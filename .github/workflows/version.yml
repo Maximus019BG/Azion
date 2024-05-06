@@ -29,18 +29,8 @@ jobs:
             PR_DESCRIPTION=$(curl -s -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }} | jq -r .body)
             echo "INFO=$PR_DESCRIPTION" >> $GITHUB_ENV
           fi
-      - name: Increment version
-        run: |
-          python -c "
-          version = open('VERSION.txt').read().strip().split('.')
-          version[-1] = str(int(version[-1]) + 1)
-          open('VERSION.txt', 'w').write('.'.join(version))
-          print('::set-output name=version::' + '.'.join(version))
-          "
-      - name: Commit and push changes
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add VERSION.txt
-          git commit -m 'Increment version - ${{ env.INFO }}'
-          git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref }}
+      - name: Auto Versioning
+        uses: Soumeh-zz/Auto-Versioning@v2.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          version-file-path: 'VERSION.txt'
