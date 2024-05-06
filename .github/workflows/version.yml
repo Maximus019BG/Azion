@@ -22,6 +22,7 @@ jobs:
       - name: Print new tag
         run: echo "New tag is ${{ steps.tag_version.outputs.newTag }}"
 
+
   release:
     needs: build
     runs-on: ubuntu-latest
