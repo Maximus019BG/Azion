@@ -32,5 +32,6 @@ jobs:
       - name: Auto Versioning
         uses: Soumeh-zz/Auto-Versioning@v2.0
         with:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-          version-file-path: 'VERSION.txt'
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+          commits: 1
