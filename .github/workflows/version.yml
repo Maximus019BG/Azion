@@ -26,7 +26,7 @@ jobs:
             MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
             echo "INFO=$MESSAGE" >> $GITHUB_ENV
           else
-            PR_DESCRIPTION=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }} | jq -r .body)
+            PR_DESCRIPTION=$(curl -s -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }} | jq -r .body)
             echo "INFO=$PR_DESCRIPTION" >> $GITHUB_ENV
           fi
       - name: Increment version
@@ -45,5 +45,5 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.MY_GITHUB_TOKEN }}
           branch: ${{ github.ref }}
