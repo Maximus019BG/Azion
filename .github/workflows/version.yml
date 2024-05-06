@@ -1,0 +1,49 @@
+name: Version generator
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    types: [closed]
+    branches: [master]
+
+jobs:
+  versioning:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # this is required to fetch all tags
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Get commit message or PR description
+        id: get_info
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
+            echo "INFO=$MESSAGE" >> $GITHUB_ENV
+          else
+            PR_DESCRIPTION=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }} | jq -r .body)
+            echo "INFO=$PR_DESCRIPTION" >> $GITHUB_ENV
+          fi
+      - name: Increment version
+        id: version
+        uses: EndBug/add-and-commit@v7
+        with:
+          message: 'Increment version - ${{ env.INFO }}'
+          add: 'VERSION.txt'  # replace with your version file
+          script: |
+            python -c "
+            version = open('VERSION.txt').read().strip().split('.')
+            version[-1] = str(int(version[-1]) + 1)
+            open('VERSION.txt', 'w').write('.'.join(version))
+            print('::set-output name=version::' + '.'.join(version))
+            "
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
