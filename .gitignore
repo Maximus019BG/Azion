@@ -1,3 +1,14 @@
+# keys
+.keys/
+.keys
+*.keys/
+*.keys
+
+*.idea/
+*.idea
+.idea/
+.idea
+
 # Compiled class file
 *.class
 
