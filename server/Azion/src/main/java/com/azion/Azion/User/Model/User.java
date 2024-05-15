@@ -1,12 +1,8 @@
 package com.azion.Azion.User.Model;
 
 import com.azion.Azion.User.Util.UserUtility;
-import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.BCrypt;
-import org.springframework.context.annotation.Primary;
-import io.github.cdimascio.dotenv.Dotenv;
-
 
 import java.util.UUID;
 
@@ -35,6 +31,19 @@ public class User {
 
     @Column(nullable = false)
     private String role;
+
+    @Column
+    private String orgid;
+
+    public String getOrgid() {
+        return orgid;
+    }
+
+    public void setOrgid(String orgid) {
+        this.orgid = orgid;
+    }
+
+
 
 
 
