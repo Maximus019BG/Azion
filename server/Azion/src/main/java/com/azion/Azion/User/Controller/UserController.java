@@ -16,7 +16,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/users/{email}")
+    @GetMapping("/user/{email}")
     public User createUser(@PathVariable String email) {
         User user = new User();
         user.setName("Hardcoded Name");

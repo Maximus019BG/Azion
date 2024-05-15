@@ -4,6 +4,7 @@ keys/
 /.idea/
 
 vs/
+/node_modules/
 
 .env
 
