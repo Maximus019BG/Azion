@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "org_azion")
-public class OrgModel {
+public class Org {
 
     @Id
     private String orgID;
@@ -100,10 +100,10 @@ public class OrgModel {
         this.orgConnectString = orgConnectString;
     }
 
-    public OrgModel() {
+    public Org() {
     }
 
-    public OrgModel(String orgName, String orgType, String orgAddress, String orgEmail, String orgConnectString, Set<User> users) {
+    public Org(String orgName, String orgType, String orgAddress, String orgEmail, String orgConnectString, Set<User> users) {
         setOrgName(orgName);
         setOrgType(orgType);
         setOrgAddress(orgAddress);

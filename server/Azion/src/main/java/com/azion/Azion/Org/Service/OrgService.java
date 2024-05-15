@@ -1,6 +1,6 @@
 package com.azion.Azion.Org.Service;
 
-import com.azion.Azion.Org.Model.OrgModel;
+import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.User.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class OrgService {
     @Autowired
     private OrgRepository orgRepository;
 
-    public void addUserToOrg(OrgModel org, User user) {
+    public void addUserToOrg(Org org, User user) {
         user.setOrgid(org.getOrgID()); // Set the orgID field of the User
         Set<User> users = org.getUsers();
         users.add(user);
@@ -26,14 +26,14 @@ public class OrgService {
         orgRepository.save(org);
     }
 
-    public void removeUserFromOrg(OrgModel org, User user) {
+    public void removeUserFromOrg(Org org, User user) {
         Set<User> users = org.getUsers();
         users.remove(user);
         org.setUsers(users);
         orgRepository.save(org);
     }
 
-    public Set<User> getUsersOfOrg(OrgModel org) {
+    public Set<User> getUsersOfOrg(Org org) {
         return org.getUsers();
     }
 }
