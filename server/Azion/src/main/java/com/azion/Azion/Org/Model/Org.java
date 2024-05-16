@@ -2,6 +2,7 @@ package com.azion.Azion.Org.Model;
 
 
 import com.azion.Azion.User.Model.User;
+import com.azion.Azion.User.Util.UserUtility;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -87,7 +88,14 @@ public class Org {
     }
 
     public void setOrgEmail(String orgEmail) {
-        this.orgEmail = orgEmail;
+
+        if (!UserUtility.isValidEmail(orgEmail)) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
+        else{
+            this.orgEmail = orgEmail;
+        }
+
     }
 
     public String getOrgConnectString() {
@@ -96,7 +104,7 @@ public class Org {
 
     public void setOrgConnectString(String orgConnectString) {
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        this.orgID = uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis();
+        this.orgID = uuid.substring(0, Math.min(uuid.length(), 10)) + System.currentTimeMillis();
         this.orgConnectString = orgConnectString;
     }
 
