@@ -35,7 +35,7 @@ public class OrgController {
     @GetMapping("/create")
     public ResponseEntity<?> createOrg() {
 
-        String orgConnectString = "Test Connection String";
+        String orgConnectString = "Test Connection String5";
         Optional<Org> existingOrg = orgRepository.findByOrgConnectString(orgConnectString);
 
         if (existingOrg.isPresent()) {
@@ -43,10 +43,10 @@ public class OrgController {
         }
 
         Org org = new Org();
-        org.setOrgName("Test Organization");
-        org.setOrgType("Test Type");
-        org.setOrgAddress("Test Address");
-        org.setOrgEmail("test@test.com");
+        org.setOrgName("Test1 Organization");
+        org.setOrgType("Test1 Type");
+        org.setOrgAddress("Test1 Address");
+        org.setOrgEmail("test2@test.com");
         org.setOrgConnectString(orgConnectString);
         org.setUsers(new HashSet<>());
 
@@ -91,7 +91,7 @@ public class OrgController {
         return ResponseEntity.ok("User with email " + email + " removed.");
     }
 
-    @GetMapping("/add/{email}")
+    @GetMapping("/invite/{email}")
     public ResponseEntity<?> inviteUserToOrg(@PathVariable String email) {
 
         User user = userRepository.findByEmail(email);
@@ -100,7 +100,7 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
 
-        user.setOrgid("ce77d1227d6c43e5a72457de785e4a9b1715804886698");
+        user.setOrgid("4159ad423f834fbc9669f0968e24824d1715877611053");
 
         userRepository.save(user);
 
