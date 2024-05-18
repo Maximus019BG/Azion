@@ -119,4 +119,17 @@ public class OrgController {
 
         return ResponseEntity.ok(users);
     }
+    @GetMapping("/delete/org/{orgName}")
+    public ResponseEntity<?> deleteOrg(@PathVariable String orgName) {
+
+        Org org = orgRepository.findById(orgName).orElse(null);
+
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+        }
+
+        orgRepository.delete(org);
+
+        return ResponseEntity.ok("Organization with id " + orgName + " deleted.");
+    }
 }
