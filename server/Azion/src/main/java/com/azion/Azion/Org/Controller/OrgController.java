@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -22,21 +21,27 @@ import java.util.Set;
 @RequestMapping("/org")
 public class OrgController {
 
+ 
+    private final OrgService orgService;
+    private final OrgRepository orgRepository;
+    private final UserService userService;
+    private final UserRepository userRepository;
+    
+    //Constructor
     @Autowired
-    private OrgService orgService;
-
-    @Autowired
-    private OrgRepository orgRepository;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UserRepository userRepository;
-
+    public OrgController(OrgService orgService, OrgRepository orgRepository, UserService userService, UserRepository userRepository) {
+        this.orgService = orgService;
+        this.orgRepository = orgRepository;
+        this.userService = userService;
+        this.userRepository = userRepository;
+    }
+    
+    //Creates an organization
     @GetMapping("/create")
     public ResponseEntity<?> createOrg() {
 
         String orgConnectString = "Test Connection String5";
-        Optional<Org> existingOrg = orgRepository.findByOrgConnectString(orgConnectString);
+        Optional<Org> existingOrg = orgRepository.findOrgByOrgConnectString(orgConnectString);
 
         if (existingOrg.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("An organization with the same connection string already exists.");
@@ -54,14 +59,54 @@ public class OrgController {
 
         return ResponseEntity.ok(org);
     }
-    @GetMapping("/addUser")
-    public ResponseEntity<Org> addUserToOrg() {
+    
+    //Show all organizations
+    @GetMapping("/list/all")
+    public ResponseEntity<?> listOrgs() {
+        return ResponseEntity.ok(orgRepository.findAll());
+    }
+    
+    //Creates a boss and organization
+    @GetMapping("/boss/{email}")
+    public ResponseEntity<?> createBoss(@PathVariable String email) {
 
-        Org org = orgRepository.findById("Test Organization").orElse(null);
+        Org org = new Org();
+        org.setOrgName("Test Organization1");
+        org.setOrgEmail(email);
+        org.setOrgAddress("Test Address1");
+        org.setOrgType("Test Type1");
+        org.setOrgConnectString("Test Connection String1");
+        
+        orgService.createOrg(org);
+        
+        User user = new User();
+        user.setName("Boss Name");
+        user.setAge(30);
+        user.setEmail(email);
+        user.setPassword("hardcodedPassword");
+        user.setFaceID("hardcodedFace");
+        user.setRole("Boss");
+        user.setOrgid(org.getOrgID());
+        
+        userService.createUser(user);
+        
+        /*
+        *TODO: Decide: user or org????!!!??!?!?!?!?
+        *TODO: Decide: user or org????!!!??!?!?!?!?
+        *TODO: Decide: user or org????!!!??!?!?!?!?
+        */
+        return ResponseEntity.ok(user);
+    }
+    
+    //!IMPORTANT:CREATES and ADDS user to the organization
+    @GetMapping("/create/employee/account/{email}")
+    public ResponseEntity<Org> addUserToOrg(@PathVariable String email) {
+
+        Org org = orgRepository.findOrgByOrgName("Test Organization").orElse(null);
         User user = new User();
         user.setName("Hardcoded Name");
         user.setAge(30);
-        user.setEmail("hardcoded@mail.com");
+        user.setEmail(email);
         user.setPassword("hardcodedPassword");
         user.setFaceID("hardcodedFaceID");
         user.setRole("hardcodedRole");
@@ -75,6 +120,8 @@ public class OrgController {
 
         return ResponseEntity.ok(org);
     }
+
+    //Removes user
     @GetMapping("/remove/{email}")
     public ResponseEntity<?> removeUserFromOrg(@PathVariable String email) {
 
@@ -90,7 +137,8 @@ public class OrgController {
 
         return ResponseEntity.ok("User with email " + email + " removed.");
     }
-
+    
+    //Invites user
     @GetMapping("/invite/{email}")
     public ResponseEntity<?> inviteUserToOrg(@PathVariable String email) {
 
@@ -100,25 +148,28 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
 
-        user.setOrgid("4159ad423f834fbc9669f0968e24824d1715877611053");
+        user.setOrgid("ce77d1227d6c43e5a72457de785e4a9b1715804886698");
 
         userRepository.save(user);
 
         return ResponseEntity.ok("User with email " + email + " invited.");
     }
+    
+    //Listing employees
+    @GetMapping("/list/employees")
+    public ResponseEntity<?> listEmployees() {
 
-    @GetMapping("/users")
-    public ResponseEntity<Set<User>> getUsersOfOrg() {
+        Org org = orgRepository.findById("ce77d1227d6c43e5a72457de785e4a9b1715804886698").orElse(null);
 
-        Org org = orgRepository.findById("Test Organization").orElse(null);
-        Set<User> users = null;
-
-        if (org != null) {
-            users = orgService.getUsersOfOrg(org);
+        if(org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
         }
+        Set<User> users = org.getUsers();
 
+        //
         return ResponseEntity.ok(users);
     }
+
     @GetMapping("/delete/org/{orgName}")
     public ResponseEntity<?> deleteOrg(@PathVariable String orgName) {
 

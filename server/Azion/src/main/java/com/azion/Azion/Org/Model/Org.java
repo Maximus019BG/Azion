@@ -103,20 +103,20 @@ public class Org {
     }
 
     public void setOrgConnectString(String orgConnectString) {
+        String randomString;
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        this.orgID = uuid.substring(0, Math.min(uuid.length(), 10)) + System.currentTimeMillis();
-        this.orgConnectString = orgConnectString;
+        randomString = uuid.substring(0, Math.min(uuid.length(), 10)) + System.currentTimeMillis();
+        this.orgConnectString = randomString;
     }
 
     public Org() {
     }
 
-    public Org(String orgName, String orgType, String orgAddress, String orgEmail, String orgConnectString, Set<User> users) {
+    public Org(String orgName, String orgType, String orgAddress, String orgEmail, Set<User> users) {
         setOrgName(orgName);
         setOrgType(orgType);
         setOrgAddress(orgAddress);
         setOrgEmail(orgEmail);
-        setOrgConnectString(orgConnectString);
         setUsers(users);
     }
 
