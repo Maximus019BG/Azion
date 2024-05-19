@@ -54,6 +54,8 @@ public class OrgController {
 
         return ResponseEntity.ok(org);
     }
+
+    //IMPORTANT:Creates and then adds a user to the organization
     @GetMapping("/addUser")
     public ResponseEntity<Org> addUserToOrg() {
 
@@ -75,6 +77,8 @@ public class OrgController {
 
         return ResponseEntity.ok(org);
     }
+
+
     @GetMapping("/remove/{email}")
     public ResponseEntity<?> removeUserFromOrg(@PathVariable String email) {
 
@@ -110,7 +114,7 @@ public class OrgController {
     @GetMapping("/users")
     public ResponseEntity<Set<User>> getUsersOfOrg() {
 
-        Org org = orgRepository.findById("Test Organization").orElse(null);
+        Org org = orgRepository.findByOrgName("Test Organization").orElse(null);
         Set<User> users = null;
 
         if (org != null) {

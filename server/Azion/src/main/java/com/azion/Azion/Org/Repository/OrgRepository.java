@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface OrgRepository extends JpaRepository<Org, String> {
     Optional<Org> findByOrgConnectString(String orgConnectString);
+    Optional<Org> findByOrgName(String orgName);
 }
