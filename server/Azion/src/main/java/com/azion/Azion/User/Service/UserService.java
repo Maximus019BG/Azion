@@ -10,13 +10,14 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    //Constructor
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
    public User createUser(User user) {
-    // Check if the user already exists
+        //Check for existing user
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("User with this email already exists");
         }
