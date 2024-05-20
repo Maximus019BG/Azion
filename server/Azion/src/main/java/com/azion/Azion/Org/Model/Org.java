@@ -1,6 +1,7 @@
 package com.azion.Azion.Org.Model;
 
 
+import com.azion.Azion.Org.Util.OrgUtility;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Util.UserUtility;
 import jakarta.persistence.*;
@@ -89,7 +90,7 @@ public class Org {
 
     public void setOrgEmail(String orgEmail) {
 
-        if (!UserUtility.isValidEmail(orgEmail)) {
+        if (!OrgUtility.isValidOrgEmail(orgEmail)) {
             throw new IllegalArgumentException("Invalid email format");
         }
         else{
