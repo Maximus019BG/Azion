@@ -1,12 +1,14 @@
 name: Generate Version
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
       - master
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +21,7 @@ jobs:
       - name: Increment the version
         id: version
         run: echo "::set-output name=version::$(echo $(echo "${{ steps.latesttag.outputs.tag }} + 0.1" | bc))"
-        
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
