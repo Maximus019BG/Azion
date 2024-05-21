@@ -1,4 +1,4 @@
-![Generate Version](https://github.com/Maximus019BG/Azion/workflows/Generate%20Version/badge.svg?branch=master)
+![Generate Version](https://github.com/Maximus019BG/Azion/workflows/Generate%20Version/badge.svg?branch=dev)
 
 # Azion - enterprise software 
  
