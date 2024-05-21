@@ -23,8 +23,12 @@ jobs:
 
       - name: Increment the version
         id: version
-        run: echo "::set-output name=version::$(echo $(echo "${{ steps.latesttag.outputs.tag }} + 0.1" | bc))"
-
+        run: |
+          if [[ -z "${{ steps.latesttag.outputs.tag }}" ]]; then
+            echo "::set-output name=version::0.1"
+          else
+            echo "::set-output name=version::$(echo "${{ steps.latesttag.outputs.tag }} + 0.1" | bc)"
+          fi
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
