@@ -1,3 +1,5 @@
+![Generate Version](https://github.com/Maximus019BG/Azion/workflows/Generate%20Version/badge.svg?branch=master)
+
 # Azion - enterprise software 
  
 <h1> Mission </h1>
