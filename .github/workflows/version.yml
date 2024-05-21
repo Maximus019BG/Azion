@@ -14,7 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 0
 
       - name: Get the latest tag
@@ -29,7 +28,7 @@ jobs:
           else
             echo "::set-output name=version::$(python -c "print(float('${{ steps.latesttag.outputs.tag }}') + 0.1)")"
           fi
-          
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
