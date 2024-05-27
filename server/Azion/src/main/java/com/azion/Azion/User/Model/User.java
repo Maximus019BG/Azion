@@ -3,8 +3,9 @@ package com.azion.Azion.User.Model;
 import com.azion.Azion.User.Util.UserUtility;
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.BCrypt;
-
+import java.util.Set;
 import java.util.UUID;
+import com.azion.Azion.Projects.Model.Project;
 
 
 @Entity
@@ -34,6 +35,11 @@ public class User {
 
     @Column
     private String orgid;
+    
+ 
+    
+    @ManyToMany(mappedBy = "users")
+    private Set<Project> projects;
 
     public String getOrgid() {
         return orgid;
@@ -42,11 +48,14 @@ public class User {
     public void setOrgid(String orgid) {
         this.orgid = orgid;
     }
-
-
-
-
-
+    
+    public Set<Project> getProjects() {
+        return projects;
+    }
+    
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
+    }
     @PrePersist
     public void generateId() {
         String uuid = UUID.randomUUID().toString().replace("-", "");
