@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/org")
+@RequestMapping("/api/org")
 public class OrgController {
 
  

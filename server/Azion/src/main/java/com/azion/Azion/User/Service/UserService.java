@@ -10,6 +10,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
 
@@ -59,6 +61,16 @@ public class UserService {
         refreshTokenCookie.setMaxAge(0);
         response.addCookie(jwtCookie);
         response.addCookie(refreshTokenCookie);
+    }
+    
+    public User updateProfilePicture(String id, byte[] profilePicture) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setProfilePicture(profilePicture);
+            return userRepository.save(user);
+        }
+        return null;
     }
 
 }

@@ -36,6 +36,12 @@ public class User {
     @Column
     private String orgid;
     
+    @Lob
+    @Column(name = "profilePicture")
+    private byte[] profilePicture;
+    
+ 
+    
  
     
     @ManyToMany(mappedBy = "users")
@@ -127,20 +133,26 @@ public class User {
     public void setPassword(String password) {
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
+    
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+    
+    public void setProfilePicture(byte[] profilePicture) {
+        this.profilePicture = profilePicture;
+    }
 
     public User() {
     }
-    public User(String name, int age, String email, String password, String faceID, String role) {
+    
+    public User(String name, int age, String email, String password, String faceID, String role, byte[] profilePicture) {
         setName(name);
         setAge(age);
         setEmail(email);
         setPassword(password);
         setFaceID(faceID);
         setRole(role);
+        setProfilePicture(profilePicture);
     }
-
-
-
-
-
+    
 }

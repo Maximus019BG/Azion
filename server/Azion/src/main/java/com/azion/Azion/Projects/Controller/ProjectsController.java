@@ -16,7 +16,7 @@ import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.User.Model.User;
 
 @RestController
-@RequestMapping("/projects")
+@RequestMapping("/api/projects")
 public class ProjectsController {
 
     private final ProjectsRepository projectsRepository;

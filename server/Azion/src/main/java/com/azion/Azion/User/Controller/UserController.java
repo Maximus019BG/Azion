@@ -38,6 +38,7 @@ public class UserController {
         user.setPassword("hardcodedPassword");
         user.setFaceID("hardcodedFaceID");
         user.setRole("hardcodedRole");
+        
         return userService.createUser(user);
     }
     
