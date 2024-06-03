@@ -3,6 +3,7 @@ package com.azion.Azion.Projects.Controller;
 import com.azion.Azion.Projects.Model.Project;
 import com.azion.Azion.Projects.Repository.ProjectsRepository;
 import com.azion.Azion.Projects.Service.ProjectsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +19,11 @@ import com.azion.Azion.User.Model.User;
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectsController {
-
+    
     private final ProjectsRepository projectsRepository;
     private final ProjectsService projectsService;
     
-
+    @Autowired
     public ProjectsController(ProjectsRepository projectsRepository, ProjectsService projectsService) {
         this.projectsService = projectsService;
         this.projectsRepository = projectsRepository;
