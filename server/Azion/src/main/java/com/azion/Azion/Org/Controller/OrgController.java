@@ -17,11 +17,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+
 @RestController
 @RequestMapping("/api/org")
 public class OrgController {
-
- 
+    
     private final OrgService orgService;
     private final OrgRepository orgRepository;
     private final UserService userService;
@@ -165,8 +165,7 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
         }
         Set<User> users = org.getUsers();
-
-        //
+        
         return ResponseEntity.ok(users);
     }
 
