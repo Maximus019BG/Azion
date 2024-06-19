@@ -1,11 +1,12 @@
 package com.azion.Azion.User.Controller;
 
 
-import com.azion.Azion.User.Model.Token;
+import com.azion.Azion.Token.Token;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
+import com.azion.Azion.User.Returns.UserReturns;
 import com.azion.Azion.User.Service.UserService;
-import org.mindrot.jbcrypt.BCrypt;
+import com.azion.Azion.MFA.Service.MFAService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +24,17 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final MFAService mfaService;
 
     @Autowired
-    public UserController(UserService userService, UserRepository userRepository) {
+    public UserController(UserService userService, UserRepository userRepository, MFAService mfaService) {
         this.userService = userService;
         this.userRepository = userRepository;
+        this.mfaService = mfaService;
     }
 
     @GetMapping("/auth/register/{email}")
-    public User createUser(@PathVariable String email) {
+    public UserReturns createUser(@PathVariable String email) {
         User user = new User();
         user.setName("Hardcoded Name");
         user.setAge(30);
@@ -39,21 +42,13 @@ public class UserController {
         user.setPassword("hardcodedPassword");
         user.setFaceID("hardcodedFaceID");
         user.setRole("hardcodedRole");
+        user.setMfaEnabled(true);
+        user.setMfaSecret(mfaService.generateNewSecret());
+        
         
         return userService.createUser(user);
     }
     
-@GetMapping("/auth/login/{email}/{password}")
-public ResponseEntity<?> loginUser(@PathVariable String email, @PathVariable String password, HttpServletResponse response) {
-    try {
-        
-        String secret = System.getProperty("secretJWT");
-        Token token = userService.loginUser(email, password, secret, response);
-        return ResponseEntity.ok(token);
-    } catch (IllegalArgumentException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-    }
-}
     
     @GetMapping("/delete/{email}")
     public ResponseEntity<?> removeUserFromOrg(@PathVariable String email) {

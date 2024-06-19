@@ -40,6 +40,14 @@ public class User {
     @Column(name = "profilePicture")
     private byte[] profilePicture;
     
+
+    
+    @Column
+    private boolean mfaEnabled;
+    
+    @Column
+    private String mfaSecret;
+    
  
     
  
@@ -141,7 +149,22 @@ public class User {
     public void setProfilePicture(byte[] profilePicture) {
         this.profilePicture = profilePicture;
     }
-
+    
+    public boolean isMfaEnabled() {
+        return mfaEnabled;
+    }
+    
+    public void setMfaEnabled(boolean mfaEnabled) {
+        this.mfaEnabled = mfaEnabled;
+    }
+    
+    public String getMfaSecret() {
+        return mfaSecret;
+    }
+    
+    public void setMfaSecret(String mfaSecret) {
+        this.mfaSecret = mfaSecret;
+    }
     public User() {
     }
     

@@ -1,0 +1,2 @@
+#pragma code_page(65001)
+1 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ "D:/Azion/server/Azion/src/main/java/com/azion/Azion/cpp/cmake-build-debug/CMakeFiles/Azion.dir/embed.manifest"

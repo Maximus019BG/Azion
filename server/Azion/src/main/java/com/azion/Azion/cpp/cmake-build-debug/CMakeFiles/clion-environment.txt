@@ -1,4 +1,4 @@
-ToolSet: 11.0 w64 (local)@D:\Program Files (x86)\New folder\CLion 2024.1\bin\mingw
+ToolSet: 17.0 (local)@C:\Program Files\Microsoft Visual Studio\2022\Community
 Ninja: 1.11.1@D:\Program Files (x86)\New folder\CLion 2024.1\bin\ninja\win\x64\ninja.exe
 Options: 
 
