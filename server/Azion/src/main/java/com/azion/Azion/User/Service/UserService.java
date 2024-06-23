@@ -5,7 +5,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import com.azion.Azion.MFA.Service.MFAService;
-import com.azion.Azion.Token.Token;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Returns.UserReturns;

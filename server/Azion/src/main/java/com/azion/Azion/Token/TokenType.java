@@ -1,6 +1,5 @@
 package com.azion.Azion.Token;
-
 public enum TokenType {
-    ACCESS,
-    REFRESH,
+    ACCESS_TOKEN,
+    REFRESH_TOKEN
 }
