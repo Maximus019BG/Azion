@@ -1,0 +1,42 @@
+name: Generate Version
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+jobs:
+  build:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Get the latest tag
+        id: latesttag
+        run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
+
+      - name: Increment the version
+        id: version
+        run: |
+          if [[ -z "${{ steps.latesttag.outputs.tag }}" ]]; then
+            echo "::set-output name=version::0.1"
+          else
+            echo "::set-output name=version::$(python -c "print(float('${{ steps.latesttag.outputs.tag }}') + 0.1)")"
+          fi
+          
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          release_name: Release ${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: false
