@@ -1,6 +1,5 @@
 package com.azion.Azion.Token;
 
-import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.User.Model.User;
 import jakarta.persistence.*;
 
@@ -14,12 +13,6 @@ public class Token {
     @Id
     private String id;
     
-    @Column(nullable = false)
-    private String issuer;
-    
-    @Column(nullable = false)
-    private String audience;
-    
     @Column(columnDefinition = "LONGTEXT", nullable = false)
     private String token;
     
@@ -28,14 +21,21 @@ public class Token {
     private TokenType tokenType;
     
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "email", referencedColumnName = "email")
+    @JoinColumn(name = "user", referencedColumnName = "id")
     private User subject;
     
     @Column(nullable = false)
     private Date issuedAt;
     
-    @Column(nullable = false)
-    private Date expiresAt;
+    public Token() {
+    }
+    
+    public Token(String token, User subject, Date issuedAt) {
+        
+        setToken(token);
+        setSubject(subject);
+        setIssuedAt(issuedAt);
+    }
     
     @PrePersist
     public void generateId() {
@@ -47,25 +47,8 @@ public class Token {
         return id;
     }
     
-    
     public void setId(String id) {
         this.id = id;
-    }
-    
-    public String getIssuer() {
-        return issuer;
-    }
-    
-    public void setIssuer(String issuer) {
-        this.issuer = issuer;
-    }
-    
-    public String getAudience() {
-        return audience;
-    }
-    
-    public void setAudience(String audience) {
-        this.audience = audience;
     }
     
     public String getToken() {
@@ -92,31 +75,11 @@ public class Token {
         this.subject = subject;
     }
     
-    public Date getExpiresAt() {
-        return expiresAt;
-    }
-    
-    public void setExpiresAt(Date expiresAt) {
-        this.expiresAt = expiresAt;
-    }
-    
     public Date getIssuedAt() {
         return issuedAt;
     }
     
     public void setIssuedAt(Date issuedAt) {
         this.issuedAt = issuedAt;
-    }
-    
-    
-    public Token() {
-    }
-    public Token(String issuer, String audience, String token, User subject, Date issuedAt, Date expiresAt) {
-        setIssuer(issuer);
-        setAudience(audience);
-        setToken(token);
-        setSubject(subject);
-        setIssuedAt(issuedAt);
-        setExpiresAt(expiresAt);
     }
 }

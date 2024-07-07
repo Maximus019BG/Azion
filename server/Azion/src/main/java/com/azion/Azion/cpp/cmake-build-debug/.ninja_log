@@ -1,0 +1,12 @@
+# ninja log v6
+9721	9975	1720087486096856017	Azion_cpp	b544081b56adf094
+15	9721	1720087476391791208	CMakeFiles/Azion_cpp.dir/main.cpp.o	e38d7ab22d212e68
+6	15	1720087476382791148	Azion_cpp_autogen/mocs_compilation.cpp	c1c89974c52c6cfd
+1	2082	1719933156563660068	CMakeFiles/cpp.dir/main.cpp.o	969873a4ebc73707
+2	57	1720345648098627700	build.ninja	7f3f9d2756d828d7
+6	15	1720087476382791148	/home/max/IdeaProjects/Azion/server/Azion/src/main/java/com/azion/Azion/cpp/cmake-build-debug/Azion_cpp_autogen/timestamp	c1c89974c52c6cfd
+6	15	1720087476382791148	Azion_cpp_autogen/timestamp	c1c89974c52c6cfd
+6	15	1720087476382791148	/home/max/IdeaProjects/Azion/server/Azion/src/main/java/com/azion/Azion/cpp/cmake-build-debug/Azion_cpp_autogen/mocs_compilation.cpp	c1c89974c52c6cfd
+30	49	1720086990815743870	CMakeFiles/Azion_cpp.dir/Azion_cpp_autogen/mocs_compilation.cpp.o	48b69660982fce12
+1	397	1720345654426611450	CMakeFiles/cpp.dir/main.cpp.o	f966af99645fc113
+397	486	1720345654822610462	cpp	838334a30e9ea101

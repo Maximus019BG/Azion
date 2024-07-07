@@ -32,22 +32,19 @@ public class TokenService {
         try {
             
             Token tokenObj = new Token();
-            tokenObj.setIssuer(issuer);
-            tokenObj.setAudience(audience);
             //setToken() is lower in code
             tokenObj.setTokenType(tokenType);
-            tokenObj.setSubject(user);// use email
+            tokenObj.setSubject(user);// use ID
             tokenObj.setIssuedAt(new Date(System.currentTimeMillis()));
-            tokenObj.setExpiresAt(new Date(System.currentTimeMillis() + 60*60*1000));
             Algorithm algorithm = Algorithm.HMAC512(secret);
             
             token = JWT.create()
-                    .withIssuer(tokenObj.getIssuer())
-                    .withAudience(tokenObj.getAudience())
+                    .withIssuer(issuer)
+                    .withAudience(audience)
                     .withJWTId(token_type.toLowerCase()+"_"+ UUID.randomUUID().toString().replace("-", ""))
-                    .withSubject(tokenObj.getSubject().getEmail())
+                    .withSubject(tokenObj.getSubject().getId())
                     .withIssuedAt(tokenObj.getIssuedAt())
-                    .withExpiresAt(tokenObj.getExpiresAt())
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 60*60*1000))
                     .sign(algorithm);
             
             tokenObj.setToken(token);

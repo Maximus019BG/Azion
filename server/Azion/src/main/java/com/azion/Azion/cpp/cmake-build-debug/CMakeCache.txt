@@ -14,6 +14,24 @@
 # EXTERNAL cache entries
 ########################
 
+//Value Computed by CMake
+Azion_BINARY_DIR:STATIC=/home/max/IdeaProjects/Azion/server/Azion/src/main/java/com/azion/Azion/cpp/cmake-build-debug
+
+//Value Computed by CMake
+Azion_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+Azion_SOURCE_DIR:STATIC=/home/max/IdeaProjects/Azion/server/Azion/src/main/java/com/azion/Azion/cpp
+
+//Value Computed by CMake
+Azion_cpp_BINARY_DIR:STATIC=/home/max/IdeaProjects/Azion/server/Azion/src/main/java/com/azion/Azion/cpp/cmake-build-debug
+
+//Value Computed by CMake
+Azion_cpp_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+Azion_cpp_SOURCE_DIR:STATIC=/home/max/IdeaProjects/Azion/server/Azion/src/main/java/com/azion/Azion/cpp
+
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=/usr/bin/addr2line
 
@@ -215,6 +233,33 @@ CMAKE_TAPI:FILEPATH=CMAKE_TAPI-NOTFOUND
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//The directory containing a CMake configuration file for OpenCV.
+OpenCV_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/opencv4
+
+//The directory containing a CMake configuration file for Qt5Core.
+Qt5Core_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt5Core
+
+//The directory containing a CMake configuration file for Qt5Gui.
+Qt5Gui_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt5Gui
+
+//The directory containing a CMake configuration file for Qt5Multimedia.
+Qt5Multimedia_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt5Multimedia
+
+//The directory containing a CMake configuration file for Qt5Network.
+Qt5Network_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt5Network
+
+//The directory containing a CMake configuration file for Qt5.
+Qt5_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt5
+
+//Value Computed by CMake
+YourProjectName_BINARY_DIR:STATIC=/home/max/IdeaProjects/Azion/server/Azion/src/main/java/com/azion/Azion/cpp/cmake-build-debug
+
+//Value Computed by CMake
+YourProjectName_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+YourProjectName_SOURCE_DIR:STATIC=/home/max/IdeaProjects/Azion/server/Azion/src/main/java/com/azion/Azion/cpp
+
 //Value Computed by CMake
 cpp_BINARY_DIR:STATIC=/home/max/IdeaProjects/Azion/server/Azion/src/main/java/com/azion/Azion/cpp/cmake-build-debug
 
@@ -223,6 +268,9 @@ cpp_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 cpp_SOURCE_DIR:STATIC=/home/max/IdeaProjects/Azion/server/Azion/src/main/java/com/azion/Azion/cpp
+
+//The directory containing a CMake configuration file for dlib.
+dlib_DIR:PATH=/usr/local/lib/cmake/dlib
 
 
 ########################
@@ -370,6 +418,8 @@ CMAKE_TAPI-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//Details about finding OpenCV
+FIND_PACKAGE_MESSAGE_DETAILS_OpenCV:INTERNAL=[/usr][v4.6.0()]
 //linker supports push/pop state
 _CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
 
