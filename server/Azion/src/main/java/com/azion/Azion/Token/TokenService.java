@@ -58,4 +58,33 @@ public class TokenService {
         }
         return token;
     }
+    
+    public boolean validateToken(String token) {
+        Dotenv dotenv = Dotenv.load();
+        String secret = dotenv.get("SECRET_JWT");
+        Token tokenObj = null;
+        boolean isValid = false;
+        try {
+            Algorithm algorithm = Algorithm.HMAC512(secret);
+            tokenObj = tokenRepo.findByToken(token);
+            JWT.require(algorithm).build().verify(token);
+            isValid = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isValid;
+    }
+    
+    public String deleteToken(String token) {
+        Token tokenObj = tokenRepo.findByToken(token);
+        if (tokenObj != null) {
+            tokenObj.setSubject(null);
+            tokenRepo.delete(tokenObj);
+            return "Token deleted successfully.";
+        } else {
+            return "Token not found.";
+        }
+    }
+    
+    
 }

@@ -5,6 +5,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import com.azion.Azion.MFA.Service.MFAService;
+import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Returns.UserReturns;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static com.azion.Azion.Token.TokenType.ACCESS_TOKEN;
+
 
 @Service
 public class UserService {
@@ -21,14 +24,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserReturns userReturns;
     private final MFAService mfaService;
+    private final TokenService tokenService;
     
     
     //Constructor
     @Autowired
-    public UserService(UserRepository userRepository,UserReturns userReturns, MFAService mfaService) {
+    public UserService(UserRepository userRepository,UserReturns userReturns, MFAService mfaService, TokenService tokenService) {
         this.userRepository = userRepository;
         this.userReturns = userReturns;
         this.mfaService = mfaService;
+        this.tokenService = tokenService;
     }
 
    public UserReturns createUser(User user) {
@@ -65,6 +70,18 @@ public class UserService {
             return userRepository.save(user);
         }
         return null;
+    }
+    
+    public String loginUser(String email, String password) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+        else if (!BCrypt.checkpw(password, user.getPassword())) {
+            throw new IllegalArgumentException("Invalid password");
+        }
+        String token = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/");
+        return token;
     }
 
 }
