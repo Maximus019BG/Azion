@@ -8,7 +8,10 @@ import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenType;
 import com.azion.Azion.User.Model.User;
+import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.UserService;
+import jakarta.transaction.Transactional;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,18 +37,23 @@ public class AuthController {
     private final TokenService tokenService;
     private final UserService userService;
     private final TokenRepo tokenRepo;
+    private final UserRepository userRepository;
     
     @Autowired
-    public AuthController(TokenService tokenService, UserService userService, TokenRepo tokenRepo) {
+    public AuthController(TokenService tokenService, UserService userService, TokenRepo tokenRepo, UserRepository userRepository) {
         this.tokenService = tokenService;
         this.userService = userService;
         this.tokenRepo = tokenRepo;
+        this.userRepository = userRepository;
     }
-
     
-   @GetMapping("/register/{email}")
-   public String login(@PathVariable String email) {
-        
+    @Transactional
+    @GetMapping("/register/{email}")
+    public ResponseEntity<?> login(@PathVariable String email) {
+        User existingUser = userRepository.findByEmail(email);
+        if (existingUser != null) {
+            return ResponseEntity.badRequest().body("User already exists");
+        }
         
         User user = new User();
         user.setName("Hardcoded Name");
@@ -55,26 +63,42 @@ public class AuthController {
         user.setFaceID("hardcodedFaceID");
         user.setRole("hardcodedRole");
         user.setMfaEnabled(true);
-//        user.setMfaSecret(mfaService.generateNewSecret());
-       
-        String token = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/");
         
-        return token;
+        userRepository.save(user);
+        
+        String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/");
+        String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/");
+        
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+        
+        return ResponseEntity.ok(tokens);
     }
     
-@GetMapping("/login/{email}/{password}")
-public ResponseEntity<?> login(@PathVariable String email, @PathVariable String password) {
-    try {
-        String token = userService.loginUser(email, password);
-        if (token != null) {
-            return ResponseEntity.ok().body("Token: " + token);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+    @Transactional
+    @GetMapping("/login/{email}/{password}")
+    public ResponseEntity<?> login(@PathVariable String email, @PathVariable String password) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not exist");
         }
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during login");
+
+        boolean passwordMatches = BCrypt.checkpw(password, user.getPassword());
+        if (!passwordMatches) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
+        }
+
+        String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/");
+        String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/");
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+
+        return ResponseEntity.ok(tokens);
     }
-}
+
 
     @GetMapping("/forgot-password")
     public String forgotPassword() {
@@ -91,10 +115,10 @@ public ResponseEntity<?> login(@PathVariable String email, @PathVariable String 
         return "Change Password";
     }
 
-    @GetMapping("/logout/{token}")
-    public String logout(@PathVariable String token) {
+    @GetMapping("/logout/{token}/{tokenR}")
+    public String logout(@PathVariable String token, @PathVariable String tokenR) {
        if(tokenService.validateToken(token)){
-           tokenService.deleteToken(token);
+           tokenService.deleteToken(token,tokenR);
            return "Logged out";
        }
        else {

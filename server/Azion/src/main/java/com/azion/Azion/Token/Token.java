@@ -21,7 +21,7 @@ public class Token {
     private TokenType tokenType;
     
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user", referencedColumnName = "id")
+    @JoinColumn(name = "user", referencedColumnName = "id", unique = false)
     private User subject;
     
     @Column(nullable = false)

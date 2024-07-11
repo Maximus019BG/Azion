@@ -28,7 +28,15 @@ public class TokenService {
         String token = "";
         String token_type = tokenType.toString();
         String secret = dotenv.get("SECRET_JWT");
+        Long time = 0L;
         
+        if(tokenType == TokenType.REFRESH_TOKEN){
+            time = 60*60*24*1000*5L;//5 day
+        }
+        else if(tokenType == TokenType.ACCESS_TOKEN){
+            time = 60*60*1000L;//1 hour
+        }
+      
         try {
             
             Token tokenObj = new Token();
@@ -38,17 +46,18 @@ public class TokenService {
             tokenObj.setIssuedAt(new Date(System.currentTimeMillis()));
             Algorithm algorithm = Algorithm.HMAC512(secret);
             
+            
             token = JWT.create()
                     .withIssuer(issuer)
                     .withAudience(audience)
                     .withJWTId(token_type.toLowerCase()+"_"+ UUID.randomUUID().toString().replace("-", ""))
                     .withSubject(tokenObj.getSubject().getId())
                     .withIssuedAt(tokenObj.getIssuedAt())
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 60*60*1000))
+                    .withExpiresAt(new Date(System.currentTimeMillis() + time))
                     .sign(algorithm);
             
             tokenObj.setToken(token);
-            
+           
             tokenRepo.save(tokenObj);
             
             
@@ -75,14 +84,48 @@ public class TokenService {
         return isValid;
     }
     
-    public String deleteToken(String token) {
+    public void deleteToken(String tokenA, String tokenR) {
+        Token tokenObjA = tokenRepo.findByToken(tokenA);
+        Token tokenObjR = tokenRepo.findByToken(tokenR);
+        if (tokenObjA != null && tokenObjR != null){
+            tokenObjA.setSubject(null);
+            tokenObjR.setSubject(null);
+            tokenRepo.save(tokenObjA);
+            tokenRepo.save(tokenObjR);
+            tokenRepo.delete(tokenObjA);
+            tokenRepo.delete(tokenObjR);
+        } else if(tokenObjA != null && tokenObjR == null){
+            tokenObjA.setSubject(null);
+            tokenRepo.save(tokenObjA);
+            tokenRepo.delete(tokenObjA);
+        } else if(tokenObjA == null && tokenObjR != null){
+            tokenObjR.setSubject(null);
+            tokenRepo.save(tokenObjR);
+            tokenRepo.delete(tokenObjR);
+        }
+   
+    }
+    
+    public boolean isAccessTokenOutOfDate(String token) {
         Token tokenObj = tokenRepo.findByToken(token);
-        if (tokenObj != null) {
-            tokenObj.setSubject(null);
-            tokenRepo.delete(tokenObj);
-            return "Token deleted successfully.";
-        } else {
-            return "Token not found.";
+        if (tokenObj.getTokenType() == TokenType.ACCESS_TOKEN && tokenObj.getIssuedAt().getTime() <= System.currentTimeMillis()) {
+            return true;
+        } else if (tokenObj.getTokenType() == TokenType.ACCESS_TOKEN && tokenObj.getIssuedAt().getTime() > System.currentTimeMillis()) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    public boolean isRefreshTokenOutOfDate(String token) {
+        Token tokenObj = tokenRepo.findByToken(token);
+        if (tokenObj.getTokenType() == TokenType.REFRESH_TOKEN && tokenObj.getIssuedAt().getTime() <= System.currentTimeMillis()) {
+            return true;
+        } else if (tokenObj.getTokenType() == TokenType.REFRESH_TOKEN && tokenObj.getIssuedAt().getTime() > System.currentTimeMillis()) {
+            return false;
+        }
+        else {
+            return true;
         }
     }
     

@@ -5,6 +5,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import com.azion.Azion.MFA.Service.MFAService;
+import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
@@ -37,7 +38,6 @@ public class UserService {
     }
 
    public UserReturns createUser(User user) {
-        //Check for existing user
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("User with this email already exists");
         }
@@ -72,16 +72,15 @@ public class UserService {
         return null;
     }
     
-    public String loginUser(String email, String password) {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new IllegalArgumentException("User not found");
-        }
-        else if (!BCrypt.checkpw(password, user.getPassword())) {
-            throw new IllegalArgumentException("Invalid password");
-        }
-        String token = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/");
-        return token;
-    }
-
+   public String loginUser(String email, String password) {
+       User user = userRepository.findByEmail(email);
+       System.out.println(user.getId());
+       
+       if (user == null || !BCrypt.checkpw(password, user.getPassword())) {
+           throw new IllegalArgumentException("Invalid email or password");
+       }
+       // Generate a new token for the user
+       String token = tokenService.generateToken(ACCESS_TOKEN, user, "Azion", "Azion");
+       return token;
+   }
 }
