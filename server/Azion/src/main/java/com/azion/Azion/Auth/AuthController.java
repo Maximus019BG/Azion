@@ -27,9 +27,6 @@ import java.util.UUID;
 import static com.azion.Azion.Token.TokenType.ACCESS_TOKEN;
 import static com.azion.Azion.Token.TokenType.REFRESH_TOKEN;
 
-
-
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -48,7 +45,7 @@ public class AuthController {
     }
     
     @Transactional
-    @GetMapping("/register/{email}")
+    @PostMapping("/register/{email}")
     public ResponseEntity<?> login(@PathVariable String email) {
         User existingUser = userRepository.findByEmail(email);
         if (existingUser != null) {
@@ -77,13 +74,15 @@ public class AuthController {
     }
     
     @Transactional
-    @GetMapping("/login/{email}/{password}")
+    @PostMapping("/login/{email}/{password}")
     public ResponseEntity<?> login(@PathVariable String email, @PathVariable String password) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not exist");
         }
-
+        else if(tokenRepo.findBySubject(user) != null){
+            return ResponseEntity.badRequest().body("User already logged in");
+        }
         boolean passwordMatches = BCrypt.checkpw(password, user.getPassword());
         if (!passwordMatches) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
@@ -117,10 +116,16 @@ public class AuthController {
 
     @GetMapping("/logout/{token}/{tokenR}")
     public String logout(@PathVariable String token, @PathVariable String tokenR) {
-       if(tokenService.validateToken(token)){
-           tokenService.deleteToken(token,tokenR);
-           return "Logged out";
-       }
+        if(tokenService.validateToken(token) && tokenService.validateToken(tokenR)) {
+            if (!tokenService.isAccessTokenOutOfDate(token) && !tokenService.isRefreshTokenOutOfDate(tokenR)) {
+                    tokenService.deleteTokens(token, tokenR);
+                    return "Logged out";
+            }
+            else {
+                return "Tokens are out of date. Logged out.";
+            }
+            
+        }
        else {
            return "Invalid token";
        }

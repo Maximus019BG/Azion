@@ -84,7 +84,7 @@ public class TokenService {
         return isValid;
     }
     
-    public void deleteToken(String tokenA, String tokenR) {
+    public void deleteTokens(String tokenA, String tokenR) {
         Token tokenObjA = tokenRepo.findByToken(tokenA);
         Token tokenObjR = tokenRepo.findByToken(tokenR);
         if (tokenObjA != null && tokenObjR != null){
