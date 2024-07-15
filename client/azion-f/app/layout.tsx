@@ -22,7 +22,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href={logo.src} />
       </head>
-      <body className={inter.className}>
+      <body className={` ${inter.className} bg-[#f7f3e8]`}>
         {children}
       </body>
     </html>
