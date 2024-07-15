@@ -1,35 +1,44 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 
 const AxiosFunction = (data: any) => {
   axios
-    .post("/user", data)
+    .post("http://localhost:8080/api/auth/register", data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
     .then(function (response: AxiosResponse) {
       console.log(response);
     })
     .catch(function (error: any) {
-      console.log(error);
+      console.log(error.response ? error.response : error);
     });
 };
 
 const Sign_up = () => {
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] =  useState("");
+  const [mfaEnabled, setMfaEnabled] = useState(false);
 
-  const handleSubmit = () => {
-    const userData = {
-      username,
-      email,
-      age,
-      password,
-    };
+const handleSubmit = () => {
+  const parsedDate = new Date(age);
 
-    AxiosFunction(userData);
+  const userData = {
+    name,
+    email,
+    age,
+    password,
+    role: "TestUser",
+    mfaEnabled: true
   };
 
+  AxiosFunction(userData);
+};
   return (
     <div className="w-screen h-screen flex flex-col justify-center items-center">
       <div className="h-[65vh] w-[90vw] md:w-[60vw] lg:w-[40vw] xl:w-[30vw] bg-slate-900 rounded-xl opacity-80 flex flex-col gap-5 justify-center items-center p-5 md:p-10">
@@ -39,7 +48,7 @@ const Sign_up = () => {
             Input your Username:
           </p>
           <input
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             type="text"
             className="border-2 border-black opacity-100 w-full md:w-10/12 p-1 rounded-md"
           />
@@ -56,7 +65,7 @@ const Sign_up = () => {
         </div>
         <div className="w-full flex flex-col justify-center items-center gap-3">
           <p className="text-slate-200 w-full flex flex-col justify-center items-start ml-4 md:ml-8 lg:ml-12">
-            Input your Age:
+            Born at:
           </p>
           <input
             onChange={(e) => setAge(e.target.value)}

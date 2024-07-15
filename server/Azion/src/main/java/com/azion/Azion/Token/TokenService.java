@@ -3,6 +3,7 @@ package com.azion.Azion.Token;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.azion.Azion.User.Model.User;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,9 +109,10 @@ public class TokenService {
     
     public boolean isAccessTokenOutOfDate(String token) {
         Token tokenObj = tokenRepo.findByToken(token);
-        if (tokenObj.getTokenType() == TokenType.ACCESS_TOKEN && tokenObj.getIssuedAt().getTime() <= System.currentTimeMillis()) {
+        DecodedJWT jwt = JWT.decode(token);
+        if (tokenObj.getTokenType() == TokenType.ACCESS_TOKEN && jwt.getExpiresAt().getTime() <= System.currentTimeMillis()) {
             return true;
-        } else if (tokenObj.getTokenType() == TokenType.ACCESS_TOKEN && tokenObj.getIssuedAt().getTime() > System.currentTimeMillis()) {
+        } else if (tokenObj.getTokenType() == TokenType.ACCESS_TOKEN && jwt.getExpiresAt().getTime()> System.currentTimeMillis()) {
             return false;
         }
         else {
@@ -119,9 +121,10 @@ public class TokenService {
     }
     public boolean isRefreshTokenOutOfDate(String token) {
         Token tokenObj = tokenRepo.findByToken(token);
-        if (tokenObj.getTokenType() == TokenType.REFRESH_TOKEN && tokenObj.getIssuedAt().getTime() <= System.currentTimeMillis()) {
+        DecodedJWT jwt = JWT.decode(token);
+        if (tokenObj.getTokenType() == TokenType.REFRESH_TOKEN && jwt.getExpiresAt().getTime()  <= System.currentTimeMillis()) {
             return true;
-        } else if (tokenObj.getTokenType() == TokenType.REFRESH_TOKEN && tokenObj.getIssuedAt().getTime() > System.currentTimeMillis()) {
+        } else if (tokenObj.getTokenType() == TokenType.REFRESH_TOKEN && jwt.getExpiresAt().getTime() > System.currentTimeMillis()) {
             return false;
         }
         else {

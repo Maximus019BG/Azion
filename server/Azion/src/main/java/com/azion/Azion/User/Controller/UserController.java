@@ -31,22 +31,6 @@ public class UserController {
         this.userRepository = userRepository;
         this.mfaService = mfaService;
     }
-
-    @GetMapping("/auth/register/{email}")
-    public UserReturns createUser(@PathVariable String email) {
-        User user = new User();
-        user.setName("Hardcoded Name");
-        user.setAge(30);
-        user.setEmail(email);
-        user.setPassword("hardcodedPassword");
-        user.setFaceID("hardcodedFaceID");
-        user.setRole("hardcodedRole");
-        user.setMfaEnabled(true);
-        user.setMfaSecret(mfaService.generateNewSecret());
-        
-        
-        return userService.createUser(user);
-    }
     
     
     @GetMapping("/delete/{email}")

@@ -3,6 +3,8 @@ package com.azion.Azion.User.Model;
 import com.azion.Azion.User.Util.UserUtility;
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.BCrypt;
+
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 import com.azion.Azion.Projects.Model.Project;
@@ -19,7 +21,7 @@ public class User {
     private String name;
 
     @Column(nullable = false)
-    private int age;
+    private Date age;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -40,17 +42,12 @@ public class User {
     @Column(name = "profilePicture")
     private byte[] profilePicture;
     
-
-    
     @Column
     private boolean mfaEnabled;
     
     @Column
     private String mfaSecret;
     
- 
-    
- 
     
     @ManyToMany(mappedBy = "users")
     private Set<Project> projects;
@@ -101,17 +98,12 @@ public class User {
         this.name = name;
     }
 
-    public int getAge() {
+    public Date getAge() {
         return age;
     }
 
-    public void setAge(int age) {
-        if(age < 0 || age > 150) {
-            throw new IllegalArgumentException("Age cannot be negative");
-        }
-        else {
-            this.age = age;
-        }
+    public void setAge(Date age) {
+        this.age = age;
     }
 
     public String getEmail() {
@@ -170,7 +162,7 @@ public class User {
     public User() {
     }
     
-    public User(String name, int age, String email, String password, String faceID, String role, byte[] profilePicture) {
+    public User(String name, Date age, String email, String password, String faceID, String role, byte[] profilePicture) {
         setName(name);
         setAge(age);
         setEmail(email);

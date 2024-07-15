@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -78,10 +80,10 @@ public class OrgController {
         org.setOrgConnectString("Test Connection String1");
         
         orgService.createOrg(org);
-        
+        Date date = new Date();
         User user = new User();
         user.setName("Boss Name");
-        user.setAge(30);
+        user.setAge(date);
         user.setEmail(email);
         user.setPassword("hardcodedPassword");
         user.setFaceID("hardcodedFace");
@@ -101,11 +103,11 @@ public class OrgController {
     //!IMPORTANT:CREATES and ADDS user to the organization
     @GetMapping("/create/employee/account/{email}")
     public ResponseEntity<Org> addUserToOrg(@PathVariable String email) {
-
+        Date date = new Date();
         Org org = orgRepository.findOrgByOrgName("Test Organization").orElse(null);
         User user = new User();
         user.setName("Hardcoded Name");
-        user.setAge(30);
+        user.setAge(date);
         user.setEmail(email);
         user.setPassword("hardcodedPassword");
         user.setFaceID("hardcodedFaceID");

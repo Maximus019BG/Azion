@@ -20,6 +20,10 @@ import org.springframework.web.bind.annotation.*;
 
 import com.azion.Azion.Token.TokenService;
 
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Date;
 import java.util.UUID;
@@ -45,21 +49,27 @@ public class AuthController {
     }
     
     @Transactional
-    @PostMapping("/register/{email}")
-    public ResponseEntity<?> login(@PathVariable String email) {
-        User existingUser = userRepository.findByEmail(email);
-        if (existingUser != null) {
-            return ResponseEntity.badRequest().body("User already exists");
-        }
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody Map<String, Object> request) {
+        String name = (String) request.get("name");
+        String email = (String) request.get("email");
+        String password = (String) request.get("password");
+        String role = (String) request.get("role");
+        boolean mfaEnabled = (boolean) request.get("mfaEnabled");
+        String bornAt =(String) request.get("age");
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        
         
         User user = new User();
-        user.setName("Hardcoded Name");
-        user.setAge(30);
+        user.setName(name);
+        user.setAge(dateFormat.parse(bornAt, pos));
         user.setEmail(email);
-        user.setPassword("hardcodedPassword");
+        user.setPassword(password);
         user.setFaceID("hardcodedFaceID");
-        user.setRole("hardcodedRole");
-        user.setMfaEnabled(true);
+        user.setRole(role);
+        user.setMfaEnabled(mfaEnabled);
         
         userRepository.save(user);
         
@@ -74,13 +84,16 @@ public class AuthController {
     }
     
     @Transactional
-    @PostMapping("/login/{email}/{password}")
-    public ResponseEntity<?> login(@PathVariable String email, @PathVariable String password) {
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, Object> request) {
+        String email = (String) request.get("email");
+        String password = (String) request.get("password");
+        
         User user = userRepository.findByEmail(email);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not exist");
         }
-        else if(tokenRepo.findBySubject(user) != null){
+        else if(tokenRepo.existsByUser(user)){
             return ResponseEntity.badRequest().body("User already logged in");
         }
         boolean passwordMatches = BCrypt.checkpw(password, user.getPassword());
@@ -114,7 +127,7 @@ public class AuthController {
         return "Change Password";
     }
 
-    @GetMapping("/logout/{token}/{tokenR}")
+    @PostMapping("/logout/{token}/{tokenR}")
     public String logout(@PathVariable String token, @PathVariable String tokenR) {
         if(tokenService.validateToken(token) && tokenService.validateToken(tokenR)) {
             if (!tokenService.isAccessTokenOutOfDate(token) && !tokenService.isRefreshTokenOutOfDate(tokenR)) {
