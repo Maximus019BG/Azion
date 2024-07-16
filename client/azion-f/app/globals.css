@@ -2,9 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --foreground: 197, 198, 199;
+  --background: 11, 12, 16;
+  --muted: 115,115,115;
+  --accent: 69, 162, 157;
+}
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+}
+/* styles/globals.css */
+.gradient-text {
+  background: linear-gradient(to right, rgba(102, 252, 241, 0.8), rgba(61, 209, 184,0.7) );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.neon-text {
+  color: rgba(255, 255, 255, 0.9); /* Lighter base color */
+  text-shadow:
+    0 0 2px rgba(215, 215, 216, 0.8),
+    0 0 4px rgba(197, 198, 199, 0.7),
+    0 0 6px rgba(197, 198, 199, 0.6),
+    0 0 8px rgba(197, 198, 199, 0.5),
+    0 0 10px rgba(197, 198, 199, 0.4),
+    0 0 20px rgba(197, 198, 199, 0.3),
+    0 0 30px rgba(197, 198, 199, 0.2),
+    0 0 40px rgba(197, 198, 199, 0.1);
 }
