@@ -10,7 +10,12 @@ const AxiosFunction = (data: any) => {
       }
     })
     .then(function (response: AxiosResponse) {
-      console.log(response);
+      const accessToken = response.data.accessToken;
+      const refreshToken = response.data.refreshToken;
+      localStorage.setItem('azionAccessToken', accessToken);
+      localStorage.setItem('azionRefreshToken', refreshToken);
+
+      window.location.href = '/organizations';
     })
     .catch(function (error: any) {
       console.log(error.response ? error.response : error);

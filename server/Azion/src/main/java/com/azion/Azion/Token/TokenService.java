@@ -32,10 +32,11 @@ public class TokenService {
         Long time = 0L;
         
         if(tokenType == TokenType.REFRESH_TOKEN){
-            time = 60*60*24*1000*5L;//5 day
+            time = 60*60*24*1000*5L;
+            
         }
         else if(tokenType == TokenType.ACCESS_TOKEN){
-            time = 60*60*1000L;//1 hour
+            time = 60*15*1000L;
         }
       
         try {
@@ -69,6 +70,31 @@ public class TokenService {
         return token;
     }
     
+    public String sessionCheck(String refreshToken, String accessToken) {
+        Token tokenObjA = tokenRepo.findByToken(accessToken);
+        Token tokenObjR = tokenRepo.findByToken(refreshToken);
+        if (tokenObjA != null && tokenObjR != null) {
+            if (tokenObjA.getSubject().getId().equals(tokenObjR.getSubject().getId())) {
+                if(isAccessTokenOutOfDate(accessToken) && isRefreshTokenOutOfDate(refreshToken)){
+                    deleteTokens(accessToken, refreshToken);
+                    return "false";
+                }
+                else if(isAccessTokenOutOfDate(accessToken) && !isRefreshTokenOutOfDate(refreshToken)){
+                    return "newAccessToken";
+                }
+                else if(!isAccessTokenOutOfDate(accessToken) && !isRefreshTokenOutOfDate(refreshToken)){
+                    if(validateToken(accessToken) && validateToken(refreshToken)){
+                        return "true";
+                    }
+                    else{
+                        deleteTokens(accessToken, refreshToken);
+                        return "false";
+                    }
+                }
+            }
+        }
+        return "false";
+    }
     public boolean validateToken(String token) {
         Dotenv dotenv = Dotenv.load();
         String secret = dotenv.get("SECRET_JWT");
@@ -112,24 +138,14 @@ public class TokenService {
         DecodedJWT jwt = JWT.decode(token);
         if (tokenObj.getTokenType() == TokenType.ACCESS_TOKEN && jwt.getExpiresAt().getTime() <= System.currentTimeMillis()) {
             return true;
-        } else if (tokenObj.getTokenType() == TokenType.ACCESS_TOKEN && jwt.getExpiresAt().getTime()> System.currentTimeMillis()) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        } else return tokenObj.getTokenType() != TokenType.ACCESS_TOKEN || jwt.getExpiresAt().getTime() <= System.currentTimeMillis();
     }
     public boolean isRefreshTokenOutOfDate(String token) {
         Token tokenObj = tokenRepo.findByToken(token);
         DecodedJWT jwt = JWT.decode(token);
         if (tokenObj.getTokenType() == TokenType.REFRESH_TOKEN && jwt.getExpiresAt().getTime()  <= System.currentTimeMillis()) {
             return true;
-        } else if (tokenObj.getTokenType() == TokenType.REFRESH_TOKEN && jwt.getExpiresAt().getTime() > System.currentTimeMillis()) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        } else return tokenObj.getTokenType() != TokenType.REFRESH_TOKEN || jwt.getExpiresAt().getTime() <= System.currentTimeMillis();
     }
     
     
