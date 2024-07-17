@@ -9,9 +9,8 @@ interface Token {
 
 const SessionCheck = () => {
 
-
-      const refreshToken: string|null = localStorage.getItem('azionRefreshToken');
-      const accessToken: string|null = localStorage.getItem('azionAccessToken');
+    const refreshToken: string|null = localStorage.getItem('azionRefreshToken');
+    const accessToken: string|null = localStorage.getItem('azionAccessToken');
 
     const data: Token = {
         refreshToken: refreshToken ? refreshToken : '',

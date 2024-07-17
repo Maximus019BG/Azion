@@ -90,7 +90,7 @@ public class OrgController {
         user.setRole("Boss");
         user.setOrgid(org.getOrgID());
         
-        userService.createUser(user);
+//        userService.createUser(user);
         
         /*
         *TODO: Decide: user or org????!!!??!?!?!?!?
@@ -114,7 +114,7 @@ public class OrgController {
         user.setRole("hardcodedRole");
         user.setOrgid("ce77d1227d6c43e5a72457de785e4a9b1715804886698");
 
-        userService.createUser(user);
+//        userService.createUser(user);
 
         if (org != null) {
             orgService.addUserToOrg(org, user);

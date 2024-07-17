@@ -14,23 +14,21 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class MFAService {
-  
-    public String generateNewSecret(){
-        return new DefaultSecretGenerator().generate();
-    }
-    public String generateQRCodeImage(String secret){
+    public String generateQRCodeImage(String secret, String email) {
+ 
+        String issuer = "Azion";
         QrData data = new QrData.Builder()
-                .label("Azion MFA")
+                .label(email)
                 .secret(secret)
-                .issuer(System.getProperty("issuerName"))
+                .issuer(issuer)
                 .algorithm(HashingAlgorithm.SHA1)
                 .digits(6)
                 .period(30)
                 .build();
-        
+
         QrGenerator generator = new ZxingPngQrGenerator();
         byte[] imageData = new byte[0];
-        
+
         try {
             imageData = generator.generate(data);
         } catch (Exception e) {
@@ -39,15 +37,25 @@ public class MFAService {
         return Utils.getDataUriForImage(imageData, generator.getImageMimeType());
     }
     
-    public boolean OtpValid(String secret, String code){
+    public boolean validateOtp(String secret, String otp) {
         TimeProvider timeProvider = new SystemTimeProvider();
         CodeGenerator codeGenerator = new DefaultCodeGenerator();
         CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
-        return verifier.isValidCode(secret, code);
+        return verifier.isValidCode(secret, otp);
     }
     
-    public boolean OtpNotValid(String secret, String code){
-        return !OtpValid(secret, code);
+    public String generateQRCodeUriForCurrentUser(String email) {
+        String secret = getOrCreateSecretForUser(email);
+        
+        return generateQRCodeImage(secret, email);
     }
+    
+    private String getOrCreateSecretForUser(String username) {
+        DefaultSecretGenerator secretGenerator = new DefaultSecretGenerator();
+        String secret = secretGenerator.generate();
+     
+        return secret;
+    }
+    
 
 }

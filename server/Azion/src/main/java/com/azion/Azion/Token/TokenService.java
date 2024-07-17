@@ -147,6 +147,10 @@ public class TokenService {
             return true;
         } else return tokenObj.getTokenType() != TokenType.REFRESH_TOKEN || jwt.getExpiresAt().getTime() <= System.currentTimeMillis();
     }
+    public User getUserFromToken(String token) {
+        Token tokenObj = tokenRepo.findByToken(token);
+        return tokenObj.getSubject();
+    }
     
     
 }
