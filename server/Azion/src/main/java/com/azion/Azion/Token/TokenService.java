@@ -32,11 +32,11 @@ public class TokenService {
         Long time = 0L;
         
         if(tokenType == TokenType.REFRESH_TOKEN){
-            time = 60*60*24*1000*5L;
+            time = 60*60*24*1000*5L;//5 days
             
         }
         else if(tokenType == TokenType.ACCESS_TOKEN){
-            time = 60*15*1000L;
+            time = 60*15*1000L;//15 minutes
         }
       
         try {

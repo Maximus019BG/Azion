@@ -38,8 +38,12 @@ public class TokenController {
     public ResponseEntity<?> register(@RequestBody Map<String, Object> request) {
         String refreshToken = (String) request.get("refreshToken");
         String accessToken = (String) request.get("accessToken");
+        
+        if(refreshToken == null || accessToken == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("sessionCheck failed");
+        }
+        
         Token tokenObj = tokenRepo.findByToken(accessToken);
-      
         Map<String, String> response = new HashMap<>();
         
         if(tokenObj == null){
