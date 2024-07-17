@@ -47,7 +47,7 @@ const Home = () => {
   }, []); // Empty dependency array to run only once on component mount
 
   return (
-    <div className="neon-text h-screen w-screen bg-[#f7f3e8] overflow-x-hidden">
+    <div className="neon-text h-screen w-screen bg-black overflow-x-hidden">
       organizations
     </div>
   );

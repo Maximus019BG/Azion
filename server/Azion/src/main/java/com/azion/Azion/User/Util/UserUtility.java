@@ -8,5 +8,5 @@ public class UserUtility {
         EmailValidator emailValidator = EmailValidator.getInstance();
         return emailValidator.isValid(email);
     }
-
+   
 }
