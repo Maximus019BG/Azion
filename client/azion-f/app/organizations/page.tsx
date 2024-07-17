@@ -1,82 +1,56 @@
-"use client"
-import React, {useEffect} from "react";
-import axios, {AxiosResponse} from "axios";
+"use client";
+import React, { useEffect } from "react";
+import axios, { AxiosResponse } from "axios";
 
 interface Token {
-    refreshToken: string;
-    accessToken: string;
+  refreshToken: string;
+  accessToken: string;
 }
 
-const SessionCheck = () => {
- 
-        const refreshToken: string|null = localStorage.getItem('azionRefreshToken');
-        const accessToken: string|null = localStorage.getItem('azionAccessToken');
-      
+const sessionCheck = (data: Token) => {
+  axios
+    .post("http://localhost:8080/api/token/session/check", data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then((response: AxiosResponse) => {
+      const { message, accessToken } = response.data;
 
-    const data: Token = {
-        refreshToken: refreshToken ? refreshToken : '',
-        accessToken: accessToken ? accessToken : ''
-    };
-    axios
-        .post("http://localhost:8080/api/token/session/check", data, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(function (response: AxiosResponse) {
-            const message = response.data.message;
+      if (message === 'newAccessToken generated') {
+        localStorage.setItem('azionAccessToken', accessToken);
+      } else if (message !== 'success') {
 
-            if(message === 'newAccessToken generated') {
-                const accessToken = response.data.accessToken;
-                localStorage.removeItem('azionAccessToken')
-                localStorage.setItem('azionAccessToken', accessToken);
-                
-            }
-            else if(message === 'success') {
 
-            }
-            else if(message === 'sessionCheck failed'){
-                localStorage.removeItem('azionAccessToken')
-                localStorage.removeItem('azionRefreshToken')
-                window.location.href = '/log-in';
-            }
-            else{
-                localStorage.removeItem('azionAccessToken')
-                localStorage.removeItem('azionRefreshToken')
-                window.location.href = '/log-in';
-            }
-
-        })
-        .catch(function (error: any) {
-            // console.log(error.response ? error.response : error);
-            if (error.response) {
-              const message = error.response.data.message;
-    
-              if(message === 'sessionCheck failed'){
-                localStorage.removeItem('azionAccessToken')
-                localStorage.removeItem('azionRefreshToken')
-              }
-              else{
-                localStorage.removeItem('azionAccessToken')
-                localStorage.removeItem('azionRefreshToken')
-              }
-            }
-            else {
-              console.log('An error occurred, but no server response was received.');
-            }
-      });
+      }
+    })
+    .catch((error) => {
+      console.error(error.response ? error.response : error);
+      localStorage.removeItem('azionAccessToken');
+      localStorage.removeItem('azionRefreshToken');
+      window.location.href = '/log-in';
+    });
 };
 
 const Home = () => {
-    //NEEDS useEffect
-    useEffect(() => {
-        SessionCheck();
-    });
-    return (
-        <div className="neon-text h-screen w-screen bg-[#f7f3e8] overflow-x-hidden">
-            organizations
-        </div>
-    );
+  useEffect(() => {
+    const refreshToken = localStorage.getItem('azionRefreshToken');
+    const accessToken = localStorage.getItem('azionAccessToken');
+
+    if (refreshToken && accessToken) {
+      const data = { refreshToken, accessToken };
+      sessionCheck(data);
+    }
+    else if(!accessToken && !refreshToken) {
+        window.location.href = '/log-in';
+    }
+  }, []); // Empty dependency array to run only once on component mount
+
+  return (
+    <div className="neon-text h-screen w-screen bg-[#f7f3e8] overflow-x-hidden">
+      organizations
+    </div>
+  );
 };
 
 export default Home;

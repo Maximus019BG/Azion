@@ -79,7 +79,7 @@ public class AuthController {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
-        
+        System.out.println("User registered");
         return ResponseEntity.ok(tokens);
     }
     

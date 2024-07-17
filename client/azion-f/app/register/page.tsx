@@ -17,10 +17,10 @@ const AxiosFunction = (data: any) => {
     .then(function (response: AxiosResponse) {
       const accessToken = response.data.accessToken;
       const refreshToken = response.data.refreshToken;
+      window.location.href = '/organizations';
       localStorage.setItem('azionAccessToken', accessToken);
       localStorage.setItem('azionRefreshToken', refreshToken);
 
-      window.location.href = '/organizations';
     })
     .catch(function (error: any) {
       console.log(error.response ? error.response : error);
@@ -48,7 +48,7 @@ const SessionCheck = () => {
 
         if(message === 'newAccessToken generated') {
           const accessToken = response.data.accessToken;
-          localStorage.removeItem('azionAccessToken')
+
           localStorage.setItem('azionAccessToken', accessToken);
           window.location.href = '/organizations';
         }

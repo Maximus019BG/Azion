@@ -8,82 +8,55 @@ interface Token {
   accessToken: string;
 }
 
-const SessionCheck = () => {
-  const refreshToken: string|null = localStorage.getItem('azionRefreshToken');
-  const accessToken: string|null = localStorage.getItem('azionAccessToken');
 
-  const data: Token = {
-    refreshToken: refreshToken ? refreshToken : '',
-    accessToken: accessToken ? accessToken : ''
-  };
+const sessionCheck = (data: Token) => {
   axios
       .post("http://localhost:8080/api/token/session/check", data, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
-      .then(function (response: AxiosResponse) {
-        const message = response.data.message;
-
-        if(message === 'newAccessToken generated') {
-          const accessToken = response.data.accessToken;
-          localStorage.removeItem('azionAccessToken')
+      .then((response: AxiosResponse) => {
+        const { message, accessToken } = response.data;
+        if (message === 'newAccessToken generated') {
           localStorage.setItem('azionAccessToken', accessToken);
+        } else if (message !== 'success') {
+
 
         }
-        else if(message === 'success') {
-
-        }
-        else if(message === 'sessionCheck failed'){
-          localStorage.removeItem('azionAccessToken')
-          localStorage.removeItem('azionRefreshToken')
-          window.location.href = '/log-in';
-
-        }
-        else{
-          localStorage.removeItem('azionAccessToken')
-          localStorage.removeItem('azionRefreshToken')
-          window.location.href = '/log-in';
-
-        }
-
       })
-      .catch(function (error: any) {
-        // console.log(error.response ? error.response : error);
-        if (error.response) {
-          const message = error.response.data.message;
-
-          if(message === 'sessionCheck failed'){
-            localStorage.removeItem('azionAccessToken')
-            localStorage.removeItem('azionRefreshToken')
-            window.location.href = '/log-in';
-          }
-          else{
-            localStorage.removeItem('azionAccessToken')
-            localStorage.removeItem('azionRefreshToken')
-            window.location.href = '/log-in';
-          }
-        }
-        else {
-          console.log('An error occurred, but no server response was received.');
-        }
-
+      .catch((error) => {
+        localStorage.removeItem('azionAccessToken');
+        localStorage.removeItem('azionRefreshToken');
+        window.location.href = '/log-in';
       });
 };
+
+
+
 const MfaSetupPage = () => {
   const [qrCodeUri, setQrCodeUri] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    SessionCheck();
+    const refreshToken = localStorage.getItem('azionRefreshToken');
+    const accessToken = localStorage.getItem('azionAccessToken');
+
+    if (refreshToken && accessToken) {
+      const data = { refreshToken, accessToken };
+      sessionCheck(data);
+    }
+    else if(!accessToken && !refreshToken) {
+      window.location.href = '/log-in';
+    }
   }, []);
 
 
 
 useEffect(() => {
   const fetchQrCodeUri = async () => {
-    const accessToken: string|null = localStorage.getItem('azionAccessToken');
+  const accessToken = localStorage.getItem('azionAccessToken');
     if (!accessToken) {
       setError('Access Token is missing');
       setLoading(false);

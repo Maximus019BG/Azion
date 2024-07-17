@@ -13,6 +13,10 @@ public interface TokenRepo extends JpaRepository<Token, String> {
     Token findByToken(String token);
     Token findByTokenType(TokenType tokenType);
     
+   
     @Query("SELECT COUNT(t) > 0 FROM Token t WHERE t.subject = :subject")
     boolean existsByUser(@Param("subject") User user);
+    
+    
+    void deleteBySubject(User user);
 }

@@ -36,7 +36,7 @@ public class TokenService {
             
         }
         else if(tokenType == TokenType.ACCESS_TOKEN){
-            time = 60*15*1000L;//15 minutes
+            time = 60*1000L;//TODO:15 minutes
         }
       
         try {
@@ -74,9 +74,13 @@ public class TokenService {
         Token tokenObjA = tokenRepo.findByToken(accessToken);
         Token tokenObjR = tokenRepo.findByToken(refreshToken);
         if (tokenObjA != null && tokenObjR != null) {
+            User user = tokenObjA.getSubject();
             if (tokenObjA.getSubject().getId().equals(tokenObjR.getSubject().getId())) {
                 if(isAccessTokenOutOfDate(accessToken) && isRefreshTokenOutOfDate(refreshToken)){
                     deleteTokens(accessToken, refreshToken);
+                    while (tokenRepo.existsByUser(user)){
+                     tokenRepo.deleteBySubject(user);
+                    }
                     return "false";
                 }
                 else if(isAccessTokenOutOfDate(accessToken) && !isRefreshTokenOutOfDate(refreshToken)){
@@ -151,6 +155,13 @@ public class TokenService {
         Token tokenObj = tokenRepo.findByToken(token);
         return tokenObj.getSubject();
     }
-    
+    public String regenerateAccessToken(String refreshToken) {
+        Token refreshTok = tokenRepo.findByToken(refreshToken);
+        if (refreshTok != null && !isRefreshTokenOutOfDate(refreshToken)) {
+            User user = refreshTok.getSubject();
+            return generateToken(TokenType.ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/");
+        }
+        return null;
+    }
     
 }
