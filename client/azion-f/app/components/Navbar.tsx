@@ -1,44 +1,93 @@
-import React from "react";
+import { apiUrl } from "../api/config";
+import { useEffect, useState } from "react";
+import axios, { AxiosResponse } from "axios";
+
+interface Token {
+  refreshToken: string;
+  accessToken: string;
+}
 
 const Navbar = () => {
+  const [isLogged, setIsLogged] = useState(false);
+
+  const sessionCheck = (data: Token) => {
+    const url = `${apiUrl}/token/session/check`;
+    axios
+      .post(url, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response: AxiosResponse) => {
+        const { message, accessToken } = response.data;
+        if (message === "newAccessToken generated" || message === "success") {
+          localStorage.setItem("azionAccessToken", accessToken);
+          setIsLogged(true);
+        } else {
+          setIsLogged(false);
+        }
+      })
+      .catch(() => {
+        setIsLogged(false);
+      });
+  };
+
+  useEffect(() => {
+    const refreshToken = localStorage.getItem("azionRefreshToken");
+    const accessToken = localStorage.getItem("azionAccessToken");
+
+    if (refreshToken && accessToken) {
+      const data = { refreshToken, accessToken };
+      sessionCheck(data);
+    } else {
+      setIsLogged(false);
+    }
+  }, []);
+
   return (
     <div className="navbar bg-accent">
       <div className="flex-none">
-        <button className="btn btn-square btn-ghost">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="inline-block h-5 w-5 stroke-current"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            ></path>
-          </svg>
-        </button>
+        {isLogged && (
+          <button className="btn btn-square btn-ghost">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              className="inline-block neon-text h-7 w-7 stroke-current"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button>
+        )}
       </div>
       <div className="flex-1">
-        <a className="btn btn-ghost neon-text text-xl">Azion</a>
+        <a className="btn btn-ghost neon-text text-3xl">Azion</a>
       </div>
-      <div className="flex-none">
-        <button className="btn btn-square btn-ghost">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="inline-block h-5 w-5 stroke-current"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
-            ></path>
-          </svg>
-        </button>
+      <div className="flex justify-center gap-12 items-center mr-10">
+        {isLogged ? (
+          <>
+            <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+              Dashboard
+            </button>
+            <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+              Organizations
+            </button>
+          </>
+        ) : (
+          <>
+            <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+              Register
+            </button>
+            <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+              Log in
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
