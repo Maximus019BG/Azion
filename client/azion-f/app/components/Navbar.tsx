@@ -1,6 +1,7 @@
 import { apiUrl } from "../api/config";
 import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
+import Link from "next/link";
 
 interface Token {
   refreshToken: string;
@@ -73,21 +74,29 @@ const Navbar = () => {
       <div className="flex justify-center gap-12 items-center mr-10">
         {isLogged ? (
           <>
+          <Link href={"/dashboard"}>
             <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
               Dashboard
             </button>
-            <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
-              Organizations
-            </button>
+            </Link>
+              <Link href={"/organizations"}>
+                <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                    Organizations
+                </button>
+            </Link>
           </>
         ) : (
           <>
-            <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
-              Register
-            </button>
-            <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
-              Log in
-            </button>
+          <Link href={"/register"}>
+                <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                    Register
+                </button>
+            </Link>
+            <Link href={"log-in"}>
+                <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                    Log-in
+                </button>
+            </Link>
           </>
         )}
       </div>
