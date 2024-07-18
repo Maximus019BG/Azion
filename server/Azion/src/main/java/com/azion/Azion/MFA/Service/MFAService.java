@@ -32,7 +32,7 @@ public class MFAService {
         User user = userRepository.findByEmail(email);
         String name = user.getName();
         
-        String issuer = System.getenv("issuerName");
+        String issuer = System.getProperty("issuerName");
         QrData data = new QrData.Builder()
                 .label("Azion: "+ name + "/" + email)
                 .secret(secret)
