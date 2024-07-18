@@ -34,17 +34,17 @@ public class MFAService {
         
         String issuer = System.getProperty("issuerName");
         QrData data = new QrData.Builder()
-                .label("Azion: "+ name + "/" + email)
+                .label(name + "/" + email)
                 .secret(secret)
                 .issuer(issuer)
                 .algorithm(HashingAlgorithm.SHA1)
                 .digits(6)
                 .period(30)
                 .build();
-
+        
         QrGenerator generator = new ZxingPngQrGenerator();
         byte[] imageData = new byte[0];
-
+        
         try {
             imageData = generator.generate(data);
         } catch (Exception e) {
@@ -59,7 +59,7 @@ public class MFAService {
         CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
         return verifier.isValidCode(secret, otp);
     }
-
+    
     
     public String generateQRCodeUriForCurrentUser(String email) {
         String secret = getUserMFASecret(email);
@@ -68,19 +68,31 @@ public class MFAService {
     }
     
     private String getUserMFASecret(String email) {
-    try {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            log.error("User not found for email: " + email);
-            return ""; // Return an empty string or a default value indicating failure
+        try {
+            User user = userRepository.findByEmail(email);
+            if (user == null) {
+                log.error("User not found for email: " + email);
+                return "";
+            }
+            String encryptedSecret = user.getMfaSecret();
+            return UserUtility.decryptMFA(encryptedSecret);
+        } catch (Exception e) {
+            log.error("Error retrieving MFA secret for email: " + email, e);
+            return "";
         }
-        String encryptedSecret = user.getMfaSecret();
-        return UserUtility.decryptMFA(encryptedSecret);
-    } catch (Exception e) {
-        log.error("Error retrieving MFA secret for email: " + email, e);
-        return ""; // Return an empty string or a default value indicating failure
     }
+    public boolean checkMfaCredentials(String email, String submittedOtp) {
+        String secret = getUserMFASecret(email);
+        if (secret.isEmpty()) {
+            log.error("MFA secret not found for user: " + email);
+            return false;
+        }
+        log.info("User: " + email + "logging in with MFA");
+        return validateOtp(secret, submittedOtp);
+    }
+    
 }
+
     
 
-}
+

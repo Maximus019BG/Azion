@@ -9,9 +9,13 @@ interface Token {
   accessToken: string;
 }
 
+const sessionCheck = () => {
+  const refreshToken = localStorage.getItem('azionRefreshToken');
+  const accessToken = localStorage.getItem('azionAccessToken');
 
-const sessionCheck = (data: Token) => {
-  const url = `${apiUrl}/token/session/check`;
+  const data = { refreshToken, accessToken };
+
+  const url = `${apiUrl}/token/session/check`
   axios
       .post(url, data, {
         headers: {
@@ -19,15 +23,13 @@ const sessionCheck = (data: Token) => {
         }
       })
       .then((response: AxiosResponse) => {
-        const {message, accessToken} = response.data;
+        const { message, accessToken } = response.data;
         if (message === 'newAccessToken generated') {
           localStorage.setItem('azionAccessToken', accessToken);
-        } else if (message !== 'success') {
-
-
         }
       })
       .catch((error) => {
+        console.error(error.response ? error.response : error);
         localStorage.removeItem('azionAccessToken');
         localStorage.removeItem('azionRefreshToken');
         window.location.href = '/log-in';
@@ -44,8 +46,7 @@ const sessionCheck = (data: Token) => {
       const accessToken = localStorage.getItem('azionAccessToken');
 
       if (refreshToken && accessToken) {
-        const data = {refreshToken, accessToken};
-        sessionCheck(data);
+        sessionCheck();
       } else if (!accessToken && !refreshToken) {
         window.location.href = '/log-in';
       }

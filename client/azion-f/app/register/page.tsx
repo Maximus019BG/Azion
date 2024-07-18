@@ -99,7 +99,6 @@ const Sign_up = () => {
 
 
 const handleSubmit = () => {
-  const parsedDate = new Date(age);
 
   const userData = {
     name,

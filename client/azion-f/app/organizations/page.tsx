@@ -9,7 +9,12 @@ interface Token {
   accessToken: string;
 }
 
-const sessionCheck = (data: Token) => {
+const sessionCheck = () => {
+  const refreshToken = localStorage.getItem('azionRefreshToken');
+  const accessToken = localStorage.getItem('azionAccessToken');
+
+  const data = { refreshToken, accessToken };
+
   const url = `${apiUrl}/token/session/check`
   axios
     .post(url, data, {
@@ -22,9 +27,6 @@ const sessionCheck = (data: Token) => {
 
       if (message === 'newAccessToken generated') {
         localStorage.setItem('azionAccessToken', accessToken);
-      } else if (message !== 'success') {
-
-
       }
     })
     .catch((error) => {
@@ -39,10 +41,8 @@ const Home = () => {
   useEffect(() => {
     const refreshToken = localStorage.getItem('azionRefreshToken');
     const accessToken = localStorage.getItem('azionAccessToken');
-
     if (refreshToken && accessToken) {
-      const data = { refreshToken, accessToken };
-      sessionCheck(data);
+      sessionCheck();
     }
     else if(!accessToken && !refreshToken) {
         window.location.href = '/log-in';
