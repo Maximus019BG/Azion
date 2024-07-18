@@ -37,8 +37,6 @@ public class MFAController {
             String qrCodeUri = mfaService.generateQRCodeUriForCurrentUser(userEmail);
             return ResponseEntity.ok().body(Map.of("qrCodeUri", qrCodeUri));
         } catch (Exception e) {
-    
-            System.out.println("Error generating QR code URI"+ e);
             return ResponseEntity.internalServerError().body(Map.of("error", "Could not generate QR code URI"));
         }
     }

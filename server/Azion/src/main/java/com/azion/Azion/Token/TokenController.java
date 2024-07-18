@@ -48,11 +48,9 @@ public class TokenController {
                 if (newAccessToken != null) {
                     response.put("accessToken", newAccessToken);
                     response.put("message", "newAccessToken generated");
-                    System.out.println("newAccessToken generated");
                 
                     return ResponseEntity.ok(response);
                 } else {
-                    System.out.println("newAccessToken failed");
                     response.put("message", "Both tokens are expired. Please log in again.");
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
                 }
@@ -60,7 +58,6 @@ public class TokenController {
                 response.put("message", "success");
                 return ResponseEntity.ok(response);
             case "false":
-                System.out.println("sessionCheck failed");
                 response.put("message", "sessionCheck failed");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             default:

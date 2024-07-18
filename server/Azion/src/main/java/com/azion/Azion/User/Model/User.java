@@ -160,13 +160,22 @@ public class User {
     public void setMfaSecret(String mfaSecret) {
         this.mfaSecret = mfaSecret;
     }
-
+    
+  private void generateMfaSecret() {
+    DefaultSecretGenerator generator = new DefaultSecretGenerator();
+    String mfaSecretGenerated = generator.generate();
+    try {
+        this.mfaSecret = UserUtility.encryptMFA(mfaSecretGenerated);
+    } catch (Exception e) {
+        this.mfaSecret = "no Secret";
+    }
+}
     
 
     @PrePersist
     public void prePersist() {
         generateId();
-
+        generateMfaSecret();
     }
     
     public User() {

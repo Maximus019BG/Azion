@@ -5,7 +5,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.azion.Azion.User.Model.User;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +23,9 @@ public class TokenService {
     }
 
     public String generateToken(TokenType tokenType, User user, String issuer, String audience){
-        Dotenv dotenv = Dotenv.load();
-        
         String token = "";
         String token_type = tokenType.toString();
-        String secret = dotenv.get("SECRET_JWT");
+        String secret =System.getProperty("secretJWT");
         Long time = 0L;
         
         if(tokenType == TokenType.REFRESH_TOKEN){
@@ -100,8 +97,8 @@ public class TokenService {
         return "false";
     }
     public boolean validateToken(String token) {
-        Dotenv dotenv = Dotenv.load();
-        String secret = dotenv.get("SECRET_JWT");
+        
+        String secret = System.getProperty("secretJWT");
         Token tokenObj = null;
         boolean isValid = false;
         try {

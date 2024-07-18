@@ -2,6 +2,7 @@ package com.azion.Azion.MFA.Service;
 
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
+import com.azion.Azion.User.Util.UserUtility;
 import dev.samstevens.totp.code.*;
 import dev.samstevens.totp.qr.QrData;
 import dev.samstevens.totp.qr.QrGenerator;
@@ -10,7 +11,6 @@ import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import dev.samstevens.totp.time.SystemTimeProvider;
 import dev.samstevens.totp.time.TimeProvider;
 import dev.samstevens.totp.util.Utils;
-import io.github.cdimascio.dotenv.Dotenv;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.apache.bcel.classfile.Code;
 import org.mindrot.jbcrypt.BCrypt;
@@ -29,11 +29,12 @@ public class MFAService {
     
     
     public String generateQRCodeImage(String secret, String email) {
-        Dotenv env = Dotenv.load();
+        User user = userRepository.findByEmail(email);
+        String name = user.getName();
         
-        String issuer = env.get("issuerName");
+        String issuer = System.getenv("issuerName");
         QrData data = new QrData.Builder()
-                .label("Azion: "+ email)
+                .label("Azion: "+ name + "/" + email)
                 .secret(secret)
                 .issuer(issuer)
                 .algorithm(HashingAlgorithm.SHA1)
@@ -42,9 +43,6 @@ public class MFAService {
                 .build();
 
         QrGenerator generator = new ZxingPngQrGenerator();
-        
-        System.out.println("Generating QR code for secret: " + getUserMFASecret(email));
-        
         byte[] imageData = new byte[0];
 
         try {
@@ -70,14 +68,19 @@ public class MFAService {
     }
     
     private String getUserMFASecret(String email) {
-       User user = userRepository.findByEmail(email);
-//       String secret = user.getPlainMfaSecret();
-       
-       //TODO:store the secret in a secure way
-        DefaultSecretGenerator secretGenerator = new DefaultSecretGenerator();
-        String secret = secretGenerator.generate();
-       return secret;
+    try {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            log.error("User not found for email: " + email);
+            return ""; // Return an empty string or a default value indicating failure
+        }
+        String encryptedSecret = user.getMfaSecret();
+        return UserUtility.decryptMFA(encryptedSecret);
+    } catch (Exception e) {
+        log.error("Error retrieving MFA secret for email: " + email, e);
+        return ""; // Return an empty string or a default value indicating failure
     }
+}
     
 
 }
