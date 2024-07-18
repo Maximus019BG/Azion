@@ -96,6 +96,7 @@ public class TokenService {
         }
         return "false";
     }
+    
     public boolean validateToken(String token) {
         
         String secret = System.getProperty("secretJWT");
