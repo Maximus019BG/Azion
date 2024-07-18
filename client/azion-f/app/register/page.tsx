@@ -1,6 +1,7 @@
 "use client";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
+import { apiUrl } from "../api/config";
 
 interface Token {
   refreshToken: string;
@@ -9,18 +10,17 @@ interface Token {
 
 const AxiosFunction = (data: any) => {
   axios
-    .post("http://localhost:8080/api/auth/register", data, {
+    .post(`${apiUrl}/auth/register`, data, {
       headers: {
-        'Content-Type': 'application/json'
-      }
+        "Content-Type": "application/json",
+      },
     })
     .then(function (response: AxiosResponse) {
       const accessToken = response.data.accessToken;
       const refreshToken = response.data.refreshToken;
-      window.location.href = '/organizations';
-      localStorage.setItem('azionAccessToken', accessToken);
-      localStorage.setItem('azionRefreshToken', refreshToken);
-
+      window.location.href = "/organizations";
+      localStorage.setItem("azionAccessToken", accessToken);
+      localStorage.setItem("azionRefreshToken", refreshToken);
     })
     .catch(function (error: any) {
       console.log(error.response ? error.response : error);
@@ -28,68 +28,61 @@ const AxiosFunction = (data: any) => {
 };
 
 const SessionCheck = () => {
-
-    const refreshToken: string|null = localStorage.getItem('azionRefreshToken');
-    const accessToken: string|null = localStorage.getItem('azionAccessToken');
-  
+  const refreshToken: string | null = localStorage.getItem("azionRefreshToken");
+  const accessToken: string | null = localStorage.getItem("azionAccessToken");
 
   const data: Token = {
-    refreshToken: refreshToken ? refreshToken : '',
-    accessToken: accessToken ? accessToken : ''
+    refreshToken: refreshToken ? refreshToken : "",
+    accessToken: accessToken ? accessToken : "",
   };
   axios
-      .post("http://localhost:8080/api/token/session/check", data, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(function (response: AxiosResponse) {
-        const message = response.data.message;
+    .post(`${apiUrl}/token/session/check`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then(function (response: AxiosResponse) {
+      const message = response.data.message;
 
-        if(message === 'newAccessToken generated') {
-          const accessToken = response.data.accessToken;
+      if (message === "newAccessToken generated") {
+        const accessToken = response.data.accessToken;
 
-          localStorage.setItem('azionAccessToken', accessToken);
-          window.location.href = '/organizations';
-        }
-        else if(message === 'success') {
-          window.location.href = '/organizations';
-        }
-        else if(message === 'sessionCheck failed'){
-          localStorage.removeItem('azionAccessToken')
-          localStorage.removeItem('azionRefreshToken')
-        }
-        else{
-          localStorage.removeItem('azionAccessToken')
-          localStorage.removeItem('azionRefreshToken')
-        }
+        localStorage.setItem("azionAccessToken", accessToken);
+        window.location.href = "/organizations";
+      } else if (message === "success") {
+        window.location.href = "/organizations";
+      } else if (message === "sessionCheck failed") {
+        localStorage.removeItem("azionAccessToken");
+        localStorage.removeItem("azionRefreshToken");
+      } else {
+        localStorage.removeItem("azionAccessToken");
+        localStorage.removeItem("azionRefreshToken");
+      }
+    })
+    .catch(function (error: any) {
+      // console.log(error.response ? error.response : error);
+      if (error.response) {
+        const message = error.response.data.message;
 
-      })
-      .catch(function (error: any) {
-        // console.log(error.response ? error.response : error);
-        if (error.response) {
-          const message = error.response.data.message;
-
-          if(message === 'sessionCheck failed'){
-            localStorage.removeItem('azionAccessToken')
-            localStorage.removeItem('azionRefreshToken')
-          }
-          else{
-            localStorage.removeItem('azionAccessToken')
-            localStorage.removeItem('azionRefreshToken')
-          }
+        if (message === "sessionCheck failed") {
+          localStorage.removeItem("azionAccessToken");
+          localStorage.removeItem("azionRefreshToken");
+        } else {
+          localStorage.removeItem("azionAccessToken");
+          localStorage.removeItem("azionRefreshToken");
         }
-        else {
-          console.log('An error occurred, but no server response was received.');
-        }
-  });
+      } else {
+        console.log("An error occurred, but no server response was received.");
+      }
+    });
 };
 const Sign_up = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] =  useState("");
+  const [password2, setPassword2] = useState("");
+  const [role, setRole] = useState("");
   const [mfaEnabled, setMfaEnabled] = useState(false);
 
   //NEEDS useEffect
@@ -97,33 +90,53 @@ const Sign_up = () => {
     SessionCheck();
   });
 
+  const handleSubmit = () => {
+    const parsedDate = new Date(age);
 
-const handleSubmit = () => {
-  const parsedDate = new Date(age);
+    const userData = {
+      name,
+      email,
+      age,
+      password,
+      role: "none",
+      mfaEnabled: true,
+    };
 
-  const userData = {
-    name,
-    email,
-    age,
-    password,
-    role: "TestUser",
-    mfaEnabled: true
+    if (password === password2) {
+      AxiosFunction(userData);
+    } else {
+      return (
+        <div role="alert" className="alert">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            className="stroke-info h-6 w-6 shrink-0"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <span>The passowrd does not match</span>
+        </div>
+      );
+    }
   };
-
-  AxiosFunction(userData);
-};
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center">
-      <div className="h-[65vh] w-[90vw] md:w-[60vw] lg:w-[40vw] xl:w-[30vw] bg-slate-900 rounded-xl opacity-80 flex flex-col gap-5 justify-center items-center p-5 md:p-10">
-        <h1 className="text-3xl text-slate-200">Sign Up</h1>
+    <div className="w-screen h-screen bg-background flex flex-col justify-center items-center">
+      <div className="h-fit w-fit bg-accent rounded-xl opacity-80 flex flex-col gap-5 justify-center items-center p-5 md:p-10">
+        <h1 className="text-3xl neon-text">Register</h1>
         <div className="w-full flex flex-col justify-center items-center gap-3">
-          <p className="text-slate-200 w-full flex flex-col justify-center items-start ml-4 md:ml-8 lg:ml-12">
+          <p className="text-slate-200 w-96 flex flex-col justify-center items-start ml-7">
             Input your Username:
           </p>
           <input
             onChange={(e) => setName(e.target.value)}
             type="text"
-            className="border-2 border-black opacity-100 w-full md:w-10/12 p-1 rounded-md"
+            className=" bg-background opacity-100 w-full md:w-10/12 p-1 rounded-md"
           />
         </div>
         <div className="w-full flex flex-col justify-center items-center gap-3">
@@ -133,7 +146,7 @@ const handleSubmit = () => {
           <input
             onChange={(e) => setEmail(e.target.value)}
             type="email"
-            className="border-2 border-black opacity-100 w-full md:w-10/12 p-1 rounded-md"
+            className=" bg-background opacity-100 w-full md:w-10/12 p-1 rounded-md"
           />
         </div>
         <div className="w-full flex flex-col justify-center items-center gap-3">
@@ -143,7 +156,7 @@ const handleSubmit = () => {
           <input
             onChange={(e) => setAge(e.target.value)}
             type="date"
-            className="border-2 border-black opacity-100 w-full md:w-10/12 p-1 rounded-md"
+            className=" bg-background opacity-100 w-full md:w-10/12 p-1 rounded-md"
           />
         </div>
         <div className="w-full flex flex-col justify-center items-center gap-3">
@@ -153,12 +166,22 @@ const handleSubmit = () => {
           <input
             onChange={(e) => setPassword(e.target.value)}
             type="password"
-            className="border-2 border-black opacity-100 w-full md:w-10/12 p-1 rounded-md"
+            className=" bg-background opacity-100 w-full md:w-10/12 p-1 rounded-md"
+          />
+        </div>
+        <div className="w-full flex flex-col justify-center items-center gap-3">
+          <p className="text-slate-200 w-full flex flex-col justify-center items-start ml-4 md:ml-8 lg:ml-12">
+            Repeat your Password:
+          </p>
+          <input
+            onChange={(e) => setPassword2(e.target.value)}
+            type="password"
+            className=" bg-background opacity-100 w-full md:w-10/12 p-1 rounded-md"
           />
         </div>
         <button
           onClick={handleSubmit}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md"
+          className="bg-lightAccent w-full text-foreground px-4 py-2 rounded-md"
         >
           Submit
         </button>

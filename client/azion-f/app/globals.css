@@ -4,10 +4,11 @@
 
 @layer base {
   :root {
-    --foreground: 197, 198, 199;
+    --foreground: 242, 242, 242;
     --background: 11, 12, 16;
     --muted: 115, 115, 115;
-    --accent: 69, 162, 157;
+    --accent: 7, 42, 64;
+    --lightAccent: 69, 162, 157;
   }
 }
 

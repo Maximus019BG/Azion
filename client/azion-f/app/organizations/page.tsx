@@ -47,7 +47,7 @@ const Home = () => {
     else if(!accessToken && !refreshToken) {
         window.location.href = '/log-in';
     }
-  }, []); // Empty dependency array to run only once on component mount
+  }, []);
 
   return (
     <div className="neon-text h-screen w-screen bg-black overflow-x-hidden">

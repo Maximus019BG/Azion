@@ -1,5 +1,6 @@
 import { apiUrl } from "../api/config";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import axios, { AxiosResponse } from "axios";
 
 interface Token {
@@ -27,7 +28,7 @@ const Navbar = () => {
           setIsLogged(false);
         }
       })
-      .catch(() => {
+      .catch((error) => {
         setIsLogged(false);
       });
   };
@@ -45,7 +46,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="navbar bg-accent">
+    <div className="navbar bg-lightAccent">
       <div className="flex-none">
         {isLogged && (
           <button className="btn btn-square btn-ghost">
@@ -80,12 +81,16 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
-              Register
-            </button>
-            <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
-              Log in
-            </button>
+            <Link href="/register">
+              <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                Register
+              </button>
+            </Link>
+            <Link href="log-in">
+              <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                Log in
+              </button>
+            </Link>
           </>
         )}
       </div>

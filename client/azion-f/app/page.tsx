@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import Navbar from "./components/Navbar";
 import { Commissioner, Poppins } from "next/font/google";
 import background from "../public/background1.png";
@@ -57,6 +58,7 @@ const Home = () => {
       setButtonText2("Log in");
     }
   }, []);
+
   return (
     <div className="h-screen w-full overflow-x-hidden">
       <div>
@@ -91,13 +93,15 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="flex flex-col sm:flex-row justify-start items-start gap-4 md:gap-8 mt-8 md:mt-12 lg:mt-16 w-full"
           >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={` neon-text w-64 md:w-80 lg:w-80 h-12 md:h-14 lg:h-14 bg-[#18b7be] rounded-2xl text-lg md:text-xl lg:text-xl hover:bg-[#139299] ${HeaderText.className}`}
-            >
-              {ButtonText1}
-            </motion.button>
+            <Link href="/register">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={` neon-text w-64 md:w-80 lg:w-80 h-12 md:h-14 lg:h-14 bg-[#18b7be] rounded-2xl text-lg md:text-xl lg:text-xl hover:bg-[#139299] ${HeaderText.className}`}
+              >
+                {ButtonText1}
+              </motion.button>
+            </Link>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

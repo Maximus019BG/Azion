@@ -13,6 +13,7 @@ module.exports = {
         foreground: 'rgb(var(--foreground))',
         muted: 'rgb(var(--muted))',
         accent: 'rgb(var(--accent))',
+        lightAccent: 'rgb(var(--lightAccent))',
       },
     },
   },
