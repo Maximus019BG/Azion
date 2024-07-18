@@ -43,6 +43,10 @@ const Home = () => {
               setButtonText1('Dashboard');
               setButtonText2('Organizations');
           }
+          else {
+            setButtonText1('Dashboard');
+            setButtonText2('Organizations');
+          }
         })
         .catch((error) => {
           setButtonText1('Register');

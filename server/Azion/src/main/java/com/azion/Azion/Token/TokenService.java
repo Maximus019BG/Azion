@@ -24,7 +24,7 @@ public class TokenService {
         this.tokenRepo = tokenRepo;
     }
 
-    public String generateToken(TokenType tokenType, User user, String issuer, String audience){
+    public String generateToken(TokenType tokenType, User user, String issuer, String audience, String UserAgent){
         String token = "";
         String token_type = tokenType.toString();
         String secret =System.getProperty("secretJWT");
@@ -55,6 +55,7 @@ public class TokenService {
                     .withSubject(tokenObj.getSubject().getId())
                     .withIssuedAt(tokenObj.getIssuedAt())
                     .withExpiresAt(new Date(System.currentTimeMillis() + time))
+                    .withClaim("UserAgent", UserAgent)
                     .sign(algorithm);
             
             tokenObj.setToken(token);
@@ -159,11 +160,11 @@ public class TokenService {
         Token tokenObj = tokenRepo.findByToken(token);
         return tokenObj.getSubject();
     }
-    public String regenerateAccessToken(String refreshToken) {
+    public String regenerateAccessToken(String refreshToken, String UserAgent) {
         Token refreshTok = tokenRepo.findByToken(refreshToken);
         if (refreshTok != null && !isRefreshTokenOutOfDate(refreshToken)) {
             User user = refreshTok.getSubject();
-            return generateToken(TokenType.ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/");
+            return generateToken(TokenType.ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
         }
         return null;
     }
