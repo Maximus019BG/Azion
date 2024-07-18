@@ -9,7 +9,7 @@ interface Token {
 }
 const AxiosFunction = (data: any) => {
     axios
-        .post("http://localhost:8080/api/auth/login", data, {
+        .post(`${apiUrl}/auth/login`, data, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -35,7 +35,7 @@ const SessionCheck = () => {
         accessToken: accessToken ? accessToken : ''
     };
     axios
-        .post("http://localhost:8080/api/token/session/check", data, {
+        .post(`${apiUrl}/token/session/check`, data, {
             headers: {
                 'Content-Type': 'application/json'
             }

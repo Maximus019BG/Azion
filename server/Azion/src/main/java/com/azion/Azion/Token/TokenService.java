@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.azion.Azion.User.Model.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class TokenService {
     
     private final TokenRepo tokenRepo;
@@ -78,17 +80,21 @@ public class TokenService {
                     while (tokenRepo.existsByUser(user)){
                      tokenRepo.deleteBySubject(user);
                     }
+                    log.info("Both tokens are expired. Please log in again.");
                     return "false";
                 }
                 else if(isAccessTokenOutOfDate(accessToken) && !isRefreshTokenOutOfDate(refreshToken)){
+                    log.info("Access token is expired. Generating new access token.");
                     return "newAccessToken";
                 }
                 else if(!isAccessTokenOutOfDate(accessToken) && !isRefreshTokenOutOfDate(refreshToken)){
                     if(validateToken(accessToken) && validateToken(refreshToken)){
+                        log.info("Both tokens are valid.");
                         return "true";
                     }
                     else{
                         deleteTokens(accessToken, refreshToken);
+                        log.info("Both tokens are invalid. Please log in again.");
                         return "false";
                     }
                 }
