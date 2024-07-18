@@ -2,23 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground: 197, 198, 199;
-  --background: 11, 12, 16;
-  --muted: 115,115,115;
-  --accent: 69, 162, 157;
+@layer base {
+  :root {
+    --foreground: 197, 198, 199;
+    --background: 11, 12, 16;
+    --muted: 115, 115, 115;
+    --accent: 69, 162, 157;
+  }
 }
 
-@layer utilities {
-}
-/* styles/globals.css */
 .gradient-text {
-  background: linear-gradient(to right, rgba(102, 252, 241, 0.8), rgba(61, 209, 184,0.7) );
+  background: linear-gradient(to right, rgba(102, 252, 241, 0.8), rgba(61, 209, 184, 0.7));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 .neon-text {
-  color: rgba(255, 255, 255, 0.9); /* Lighter base color */
+  color: rgba(255, 255, 255, 0.9);
+  /* Lighter base color */
   text-shadow:
     0 0 2px rgba(215, 215, 216, 0.8),
     0 0 4px rgba(197, 198, 199, 0.7),

@@ -1,7 +1,9 @@
 "use client";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Navbar from "./components/Navbar";
 import { Commissioner, Poppins } from "next/font/google";
+import background from "../public/background1.png";
 
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
@@ -9,29 +11,34 @@ const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
 const Home = () => {
   return (
     <div className="h-[500vh] w-full overflow-x-hidden">
+      <Navbar />
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: -400 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="flex flex-col justify-center items-center lg:items-start px-6 lg:px-56 py-10 lg:py-28 w-full"
+        className=" w-screen flex flex-col md:flex-row gap-24 justify-center items-center px-6 lg:px-36 py-10 lg:py-56 "
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="max-w-2xl mt-10 gap-8 text-center lg:text-left w-full"
+          className="max-w-2xl mt-10 gap-8 text-left w-full"
         >
-          <h1 className={`text-3xl gradient-text md:text-4xl lg:text-6xl ${HeaderText.className}`}>
+          <h1
+            className={`text-3xl gradient-text md:text-4xl lg:text-6xl ${HeaderText.className}`}
+          >
             Improve your workflow and secure your company with{" "}
           </h1>
-          <span className={` neon-text text-4xl md:text-6xl lg:text-8xl ${azionText.className}`}>
-              Azion
-            </span>
+          <span
+            className={` neon-text text-5xl md:text-6xl lg:text-8xl ${azionText.className}`}
+          >
+            Azion
+          </span>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-8 mt-8 md:mt-12 lg:mt-16 w-full"
+            className="flex flex-col sm:flex-row justify-start items-start gap-4 md:gap-8 mt-8 md:mt-12 lg:mt-16 w-full"
           >
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -49,7 +56,16 @@ const Home = () => {
             </motion.button>
           </motion.div>
         </motion.div>
-        <Navbar />
+        {/* Image Section */}
+        <div className="h-fit w-fit ">
+          <Image
+            src={background.src}
+            alt="Azion background"
+            width={1100}
+            height={800}
+          ></Image>
+        </div>
+        
       </motion.div>
     </div>
   );
