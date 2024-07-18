@@ -1,6 +1,7 @@
 "use client";
 import React, {useEffect} from 'react'
 import axios, {AxiosResponse} from "axios";
+import { apiUrl } from '../api/config';
 
 interface Token {
   refreshToken: string;
@@ -9,8 +10,9 @@ interface Token {
 
 
 const sessionCheck = (data: any) => {
+    const url = `${apiUrl}/token/session/check`
     axios
-        .post("http://localhost:8080/api/token/session/check", data, {
+        .post(url, data, {
             headers: {
                 'Content-Type': 'application/json'
             }

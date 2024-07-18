@@ -33,39 +33,39 @@ public class TokenController {
         this.userRepository = userRepository;
     }
     
-
+    
     @Transactional
     @PostMapping("/session/check")
     public ResponseEntity<?> sessionCheck(@RequestBody Map<String, Object> request) {
-    String refreshToken = (String) request.get("refreshToken");
-    String accessToken = (String) request.get("accessToken");
-    String sessionCheckResult = tokenService.sessionCheck(refreshToken, accessToken);
+        String refreshToken = (String) request.get("refreshToken");
+        String accessToken = (String) request.get("accessToken");
+        String sessionCheckResult = tokenService.sessionCheck(refreshToken, accessToken);
     
-    Map<String, String> response = new HashMap<>();
-    switch (sessionCheckResult) {
-        case "newAccessToken":
-            String newAccessToken = tokenService.regenerateAccessToken(refreshToken);
-            if (newAccessToken != null) {
-                response.put("accessToken", newAccessToken);
-                response.put("message", "newAccessToken generated");
-                System.out.println("newAccessToken generated");
+        Map<String, String> response = new HashMap<>();
+        switch (sessionCheckResult) {
+            case "newAccessToken":
+                String newAccessToken = tokenService.regenerateAccessToken(refreshToken);
+                if (newAccessToken != null) {
+                    response.put("accessToken", newAccessToken);
+                    response.put("message", "newAccessToken generated");
+                    System.out.println("newAccessToken generated");
                 
+                    return ResponseEntity.ok(response);
+                } else {
+                    System.out.println("newAccessToken failed");
+                    response.put("message", "Both tokens are expired. Please log in again.");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+                }
+            case "true":
+                response.put("message", "success");
                 return ResponseEntity.ok(response);
-            } else {
-                System.out.println("newAccessToken failed");
-                response.put("message", "Both tokens are expired. Please log in again.");
+            case "false":
+                System.out.println("sessionCheck failed");
+                response.put("message", "sessionCheck failed");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-        case "true":
-            response.put("message", "success");
-            return ResponseEntity.ok(response);
-        case "false":
-            System.out.println("sessionCheck failed");
-            response.put("message", "sessionCheck failed");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        default:
-            response.put("message", "sessionCheck failed");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    }
+            default:
+                response.put("message", "sessionCheck failed");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
     }
 }

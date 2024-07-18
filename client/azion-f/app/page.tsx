@@ -4,11 +4,65 @@ import Image from "next/image";
 import Navbar from "./components/Navbar";
 import { Commissioner, Poppins } from "next/font/google";
 import background from "../public/background1.png";
+import axios, {AxiosResponse} from "axios";
+import {apiUrl} from "./api/config";
+import {useEffect, useState} from "react";
+
+
+interface Token {
+  refreshToken: string;
+  accessToken: string;
+}
 
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
 
+
+
+
 const Home = () => {
+  const [ButtonText1, setButtonText1] = useState('');
+  const [ButtonText2, setButtonText2] = useState('');
+
+  const sessionCheck = (data: Token) => {
+    const url = `${apiUrl}/token/session/check`;
+    axios
+        .post(url, data, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((response: AxiosResponse) => {
+          const { message, accessToken } = response.data;
+          if (message === 'newAccessToken generated') {
+            localStorage.setItem('azionAccessToken', accessToken);
+            setButtonText1('Dashboard');
+            setButtonText2('Organizations');
+
+          } else if (message !== 'success') {
+              setButtonText1('Dashboard');
+              setButtonText2('Organizations');
+          }
+        })
+        .catch((error) => {
+          setButtonText1('Register');
+          setButtonText2('Log in');
+        });
+  };
+
+  useEffect(() => {
+    const refreshToken = localStorage.getItem('azionRefreshToken');
+    const accessToken = localStorage.getItem('azionAccessToken');
+
+    if (refreshToken && accessToken) {
+      const data = { refreshToken, accessToken };
+      sessionCheck(data);
+    }
+    else if(!accessToken && !refreshToken) {
+      setButtonText1('Register');
+      setButtonText2('Log in');
+    }
+  }, []);
   return (
     <div className="h-[500vh] w-full overflow-x-hidden">
       <Navbar />
@@ -45,14 +99,14 @@ const Home = () => {
               whileTap={{ scale: 0.95 }}
               className={` neon-text w-40 md:w-64 lg:w-80 h-10 md:h-12 lg:h-14 bg-[#18b7be] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#139299] ${HeaderText.className}`}
             >
-              Register
+              {ButtonText1}
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className={` neon-text w-40 md:w-64 lg:w-80 h-10 md:h-12 lg:h-14 bg-[#072a40] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] ${HeaderText.className}`}
             >
-              Continue
+              {ButtonText2}
             </motion.button>
           </motion.div>
         </motion.div>

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios, {AxiosResponse} from 'axios';
 import Image from "next/image";
+import { apiUrl } from '../api/config';
 
 interface Token {
   refreshToken: string;
@@ -10,8 +11,9 @@ interface Token {
 
 
 const sessionCheck = (data: Token) => {
+  const url = `${apiUrl}/token/session/check`;
   axios
-      .post("http://localhost:8080/api/token/session/check", data, {
+      .post(url, data, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -62,7 +64,8 @@ useEffect(() => {
       setLoading(false);
       return;
     }
-    const url = `http://localhost:8080/api/mfa/qr-code?accessToken=${encodeURIComponent(accessToken)}`;
+
+    const url = `${apiUrl}/mfa/qr-code?accessToken=${encodeURIComponent(accessToken)}`;
     try {
       const response = await axios.get(url, {
         headers: {
