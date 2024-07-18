@@ -17,6 +17,7 @@ public class AzionApplication {
 		System.setProperty("spring.datasource.password", dotenv.get("DB_PASSWORD"));
 		System.setProperty("secretJWT", dotenv.get("SECRET_JWT"));
 		System.setProperty("issuerName", dotenv.get("ISSUER_NAME"));
+		System.setProperty("secretMFA", dotenv.get("SECRET_MFA"));
 		
 		SpringApplication.run(AzionApplication.class, args);
 	}

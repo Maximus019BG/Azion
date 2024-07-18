@@ -39,9 +39,12 @@ const Home = () => {
             setButtonText1('Dashboard');
             setButtonText2('Organizations');
 
-          } else if (message !== 'success') {
+          } else if (message === 'success') {
               setButtonText1('Dashboard');
               setButtonText2('Organizations');
+          }
+          else if(message !== 'error') {
+
           }
         })
         .catch((error) => {
