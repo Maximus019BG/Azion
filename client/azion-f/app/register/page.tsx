@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
 import { Poppins } from "next/font/google";
-import background from "../../public/background2.jpeg";
 
 interface Token {
   refreshToken: string;
@@ -11,7 +10,6 @@ interface Token {
 }
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
-
 
 const AxiosFunction = (data: any, isOwner: boolean) => {
   axios
@@ -23,12 +21,12 @@ const AxiosFunction = (data: any, isOwner: boolean) => {
     .then(function (response: AxiosResponse) {
       const accessToken = response.data.accessToken;
       const refreshToken = response.data.refreshToken;
-      if(!isOwner){
+      if (!isOwner) {
         window.location.href = "/organizations";
-      } else if(isOwner){
+      } else if (isOwner) {
         window.location.href = "/register-organization";
       }
-      
+
       localStorage.setItem("azionAccessToken", accessToken);
       localStorage.setItem("azionRefreshToken", refreshToken);
     })
@@ -99,14 +97,11 @@ const Sign_up = () => {
     SessionCheck();
   }, []);
 
-
-
   const handleSubmit = () => {
-
-    if(isOrgOwner){
-       setRole("owner");
-    } else if(!isOrgOwner){
-      setRole("none")
+    if (isOrgOwner) {
+      setRole("owner");
+    } else if (!isOrgOwner) {
+      setRole("none");
     }
     const userData = {
       name,
@@ -125,81 +120,86 @@ const Sign_up = () => {
     setIsOrgOwner(e.target.checked);
   };
 
- 
-
   return (
-    <div
-      style={{
-        backgroundImage: `linear-gradient(to bottom, rgba(30, 29, 29, 0.8), rgba(26, 25, 25, 0.7), rgba(22, 21, 21, 0.6), rgba(18, 17, 17, 0.5)), url(${background.src})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-      className="w-screen h-screen flex flex-col justify-center items-center"
-    >
-      <div className="h-fit w-fit gradient-form rounded-3xl flex flex-col justify-around items-center p-5 md:p-10">
-        <h1
-          className={`mt-6 text-neonAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
+    <div className="w-screen h-screen flex justify-center items-center gap-0">
+      <div className="w-1/2 h-full">
+        <video
+          className="w-full h-full object-cover"
+          autoPlay
+          loop
+          muted
+          preload="auto"
         >
-          Register
-        </h1>
-        <div className="w-full flex flex-col justify-center items-center gap-12">
-          <div className="w-full flex flex-col justify-center items-center gap-3">
-            <input
-              onChange={(e) => setName(e.target.value)}
-              type="text"
-              placeholder="Enter your username:"
-              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
-            />
-          </div>
-          <div className="w-full flex flex-col justify-center items-center gap-3">
-            <input
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              placeholder="Input your Email:"
-              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
-            />
-          </div>
-          <div className="w-full flex flex-col justify-center items-center gap-3">
-            <input
-              onChange={(e) => setAge(e.target.value)}
-              placeholder="Born At:"
-              type="date"
-              className="pl-5 bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
-            />
-          </div>
-          <div className="w-full flex flex-col justify-center items-center gap-3">
-            <input
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password:"
-              type="password"
-              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
-            />
-          </div>
-          <div className="w-full flex flex-col justify-center items-center gap-3">
-            <input
-              onChange={(e) => setPassword2(e.target.value)}
-              placeholder="Repeat Password:"
-              type="password"
-              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
-            />
-          </div>
-          <div className="w-full flex flex-col justify-center items-center gap-3">
-            <label className="text-neonAccent">
+          <source src="/azion.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div className="w-1/2 h-full flex flex-col justify-center items-center">
+        <div className="h-full min-w-full gradient-form flex flex-col justify-around items-center p-5 md:p-10">
+          <h1
+            className={`mt-6 text-neonAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
+          >
+            Register
+          </h1>
+          <div className="w-full flex flex-col justify-center items-center gap-12">
+            <div className="w-full flex flex-col justify-center items-center gap-3">
               <input
-                type="checkbox"
-                onChange={handleCheckboxChange}
-                className="mr-2"
+                onChange={(e) => setName(e.target.value)}
+                type="text"
+                placeholder="Enter your username:"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
               />
-              I&apos;m an organization owner
-            </label>
+            </div>
+            <div className="w-full flex flex-col justify-center items-center gap-3">
+              <input
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                placeholder="Input your Email:"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+              />
+            </div>
+            <div className="w-full flex flex-col justify-center items-center gap-3">
+              <input
+                onChange={(e) => setAge(e.target.value)}
+                placeholder="Born At:"
+                type="date"
+                className="pl-5 bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+              />
+            </div>
+            <div className="w-full flex flex-col justify-center items-center gap-3">
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password:"
+                type="password"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+              />
+            </div>
+            <div className="w-full flex flex-col justify-center items-center gap-3">
+              <input
+                onChange={(e) => setPassword2(e.target.value)}
+                placeholder="Repeat Password:"
+                type="password"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+              />
+            </div>
+            <div className="w-full flex flex-col justify-center items-center gap-3">
+              <label className="text-neonAccent">
+                <input
+                  type="checkbox"
+                  onChange={handleCheckboxChange}
+                  className="mr-2"
+                />
+                I&apos;m an organization owner
+              </label>
+            </div>
           </div>
+          <button
+            onClick={handleSubmit}
+            className="bg-background w-fit text-neonAccent hover:border-2 hover:border-neonAccent font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
+          >
+            Submit
+          </button>
         </div>
-        <button
-          onClick={handleSubmit}
-          className="bg-background w-fit text-neonAccent hover:border-2 hover:border-neonAccent font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
-        >
-          Submit
-        </button>
       </div>
     </div>
   );
