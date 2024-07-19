@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
@@ -36,7 +37,7 @@ public class TokenController {
     
     @Transactional
     @PostMapping("/session/check")
-    public ResponseEntity<?> sessionCheck(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> sessionCheck(@RequestBody Map<String, Object> request,  @RequestHeader(value = "User-Agent") String UserAgent) {
         String refreshToken = (String) request.get("refreshToken");
         String accessToken = (String) request.get("accessToken");
         String sessionCheckResult = tokenService.sessionCheck(refreshToken, accessToken);
@@ -44,15 +45,13 @@ public class TokenController {
         Map<String, String> response = new HashMap<>();
         switch (sessionCheckResult) {
             case "newAccessToken":
-                String newAccessToken = tokenService.regenerateAccessToken(refreshToken);
+                String newAccessToken = tokenService.regenerateAccessToken(refreshToken, UserAgent);
                 if (newAccessToken != null) {
                     response.put("accessToken", newAccessToken);
                     response.put("message", "newAccessToken generated");
-                    System.out.println("newAccessToken generated");
                 
                     return ResponseEntity.ok(response);
                 } else {
-                    System.out.println("newAccessToken failed");
                     response.put("message", "Both tokens are expired. Please log in again.");
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
                 }
@@ -60,7 +59,6 @@ public class TokenController {
                 response.put("message", "success");
                 return ResponseEntity.ok(response);
             case "false":
-                System.out.println("sessionCheck failed");
                 response.put("message", "sessionCheck failed");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             default:

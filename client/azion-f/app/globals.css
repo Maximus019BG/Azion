@@ -9,6 +9,7 @@
     --muted: 115, 115, 115;
     --accent: 7, 42, 64;
     --lightAccent: 69, 162, 157;
+    --neonAccent: 102, 252, 242;
   }
 }
 
@@ -17,6 +18,13 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+.gradient-form {
+  background: linear-gradient(to right, rgba(10, 56, 87, 0.7), rgba(33, 198, 231, 0.7));
+  /* Ensure the div takes up some space to show the gradient */
+  width: 40%;
+  height: 100%; /* Full viewport height */
+}
+
 
 .neon-text {
   color: rgba(255, 255, 255, 0.9);

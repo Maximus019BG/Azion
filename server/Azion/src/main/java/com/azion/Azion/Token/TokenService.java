@@ -5,7 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.azion.Azion.User.Model.User;
-import io.github.cdimascio.dotenv.Dotenv;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class TokenService {
     
     private final TokenRepo tokenRepo;
@@ -23,12 +24,10 @@ public class TokenService {
         this.tokenRepo = tokenRepo;
     }
 
-    public String generateToken(TokenType tokenType, User user, String issuer, String audience){
-        Dotenv dotenv = Dotenv.load();
-        
+    public String generateToken(TokenType tokenType, User user, String issuer, String audience, String UserAgent){
         String token = "";
         String token_type = tokenType.toString();
-        String secret = dotenv.get("SECRET_JWT");
+        String secret =System.getProperty("secretJWT");
         Long time = 0L;
         
         if(tokenType == TokenType.REFRESH_TOKEN){
@@ -56,6 +55,7 @@ public class TokenService {
                     .withSubject(tokenObj.getSubject().getId())
                     .withIssuedAt(tokenObj.getIssuedAt())
                     .withExpiresAt(new Date(System.currentTimeMillis() + time))
+                    .withClaim("UserAgent", UserAgent)
                     .sign(algorithm);
             
             tokenObj.setToken(token);
@@ -81,17 +81,21 @@ public class TokenService {
                     while (tokenRepo.existsByUser(user)){
                      tokenRepo.deleteBySubject(user);
                     }
+                    log.info("Both tokens are expired. Please log in again.");
                     return "false";
                 }
                 else if(isAccessTokenOutOfDate(accessToken) && !isRefreshTokenOutOfDate(refreshToken)){
+                    log.info("Access token is expired. Generating new access token.");
                     return "newAccessToken";
                 }
                 else if(!isAccessTokenOutOfDate(accessToken) && !isRefreshTokenOutOfDate(refreshToken)){
                     if(validateToken(accessToken) && validateToken(refreshToken)){
+                        log.info("Both tokens are valid.");
                         return "true";
                     }
                     else{
                         deleteTokens(accessToken, refreshToken);
+                        log.info("Both tokens are invalid. Please log in again.");
                         return "false";
                     }
                 }
@@ -99,9 +103,10 @@ public class TokenService {
         }
         return "false";
     }
+    
     public boolean validateToken(String token) {
-        Dotenv dotenv = Dotenv.load();
-        String secret = dotenv.get("SECRET_JWT");
+        
+        String secret = System.getProperty("secretJWT");
         Token tokenObj = null;
         boolean isValid = false;
         try {
@@ -155,11 +160,11 @@ public class TokenService {
         Token tokenObj = tokenRepo.findByToken(token);
         return tokenObj.getSubject();
     }
-    public String regenerateAccessToken(String refreshToken) {
+    public String regenerateAccessToken(String refreshToken, String UserAgent) {
         Token refreshTok = tokenRepo.findByToken(refreshToken);
         if (refreshTok != null && !isRefreshTokenOutOfDate(refreshToken)) {
             User user = refreshTok.getSubject();
-            return generateToken(TokenType.ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/");
+            return generateToken(TokenType.ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
         }
         return null;
     }

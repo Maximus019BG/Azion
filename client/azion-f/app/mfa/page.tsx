@@ -9,9 +9,13 @@ interface Token {
   accessToken: string;
 }
 
+const sessionCheck = () => {
+  const refreshToken = localStorage.getItem('azionRefreshToken');
+  const accessToken = localStorage.getItem('azionAccessToken');
 
-const sessionCheck = (data: Token) => {
-  const url = `${apiUrl}/token/session/check`;
+  const data = { refreshToken, accessToken };
+
+  const url = `${apiUrl}/token/session/check`
   axios
       .post(url, data, {
         headers: {
@@ -22,76 +26,67 @@ const sessionCheck = (data: Token) => {
         const { message, accessToken } = response.data;
         if (message === 'newAccessToken generated') {
           localStorage.setItem('azionAccessToken', accessToken);
-        } else if (message !== 'success') {
-
-
         }
       })
       .catch((error) => {
+        console.error(error.response ? error.response : error);
         localStorage.removeItem('azionAccessToken');
         localStorage.removeItem('azionRefreshToken');
         window.location.href = '/log-in';
       });
 };
+  const MfaSetupPage = () => {
 
+    const [qrCodeUri, setQrCodeUri] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
+    useEffect(() => {
+      const refreshToken = localStorage.getItem('azionRefreshToken');
+      const accessToken = localStorage.getItem('azionAccessToken');
 
-const MfaSetupPage = () => {
-  const [qrCodeUri, setQrCodeUri] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+      if (refreshToken && accessToken) {
+        sessionCheck();
+      } else if (!accessToken && !refreshToken) {
+        window.location.href = '/log-in';
+      }
 
-  useEffect(() => {
-    const refreshToken = localStorage.getItem('azionRefreshToken');
-    const accessToken = localStorage.getItem('azionAccessToken');
+        const fetchQrCodeUri = async () => {
+          const accessToken = localStorage.getItem('azionAccessToken');
+          if (!accessToken) {
+            setError('Access Token is missing');
+            setLoading(false);
+            return;
+          }
 
-    if (refreshToken && accessToken) {
-      const data = { refreshToken, accessToken };
-      sessionCheck(data);
-    }
-    else if(!accessToken && !refreshToken) {
-      window.location.href = '/log-in';
-    }
-  }, []);
+          const url = `${apiUrl}/mfa/qr-code?accessToken=${encodeURIComponent(accessToken)}`;
+          try {
+            const response = await axios.get(url, {
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            });
+            setQrCodeUri(response.data.qrCodeUri);
+            setLoading(false);
+          } catch (err) {
+            setError('Failed to fetch QR code URI');
+            setLoading(false);
+          }
+        };
 
+        fetchQrCodeUri();
 
+    }, []);
 
-useEffect(() => {
-  const fetchQrCodeUri = async () => {
-  const accessToken = localStorage.getItem('azionAccessToken');
-    if (!accessToken) {
-      setError('Access Token is missing');
-      setLoading(false);
-      return;
-    }
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error}</p>;
 
-    const url = `${apiUrl}/mfa/qr-code?accessToken=${encodeURIComponent(accessToken)}`;
-    try {
-      const response = await axios.get(url, {
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      setQrCodeUri(response.data.qrCodeUri);
-      setLoading(false);
-    } catch (err) {
-      setError('Failed to fetch QR code URI');
-      setLoading(false);
-    }
-  };
-
-  fetchQrCodeUri();
-}, []);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-
-  return (
-    <div>
-      <h1>Setup MFA</h1>
-      <Image src={qrCodeUri} alt="QR Code" width={400} height={400} />
-    </div>
-  );
-};
+    return (
+        <div>
+          <h1>Setup MFA</h1>
+          <Image src={qrCodeUri} alt="QR Code" width={400} height={400}/>
+        </div>
+    );
+ };
 
 export default MfaSetupPage;

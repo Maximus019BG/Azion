@@ -72,15 +72,4 @@ public class UserService {
         return null;
     }
     
-   public String loginUser(String email, String password) {
-       User user = userRepository.findByEmail(email);
-       System.out.println(user.getId());
-       
-       if (user == null || !BCrypt.checkpw(password, user.getPassword())) {
-           throw new IllegalArgumentException("Invalid email or password");
-       }
-       // Generate a new token for the user
-       String token = tokenService.generateToken(ACCESS_TOKEN, user, "Azion", "Azion");
-       return token;
-   }
 }

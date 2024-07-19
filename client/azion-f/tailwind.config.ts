@@ -14,6 +14,7 @@ module.exports = {
         muted: 'rgb(var(--muted))',
         accent: 'rgb(var(--accent))',
         lightAccent: 'rgb(var(--lightAccent))',
+        neonAccent: 'rgb(var(--neonAccent))',
       },
     },
   },

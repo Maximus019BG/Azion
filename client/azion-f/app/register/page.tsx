@@ -2,11 +2,16 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
+import { Poppins } from "next/font/google";
+import background from "../../public/background2.jpeg";
+import { url } from "inspector";
 
 interface Token {
   refreshToken: string;
   accessToken: string;
 }
+
+const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
 const AxiosFunction = (data: any) => {
   axios
@@ -91,97 +96,79 @@ const Sign_up = () => {
   });
 
   const handleSubmit = () => {
-    const parsedDate = new Date(age);
-
     const userData = {
       name,
       email,
       age,
       password,
-      role: "none",
+      role: "TestUser",
       mfaEnabled: true,
     };
-
     if (password === password2) {
       AxiosFunction(userData);
-    } else {
-      return (
-        <div role="alert" className="alert">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="stroke-info h-6 w-6 shrink-0"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
-          <span>The passowrd does not match</span>
-        </div>
-      );
     }
   };
   return (
-    <div className="w-screen h-screen bg-background flex flex-col justify-center items-center">
-      <div className="h-fit w-fit bg-accent rounded-xl opacity-80 flex flex-col gap-5 justify-center items-center p-5 md:p-10">
-        <h1 className="text-3xl neon-text">Register</h1>
-        <div className="w-full flex flex-col justify-center items-center gap-3">
-          <p className="text-slate-200 w-96 flex flex-col justify-center items-start ml-7">
-            Input your Username:
-          </p>
-          <input
-            onChange={(e) => setName(e.target.value)}
-            type="text"
-            className=" bg-background opacity-100 w-full md:w-10/12 p-1 rounded-md"
-          />
-        </div>
-        <div className="w-full flex flex-col justify-center items-center gap-3">
-          <p className="text-slate-200 w-full flex flex-col justify-center items-start ml-4 md:ml-8 lg:ml-12">
-            Input your Email:
-          </p>
-          <input
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            className=" bg-background opacity-100 w-full md:w-10/12 p-1 rounded-md"
-          />
-        </div>
-        <div className="w-full flex flex-col justify-center items-center gap-3">
-          <p className="text-slate-200 w-full flex flex-col justify-center items-start ml-4 md:ml-8 lg:ml-12">
-            Born at:
-          </p>
-          <input
-            onChange={(e) => setAge(e.target.value)}
-            type="date"
-            className=" bg-background opacity-100 w-full md:w-10/12 p-1 rounded-md"
-          />
-        </div>
-        <div className="w-full flex flex-col justify-center items-center gap-3">
-          <p className="text-slate-200 w-full flex flex-col justify-center items-start ml-4 md:ml-8 lg:ml-12">
-            Input your Password:
-          </p>
-          <input
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            className=" bg-background opacity-100 w-full md:w-10/12 p-1 rounded-md"
-          />
-        </div>
-        <div className="w-full flex flex-col justify-center items-center gap-3">
-          <p className="text-slate-200 w-full flex flex-col justify-center items-start ml-4 md:ml-8 lg:ml-12">
-            Repeat your Password:
-          </p>
-          <input
-            onChange={(e) => setPassword2(e.target.value)}
-            type="password"
-            className=" bg-background opacity-100 w-full md:w-10/12 p-1 rounded-md"
-          />
+    <div
+      style={{
+        backgroundImage: `linear-gradient(to bottom, rgba(30, 29, 29, 0.8), rgba(26, 25, 25, 0.7), rgba(22, 21, 21, 0.6), rgba(18, 17, 17, 0.5)), url(${background.src})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+      className="w-screen h-screen flex flex-col justify-center items-center"
+    >
+      <div className="h-fit w-fit gradient-form rounded-3xl flex flex-col justify-around items-center p-5 md:p-10">
+        <h1
+          className={` mt-6 text-neonAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
+        >
+          Register
+        </h1>
+        <div className=" w-full flex flex-col justify- items-center gap-12">
+          <div className="w-full  flex flex-col justify-center items-center gap-3">
+            
+            <input
+              onChange={(e) => setName(e.target.value)}
+              type="text"
+              placeholder="   Enter your username:"
+              className=" bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+            />
+          </div>
+          <div className="w-full flex flex-col justify-center items-center gap-3">
+            <input
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              placeholder="   Input your Email:"
+              className=" bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+            />
+          </div>
+          <div className="w-full flex flex-col justify-center items-center gap-3">
+            <input
+              onChange={(e) => setAge(e.target.value)}
+              placeholder="   Born At:"
+              type="date"
+              className=" pl-5 bg-background  opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+            />
+          </div>
+          <div className="w-full flex flex-col justify-center items-center gap-3">
+            <input
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="   Password:"
+              type="password"
+              className=" bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+            />
+          </div>
+          <div className="w-full flex flex-col justify-center items-center gap-3">  
+            <input
+              onChange={(e) => setPassword2(e.target.value)}
+              placeholder="   Repeat Password:"
+              type="password"
+              className=" bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+            />
+          </div>
         </div>
         <button
           onClick={handleSubmit}
-          className="bg-lightAccent w-full text-foreground px-4 py-2 rounded-md"
+          className="bg-background w-fit text-neonAccent hover:border-2 hover:border-neonAccent font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
         >
           Submit
         </button>

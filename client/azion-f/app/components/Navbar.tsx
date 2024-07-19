@@ -14,23 +14,25 @@ const Navbar = () => {
   const sessionCheck = (data: Token) => {
     const url = `${apiUrl}/token/session/check`;
     axios
-      .post(url, data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response: AxiosResponse) => {
-        const { message, accessToken } = response.data;
-        if (message === "newAccessToken generated" || message === "success") {
-          localStorage.setItem("azionAccessToken", accessToken);
-          setIsLogged(true);
-        } else {
+        .post(url, data, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((response: AxiosResponse) => {
+          const { message, accessToken } = response.data;
+          if (message === 'newAccessToken generated') {
+            localStorage.setItem('azionAccessToken', accessToken);
+            setIsLogged(true);
+          } else if (message !== 'success') {
+            setIsLogged(true);
+          } else {
+            setIsLogged(true);
+          }
+        })
+        .catch((error) => {
           setIsLogged(false);
-        }
-      })
-      .catch((error) => {
-        setIsLogged(false);
-      });
+        });
   };
 
   useEffect(() => {
@@ -72,24 +74,28 @@ const Navbar = () => {
       <div className="flex justify-center gap-12 items-center mr-10">
         {isLogged ? (
           <>
+          <Link href={"/dashboard"}>
             <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
               Dashboard
             </button>
-            <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
-              Organizations
-            </button>
+            </Link>
+              <Link href={"/organizations"}>
+                <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                    Organizations
+                </button>
+            </Link>
           </>
         ) : (
           <>
-            <Link href="/register">
-              <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
-                Register
-              </button>
+          <Link href={"/register"}>
+                <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                    Register
+                </button>
             </Link>
-            <Link href="log-in">
-              <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
-                Log in
-              </button>
+            <Link href={"log-in"}>
+                <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                    Log-in
+                </button>
             </Link>
           </>
         )}

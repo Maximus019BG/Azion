@@ -49,9 +49,6 @@ public class User {
     @Column
     private String mfaSecret ;
     
-    @Transient
-    private String plainMfaSecret;
-    
     
     @ManyToMany(mappedBy = "users")
     private Set<Project> projects;
@@ -163,23 +160,22 @@ public class User {
     public void setMfaSecret(String mfaSecret) {
         this.mfaSecret = mfaSecret;
     }
+    
+  private void generateMfaSecret() {
+    DefaultSecretGenerator generator = new DefaultSecretGenerator();
+    String mfaSecretGenerated = generator.generate();
+    try {
+        this.mfaSecret = UserUtility.encryptMFA(mfaSecretGenerated);
+    } catch (Exception e) {
+        this.mfaSecret = "no Secret";
+    }
+}
+    
 
-    
-    private void generateMFASecret() {
-        DefaultSecretGenerator secretGenerator = new DefaultSecretGenerator();
-        String secret = secretGenerator.generate();
-        this.plainMfaSecret = secret;
-        String hashedSecret = BCrypt.hashpw(secret, BCrypt.gensalt());
-        this.mfaSecret = hashedSecret;
-    }
-    
-    public String getPlainMfaSecret() {
-        return this.plainMfaSecret;
-    }
     @PrePersist
     public void prePersist() {
         generateId();
-        generateMFASecret();
+        generateMfaSecret();
     }
     
     public User() {
