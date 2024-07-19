@@ -142,7 +142,12 @@ const Log_in = () => {
             />
           </div>
      </div>
-        
+     <div className="form-control">
+  <label className="label cursor-pointer">
+    <span className="label-text">Remember me</span>
+    <input type="checkbox" defaultChecked className="checkbox" />
+  </label>
+</div>
       <button
         onClick={handleSubmit}
         className="bg-background w-fit text-neonAccent hover:border-2 hover:border-neonAccent font-black px-60 py-4 rounded-3xl text-xl hover:scale-105 transition-all ease-in"

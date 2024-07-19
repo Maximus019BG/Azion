@@ -1,10 +1,9 @@
-"use client";
+"use client"
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
 import { Poppins } from "next/font/google";
 import background from "../../public/background2.jpeg";
-import { url } from "inspector";
 
 interface Token {
   refreshToken: string;
@@ -13,7 +12,8 @@ interface Token {
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
-const AxiosFunction = (data: any) => {
+
+const AxiosFunction = (data: any, isOwner: boolean) => {
   axios
     .post(`${apiUrl}/auth/register`, data, {
       headers: {
@@ -23,7 +23,12 @@ const AxiosFunction = (data: any) => {
     .then(function (response: AxiosResponse) {
       const accessToken = response.data.accessToken;
       const refreshToken = response.data.refreshToken;
-      window.location.href = "/organizations";
+      if(!isOwner){
+        window.location.href = "/organizations";
+      } else if(isOwner){
+        window.location.href = "/register-organisation";
+      }
+      
       localStorage.setItem("azionAccessToken", accessToken);
       localStorage.setItem("azionRefreshToken", refreshToken);
     })
@@ -65,7 +70,6 @@ const SessionCheck = () => {
       }
     })
     .catch(function (error: any) {
-      // console.log(error.response ? error.response : error);
       if (error.response) {
         const message = error.response.data.message;
 
@@ -81,33 +85,48 @@ const SessionCheck = () => {
       }
     });
 };
+
 const Sign_up = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
+  const [isOrgOwner, setIsOrgOwner] = useState(false);
   const [role, setRole] = useState("");
-  const [mfaEnabled, setMfaEnabled] = useState(false);
 
-  //NEEDS useEffect
   useEffect(() => {
     SessionCheck();
-  });
+  }, []);
+
+
 
   const handleSubmit = () => {
+
+    if(isOrgOwner){
+       setRole("owner");
+    } else if(!isOrgOwner){
+      setRole("none")
+    }
     const userData = {
       name,
       email,
       age,
       password,
-      role: "TestUser",
+      role,
       mfaEnabled: true,
     };
     if (password === password2) {
-      AxiosFunction(userData);
+      AxiosFunction(userData, isOrgOwner);
     }
   };
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsOrgOwner(e.target.checked);
+  };
+
+ 
+
   return (
     <div
       style={{
@@ -119,51 +138,60 @@ const Sign_up = () => {
     >
       <div className="h-fit w-fit gradient-form rounded-3xl flex flex-col justify-around items-center p-5 md:p-10">
         <h1
-          className={` mt-6 text-neonAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
+          className={`mt-6 text-neonAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
         >
           Register
         </h1>
-        <div className=" w-full flex flex-col justify- items-center gap-12">
-          <div className="w-full  flex flex-col justify-center items-center gap-3">
-            
+        <div className="w-full flex flex-col justify-center items-center gap-12">
+          <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
               onChange={(e) => setName(e.target.value)}
               type="text"
-              placeholder="   Enter your username:"
-              className=" bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+              placeholder="Enter your username:"
+              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
               onChange={(e) => setEmail(e.target.value)}
               type="email"
-              placeholder="   Input your Email:"
-              className=" bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+              placeholder="Input your Email:"
+              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
               onChange={(e) => setAge(e.target.value)}
-              placeholder="   Born At:"
+              placeholder="Born At:"
               type="date"
-              className=" pl-5 bg-background  opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+              className="pl-5 bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="   Password:"
+              placeholder="Password:"
               type="password"
-              className=" bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
-          <div className="w-full flex flex-col justify-center items-center gap-3">  
+          <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
               onChange={(e) => setPassword2(e.target.value)}
-              placeholder="   Repeat Password:"
+              placeholder="Repeat Password:"
               type="password"
-              className=" bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
+          </div>
+          <div className="w-full flex flex-col justify-center items-center gap-3">
+            <label className="text-neonAccent">
+              <input
+                type="checkbox"
+                onChange={handleCheckboxChange}
+                className="mr-2"
+              />
+              I&apos;m an organization owner
+            </label>
           </div>
         </div>
         <button
