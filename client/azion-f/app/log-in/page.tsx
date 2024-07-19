@@ -130,7 +130,7 @@ const Log_in = () => {
             onChange={(e) => setEmail(e.target.value)}
             type="email"
             placeholder="   Input your Email:"
-            className=" bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+            className=" bg-background opacity-100 w-full md:w-10/12 p-3 rounded-3xl hover:bg-[#191b24]"
           />
         </div>
         <div className="w-full flex flex-col justify-center items-center gap-3">
@@ -138,14 +138,14 @@ const Log_in = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="   Password:"
               type="password"
-              className=" bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+              className=" bg-background opacity-100 w-full md:w-10/12 p-3 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
      </div>
         
       <button
         onClick={handleSubmit}
-        className="bg-background w-fit text-neonAccent hover:border-2 hover:border-neonAccent font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
+        className="bg-background w-fit text-neonAccent hover:border-2 hover:border-neonAccent font-black px-60 py-4 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
       >
         Submit
       </button>
