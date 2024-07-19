@@ -26,7 +26,7 @@ const AxiosFunction = (data: any, isOwner: boolean) => {
       if(!isOwner){
         window.location.href = "/organizations";
       } else if(isOwner){
-        window.location.href = "/register-organisation";
+        window.location.href = "/register-organization";
       }
       
       localStorage.setItem("azionAccessToken", accessToken);
