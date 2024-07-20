@@ -4,9 +4,7 @@ services:
     image: mysql:8.0.28
     environment:
       MYSQL_DATABASE: 'aziondb'
-      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}' # Ensure this is set
-      # MYSQL_USER: 'root' # Remove or change this line
-      # MYSQL_PASSWORD: '${DB_PASSWORD}' # Adjust accordingly if using a regular user
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}' # Ensure this is set securely and shared with your friend
     ports:
       - "3307:3306"
     volumes:
@@ -14,13 +12,13 @@ services:
     restart: always
 
   azionapp:
-    build: .
+    image: maximus019/azion-app:latest # Updated to use your Docker Hub username
     depends_on:
       - aziondb
     ports:
       - "8080:8080"
     environment:
-      DB_URL: '${DB_URL}'
+      DB_URL: '${DB_URL}' # Make sure this points to your MySQL service accessible by your friend
       DB_USERNAME: '${DB_USERNAME}'
       DB_PASSWORD: '${DB_PASSWORD}'
       SECRET_JWT: '${SECRET_JWT}'
