@@ -36,16 +36,7 @@ public class OrgController {
         this.tokenService = tokenService;
     }
     
-    @PostMapping("/partOfOrg")
-    public ResponseEntity<?> getOrg(@RequestBody Map<String, Object> request) {
-        String token = (String) request.get("token");
-        User user = tokenService.getUserFromToken(token);
-        Org org = orgService.findOrgByUser(user);
-        if (org == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
-        }
-        return ResponseEntity.ok(org);
-    }
+
     
     @PostMapping("/create")
     public ResponseEntity<?> createOrg(@RequestBody Map<String,Object> request) {
@@ -77,17 +68,49 @@ public class OrgController {
         return ResponseEntity.ok(org);
     }
     
+    @GetMapping("/invite/{email}")
+    public ResponseEntity<?> inviteUserToOrg(@PathVariable String email) {
+        
+        User user = userRepository.findByEmail(email);
+        
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        
+        user.setOrgid("ce77d1227d6c43e5a72457de785e4a9b1715804886698");
+        
+        userRepository.save(user);
+        
+        return ResponseEntity.ok("User with email " + email + " invited.");
+    }
+    
+    @PostMapping("/partOfOrg")
+    public ResponseEntity<?> getOrg(@RequestBody Map<String, Object> request) {
+        String token = (String) request.get("token");
+        User user = tokenService.getUserFromToken(token);
+        Org org = orgService.findOrgByUser(user);
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
+        }
+        return ResponseEntity.ok(org);
+    }
+    
     @Transactional
     @GetMapping("/list/all")
     public ResponseEntity<?> listOrgs() {
-//
-//        Map<String, String> response = new HashMap<>();
-//        response.put("message", "success");
         List<OrgProjection> orgs = orgRepository.findAllOrgs();
         return ResponseEntity.ok(orgs);
     }
     
-    
+    @GetMapping("/list/employees")
+    public ResponseEntity<?> listEmployees() {
+        Org org = orgRepository.findById("ce77d1227d6c43e5a72457de785e4a9b1715804886698").orElse(null);
+        if(org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+        }
+        Set<User> users = org.getUsers();
+        return ResponseEntity.ok(users);
+    }
     @GetMapping("/remove/{email}")
     public ResponseEntity<?> removeUserFromOrg(@PathVariable String email) {
 
@@ -104,32 +127,6 @@ public class OrgController {
         return ResponseEntity.ok("User with email " + email + " removed.");
     }
     
-    @GetMapping("/invite/{email}")
-    public ResponseEntity<?> inviteUserToOrg(@PathVariable String email) {
-
-        User user = userRepository.findByEmail(email);
-
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
-        }
-
-        user.setOrgid("ce77d1227d6c43e5a72457de785e4a9b1715804886698");
-
-        userRepository.save(user);
-
-        return ResponseEntity.ok("User with email " + email + " invited.");
-    }
-    
-    @GetMapping("/list/employees")
-    public ResponseEntity<?> listEmployees() {
-        Org org = orgRepository.findById("ce77d1227d6c43e5a72457de785e4a9b1715804886698").orElse(null);
-        if(org == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
-        }
-        Set<User> users = org.getUsers();
-        return ResponseEntity.ok(users);
-    }
-
     @GetMapping("/delete/org/{orgName}")
     public ResponseEntity<?> deleteOrg(@PathVariable String orgName) {
         Org org = orgRepository.findById(orgName).orElse(null);

@@ -2,15 +2,20 @@ package com.azion.Azion.Org.Service;
 
 import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.User.Model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.*;
 import com.azion.Azion.Org.Repository.OrgRepository;
+
+import java.util.List;
 import java.util.Set;
 
 @Service
 public class OrgService {
-
+    
+    private static final Logger log = LoggerFactory.getLogger(OrgService.class);
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -35,13 +40,16 @@ public class OrgService {
         
     }
   
-    public Org findOrgByUser(User user) {
-        String jpql = "SELECT o FROM Org o JOIN o.users u WHERE u.id = :userId";
-        return entityManager.createQuery(jpql, Org.class)
-                .setParameter("userId", user.getId())
-                .getSingleResult();
+public Org findOrgByUser(User user) {
+    String jpql = "SELECT o FROM Org o JOIN o.users u WHERE u.id = :userId";
+    List<Org> results = entityManager.createQuery(jpql, Org.class)
+            .setParameter("userId", user.getId())
+            .getResultList();
+    if(results.isEmpty()) {
+        return null;
     }
-    
+    return results.get(0);
+}
     public Set<User> getUsersOfOrg(Org org) {
         return org.getUsers();
     }

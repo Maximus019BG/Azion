@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios, {AxiosResponse} from 'axios';
 import Image from "next/image";
 import { apiUrl } from '../api/config';
+import Link from "next/link";
 
 interface Token {
   refreshToken: string;
@@ -84,7 +85,12 @@ const sessionCheck = () => {
     return (
         <div>
           <h1>Setup MFA</h1>
+          <p>Scan the QR code below with your authenticator app</p>
           <Image src={qrCodeUri} alt="QR Code" width={400} height={400}/>
+
+          <Link href={"/organizations"}>
+            <p>Continue</p>
+          </Link>
         </div>
     );
  };

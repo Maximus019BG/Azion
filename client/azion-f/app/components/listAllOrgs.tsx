@@ -13,18 +13,22 @@ interface Organization {
 
 const ListAllOrgs = () => {
     const [orgs, setOrgs] = useState<Organization[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.get(`${apiUrl}/org/list/all`)
             .then(function (response: AxiosResponse) {
                 console.log(response.data);
                 setOrgs(response.data);
+                setLoading(false);
             })
             .catch(function (error) {
                 console.error(error.response ? error.response : error);
             });
     }, []);
-    if (orgs.length === 0) {
+    if(loading) {return <h2>Loading...</h2>}
+
+    if (orgs.length === 0&& !loading) {
         return <h2>No organizations to display</h2>
     }
     else {
