@@ -1,6 +1,7 @@
 package com.azion.Azion.Org.Controller;
 
 import com.azion.Azion.Org.Model.Org;
+import com.azion.Azion.Org.OrgProjection;
 import com.azion.Azion.Org.Repository.OrgRepository;
 import com.azion.Azion.Org.Service.OrgService;
 import com.azion.Azion.Token.TokenService;
@@ -10,6 +11,7 @@ import com.azion.Azion.User.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -35,9 +37,10 @@ public class OrgController {
     }
     
     @PostMapping("/partOfOrg")
-    public ResponseEntity<?> getOrg(@PathVariable String token) {
+    public ResponseEntity<?> getOrg(@RequestBody Map<String, Object> request) {
+        String token = (String) request.get("token");
         User user = tokenService.getUserFromToken(token);
-        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+        Org org = orgService.findOrgByUser(user);
         if (org == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
         }
@@ -74,9 +77,14 @@ public class OrgController {
         return ResponseEntity.ok(org);
     }
     
+    @Transactional
     @GetMapping("/list/all")
     public ResponseEntity<?> listOrgs() {
-        return ResponseEntity.ok(orgRepository.findAll());
+//
+//        Map<String, String> response = new HashMap<>();
+//        response.put("message", "success");
+        List<OrgProjection> orgs = orgRepository.findAllOrgs();
+        return ResponseEntity.ok(orgs);
     }
     
     

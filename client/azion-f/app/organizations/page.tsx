@@ -38,8 +38,11 @@ const sessionCheck = () => {
     });
 };
 const PartOfOrg = () => {
-    axios.post(`${apiUrl}/org/partOfOrg`, {
-      token: localStorage.getItem('azionAccessToken'),
+    const data = { token: localStorage.getItem('azionAccessToken') };
+    axios.post(`${apiUrl}/org/partOfOrg`, data, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
     })
         .then(function (response: AxiosResponse) {
             window.location.href = '/orgName';
@@ -55,7 +58,7 @@ const Home = () => {
     const accessToken = localStorage.getItem('azionAccessToken');
     if (refreshToken && accessToken) {
       sessionCheck();
-        PartOfOrg();
+      PartOfOrg();
     }
     else if(!accessToken && !refreshToken) {
         window.location.href = '/log-in';

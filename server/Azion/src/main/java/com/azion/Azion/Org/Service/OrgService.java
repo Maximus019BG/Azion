@@ -18,7 +18,6 @@ public class OrgService {
     private OrgRepository orgRepository;
     
     
-    //Add user to organization
     public void addUserToOrg(Org org, User user) {
         user.setOrgid(org.getOrgID());
         Set<User> users = org.getUsers();
@@ -27,10 +26,7 @@ public class OrgService {
         orgRepository.save(org);
     }
     
-    
-    //Saves organization
     public Org createOrg(Org org) {
-        //Check for existing organization
         if(orgRepository.existsOrg(org.getOrgID(), org.getOrgName(), org.getOrgConnectString(), org.getOrgAddress(), org.getOrgEmail())) {
             throw new IllegalArgumentException("Organization with this credentials already exists.");
         }
@@ -38,8 +34,14 @@ public class OrgService {
         return orgRepository.save(org);
         
     }
+  
+    public Org findOrgByUser(User user) {
+        String jpql = "SELECT o FROM Org o JOIN o.users u WHERE u.id = :userId";
+        return entityManager.createQuery(jpql, Org.class)
+                .setParameter("userId", user.getId())
+                .getSingleResult();
+    }
     
-    //Get user from organization
     public Set<User> getUsersOfOrg(Org org) {
         return org.getUsers();
     }
