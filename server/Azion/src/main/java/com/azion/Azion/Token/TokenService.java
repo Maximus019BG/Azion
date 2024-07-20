@@ -35,7 +35,7 @@ public class TokenService {
             
         }
         else if(tokenType == TokenType.ACCESS_TOKEN){
-            time = 15*1000L;//15 minutes
+            time = 60*15*1000L;//15 minutes
         }
       
         try {

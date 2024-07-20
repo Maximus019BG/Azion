@@ -8,5 +8,14 @@ public class OrgUtility {
         EmailValidator emailValidator = EmailValidator.getInstance();
         return emailValidator.isValid(email);
     }
+    public static boolean isValidOrgAddress(String address) {
+        if(address == null) return false;
+        else if(address.matches(".*\\d.*")) {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     
 }

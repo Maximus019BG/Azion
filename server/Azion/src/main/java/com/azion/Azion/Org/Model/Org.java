@@ -22,7 +22,7 @@ public class Org {
     @Column(nullable = false)
     private String orgType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String orgAddress;
 
     @Column(nullable = false, unique = true)
@@ -30,7 +30,13 @@ public class Org {
 
     @Column(nullable = false, unique = true)
     private String orgConnectString;
-
+    
+    @Column(nullable = false)
+    private String orgPhone;
+    
+    @Column(nullable = true)
+    private String orgDescription;
+   
     //Employees
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "orgID")
@@ -46,10 +52,10 @@ public class Org {
     }
 
 
-    @PrePersist
+    
     public void generateId() {
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        this.orgID = uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis();
+        setOrgID(uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis());
     }
 
     public String getOrgID() {
@@ -81,6 +87,9 @@ public class Org {
     }
 
     public void setOrgAddress(String orgAddress) {
+        if (!OrgUtility.isValidOrgAddress(orgAddress)) {
+            throw new IllegalArgumentException("Invalid address format");
+        }
         this.orgAddress = orgAddress;
     }
 
@@ -102,23 +111,54 @@ public class Org {
     public String getOrgConnectString() {
         return orgConnectString;
     }
-
+    
+ 
     public void setOrgConnectString(String orgConnectString) {
         String randomString;
         String uuid = UUID.randomUUID().toString().replace("-", "");
         randomString = uuid.substring(0, Math.min(uuid.length(), 10)) + System.currentTimeMillis();
         this.orgConnectString = randomString;
     }
+    
+    public void generateConString() {
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        setOrgConnectString(this.orgName + ": ".substring(0, Math.min(uuid.length(), 5)) + System.currentTimeMillis());
+    }
+    
+    
+    public String getOrgPhone() {
+        return orgPhone;
+    }
+    
+    public void setOrgPhone(String orgPhone) {
+        this.orgPhone = orgPhone;
+    }
+    
+    public String getOrgDescription() {
+        return orgDescription;
+    }
+    
+    public void setOrgDescription(String orgDescription) {
+        this.orgDescription = orgDescription;
+    }
+    
+    @PrePersist
+    private void PrePersist(){
+        generateId();
+        generateConString();
+    }
 
     public Org() {
     }
 
-    public Org(String orgName, String orgType, String orgAddress, String orgEmail, Set<User> users) {
+    public Org(String orgName, String orgType, String orgAddress, String orgEmail, Set<User> users, String orgPhone, String orgDescription) {
         setOrgName(orgName);
         setOrgType(orgType);
         setOrgAddress(orgAddress);
         setOrgEmail(orgEmail);
         setUsers(users);
+        setOrgPhone(orgPhone);
+        setOrgDescription(orgDescription);
     }
 
 

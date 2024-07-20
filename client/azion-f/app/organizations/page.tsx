@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
+import ListAllOrgs from "../components/listAllOrgs";
 
 
 interface Token {
@@ -36,6 +37,17 @@ const sessionCheck = () => {
       window.location.href = '/log-in';
     });
 };
+const PartOfOrg = () => {
+    axios.post(`${apiUrl}/org/partOfOrg`, {
+      token: localStorage.getItem('azionAccessToken'),
+    })
+        .then(function (response: AxiosResponse) {
+            window.location.href = '/orgName';
+        })
+        .catch(function (error) {
+
+        });
+}
 
 const Home = () => {
   useEffect(() => {
@@ -43,6 +55,7 @@ const Home = () => {
     const accessToken = localStorage.getItem('azionAccessToken');
     if (refreshToken && accessToken) {
       sessionCheck();
+        PartOfOrg();
     }
     else if(!accessToken && !refreshToken) {
         window.location.href = '/log-in';
@@ -51,7 +64,9 @@ const Home = () => {
 
   return (
     <div className="neon-text h-screen w-screen bg-black overflow-x-hidden">
-      organizations
+      Organizations
+      <ListAllOrgs />
+
     </div>
   );
 };
