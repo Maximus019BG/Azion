@@ -41,7 +41,7 @@ const OTP = ({ length = 4, onComplete }: InputProps) => {
           ref={(ref) => {
             inputRef.current[index] = ref;
           }}
-          className={`border-2 border-border-slate-500 w-[3.3rem] rounded-lg h-16 focus:border-blue-600 p-5 outline-none`}
+          className={`border-2 border-border-slate-500 w-[3.3rem] rounded-lg h-16 focus:border-lightAccent p-5 outline-none`}
           style={{ marginRight: index === length - 1 ? '0' : '10px' }}
         />
       ))}

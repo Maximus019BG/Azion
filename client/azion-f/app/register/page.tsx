@@ -146,43 +146,48 @@ const Sign_up = () => {
               <input
                 onChange={(e) => setName(e.target.value)}
                 type="text"
+                style={{outline: 'none'}}
                 placeholder="Enter your username:"
-                className="bg-[#ebe9e5] pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+                className="bg-[#ebe9e5] pl-6 text-black border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
               />
             </div>
             <div className="w-full flex flex-col justify-center items-center gap-3">
               <input
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
+                style={{outline: 'none'}}
                 placeholder="Input your Email:"
-                className="bg-[#ebe9e5] pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+                className="bg-[#ebe9e5] pl-6 text-black border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
               />
             </div>
             <div className="w-full flex flex-col justify-center items-center gap-3">
               <input
                 onChange={(e) => setAge(e.target.value)}
                 placeholder="Born At:"
+                style={{outline: 'none'}}
                 type="date"
-                className="bg-[#ebe9e5] border-b-4 placeholder-background text-background pl-6 border-lightAccent opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+                className="bg-[#ebe9e5] text-black border-b-4 placeholder-background text-background pl-6 border-lightAccent opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
               />
             </div>
             <div className="w-full flex  flex-col justify-center items-center gap-3">
               <input
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password:"
+                style={{outline: 'none'}}
                 type="password"
-                className="bg-[#ebe9e5] pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+                className="bg-[#ebe9e5] text-black pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
               />
             </div>
             <div className="w-full flex flex-col justify-center items-center gap-3">
               <input
                 onChange={(e) => setPassword2(e.target.value)}
                 placeholder="Repeat Password:"
+                style={{outline: 'none'}}
                 type="password"
-                className="bg-[#ebe9e5] pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+                className="bg-[#ebe9e5] text-black pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
               />
             </div>
-            <div className="w-full flex flex-col justify-center items-center gap-3">
+            <div className="w-full  flex flex-col justify-center items-center gap-3">
               <label className="text-background">
                 <input
                   type="checkbox"

@@ -163,8 +163,9 @@ const Sign_up = () => {
               <input
                 onChange={(e) => setName(e.target.value)}
                 type="text"
+                style={{outline: 'none'}}
                 placeholder="Enter your username:"
-                className="bg-[#ebe9e5] pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
               />
             </div>
             <div className="w-full flex  flex-col justify-center items-center gap-3">
@@ -172,7 +173,8 @@ const Sign_up = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password:"
                 type="password"
-                className="bg-[#ebe9e5] pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+                className="bg-[#ebe9e5] text-black pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+                style={{ outline: "none" }}
               />
             </div>
           </div>
@@ -188,21 +190,28 @@ const Sign_up = () => {
             className="modal modal-bottom sm:modal-middle"
           >
             <div className="modal-box flex flex-col justify-center items-center h-full ">
-              <h3 className="font-bold text-2xl text-center">
-                Enter your One-Time-Passowrd (OTP)
-              </h3>
+              <div className=" flex flex-col justify-center items-center gap-6 mb-5">
+                <p className=" absolute left-0 top-0 p-5 font-black">
+                  Esc to go back
+                </p>
+                <h1 className=" text-2xl text-center font-black">
+                  Enter your One-Time-Passowrd (OTP)
+                </h1>
+                <p className=" text-center font-medium">
+                  You can find your OTP on your authenticator app on your phone
+                </p>
+              </div>
 
-              <p className="">
-                You can find your OTP on your authenticator app on your phone
-              </p>
               <div className="w-full flex  flex-col justify-center items-center gap-3"></div>
               <div className="modal-action flex flex-col justify-center items-center gap-12">
                 <div>
-                  <OTP length={6} onComplete={handleSubmit}/>
-                  </div>
+                  <OTP length={6} onComplete={handleSubmit} />
+                </div>
                 <form method="dialog">
                   {/* if there is a button in form, it will close the modal */}
-                  <button className="btn">Submit</button>
+                  <button className="btn px-24  bg-accent hover:bg-[#105380] rounded-2xl hover:scale-110 text-lg">
+                    Submit
+                  </button>
                 </form>
               </div>
             </div>
