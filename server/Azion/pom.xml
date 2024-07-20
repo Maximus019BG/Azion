@@ -14,7 +14,7 @@
 	<name>Azion</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>21.0.3</java.version>
+		<java.version>11</java.version>
 	</properties>
 	<dependencies>
 
@@ -95,11 +95,7 @@
 			<artifactId>java-dotenv</artifactId>
 			<version>5.2.2</version>
 		</dependency>
-		<dependency>
-			<groupId>com.example</groupId>
-			<artifactId>Azion</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  aziondb:
+    image: mysql:8.0.28
+    environment:
+      MYSQL_DATABASE: 'aziondb'
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}' # Ensure this is set
+      # MYSQL_USER: 'root' # Remove or change this line
+      # MYSQL_PASSWORD: '${DB_PASSWORD}' # Adjust accordingly if using a regular user
+    ports:
+      - "3307:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    restart: always
+
+  azionapp:
+    build: .
+    depends_on:
+      - aziondb
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: '${DB_URL}'
+      DB_USERNAME: '${DB_USERNAME}'
+      DB_PASSWORD: '${DB_PASSWORD}'
+      SECRET_JWT: '${SECRET_JWT}'
+      ISSUER_NAME: '${ISSUER_NAME}'
+      SECRET_MFA: '${SECRET_MFA}'
+    restart: always
+
+volumes:
+  db-data:
