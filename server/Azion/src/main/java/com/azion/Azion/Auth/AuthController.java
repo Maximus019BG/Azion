@@ -92,6 +92,7 @@ public class AuthController {
     @Transactional
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, Object> request,  @RequestHeader(value = "User-Agent") String UserAgent) {
+        log.info("Login attempt");
         String email = (String) request.get("email");
         String password = (String) request.get("password");
         String OTP = (String) request.get("OTP");

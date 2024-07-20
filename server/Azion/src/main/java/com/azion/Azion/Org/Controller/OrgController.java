@@ -26,7 +26,7 @@ public class OrgController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final TokenService tokenService;
-    //Constructor
+
     @Autowired
     public OrgController(OrgService orgService, OrgRepository orgRepository, UserService userService, UserRepository userRepository, TokenService tokenService) {
         this.orgService = orgService;
