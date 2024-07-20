@@ -12,6 +12,7 @@ import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.UserService;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,7 @@ import java.util.UUID;
 import static com.azion.Azion.Token.TokenType.ACCESS_TOKEN;
 import static com.azion.Azion.Token.TokenType.REFRESH_TOKEN;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -83,7 +85,7 @@ public class AuthController {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
-        System.out.println("User registered");
+        log.debug("User registered");
         return ResponseEntity.ok(tokens);
     }
     

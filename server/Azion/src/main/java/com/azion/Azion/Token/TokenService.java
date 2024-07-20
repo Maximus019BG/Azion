@@ -35,7 +35,7 @@ public class TokenService {
             
         }
         else if(tokenType == TokenType.ACCESS_TOKEN){
-            time = 60*15*1000L;//15 minutes
+            time = 15*1000L;//15 minutes
         }
       
         try {
@@ -81,21 +81,21 @@ public class TokenService {
                     while (tokenRepo.existsByUser(user)){
                      tokenRepo.deleteBySubject(user);
                     }
-                    log.info("Both tokens are expired. Please log in again.");
+                    log.debug("Both tokens are expired. Please log in again.");
                     return "false";
                 }
                 else if(isAccessTokenOutOfDate(accessToken) && !isRefreshTokenOutOfDate(refreshToken)){
-                    log.info("Access token is expired. Generating new access token.");
+                    log.debug("Access token is expired. Generating new access token.");
                     return "newAccessToken";
                 }
                 else if(!isAccessTokenOutOfDate(accessToken) && !isRefreshTokenOutOfDate(refreshToken)){
                     if(validateToken(accessToken) && validateToken(refreshToken)){
-                        log.info("Both tokens are valid.");
+                        log.debug("Both tokens are valid.");
                         return "true";
                     }
                     else{
                         deleteTokens(accessToken, refreshToken);
-                        log.info("Both tokens are invalid. Please log in again.");
+                        log.debug("Both tokens are invalid. Please log in again.");
                         return "false";
                     }
                 }
