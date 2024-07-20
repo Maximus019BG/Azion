@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
@@ -121,7 +121,7 @@ const Sign_up = () => {
   };
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center gap-0">
+    <div className="w-screen h-screen flex justify-center items-center">
       <div className="w-1/2 h-full">
         <video
           className="w-full h-full object-cover"
@@ -135,9 +135,9 @@ const Sign_up = () => {
         </video>
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-center">
-        <div className="h-full min-w-full gradient-form flex flex-col justify-around items-center p-5 md:p-10">
+        <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-around items-center p-5 md:p-10">
           <h1
-            className={`mt-6 text-neonAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
+            className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
           >
             Register
           </h1>
@@ -147,7 +147,7 @@ const Sign_up = () => {
                 onChange={(e) => setName(e.target.value)}
                 type="text"
                 placeholder="Enter your username:"
-                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                className="bg-[#ebe9e5] pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
               />
             </div>
             <div className="w-full flex flex-col justify-center items-center gap-3">
@@ -155,7 +155,7 @@ const Sign_up = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 placeholder="Input your Email:"
-                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                className="bg-[#ebe9e5] pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
               />
             </div>
             <div className="w-full flex flex-col justify-center items-center gap-3">
@@ -163,15 +163,15 @@ const Sign_up = () => {
                 onChange={(e) => setAge(e.target.value)}
                 placeholder="Born At:"
                 type="date"
-                className="pl-5 bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                className="bg-[#ebe9e5] border-b-4 placeholder-background text-background pl-6 border-lightAccent opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
               />
             </div>
-            <div className="w-full flex flex-col justify-center items-center gap-3">
+            <div className="w-full flex  flex-col justify-center items-center gap-3">
               <input
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password:"
                 type="password"
-                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                className="bg-[#ebe9e5] pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
               />
             </div>
             <div className="w-full flex flex-col justify-center items-center gap-3">
@@ -179,11 +179,11 @@ const Sign_up = () => {
                 onChange={(e) => setPassword2(e.target.value)}
                 placeholder="Repeat Password:"
                 type="password"
-                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                className="bg-[#ebe9e5] pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
               />
             </div>
             <div className="w-full flex flex-col justify-center items-center gap-3">
-              <label className="text-neonAccent">
+              <label className="text-background">
                 <input
                   type="checkbox"
                   onChange={handleCheckboxChange}
@@ -195,7 +195,7 @@ const Sign_up = () => {
           </div>
           <button
             onClick={handleSubmit}
-            className="bg-background w-fit text-neonAccent hover:border-2 hover:border-neonAccent font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
+            className="bg-accent w-fit text-[#cbccc4] font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
           >
             Submit
           </button>
