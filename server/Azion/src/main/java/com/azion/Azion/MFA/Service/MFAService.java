@@ -14,8 +14,25 @@ import dev.samstevens.totp.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.apache.bcel.classfile.Code;
 import org.mindrot.jbcrypt.BCrypt;
+import org.opencv.imgproc.Imgproc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.opencv.core.*;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.objdetect.CascadeClassifier;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Base64;
+
+import static java.lang.System.loadLibrary;
+import static org.opencv.imgproc.Imgproc.rectangle;
+
 
 @Service
 @Slf4j
@@ -26,7 +43,6 @@ public class MFAService {
     public MFAService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-    
     
     public String generateQRCodeImage(String secret, String email) {
         User user = userRepository.findByEmail(email);
@@ -89,6 +105,25 @@ public class MFAService {
         }
         log.info("User: " + email + "logging in with MFA");
         return validateOtp(secret, submittedOtp);
+    }
+    
+    public String faceRecognition(String base64Image) throws IOException {
+        CascadeClassifier faceDetector = new CascadeClassifier();
+        faceDetector.load(getClass().getClassLoader().getResource("haarcascade_frontalface_alt.xml").getPath());
+        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+        Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
+        MatOfRect faceDetections = new MatOfRect();
+        faceDetector.detectMultiScale(mat, faceDetections);
+        log.info("Faces detected: " + faceDetections.toArray().length);
+        
+        for (Rect rect : faceDetections.toArray()) {
+            rectangle(mat, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
+        }
+        
+        MatOfByte matOfByte = new MatOfByte();
+        Imgcodecs.imencode(".jpg", mat, matOfByte);
+        byte[] processedImageBytes = matOfByte.toArray();
+        return Base64.getEncoder().encodeToString(processedImageBytes);
     }
     
 }
