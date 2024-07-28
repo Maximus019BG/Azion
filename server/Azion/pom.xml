@@ -8,12 +8,7 @@
 		<version>3.2.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<repositories>
-		<repository>
-			<id>opencv-repository</id>
-			<url>https://github.com/openpnp/opencv/releases/download/4.5.1-2/</url>
-		</repository>
-	</repositories>
+
 	<groupId>com.example</groupId>
 	<artifactId>Azion</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -22,8 +17,14 @@
 	<properties>
 		<java.version>11</java.version>
 	</properties>
-	<dependencies>
+	<repositories>
+		<repository>
+			<id>opencv</id>
+			<url>https://raw.githubusercontent.com/openpnp/opencv/releases</url>
+		</repository>
+	</repositories>
 
+	<dependencies>
 		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
@@ -32,14 +33,29 @@
 		<dependency>
 			<groupId>org.openpnp</groupId>
 			<artifactId>opencv</artifactId>
-			<version>4.5.1-2</version>
+			<version>4.9.0-0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.opencv</groupId>
+			<artifactId>opencv</artifactId>
+			<version>4.5.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/../../libs/jars/opencv-4.5.1.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>org.opencv</groupId>
+			<artifactId>opencv</artifactId>
+			<version>4.5.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/../../libs/jars/opencv-4.5.1-contrib.jar</systemPath>
+		</dependency>
+
 		<dependency>
 			<groupId>dev.samstevens.totp</groupId>
 			<artifactId>totp</artifactId>
 			<version>1.7.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>jakarta.persistence</groupId>
 			<artifactId>jakarta.persistence-api</artifactId>
