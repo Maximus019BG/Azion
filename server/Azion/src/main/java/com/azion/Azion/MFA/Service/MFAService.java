@@ -7,47 +7,40 @@ import dev.samstevens.totp.code.*;
 import dev.samstevens.totp.qr.QrData;
 import dev.samstevens.totp.qr.QrGenerator;
 import dev.samstevens.totp.qr.ZxingPngQrGenerator;
-import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import dev.samstevens.totp.time.SystemTimeProvider;
 import dev.samstevens.totp.time.TimeProvider;
 import dev.samstevens.totp.util.Utils;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.apache.bcel.classfile.Code;
-import org.mindrot.jbcrypt.BCrypt;
+import org.opencv.core.*;
+import org.opencv.dnn.*;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.opencv.core.*;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.objdetect.CascadeClassifier;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import static org.opencv.imgproc.Imgproc.rectangle;
+import java.net.URL;
 import java.io.IOException;
-import java.util.Base64;
-
+import java.util.*;
 import static java.lang.System.loadLibrary;
 import static org.opencv.imgproc.Imgproc.rectangle;
-
 
 @Service
 @Slf4j
 public class MFAService {
     private final UserRepository userRepository;
-    
+    private final Map<String, double[]> knownFaces = new HashMap<>();
+    private static final double THRESHOLD = 8;
+
     @Autowired
     public MFAService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-    
+
     public String generateQRCodeImage(String secret, String email) {
         User user = userRepository.findByEmail(email);
         String name = user.getName();
-        
+
         String issuer = System.getProperty("issuerName");
         QrData data = new QrData.Builder()
                 .label(name + "/" + email)
@@ -57,10 +50,10 @@ public class MFAService {
                 .digits(6)
                 .period(30)
                 .build();
-        
+
         QrGenerator generator = new ZxingPngQrGenerator();
         byte[] imageData = new byte[0];
-        
+
         try {
             imageData = generator.generate(data);
         } catch (Exception e) {
@@ -68,21 +61,19 @@ public class MFAService {
         }
         return Utils.getDataUriForImage(imageData, generator.getImageMimeType());
     }
-    
+
     public boolean validateOtp(String secret, String otp) {
         TimeProvider timeProvider = new SystemTimeProvider();
         CodeGenerator codeGenerator = new DefaultCodeGenerator();
         CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
         return verifier.isValidCode(secret, otp);
     }
-    
-    
+
     public String generateQRCodeUriForCurrentUser(String email) {
         String secret = getUserMFASecret(email);
-        
         return generateQRCodeImage(secret, email);
     }
-    
+
     private String getUserMFASecret(String email) {
         try {
             User user = userRepository.findByEmail(email);
@@ -97,43 +88,137 @@ public class MFAService {
             return "";
         }
     }
+
     public boolean checkMfaCredentials(String email, String submittedOtp) {
         String secret = getUserMFASecret(email);
         if (secret.isEmpty()) {
             log.error("MFA secret not found for user: " + email);
             return false;
         }
-        log.info("User: " + email + "logging in with MFA");
+        log.info("User: " + email + " logging in with MFA");
         return validateOtp(secret, submittedOtp);
     }
-    
-    public String faceRecognition(String base64Image) throws IOException {
+
+    public String faceLocation(String base64Image) throws IOException {
         CascadeClassifier faceDetector = new CascadeClassifier();
         faceDetector.load(getClass().getClassLoader().getResource("haarcascade_frontalface_alt.xml").getPath());
         byte[] imageBytes = Base64.getDecoder().decode(base64Image);
         Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
         MatOfRect faceDetections = new MatOfRect();
         faceDetector.detectMultiScale(mat, faceDetections);
-        
-        if(faceDetections.toArray().length > 0){
+
+        if (faceDetections.toArray().length > 0) {
             log.info("Faces detected: " + faceDetections.toArray().length);
-        }
-        else if(faceDetections.toArray().length == 0){
+        } else if (faceDetections.toArray().length == 0) {
             log.info("No faces detected");
             return "no faces detected";
         }
         for (Rect rect : faceDetections.toArray()) {
             rectangle(mat, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
         }
-        
+
         MatOfByte matOfByte = new MatOfByte();
         Imgcodecs.imencode(".jpg", mat, matOfByte);
         byte[] processedImageBytes = matOfByte.toArray();
         return Base64.getEncoder().encodeToString(processedImageBytes);
     }
-    
+
+    public String faceRecognition(String base64Image) throws IOException {
+        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+        Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
+
+        URL modelConfigUrl = getClass().getClassLoader().getResource("deploy.prototxt");
+        URL modelWeightsUrl = getClass().getClassLoader().getResource("res10_300x300_ssd_iter_140000.caffemodel");
+
+        if (modelConfigUrl == null || modelWeightsUrl == null) {
+            log.error("Model configuration or weights file not found in resources.");
+            throw new IOException("Model configuration or weights file not found in resources.");
+        }
+
+        String modelConfiguration = modelConfigUrl.getPath();
+        String modelWeights = modelWeightsUrl.getPath();
+        Net net = Dnn.readNetFromCaffe(modelConfiguration, modelWeights);
+
+        Mat blob = Dnn.blobFromImage(mat, 1.0, new Size(300, 300), new Scalar(104.0, 177.0, 124.0), false, false);
+        net.setInput(blob);
+        Mat detections = net.forward();
+
+        int cols = mat.cols();
+        int rows = mat.rows();
+        detections = detections.reshape(1, (int) detections.total() / 7);
+
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < detections.rows(); i++) {
+            double confidence = detections.get(i, 2)[0];
+            if (confidence > 0.3) {
+                int x1 = (int) (detections.get(i, 3)[0] * cols);
+                int y1 = (int) (detections.get(i, 4)[0] * rows);
+                int x2 = (int) (detections.get(i, 5)[0] * cols);
+                int y2 = (int) (detections.get(i, 6)[0] * rows);
+                Rect rect = new Rect(new Point(x1, y1), new Point(x2, y2));
+                rectangle(mat, rect, new Scalar(0, 255, 0));
+
+                Mat face = new Mat(mat, rect);
+                double[] faceEncoding = encodeFace(face);
+
+                String recognizedPerson = compareFaceEncoding(faceEncoding);
+                if (recognizedPerson != null) {
+                    result.append("User scanned before: ").append(recognizedPerson).append("\n");
+                    log.info("User scanned before: " + recognizedPerson);
+                } else {
+                    String newUserId = UUID.randomUUID().toString();
+                    knownFaces.put(newUserId, faceEncoding);
+                    result.append("New user remembered: ").append(newUserId).append("\n");
+                    log.info("New user remembered: " + newUserId);
+                }
+            }
+        }
+
+        MatOfByte matOfByte = new MatOfByte();
+        Imgcodecs.imencode(".jpg", mat, matOfByte);
+        byte[] processedImageBytes = matOfByte.toArray();
+        return Base64.getEncoder().encodeToString(processedImageBytes);
+    }
+    private double[] encodeFace(Mat face) {
+        Mat grayFace = new Mat();
+        Imgproc.cvtColor(face, grayFace, Imgproc.COLOR_BGR2GRAY);
+        Mat resizedFace = new Mat();
+        Size size = new Size(64, 64);
+        Imgproc.resize(grayFace, resizedFace, size);
+        int totalElements = (int) (resizedFace.total() * resizedFace.channels());
+        byte[] faceEncoding = new byte[totalElements];
+        resizedFace.get(0, 0, faceEncoding);
+        double[] normalizedFaceEncoding = new double[totalElements];
+        for (int i = 0; i < faceEncoding.length; i++) {
+            normalizedFaceEncoding[i] = (faceEncoding[i] & 0xFF) / 255.0;
+        }
+
+        log.debug("Face encoding: " + Arrays.toString(normalizedFaceEncoding));
+
+        return normalizedFaceEncoding;
+    }
+    public String compareFaceEncoding(double[] newFaceEncoding) {
+        for (Map.Entry<String, double[]> entry : knownFaces.entrySet()) {
+            double[] storedFaceEncoding = entry.getValue();
+            double distance = calculateEuclideanDistance(newFaceEncoding, storedFaceEncoding);
+            log.debug("Comparing with known face: " + entry.getKey() + ", distance: " + distance);
+            if (distance < THRESHOLD) {
+                log.info("Recognized user: " + entry.getKey() + " with distance: " + distance);
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    private double calculateEuclideanDistance(double[] vector1, double[] vector2) {
+        if (vector1.length != vector2.length) {
+            throw new IllegalArgumentException("Vector dimensions must match");
+        }
+        double sum = 0.0;
+        for (int i = 0; i < vector1.length; i++) {
+            sum += Math.pow((vector1[i] - vector2[i]), 2);
+        }
+        return Math.sqrt(sum);
+    }
+
 }
-
-    
-
-

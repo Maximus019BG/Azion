@@ -71,4 +71,6 @@ public class MFAController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing image");
         }
     }
+    
+    
 }
