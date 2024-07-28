@@ -114,8 +114,14 @@ public class MFAService {
         Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
         MatOfRect faceDetections = new MatOfRect();
         faceDetector.detectMultiScale(mat, faceDetections);
-        log.info("Faces detected: " + faceDetections.toArray().length);
         
+        if(faceDetections.toArray().length > 0){
+            log.info("Faces detected: " + faceDetections.toArray().length);
+        }
+        else if(faceDetections.toArray().length == 0){
+            log.info("No faces detected");
+            return "no faces detected";
+        }
         for (Rect rect : faceDetections.toArray()) {
             rectangle(mat, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
         }

@@ -7,6 +7,7 @@ import { apiUrl } from '../api/config';
 export default function Camera() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [imageSrc, setImageSrc] = useState('');
+  const [altText, setAltText] = useState('');
 
   useEffect(() => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -38,6 +39,12 @@ export default function Camera() {
             }
           });
           const processedImage = `data:image/jpeg;base64,${response.data.image}`;
+          if(response.data.image === 'no faces detected'){
+            setAltText('No faces detected');
+          }
+          else {
+            setAltText('Detected Face');
+          }
           setImageSrc(processedImage);
         } catch (error) {
           console.error("Error sending image to API: ", error);
@@ -50,7 +57,7 @@ export default function Camera() {
     <>
       <video ref={videoRef} autoPlay></video>
       <button onClick={captureAndSendFrame}>Send Image</button>
-      {imageSrc && <Image src={imageSrc} width={300} height={300} alt="Detected Face"/>}
+      {imageSrc && <Image src={imageSrc} width={300} height={300} alt={altText}/>}
     </>
   );
 }

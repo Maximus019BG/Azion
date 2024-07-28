@@ -66,3 +66,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/server/nohup.out
