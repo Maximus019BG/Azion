@@ -5,7 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.azion.Azion.User.Model.User;
-import io.github.cdimascio.dotenv.Dotenv;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class TokenService {
     
     private final TokenRepo tokenRepo;
@@ -23,19 +24,18 @@ public class TokenService {
         this.tokenRepo = tokenRepo;
     }
 
-    public String generateToken(TokenType tokenType, User user, String issuer, String audience){
-        Dotenv dotenv = Dotenv.load();
-        
+    public String generateToken(TokenType tokenType, User user, String issuer, String audience, String UserAgent){
         String token = "";
         String token_type = tokenType.toString();
-        String secret = dotenv.get("SECRET_JWT");
+        String secret =System.getProperty("secretJWT");
         Long time = 0L;
         
         if(tokenType == TokenType.REFRESH_TOKEN){
-            time = 60*60*24*1000*5L;//5 day
+            time = 60*60*24*1000*5L;//5 days
+            
         }
         else if(tokenType == TokenType.ACCESS_TOKEN){
-            time = 60*60*1000L;//1 hour
+            time = 60*15*1000L;//15 minutes
         }
       
         try {
@@ -55,6 +55,7 @@ public class TokenService {
                     .withSubject(tokenObj.getSubject().getId())
                     .withIssuedAt(tokenObj.getIssuedAt())
                     .withExpiresAt(new Date(System.currentTimeMillis() + time))
+                    .withClaim("UserAgent", UserAgent)
                     .sign(algorithm);
             
             tokenObj.setToken(token);
@@ -69,9 +70,43 @@ public class TokenService {
         return token;
     }
     
+    public String sessionCheck(String refreshToken, String accessToken) {
+        Token tokenObjA = tokenRepo.findByToken(accessToken);
+        Token tokenObjR = tokenRepo.findByToken(refreshToken);
+        if (tokenObjA != null && tokenObjR != null) {
+            User user = tokenObjA.getSubject();
+            if (tokenObjA.getSubject().getId().equals(tokenObjR.getSubject().getId())) {
+                if(isAccessTokenOutOfDate(accessToken) && isRefreshTokenOutOfDate(refreshToken)){
+                    deleteTokens(accessToken, refreshToken);
+                    while (tokenRepo.existsByUser(user)){
+                     tokenRepo.deleteBySubject(user);
+                    }
+                    log.debug("Both tokens are expired. Please log in again.");
+                    return "false";
+                }
+                else if(isAccessTokenOutOfDate(accessToken) && !isRefreshTokenOutOfDate(refreshToken)){
+                    log.debug("Access token is expired. Generating new access token.");
+                    return "newAccessToken";
+                }
+                else if(!isAccessTokenOutOfDate(accessToken) && !isRefreshTokenOutOfDate(refreshToken)){
+                    if(validateToken(accessToken) && validateToken(refreshToken)){
+                        log.debug("Both tokens are valid.");
+                        return "true";
+                    }
+                    else{
+                        deleteTokens(accessToken, refreshToken);
+                        log.debug("Both tokens are invalid. Please log in again.");
+                        return "false";
+                    }
+                }
+            }
+        }
+        return "false";
+    }
+    
     public boolean validateToken(String token) {
-        Dotenv dotenv = Dotenv.load();
-        String secret = dotenv.get("SECRET_JWT");
+        
+        String secret = System.getProperty("secretJWT");
         Token tokenObj = null;
         boolean isValid = false;
         try {
@@ -112,25 +147,26 @@ public class TokenService {
         DecodedJWT jwt = JWT.decode(token);
         if (tokenObj.getTokenType() == TokenType.ACCESS_TOKEN && jwt.getExpiresAt().getTime() <= System.currentTimeMillis()) {
             return true;
-        } else if (tokenObj.getTokenType() == TokenType.ACCESS_TOKEN && jwt.getExpiresAt().getTime()> System.currentTimeMillis()) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        } else return tokenObj.getTokenType() != TokenType.ACCESS_TOKEN || jwt.getExpiresAt().getTime() <= System.currentTimeMillis();
     }
     public boolean isRefreshTokenOutOfDate(String token) {
         Token tokenObj = tokenRepo.findByToken(token);
         DecodedJWT jwt = JWT.decode(token);
         if (tokenObj.getTokenType() == TokenType.REFRESH_TOKEN && jwt.getExpiresAt().getTime()  <= System.currentTimeMillis()) {
             return true;
-        } else if (tokenObj.getTokenType() == TokenType.REFRESH_TOKEN && jwt.getExpiresAt().getTime() > System.currentTimeMillis()) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        } else return tokenObj.getTokenType() != TokenType.REFRESH_TOKEN || jwt.getExpiresAt().getTime() <= System.currentTimeMillis();
     }
-    
+    public User getUserFromToken(String token) {
+        Token tokenObj = tokenRepo.findByToken(token);
+        return tokenObj.getSubject();
+    }
+    public String regenerateAccessToken(String refreshToken, String UserAgent) {
+        Token refreshTok = tokenRepo.findByToken(refreshToken);
+        if (refreshTok != null && !isRefreshTokenOutOfDate(refreshToken)) {
+            User user = refreshTok.getSubject();
+            return generateToken(TokenType.ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
+        }
+        return null;
+    }
     
 }

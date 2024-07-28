@@ -2,9 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@layer base {
+  :root {
+    --foreground: 242, 242, 242;
+    --background: 11, 12, 16;
+    --muted: 115, 115, 115;
+    --accent: 7, 42, 64;
+    --lightAccent: 69, 162, 157;
+    --neonAccent: 102, 252, 242;
   }
+}
+
+.gradient-text {
+  background: linear-gradient(to right, rgba(102, 252, 241, 0.8), rgba(61, 209, 184, 0.7));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.gradient-form {
+  background: linear-gradient(to right, rgba(10, 56, 87, 0.7), rgba(33, 198, 231, 0.7));
+  /* Ensure the div takes up some space to show the gradient */
+  width: 40%;
+  height: 100%; /* Full viewport height */
+}
+
+
+.neon-text {
+  color: rgba(255, 255, 255, 0.9);
+  /* Lighter base color */
+  text-shadow:
+    0 0 2px rgba(215, 215, 216, 0.8),
+    0 0 4px rgba(197, 198, 199, 0.7),
+    0 0 6px rgba(197, 198, 199, 0.6),
+    0 0 8px rgba(197, 198, 199, 0.5),
+    0 0 10px rgba(197, 198, 199, 0.4),
+    0 0 20px rgba(197, 198, 199, 0.3),
+    0 0 30px rgba(197, 198, 199, 0.2),
+    0 0 40px rgba(197, 198, 199, 0.1);
 }

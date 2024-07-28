@@ -1,6 +1,6 @@
-import type { Config } from "tailwindcss";
+/** @type {import('tailwindcss').Config} */
 
-const config: Config = {
+module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,13 +8,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      colors: {
+        background: 'rgb(var(--background))',
+        foreground: 'rgb(var(--foreground))',
+        muted: 'rgb(var(--muted))',
+        accent: 'rgb(var(--accent))',
+        lightAccent: 'rgb(var(--lightAccent))',
+        neonAccent: 'rgb(var(--neonAccent))',
       },
     },
   },
-  plugins: [],
+  plugins: [require('daisyui'),],
 };
-export default config;

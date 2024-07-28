@@ -27,15 +27,8 @@ public class Token {
     @Column(nullable = false)
     private Date issuedAt;
     
-    public Token() {
-    }
     
-    public Token(String token, User subject, Date issuedAt) {
-        
-        setToken(token);
-        setSubject(subject);
-        setIssuedAt(issuedAt);
-    }
+    
     
     @PrePersist
     public void generateId() {
@@ -81,5 +74,15 @@ public class Token {
     
     public void setIssuedAt(Date issuedAt) {
         this.issuedAt = issuedAt;
+    }
+    
+    public Token() {
+    }
+    
+    public Token(String token, User subject, Date issuedAt) {
+        
+        setToken(token);
+        setSubject(subject);
+        setIssuedAt(issuedAt);
     }
 }

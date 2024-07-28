@@ -37,19 +37,6 @@ public class UserService {
         this.tokenService = tokenService;
     }
 
-   public UserReturns createUser(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("User with this email already exists");
-        }
-        userRepository.save(user);
-        return UserReturns.builder()
-                .accessToken("someAccessToken")
-                .refreshToken("someRefreshToken")
-                .mfaEnabled(user.isMfaEnabled())
-                .secretImageUri(mfaService.generateQRCodeImage(user.getMfaSecret()))
-                .build();
-    }
-    
  
     
     public void logoutUser(HttpServletResponse response) {
@@ -72,15 +59,4 @@ public class UserService {
         return null;
     }
     
-   public String loginUser(String email, String password) {
-       User user = userRepository.findByEmail(email);
-       System.out.println(user.getId());
-       
-       if (user == null || !BCrypt.checkpw(password, user.getPassword())) {
-           throw new IllegalArgumentException("Invalid email or password");
-       }
-       // Generate a new token for the user
-       String token = tokenService.generateToken(ACCESS_TOKEN, user, "Azion", "Azion");
-       return token;
-   }
 }

@@ -2,15 +2,20 @@ package com.azion.Azion.Org.Service;
 
 import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.User.Model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.*;
 import com.azion.Azion.Org.Repository.OrgRepository;
+
+import java.util.List;
 import java.util.Set;
 
 @Service
 public class OrgService {
-
+    
+    private static final Logger log = LoggerFactory.getLogger(OrgService.class);
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -18,7 +23,6 @@ public class OrgService {
     private OrgRepository orgRepository;
     
     
-    //Add user to organization
     public void addUserToOrg(Org org, User user) {
         user.setOrgid(org.getOrgID());
         Set<User> users = org.getUsers();
@@ -27,10 +31,7 @@ public class OrgService {
         orgRepository.save(org);
     }
     
-    
-    //Saves organization
     public Org createOrg(Org org) {
-        //Check for existing organization
         if(orgRepository.existsOrg(org.getOrgID(), org.getOrgName(), org.getOrgConnectString(), org.getOrgAddress(), org.getOrgEmail())) {
             throw new IllegalArgumentException("Organization with this credentials already exists.");
         }
@@ -38,8 +39,17 @@ public class OrgService {
         return orgRepository.save(org);
         
     }
-    
-    //Get user from organization
+  
+public Org findOrgByUser(User user) {
+    String jpql = "SELECT o FROM Org o JOIN o.users u WHERE u.id = :userId";
+    List<Org> results = entityManager.createQuery(jpql, Org.class)
+            .setParameter("userId", user.getId())
+            .getResultList();
+    if(results.isEmpty()) {
+        return null;
+    }
+    return results.get(0);
+}
     public Set<User> getUsersOfOrg(Org org) {
         return org.getUsers();
     }

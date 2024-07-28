@@ -1,6 +1,7 @@
 package com.azion.Azion.User.Model;
 
 import com.azion.Azion.User.Util.UserUtility;
+import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -46,7 +47,7 @@ public class User {
     private boolean mfaEnabled;
     
     @Column
-    private String mfaSecret;
+    private String mfaSecret ;
     
     
     @ManyToMany(mappedBy = "users")
@@ -69,8 +70,8 @@ public class User {
     }
     
     
-    @PrePersist
-    public void generateId() {
+   
+    private void generateId() {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         this.id = uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis();
     }
@@ -159,9 +160,26 @@ public class User {
     public void setMfaSecret(String mfaSecret) {
         this.mfaSecret = mfaSecret;
     }
-    public User() {
+    
+  private void generateMfaSecret() {
+    DefaultSecretGenerator generator = new DefaultSecretGenerator();
+    String mfaSecretGenerated = generator.generate();
+    try {
+        this.mfaSecret = UserUtility.encryptMFA(mfaSecretGenerated);
+    } catch (Exception e) {
+        this.mfaSecret = "no Secret";
+    }
+}
+    
+
+    @PrePersist
+    public void prePersist() {
+        generateId();
+        generateMfaSecret();
     }
     
+    public User() {
+    }
     public User(String name, Date age, String email, String password, String faceID, String role, byte[] profilePicture) {
         setName(name);
         setAge(age);

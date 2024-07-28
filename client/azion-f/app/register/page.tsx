@@ -1,19 +1,86 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
+import { apiUrl } from "../api/config";
+import { Poppins } from "next/font/google";
 
-const AxiosFunction = (data: any) => {
+interface Token {
+  refreshToken: string;
+  accessToken: string;
+}
+
+const headerText = Poppins({ subsets: ["latin"], weight: "900" });
+
+const AxiosFunction = (data: any, isOwner: boolean) => {
   axios
-    .post("http://localhost:8080/api/auth/register", data, {
+    .post(`${apiUrl}/auth/register`, data, {
       headers: {
-        'Content-Type': 'application/json'
-      }
+        "Content-Type": "application/json",
+      },
     })
     .then(function (response: AxiosResponse) {
-      console.log(response);
+      const accessToken = response.data.accessToken;
+      const refreshToken = response.data.refreshToken;
+      if (!isOwner) {
+        window.location.href = "/organizations";
+      } else if (isOwner) {
+        window.location.href = "/register-organization";
+      }
+
+      localStorage.setItem("azionAccessToken", accessToken);
+      localStorage.setItem("azionRefreshToken", refreshToken);
     })
     .catch(function (error: any) {
       console.log(error.response ? error.response : error);
+    });
+};
+
+const SessionCheck = () => {
+  const refreshToken: string | null = localStorage.getItem("azionRefreshToken");
+  const accessToken: string | null = localStorage.getItem("azionAccessToken");
+
+  const data: Token = {
+    refreshToken: refreshToken ? refreshToken : "",
+    accessToken: accessToken ? accessToken : "",
+  };
+  axios
+    .post(`${apiUrl}/token/session/check`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then(function (response: AxiosResponse) {
+      const message = response.data.message;
+
+      if (message === "newAccessToken generated") {
+        const accessToken = response.data.accessToken;
+
+        localStorage.setItem("azionAccessToken", accessToken);
+        window.location.href = "/organizations";
+      } else if (message === "success") {
+        window.location.href = "/organizations";
+      } else if (message === "sessionCheck failed") {
+        localStorage.removeItem("azionAccessToken");
+        localStorage.removeItem("azionRefreshToken");
+      } else {
+        localStorage.removeItem("azionAccessToken");
+        localStorage.removeItem("azionRefreshToken");
+      }
+    })
+    .catch(function (error: any) {
+      if (error.response) {
+        const message = error.response.data.message;
+
+        if (message === "sessionCheck failed") {
+          localStorage.removeItem("azionAccessToken");
+          localStorage.removeItem("azionRefreshToken");
+        } else {
+          localStorage.removeItem("azionAccessToken");
+          localStorage.removeItem("azionRefreshToken");
+        }
+      } else {
+        console.log("An error occurred, but no server response was received.");
+      }
     });
 };
 
@@ -22,73 +89,122 @@ const Sign_up = () => {
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] =  useState("");
-  const [mfaEnabled, setMfaEnabled] = useState(false);
+  const [password2, setPassword2] = useState("");
+  const [isOrgOwner, setIsOrgOwner] = useState(false);
+  const [role, setRole] = useState("");
 
-const handleSubmit = () => {
-  const parsedDate = new Date(age);
+  useEffect(() => {
+    SessionCheck();
+  }, []);
 
-  const userData = {
-    name,
-    email,
-    age,
-    password,
-    role: "TestUser",
-    mfaEnabled: true
+  const handleSubmit = () => {
+    if (isOrgOwner) {
+      setRole("owner");
+    } else if (!isOrgOwner) {
+      setRole("none");
+    }
+    const userData = {
+      name,
+      email,
+      age,
+      password,
+      role,
+      mfaEnabled: true,
+    };
+    if (password === password2) {
+      AxiosFunction(userData, isOrgOwner);
+    }
   };
 
-  AxiosFunction(userData);
-};
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsOrgOwner(e.target.checked);
+  };
+
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center">
-      <div className="h-[65vh] w-[90vw] md:w-[60vw] lg:w-[40vw] xl:w-[30vw] bg-slate-900 rounded-xl opacity-80 flex flex-col gap-5 justify-center items-center p-5 md:p-10">
-        <h1 className="text-3xl text-slate-200">Sign Up</h1>
-        <div className="w-full flex flex-col justify-center items-center gap-3">
-          <p className="text-slate-200 w-full flex flex-col justify-center items-start ml-4 md:ml-8 lg:ml-12">
-            Input your Username:
-          </p>
-          <input
-            onChange={(e) => setName(e.target.value)}
-            type="text"
-            className="border-2 border-black opacity-100 w-full md:w-10/12 p-1 rounded-md"
-          />
-        </div>
-        <div className="w-full flex flex-col justify-center items-center gap-3">
-          <p className="text-slate-200 w-full flex flex-col justify-center items-start ml-4 md:ml-8 lg:ml-12">
-            Input your Email:
-          </p>
-          <input
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            className="border-2 border-black opacity-100 w-full md:w-10/12 p-1 rounded-md"
-          />
-        </div>
-        <div className="w-full flex flex-col justify-center items-center gap-3">
-          <p className="text-slate-200 w-full flex flex-col justify-center items-start ml-4 md:ml-8 lg:ml-12">
-            Born at:
-          </p>
-          <input
-            onChange={(e) => setAge(e.target.value)}
-            type="date"
-            className="border-2 border-black opacity-100 w-full md:w-10/12 p-1 rounded-md"
-          />
-        </div>
-        <div className="w-full flex flex-col justify-center items-center gap-3">
-          <p className="text-slate-200 w-full flex flex-col justify-center items-start ml-4 md:ml-8 lg:ml-12">
-            Input your Password:
-          </p>
-          <input
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            className="border-2 border-black opacity-100 w-full md:w-10/12 p-1 rounded-md"
-          />
-        </div>
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md"
+    <div className="w-screen h-screen flex justify-center items-center">
+      <div className="w-1/2 h-full">
+        <video
+          className="w-full h-full object-cover"
+          autoPlay
+          loop
+          muted
+          preload="auto"
         >
-          Submit
-        </button>
+          <source src="/azion.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div className="w-1/2 h-full flex flex-col justify-center items-center">
+        <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-around items-center p-5 md:p-10">
+          <h1
+            className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
+          >
+            Register
+          </h1>
+          <div className="w-full flex flex-col justify-center items-center gap-12">
+            <div className="w-full flex flex-col justify-center items-center gap-3">
+              <input
+                onChange={(e) => setName(e.target.value)}
+                type="text"
+                style={{outline: 'none'}}
+                placeholder="Enter your username:"
+                className="bg-[#ebe9e5] pl-6 text-black border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+              />
+            </div>
+            <div className="w-full flex flex-col justify-center items-center gap-3">
+              <input
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                style={{outline: 'none'}}
+                placeholder="Input your Email:"
+                className="bg-[#ebe9e5] pl-6 text-black border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+              />
+            </div>
+            <div className="w-full flex flex-col justify-center items-center gap-3">
+              <input
+                onChange={(e) => setAge(e.target.value)}
+                placeholder="Born At:"
+                style={{outline: 'none'}}
+                type="date"
+                className="bg-[#ebe9e5] text-black border-b-4 placeholder-background text-background pl-6 border-lightAccent opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+              />
+            </div>
+            <div className="w-full flex  flex-col justify-center items-center gap-3">
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password:"
+                style={{outline: 'none'}}
+                type="password"
+                className="bg-[#ebe9e5] text-black pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+              />
+            </div>
+            <div className="w-full flex flex-col justify-center items-center gap-3">
+              <input
+                onChange={(e) => setPassword2(e.target.value)}
+                placeholder="Repeat Password:"
+                style={{outline: 'none'}}
+                type="password"
+                className="bg-[#ebe9e5] text-black pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+              />
+            </div>
+            <div className="w-full  flex flex-col justify-center items-center gap-3">
+              <label className="text-background">
+                <input
+                  type="checkbox"
+                  onChange={handleCheckboxChange}
+                  className="mr-2"
+                />
+                I&apos;m an organization owner
+              </label>
+            </div>
+          </div>
+          <button
+            onClick={handleSubmit}
+            className="bg-accent w-fit text-[#cbccc4] font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
+          >
+            Submit
+          </button>
+        </div>
       </div>
     </div>
   );

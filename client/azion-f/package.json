@@ -10,16 +10,23 @@
   },
   "dependencies": {
     "@heroicons/react": "^1.0.6",
+    "@radix-ui/react-navigation-menu": "^1.2.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "framer-motion": "^11.3.2",
+    "lucide-react": "^0.408.0",
     "next": "14.2.3",
     "next-fonts": "^1.5.1",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "tailwind-merge": "^2.4.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "20.12.12",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "daisyui": "^4.12.10",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "postcss": "^8",
