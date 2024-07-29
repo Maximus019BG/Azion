@@ -73,7 +73,6 @@ public class AuthController {
         user.setAge(dateFormat.parse(bornAt, pos));
         user.setEmail(email);
         user.setPassword(password);
-        user.setFaceID("hardcodedFaceID");
         user.setRole(role);
         user.setMfaEnabled(mfaEnabled);
         
@@ -88,6 +87,7 @@ public class AuthController {
         log.debug("User registered");
         return ResponseEntity.ok(tokens);
     }
+    
     
     @Transactional
     @PostMapping("/login")

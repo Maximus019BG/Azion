@@ -3,6 +3,8 @@ package com.azion.Azion.User.Model;
 import com.azion.Azion.User.Util.UserUtility;
 import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import jakarta.persistence.*;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Date;
@@ -29,8 +31,8 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false)
+    
+    @Column(nullable = true, length = 14336)
     private String faceID;
 
     @Column(nullable = false)
@@ -124,9 +126,19 @@ public class User {
     public String getFaceID() {
         return faceID;
     }
-
-    public void setFaceID(String faceID) {
-        this.faceID = faceID;
+    
+    public void setFaceID(double[] faceID) throws Exception {
+        String faceIDString = UserUtility.doubleArrayToString(faceID);
+        System.out.println(faceIDString);
+        this.faceID = UserUtility.encryptFaceId(faceIDString);
+    }
+    public double[] getDecryptedFaceID() throws Exception {
+        String encryptedFaceID = this.faceID;
+        if (encryptedFaceID == null) {
+            throw new IllegalArgumentException("Face ID cannot be null");
+        }
+        String decryptedFaceIDString = UserUtility.decryptFaceID(this.faceID);
+        return UserUtility.stringToDoubleArray(decryptedFaceIDString);
     }
 
     public String getPassword() {
@@ -180,7 +192,7 @@ public class User {
     
     public User() {
     }
-    public User(String name, Date age, String email, String password, String faceID, String role, byte[] profilePicture) {
+    public User(String name, Date age, String email, String password, double[] faceID, String role, byte[] profilePicture) throws Exception {
         setName(name);
         setAge(age);
         setEmail(email);

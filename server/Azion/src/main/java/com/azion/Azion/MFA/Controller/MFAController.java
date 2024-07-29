@@ -3,6 +3,7 @@ package com.azion.Azion.MFA.Controller;
 import com.azion.Azion.MFA.Service.MFAService;
 import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
+import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,20 +58,32 @@ public class MFAController {
     }
     
     
-    @Transactional
-    @PostMapping("/face")
-    public ResponseEntity<?> handleFaceRecognition(@RequestBody Map<String, String> payload) {
-        try {
-            String base64Image = payload.get("image");
-            Map<String, String> response = new HashMap<>();
-            String processedImage = mfaService.faceRecognition(base64Image);
-            response.put("image", processedImage);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing image");
-        }
+@Transactional
+@PostMapping("/face-scan")
+public ResponseEntity<?> handleFaceRecognition(@RequestBody Map<String, Object> requestBody) {
+    Map<String, String> request = (Map<String, String>) requestBody.get("request");
+    Map<String, String> payload = (Map<String, String>) requestBody.get("payload");
+
+    String token = request.get("accessToken");
+    if (token == null) {
+        return ResponseEntity.badRequest().body(Map.of("error", "Access token is required"));
     }
+    User user = tokenService.getUserFromToken(token);
+    
+    if(user.getFaceID()!=null){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Face ID already exists");
+    }
+    try {
+        String base64Image = payload.get("image");
+        Map<String, String> response = new HashMap<>();
+        String processedImage = mfaService.faceIdMFAScan(base64Image, token);
+        response.put("image", processedImage);
+        return ResponseEntity.ok(response);
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing image");
+    }
+}
     
     
 }
