@@ -4,6 +4,7 @@ import axios, {AxiosResponse} from "axios";
 import { apiUrl } from '../api/config';
 import background from "../../public/background2.jpeg";
 import { Poppins } from 'next/font/google';
+import Cookies from 'js-cookie';
 
 const headerText = Poppins({subsets: ['latin'], weight: '900'});
 
@@ -11,6 +12,7 @@ interface Token {
     refreshToken: string;
     accessToken: string;
 }
+
 const AxiosFunction = (data: any) => {
     axios
         .post(`${apiUrl}/auth/login`, data, {
@@ -22,17 +24,17 @@ const AxiosFunction = (data: any) => {
             const accessToken = response.data.accessToken;
             const refreshToken = response.data.refreshToken;
             window.location.href = '/organizations';
-            localStorage.setItem('azionAccessToken', accessToken);
-            localStorage.setItem('azionRefreshToken', refreshToken);
-
+            Cookies.set('azionAccessToken', accessToken, { secure: true, sameSite: 'Strict' });
+            Cookies.set('azionRefreshToken', refreshToken, { secure: true, sameSite: 'Strict' });
         })
         .catch(function (error: any) {
             console.log(error.response ? error.response : error);
         });
 };
+
 const SessionCheck = () => {
-    const refreshToken: string|null = localStorage.getItem('azionRefreshToken');
-    const accessToken: string|null = localStorage.getItem('azionAccessToken');
+    const refreshToken = Cookies.get('azionRefreshToken');
+    const accessToken = Cookies.get('azionAccessToken');
 
     const data: Token = {
         refreshToken: refreshToken ? refreshToken : '',
@@ -49,35 +51,33 @@ const SessionCheck = () => {
 
             if(message === 'newAccessToken generated') {
                 const accessToken = response.data.accessToken;
-
-                localStorage.setItem('azionAccessToken', accessToken);
+                Cookies.set('azionAccessToken', accessToken, { secure: true, sameSite: 'Strict' });
                 window.location.href = '/organizations';
             }
             else if(message === 'success') {
                 window.location.href = '/organizations';
             }
             else if(message === 'sessionCheck failed'){
-                localStorage.removeItem('azionAccessToken')
-                localStorage.removeItem('azionRefreshToken')
+                Cookies.remove('azionAccessToken');
+                Cookies.remove('azionRefreshToken');
             }
             else{
-                localStorage.removeItem('azionAccessToken')
-                localStorage.removeItem('azionRefreshToken')
+                Cookies.remove('azionAccessToken');
+                Cookies.remove('azionRefreshToken');
             }
 
         })
         .catch(function (error: any) {
-            // console.log(error.response ? error.response : error);
             if (error.response) {
                 const message = error.response.data.message;
 
                 if(message === 'sessionCheck failed'){
-                    localStorage.removeItem('azionAccessToken')
-                    localStorage.removeItem('azionRefreshToken')
+                    Cookies.remove('azionAccessToken');
+                    Cookies.remove('azionRefreshToken');
                 }
                 else{
-                    localStorage.removeItem('azionAccessToken')
-                    localStorage.removeItem('azionRefreshToken')
+                    Cookies.remove('azionAccessToken');
+                    Cookies.remove('azionRefreshToken');
                 }
             }
             else {
@@ -85,14 +85,15 @@ const SessionCheck = () => {
             }
         });
 };
+
 const YourOrg = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [OTP, setOtp] = useState("");
 
     useEffect(() => {
-        const refreshToken = localStorage.getItem('azionRefreshToken');
-        const accessToken = localStorage.getItem('azionAccessToken');
+        const refreshToken = Cookies.get('azionRefreshToken');
+        const accessToken = Cookies.get('azionAccessToken');
 
         if (refreshToken && accessToken) {
             SessionCheck();
@@ -159,4 +160,4 @@ const YourOrg = () => {
     )
 }
 
-export default YourOrg
+export default YourOrg;

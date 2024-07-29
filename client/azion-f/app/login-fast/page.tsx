@@ -1,8 +1,9 @@
-"use client";
+"use client"
 import { useEffect, useRef, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import Image from "next/image";
 import { apiUrl } from '../api/config';
+import Cookies from 'js-cookie';
 
 interface Token {
     refreshToken: string;
@@ -10,8 +11,8 @@ interface Token {
 }
 
 const sessionCheck = () => {
-    const refreshToken: string | null = localStorage.getItem("azionRefreshToken");
-    const accessToken: string | null = localStorage.getItem("azionAccessToken");
+    const refreshToken: string | undefined = Cookies.get("azionRefreshToken");
+    const accessToken: string | undefined = Cookies.get("azionAccessToken");
 
     const data: Token = {
         refreshToken: refreshToken ? refreshToken : "",
@@ -29,16 +30,16 @@ const sessionCheck = () => {
             if (message === "newAccessToken generated") {
                 const accessToken = response.data.accessToken;
 
-                localStorage.setItem("azionAccessToken", accessToken);
+                Cookies.set("azionAccessToken", accessToken, { secure: true, sameSite: 'Strict' });
                 window.location.href = "/organizations";
             } else if (message === "success") {
                 window.location.href = "/organizations";
             } else if (message === "sessionCheck failed") {
-                localStorage.removeItem("azionAccessToken");
-                localStorage.removeItem("azionRefreshToken");
+                Cookies.remove("azionAccessToken");
+                Cookies.remove("azionRefreshToken");
             } else {
-                localStorage.removeItem("azionAccessToken");
-                localStorage.removeItem("azionRefreshToken");
+                Cookies.remove("azionAccessToken");
+                Cookies.remove("azionRefreshToken");
             }
         })
         .catch(function (error: any) {
@@ -46,11 +47,11 @@ const sessionCheck = () => {
                 const message = error.response.data.message;
 
                 if (message === "sessionCheck failed") {
-                    localStorage.removeItem("azionAccessToken");
-                    localStorage.removeItem("azionRefreshToken");
+                    Cookies.remove("azionAccessToken");
+                    Cookies.remove("azionRefreshToken");
                 } else {
-                    localStorage.removeItem("azionAccessToken");
-                    localStorage.removeItem("azionRefreshToken");
+                    Cookies.remove("azionAccessToken");
+                    Cookies.remove("azionRefreshToken");
                 }
             } else {
                 console.log("An error occurred, but no server response was received.");
@@ -89,7 +90,7 @@ export default function FastLogIn() {
                 context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
                 const imageData = canvas.toDataURL('image/jpeg');
                 const base64Image = imageData.split(',')[1];
-                const accessToken: string | null = localStorage.getItem('azionAccessToken');
+                const accessToken: string | undefined = Cookies.get('azionAccessToken');
 
                 const payload = { image: base64Image };
 
@@ -103,9 +104,9 @@ export default function FastLogIn() {
 
                     setAltText('Detected Face');
 
-                    localStorage.setItem('azionAccessToken', response.data.accessToken);
-                    localStorage.setItem('azionRefreshToken', response.data.refreshToken);
-                    if(localStorage.getItem('azionAccessToken') && localStorage.getItem('azionRefreshToken')) {
+                    Cookies.set('azionAccessToken', response.data.accessToken, { secure: true, sameSite: 'Strict' });
+                    Cookies.set('azionRefreshToken', response.data.refreshToken, { secure: true, sameSite: 'Strict' });
+                    if(Cookies.get('azionAccessToken') && Cookies.get('azionRefreshToken')) {
                         sessionCheck();
                     }
                 } catch (error) {

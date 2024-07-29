@@ -97,10 +97,11 @@ public class MFAService {
             log.error("MFA secret not found for user: " + email);
             return false;
         }
-        log.info("User: " + email + " logging in with MFA");
+        log.debug("User: " + email + " logging in with MFA");
         return validateOtp(secret, submittedOtp);
     }
 
+    //For tests!!!
     public String faceLocation(String base64Image) throws IOException {
         CascadeClassifier faceDetector = new CascadeClassifier();
         faceDetector.load(getClass().getClassLoader().getResource("haarcascade_frontalface_alt.xml").getPath());
@@ -110,9 +111,9 @@ public class MFAService {
         faceDetector.detectMultiScale(mat, faceDetections);
 
         if (faceDetections.toArray().length > 0) {
-            log.info("Faces detected: " + faceDetections.toArray().length);
+            log.debug("Faces detected: " + faceDetections.toArray().length);
         } else if (faceDetections.toArray().length == 0) {
-            log.info("No faces detected");
+            log.debug("No faces detected");
             return "no faces detected";
         }
         for (Rect rect : faceDetections.toArray()) {
@@ -166,16 +167,16 @@ public class MFAService {
                 String recognizedPerson = compareFaceEncoding(faceEncoding);
                 if (recognizedPerson != null) {
                     result.append("User scanned before: ").append(recognizedPerson).append("\n");
-                    log.info("User scanned before: " + recognizedPerson);
+                    log.debug("User scanned before: " + recognizedPerson);
                     User user = userRepository.findByEmail(recognizedPerson);
                     if (user != null) {
                         return user.getEmail();
                     } else {
-                        log.info("No user found");
+                        log.debug("No user found");
                         return null;
                     }
                 } else {
-                    log.info("No user found");
+                    log.debug("No user found");
                     return null;
                 }
             }
@@ -231,14 +232,14 @@ public class MFAService {
                 double[] faceEncoding = encodeFace(face);
                 
                 if(user.getFaceID()==null){
-                    log.info("User face ID not found");
+                    log.debug("User face ID not found");
                     try{
                         user.setFaceID(faceEncoding);
                         userRepository.save(user);
                     } catch (Exception e) {
                         log.error("Error saving face ID for user: " + user.getEmail(), e);
                     }
-                    log.info("New user face ID saved");
+                    log.debug("New user face ID saved");
                 }
                 else if(user.getFaceID()!=null) {
                         return "User has face ID saved";
@@ -249,7 +250,7 @@ public class MFAService {
                     } catch (Exception e) {
                         log.error("Error saving face ID for user: " + user.getEmail(), e);
                     }
-                    log.info("New user face ID saved");
+                    log.debug("New user face ID saved");
                 }
             }
         }
@@ -286,7 +287,7 @@ public class MFAService {
                 double distance = calculateEuclideanDistance(newFaceEncoding, storedFaceEncoding);
                 log.debug("Comparing with known face: " + user.getEmail() + ", distance: " + distance);
                 if (distance < THRESHOLD) {
-                    log.info("Recognized user: " + user.getEmail() + " with distance: " + distance);
+                    log.debug("Recognized user: " + user.getEmail() + " with distance: " + distance);
                     return user.getEmail();
                 }
             } catch (Exception e) {

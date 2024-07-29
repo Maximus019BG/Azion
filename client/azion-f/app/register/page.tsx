@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
 import { Poppins } from "next/font/google";
+import Cookies from 'js-cookie';
 
 interface Token {
   refreshToken: string;
@@ -27,8 +28,8 @@ const AxiosFunction = (data: any, isOwner: boolean) => {
         window.location.href = "/register-organization";
       }
 
-      localStorage.setItem("azionAccessToken", accessToken);
-      localStorage.setItem("azionRefreshToken", refreshToken);
+      Cookies.set("azionAccessToken", accessToken, { secure: true, sameSite: 'Strict' });
+      Cookies.set("azionRefreshToken", refreshToken, { secure: true, sameSite: 'Strict' });
     })
     .catch(function (error: any) {
       console.log(error.response ? error.response : error);
@@ -36,8 +37,8 @@ const AxiosFunction = (data: any, isOwner: boolean) => {
 };
 
 const SessionCheck = () => {
-  const refreshToken: string | null = localStorage.getItem("azionRefreshToken");
-  const accessToken: string | null = localStorage.getItem("azionAccessToken");
+  const refreshToken: string | undefined = Cookies.get("azionRefreshToken");
+  const accessToken: string | undefined = Cookies.get("azionAccessToken");
 
   const data: Token = {
     refreshToken: refreshToken ? refreshToken : "",
@@ -55,16 +56,16 @@ const SessionCheck = () => {
       if (message === "newAccessToken generated") {
         const accessToken = response.data.accessToken;
 
-        localStorage.setItem("azionAccessToken", accessToken);
+        Cookies.set("azionAccessToken", accessToken, { secure: true, sameSite: 'Strict' });
         window.location.href = "/organizations";
       } else if (message === "success") {
         window.location.href = "/organizations";
       } else if (message === "sessionCheck failed") {
-        localStorage.removeItem("azionAccessToken");
-        localStorage.removeItem("azionRefreshToken");
+        Cookies.remove("azionAccessToken");
+        Cookies.remove("azionRefreshToken");
       } else {
-        localStorage.removeItem("azionAccessToken");
-        localStorage.removeItem("azionRefreshToken");
+        Cookies.remove("azionAccessToken");
+        Cookies.remove("azionRefreshToken");
       }
     })
     .catch(function (error: any) {
@@ -72,11 +73,11 @@ const SessionCheck = () => {
         const message = error.response.data.message;
 
         if (message === "sessionCheck failed") {
-          localStorage.removeItem("azionAccessToken");
-          localStorage.removeItem("azionRefreshToken");
+          Cookies.remove("azionAccessToken");
+          Cookies.remove("azionRefreshToken");
         } else {
-          localStorage.removeItem("azionAccessToken");
-          localStorage.removeItem("azionRefreshToken");
+          Cookies.remove("azionAccessToken");
+          Cookies.remove("azionRefreshToken");
         }
       } else {
         console.log("An error occurred, but no server response was received.");
@@ -84,7 +85,7 @@ const SessionCheck = () => {
     });
 };
 
-const Sign_up = () => {
+const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
@@ -194,7 +195,7 @@ const Sign_up = () => {
                   onChange={handleCheckboxChange}
                   className="mr-2"
                 />
-                I&apos;m an organization owner
+                I\`m an organization owner
               </label>
             </div>
           </div>
@@ -210,4 +211,4 @@ const Sign_up = () => {
   );
 };
 
-export default Sign_up;
+export default Register;

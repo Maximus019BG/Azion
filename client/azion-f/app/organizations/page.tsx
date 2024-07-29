@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
 import ListAllOrgs from "../components/listAllOrgs";
-
+import Cookies from 'js-cookie';
 
 interface Token {
   refreshToken: string;
@@ -11,8 +11,8 @@ interface Token {
 }
 
 const sessionCheck = () => {
-  const refreshToken = localStorage.getItem('azionRefreshToken');
-  const accessToken = localStorage.getItem('azionAccessToken');
+  const refreshToken = Cookies.get('azionRefreshToken');
+  const accessToken = Cookies.get('azionAccessToken');
 
   const data = { refreshToken, accessToken };
 
@@ -27,41 +27,42 @@ const sessionCheck = () => {
       const { message, accessToken } = response.data;
 
       if (message === 'newAccessToken generated') {
-        localStorage.setItem('azionAccessToken', accessToken);
+        Cookies.set('azionAccessToken', accessToken, { secure: true, sameSite: 'Strict' });
       }
     })
     .catch((error) => {
       console.error(error.response ? error.response : error);
-      localStorage.removeItem('azionAccessToken');
-      localStorage.removeItem('azionRefreshToken');
+      Cookies.remove('azionAccessToken');
+      Cookies.remove('azionRefreshToken');
       window.location.href = '/log-in';
     });
 };
-const PartOfOrg = () => {
-    const data = { token: localStorage.getItem('azionAccessToken') };
-    axios.post(`${apiUrl}/org/partOfOrg`, data, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(function (response: AxiosResponse) {
-            window.location.href = '/orgName';
-        })
-        .catch(function (error) {
 
-        });
+const PartOfOrg = () => {
+  const data = { token: Cookies.get('azionAccessToken') };
+  axios.post(`${apiUrl}/org/partOfOrg`, data, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(function (response: AxiosResponse) {
+      window.location.href = '/orgName';
+    })
+    .catch(function (error) {
+      console.error(error.response ? error.response : error);
+    });
 }
 
 const Home = () => {
   useEffect(() => {
-    const refreshToken = localStorage.getItem('azionRefreshToken');
-    const accessToken = localStorage.getItem('azionAccessToken');
+    const refreshToken = Cookies.get('azionRefreshToken');
+    const accessToken = Cookies.get('azionAccessToken');
     if (refreshToken && accessToken) {
       sessionCheck();
       PartOfOrg();
     }
-    else if(!accessToken && !refreshToken) {
-        window.location.href = '/log-in';
+    else if (!accessToken && !refreshToken) {
+      window.location.href = '/log-in';
     }
   }, []);
 
@@ -69,7 +70,6 @@ const Home = () => {
     <div className="neon-text h-screen w-screen bg-black overflow-x-hidden">
       Organizations
       <ListAllOrgs />
-
     </div>
   );
 };

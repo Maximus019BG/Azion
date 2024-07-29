@@ -92,7 +92,7 @@ public class AuthController {
     @Transactional
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, Object> request,  @RequestHeader(value = "User-Agent") String UserAgent) {
-        log.info("Login attempt");
+        log.debug("Login attempt");
         String email = (String) request.get("email");
         String password = (String) request.get("password");
         String OTP = (String) request.get("OTP");
@@ -136,7 +136,7 @@ public class AuthController {
 @Transactional
 @PostMapping("/fast-login")
 public ResponseEntity<?> fastLogin(@RequestBody Map<String, Object> requestBody, @RequestHeader(value = "User-Agent") String UserAgent) {
-    log.info("Login attempt");
+    log.debug("Fast login attempt");
     Map<String, String> payload = (Map<String, String>) requestBody.get("payload");
     User user = null;
     try {

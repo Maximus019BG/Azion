@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import Image from "next/image";
 import { apiUrl } from '../api/config';
+import Cookies from 'js-cookie';
 
 interface Token {
   refreshToken: string;
@@ -10,8 +11,8 @@ interface Token {
 }
 
 const sessionCheck = () => {
-  const refreshToken = localStorage.getItem('azionRefreshToken');
-  const accessToken = localStorage.getItem('azionAccessToken');
+  const refreshToken = Cookies.get('azionRefreshToken');
+  const accessToken = Cookies.get('azionAccessToken');
 
   const data = { refreshToken, accessToken };
 
@@ -26,13 +27,13 @@ const sessionCheck = () => {
       const { message, accessToken } = response.data;
 
       if (message === 'newAccessToken generated') {
-        localStorage.setItem('azionAccessToken', accessToken);
+        Cookies.set('azionAccessToken', accessToken, { secure: true, sameSite: 'Strict' });
       }
     })
     .catch((error) => {
       console.error(error.response ? error.response : error);
-      localStorage.removeItem('azionAccessToken');
-      localStorage.removeItem('azionRefreshToken');
+      Cookies.remove('azionAccessToken');
+      Cookies.remove('azionRefreshToken');
       window.location.href = '/log-in';
     });
 };
@@ -43,8 +44,8 @@ export default function Camera() {
   const [altText, setAltText] = useState('');
 
   useEffect(() => {
-    const refreshToken = localStorage.getItem('azionRefreshToken');
-    const accessToken = localStorage.getItem('azionAccessToken');
+    const refreshToken = Cookies.get('azionRefreshToken');
+    const accessToken = Cookies.get('azionAccessToken');
     if (refreshToken && accessToken) {
       sessionCheck();
     }
@@ -75,7 +76,7 @@ export default function Camera() {
             context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
             const imageData = canvas.toDataURL('image/jpeg');
             const base64Image = imageData.split(',')[1];
-            const accessToken: string | null = localStorage.getItem('azionAccessToken');
+            const accessToken = Cookies.get('azionAccessToken');
 
             const request = { accessToken };
             const payload = { image: base64Image };

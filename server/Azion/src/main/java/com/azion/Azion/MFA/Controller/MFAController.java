@@ -44,7 +44,7 @@ public class MFAController {
     @Transactional
     @GetMapping("/qr-code")
     public ResponseEntity<?> getQrCodeUri(@RequestParam("accessToken") String accessToken) {
-        log.info("GET /api/mfa/qr-code");
+        log.debug("GET /api/mfa/qr-code");
         if (accessToken == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "Access token is required"));
         }
