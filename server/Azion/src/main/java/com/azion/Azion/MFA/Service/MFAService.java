@@ -128,27 +128,27 @@ public class MFAService {
     public String faceRecognition(String base64Image) throws IOException {
         byte[] imageBytes = Base64.getDecoder().decode(base64Image);
         Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
-
+        
         URL modelConfigUrl = getClass().getClassLoader().getResource("deploy.prototxt");
         URL modelWeightsUrl = getClass().getClassLoader().getResource("res10_300x300_ssd_iter_140000.caffemodel");
-
+        
         if (modelConfigUrl == null || modelWeightsUrl == null) {
             log.error("Model configuration or weights file not found in resources.");
             throw new IOException("Model configuration or weights file not found in resources.");
         }
-
+        
         String modelConfiguration = modelConfigUrl.getPath();
         String modelWeights = modelWeightsUrl.getPath();
         Net net = Dnn.readNetFromCaffe(modelConfiguration, modelWeights);
-
+        
         Mat blob = Dnn.blobFromImage(mat, 1.0, new Size(300, 300), new Scalar(104.0, 177.0, 124.0), false, false);
         net.setInput(blob);
         Mat detections = net.forward();
-
+        
         int cols = mat.cols();
         int rows = mat.rows();
         detections = detections.reshape(1, (int) detections.total() / 7);
-
+        
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < detections.rows(); i++) {
             double confidence = detections.get(i, 2)[0];
@@ -159,24 +159,28 @@ public class MFAService {
                 int y2 = (int) (detections.get(i, 6)[0] * rows);
                 Rect rect = new Rect(new Point(x1, y1), new Point(x2, y2));
                 rectangle(mat, rect, new Scalar(0, 255, 0));
-
+                
                 Mat face = new Mat(mat, rect);
                 double[] faceEncoding = encodeFace(face);
-
+                
                 String recognizedPerson = compareFaceEncoding(faceEncoding);
                 if (recognizedPerson != null) {
                     result.append("User scanned before: ").append(recognizedPerson).append("\n");
                     log.info("User scanned before: " + recognizedPerson);
+                    User user = userRepository.findByEmail(recognizedPerson);
+                    if (user != null) {
+                        return user.getEmail();
+                    } else {
+                        log.info("No user found");
+                        return null;
+                    }
                 } else {
                     log.info("No user found");
+                    return null;
                 }
             }
         }
-
-        MatOfByte matOfByte = new MatOfByte();
-        Imgcodecs.imencode(".jpg", mat, matOfByte);
-        byte[] processedImageBytes = matOfByte.toArray();
-        return Base64.getEncoder().encodeToString(processedImageBytes);
+        return null;
     }
     public String faceIdMFAScan(String base64Image, String token) throws IOException {
         if(token ==null){
