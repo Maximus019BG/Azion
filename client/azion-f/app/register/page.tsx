@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
 import { Poppins } from "next/font/google";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
+import Link from "next/link";
 
 interface Token {
   refreshToken: string;
@@ -28,8 +29,14 @@ const AxiosFunction = (data: any, isOwner: boolean) => {
         window.location.href = "/register-organization";
       }
 
-      Cookies.set("azionAccessToken", accessToken, { secure: true, sameSite: 'Strict' });
-      Cookies.set("azionRefreshToken", refreshToken, { secure: true, sameSite: 'Strict' });
+      Cookies.set("azionAccessToken", accessToken, {
+        secure: true,
+        sameSite: "Strict",
+      });
+      Cookies.set("azionRefreshToken", refreshToken, {
+        secure: true,
+        sameSite: "Strict",
+      });
     })
     .catch(function (error: any) {
       console.log(error.response ? error.response : error);
@@ -56,7 +63,10 @@ const SessionCheck = () => {
       if (message === "newAccessToken generated") {
         const accessToken = response.data.accessToken;
 
-        Cookies.set("azionAccessToken", accessToken, { secure: true, sameSite: 'Strict' });
+        Cookies.set("azionAccessToken", accessToken, {
+          secure: true,
+          sameSite: "Strict",
+        });
         window.location.href = "/organizations";
       } else if (message === "success") {
         window.location.href = "/organizations";
@@ -136,56 +146,55 @@ const Register = () => {
         </video>
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-center">
-        <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-around items-center p-5 md:p-10">
+        <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-evenly items-center p-5 md:p-10">
           <h1
             className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
           >
             Register
           </h1>
-          <div className="w-full flex flex-col justify-center items-center gap-12">
+          <div className="w-full flex flex-col justify-center items-center gap-8">
             <div className="w-full flex flex-col justify-center items-center gap-3">
               <input
                 onChange={(e) => setName(e.target.value)}
                 type="text"
-                style={{outline: 'none'}}
+                style={{ outline: "none" }}
                 placeholder="Enter your username:"
-                className="bg-[#ebe9e5] pl-6 text-black border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
               />
             </div>
             <div className="w-full flex flex-col justify-center items-center gap-3">
               <input
                 onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                style={{outline: 'none'}}
-                placeholder="Input your Email:"
-                className="bg-[#ebe9e5] pl-6 text-black border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+                type="text"
+                style={{ outline: "none" }}
+                placeholder="Enter your username:"
+                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
               />
             </div>
             <div className="w-full flex flex-col justify-center items-center gap-3">
               <input
                 onChange={(e) => setAge(e.target.value)}
-                placeholder="Born At:"
-                style={{outline: 'none'}}
                 type="date"
-                className="bg-[#ebe9e5] text-black border-b-4 placeholder-background text-background pl-6 border-lightAccent opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+                style={{ outline: "none" }}
+                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
               />
             </div>
-            <div className="w-full flex  flex-col justify-center items-center gap-3">
+            <div className="w-full flex flex-col justify-center items-center gap-3">
               <input
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password:"
-                style={{outline: 'none'}}
                 type="password"
-                className="bg-[#ebe9e5] text-black pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+                style={{ outline: "none" }}
+                placeholder="Password:"
+                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
               />
             </div>
             <div className="w-full flex flex-col justify-center items-center gap-3">
               <input
                 onChange={(e) => setPassword2(e.target.value)}
-                placeholder="Repeat Password:"
-                style={{outline: 'none'}}
                 type="password"
-                className="bg-[#ebe9e5] text-black pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
+                style={{ outline: "none" }}
+                placeholder="Repeat Password:"
+                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
               />
             </div>
             <div className="w-full  flex flex-col justify-center items-center gap-3">
@@ -195,16 +204,19 @@ const Register = () => {
                   onChange={handleCheckboxChange}
                   className="mr-2"
                 />
-                I\`m an organization owner
+                I&apos;m an organization owner
               </label>
             </div>
           </div>
-          <button
-            onClick={handleSubmit}
-            className="bg-accent w-fit text-[#cbccc4] font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
-          >
-            Submit
-          </button>
+          <div className=" flex flex-col justify-center items-center gap-5">
+            <button
+              onClick={handleSubmit}
+              className="bg-accent w-fit text-[#cbccc4] font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
+            >
+              Submit
+            </button>
+            <h1 className="text-black">If you have an existing account go to <Link href="/log-in" className=" text-lightAccent hover:text-[#51bbb6] font-extrabold text-xl underline">Log-In</Link></h1>
+          </div>
         </div>
       </div>
     </div>

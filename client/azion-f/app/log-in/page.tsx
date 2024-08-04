@@ -1,10 +1,14 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
 import { Poppins } from "next/font/google";
 import OTP from "../components/OTP";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
+import Link from "next/link";
+import Image from "next/image";
+import previous from "../../public/previous.png";
 
 interface Token {
   refreshToken: string;
@@ -29,8 +33,14 @@ const AxiosFunction = (data: any, isOwner: boolean) => {
         window.location.href = "/register-organization";
       }
 
-      Cookies.set("azionAccessToken", accessToken, { secure: true, sameSite: 'Strict' });
-      Cookies.set("azionRefreshToken", refreshToken, { secure: true, sameSite: 'Strict' });
+      Cookies.set("azionAccessToken", accessToken, {
+        secure: true,
+        sameSite: "Strict",
+      });
+      Cookies.set("azionRefreshToken", refreshToken, {
+        secure: true,
+        sameSite: "Strict",
+      });
     })
     .catch(function (error: any) {
       console.log(error.response ? error.response : error);
@@ -57,7 +67,10 @@ const SessionCheck = () => {
       if (message === "newAccessToken generated") {
         const accessToken = response.data.accessToken;
 
-        Cookies.set("azionAccessToken", accessToken, { secure: true, sameSite: 'Strict' });
+        Cookies.set("azionAccessToken", accessToken, {
+          secure: true,
+          sameSite: "Strict",
+        });
         window.location.href = "/organizations";
       } else if (message === "success") {
         window.location.href = "/organizations";
@@ -119,7 +132,7 @@ const Sign_up = () => {
     }
   };
 
-  const handleContiniue = () => {
+  const handleContinue = () => {
     setOpenModal(true);
   };
 
@@ -153,9 +166,17 @@ const Sign_up = () => {
         </video>
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-center">
-        <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-around items-center p-5 md:p-10">
+        <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-evenly items-center p-3 md:p-10">
+          <Link className="absolute right-12 top-5" href="/">
+            <Image
+              src={previous.src}
+              alt="Go Home"
+              width={50}
+              height={50}
+            />
+          </Link>
           <h1
-            className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
+            className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-8xl ${headerText.className}`}
           >
             Login
           </h1>
@@ -164,27 +185,39 @@ const Sign_up = () => {
               <input
                 onChange={(e) => setName(e.target.value)}
                 type="text"
-                style={{outline: 'none'}}
+                style={{ outline: "none" }}
                 placeholder="Enter your username:"
                 className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
               />
             </div>
-            <div className="w-full flex  flex-col justify-center items-center gap-3">
+            <div className="w-full flex flex-col justify-center items-center gap-3">
               <input
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password:"
                 type="password"
-                className="bg-[#ebe9e5] text-black pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
                 style={{ outline: "none" }}
+                placeholder="Password:"
+                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
               />
             </div>
           </div>
-          <button
-            onClick={showModal}
-            className="bg-accent w-fit text-[#cbccc4] font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
-          >
-            Continiue
-          </button>
+          <div className=" flex flex-col justify-center items-center gap-5">
+            <button
+              onClick={showModal}
+              className="bg-accent w-fit text-[#cbccc4] font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
+            >
+              Continue
+            </button>
+
+            <h1 className="text-black">
+              If you don&apos;t have an existing account go to{" "}
+              <Link
+                href="/register"
+                className=" text-lightAccent hover:text-[#51bbb6] font-extrabold text-xl underline"
+              >
+                Register
+              </Link>
+            </h1>
+          </div>
 
           <dialog
             id="my_modal_5"
@@ -224,3 +257,4 @@ const Sign_up = () => {
 };
 
 export default Sign_up;
+``
