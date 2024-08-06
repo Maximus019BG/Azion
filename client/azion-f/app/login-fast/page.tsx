@@ -156,7 +156,7 @@ export default function FastLogIn() {
         className="text-white bg-lightAccent w-fit font-black text-2xl px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
         onClick={captureAndSendFrame}
       >
-        Save face
+        Login
       </button>
       {imageSrc && (
         <Image src={imageSrc} width={300} height={300} alt={altText} />

@@ -5,6 +5,8 @@ import { apiUrl } from "../api/config";
 import { Poppins } from "next/font/google";
 import Cookies from "js-cookie";
 import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleLeft } from "@fortawesome/free-solid-svg-icons";
 
 interface Token {
   refreshToken: string;
@@ -147,6 +149,9 @@ const Register = () => {
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-center">
         <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-evenly items-center p-5 md:p-10">
+        <Link className="absolute right-12 top-12" href="/">
+            <FontAwesomeIcon className=" text-6xl text-lightAccent" icon={faCircleLeft} />
+        </Link>
           <h1
             className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
           >
