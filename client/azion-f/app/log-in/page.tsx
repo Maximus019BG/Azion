@@ -99,7 +99,7 @@ const SessionCheck = () => {
     });
 };
 
-const Sign_up = () => {
+const Login = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
@@ -167,8 +167,8 @@ const Sign_up = () => {
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-center">
         <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-evenly items-center p-3 md:p-10">
-          <Link className="absolute right-12 top-12" href="/">
-            <FontAwesomeIcon className=" text-6xl text-lightAccent" icon={faCircleLeft} />
+          <Link className="absolute right-6 top-6" href="/">
+            <FontAwesomeIcon className=" text-4xl text-lightAccent" icon={faCircleLeft} />
           </Link>
           <h1
             className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-8xl ${headerText.className}`}
@@ -251,4 +251,4 @@ const Sign_up = () => {
   );
 };
 
-export default Sign_up;
+export default Login;

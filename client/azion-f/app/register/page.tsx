@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
@@ -11,6 +12,14 @@ import { faCircleLeft } from "@fortawesome/free-solid-svg-icons";
 interface Token {
   refreshToken: string;
   accessToken: string;
+}
+
+interface InputField<T> {
+  label: string;
+  value: T;
+  onChange: (value: T) => void;
+  type?: "text" | "email" | "date" | "password" | "checkbox";
+  combinedWith?: string;
 }
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
@@ -105,6 +114,7 @@ const Register = () => {
   const [password2, setPassword2] = useState("");
   const [isOrgOwner, setIsOrgOwner] = useState(false);
   const [role, setRole] = useState("");
+  const [step, setStep] = useState(0);
 
   useEffect(() => {
     SessionCheck();
@@ -126,16 +136,44 @@ const Register = () => {
     };
     if (password === password2) {
       AxiosFunction(userData, isOrgOwner);
+    } else {
+      alert("Passwords do not match.");
     }
   };
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsOrgOwner(e.target.checked);
+  const handleNextStep = () => {
+    if (step === 3) {
+      // Skip step 4
+      setStep(step + 2);
+    } else if (step < inputFields.length - 1) {
+      setStep(step + 1);
+    }
+  };
+
+  const inputFields: InputField<any>[] = [
+    { label: "Enter your username:", value: name, onChange: setName, type: "text" },
+    { label: "Enter your email:", value: email, onChange: setEmail, type: "email" },
+    { label: "Enter your age:", value: age, onChange: setAge, type: "date" },
+    { label: "Password:", value: password, onChange: setPassword, type: "password", combinedWith: "Confirm Password:" },
+    { label: "Confirm Password:", value: password2, onChange: setPassword2, type: "password", combinedWith: "Password:" },
+    { label: "I'm an organization owner", value: isOrgOwner, onChange: setIsOrgOwner, type: "checkbox" }
+  ];
+
+  const getCurrentFields = () => {
+    if (step === 3) {
+      // Group fields based on the `combinedWith` property
+      return inputFields.filter(field =>
+        field.label === "Password:" || field.label === "Confirm Password:"
+      );
+    }
+  
+    // For other steps, display fields individually
+    return [inputFields[step]];
   };
 
   return (
     <div className="w-screen h-screen flex justify-center items-center">
-      <div className="w-1/2 h-full">
+      <div className="w-1/2 h-full order-2">
         <video
           className="w-full h-full object-cover"
           autoPlay
@@ -149,78 +187,60 @@ const Register = () => {
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-center">
         <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-evenly items-center p-5 md:p-10">
-        <Link className="absolute right-12 top-12" href="/">
-            <FontAwesomeIcon className=" text-6xl text-lightAccent" icon={faCircleLeft} />
-        </Link>
+          <Link className="absolute left-6 top-6" href="/">
+            <FontAwesomeIcon className="text-4xl text-lightAccent" icon={faCircleLeft} />
+          </Link>
           <h1
             className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
           >
             Register
           </h1>
-          <div className="w-full flex flex-col justify-center items-center gap-8">
+          <div className="w-full flex flex-col justify-center items-center gap-12">
             <div className="w-full flex flex-col justify-center items-center gap-3">
-              <input
-                onChange={(e) => setName(e.target.value)}
-                type="text"
-                style={{ outline: "none" }}
-                placeholder="Enter your username:"
-                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
-              />
+              <progress value={step} max={inputFields.length - 1} className="w-full md:w-10/12 mb-5"></progress>
+              {getCurrentFields().map((field, index) => (
+                <div key={index} className="w-full flex flex-col justify-center items-center gap-3">
+                  {field.type === "checkbox" ? (
+                    <label className="text-background">
+                      <input
+                        type="checkbox"
+                        checked={field.value as boolean}
+                        onChange={(e) => field.onChange(e.target.checked as any)}
+                        className="mr-2"
+                      />
+                      {field.label}
+                    </label>
+                  ) : (
+                    <input
+                      type={field.type || "text"}
+                      value={field.value as string}
+                      onChange={(e) => field.onChange(e.target.value as any)}
+                      style={{ outline: "none" }}
+                      placeholder={field.label}
+                      className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
+                    />
+                  )}
+                </div>
+              ))}
             </div>
-            <div className="w-full flex flex-col justify-center items-center gap-3">
-              <input
-                onChange={(e) => setEmail(e.target.value)}
-                type="text"
-                style={{ outline: "none" }}
-                placeholder="Enter your username:"
-                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
-              />
+            <div className="w-full flex justify-center items-center gap-3">
+              {step < inputFields.length - 1 && (
+                <button
+                  onClick={handleNextStep}
+                  className="bg-lightAccent text-black p-2 rounded-lg hover:bg-darkAccent"
+                >
+                  Next
+                </button>
+              )}
+              {step === inputFields.length - 1 && (
+                <button
+                  onClick={handleSubmit}
+                  className="bg-lightAccent text-black p-2 rounded-lg hover:bg-darkAccent"
+                >
+                  Submit
+                </button>
+              )}
             </div>
-            <div className="w-full flex flex-col justify-center items-center gap-3">
-              <input
-                onChange={(e) => setAge(e.target.value)}
-                type="date"
-                style={{ outline: "none" }}
-                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
-              />
-            </div>
-            <div className="w-full flex flex-col justify-center items-center gap-3">
-              <input
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-                style={{ outline: "none" }}
-                placeholder="Password:"
-                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
-              />
-            </div>
-            <div className="w-full flex flex-col justify-center items-center gap-3">
-              <input
-                onChange={(e) => setPassword2(e.target.value)}
-                type="password"
-                style={{ outline: "none" }}
-                placeholder="Repeat Password:"
-                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
-              />
-            </div>
-            <div className="w-full  flex flex-col justify-center items-center gap-3">
-              <label className="text-background">
-                <input
-                  type="checkbox"
-                  onChange={handleCheckboxChange}
-                  className="mr-2"
-                />
-                I&apos;m an organization owner
-              </label>
-            </div>
-          </div>
-          <div className=" flex flex-col justify-center items-center gap-5">
-            <button
-              onClick={handleSubmit}
-              className="bg-accent w-fit text-[#cbccc4] font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
-            >
-              Submit
-            </button>
-            <h1 className="text-black">If you have an existing account go to <Link href="/log-in" className=" text-lightAccent hover:text-[#51bbb6] font-extrabold text-xl underline">Log-In</Link></h1>
           </div>
         </div>
       </div>
