@@ -4,10 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "./components/Navbar";
 import { Commissioner, Poppins } from "next/font/google";
-import background from "../public/background1.png";
+import background from "../public/background2.jpeg";
 import axios, {AxiosResponse} from "axios";
 import {apiUrl} from "./api/config";
 import {useEffect, useState} from "react";
+import Main_Services from "./components/main-services";
+import Footer from "./components/Footer";
 
 
 interface Token {
@@ -128,8 +130,12 @@ const Home = () => {
             height={800}
           ></Image>
         </div>
-        
       </motion.div>
+
+    <div className=" flex flex-col justify-center items-center mt-48">
+      <Main_Services/>
+    </div>
+    <Footer/>
     </div>
   );
 };
