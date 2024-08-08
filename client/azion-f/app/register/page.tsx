@@ -227,9 +227,7 @@ const Register = () => {
               {step < inputFields.length - 1 && (
                 <button
                   onClick={handleNextStep}
-                  className="bg-lightAccent text-slate-5
-                  
-                  0 font-extrabold p-2 rounded-lg hover:bg-darkAccent"
+                  className="bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
                 >
                   Next
                 </button>
@@ -237,7 +235,7 @@ const Register = () => {
               {step === inputFields.length - 1 && (
                 <button
                   onClick={handleSubmit}
-                  className="bg-lightAccent text-black p-2 rounded-lg hover:bg-darkAccent"
+                  className="bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
                 >
                   Submit
                 </button>
