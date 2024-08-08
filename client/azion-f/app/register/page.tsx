@@ -197,7 +197,7 @@ const Register = () => {
           </h1>
           <div className="w-full flex flex-col justify-center items-center gap-12">
             <div className="w-full flex flex-col justify-center items-center gap-3">
-              <progress value={step} max={inputFields.length - 1} className="w-full md:w-10/12 mb-5"></progress>
+              <progress value={step} max={inputFields.length - 1} className="progress progress-accent w-5/6 mb-8 bg-slate-400"></progress>
               {getCurrentFields().map((field, index) => (
                 <div key={index} className="w-full flex flex-col justify-center items-center gap-3">
                   {field.type === "checkbox" ? (
@@ -227,7 +227,9 @@ const Register = () => {
               {step < inputFields.length - 1 && (
                 <button
                   onClick={handleNextStep}
-                  className="bg-lightAccent text-black p-2 rounded-lg hover:bg-darkAccent"
+                  className="bg-lightAccent text-slate-5
+                  
+                  0 font-extrabold p-2 rounded-lg hover:bg-darkAccent"
                 >
                   Next
                 </button>
