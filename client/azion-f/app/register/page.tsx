@@ -225,20 +225,20 @@ const Register = () => {
             </div>
             <div className="w-full flex justify-center items-center gap-3">
               {step < inputFields.length - 1 && (
-                <button
+                <abbr title="click to move to the next one"
                   onClick={handleNextStep}
                   className="bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
                 >
                   Next
-                </button>
+                </abbr>
               )}
               {step === inputFields.length - 1 && (
-                <button
+                <abbr title="click to submit"
                   onClick={handleSubmit}
                   className="bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
                 >
                   Submit
-                </button>
+                </abbr>
               )}
             </div>
           </div>
