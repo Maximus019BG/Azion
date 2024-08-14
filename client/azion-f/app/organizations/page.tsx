@@ -4,6 +4,8 @@ import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
 import ListAllOrgs from "../components/listAllOrgs";
 import Cookies from 'js-cookie';
+import Side_menu from "../components/Side-menu";
+
 
 interface Token {
   refreshToken: string;
@@ -61,14 +63,15 @@ const Home = () => {
       sessionCheck();
       PartOfOrg();
     }
-    else if (!accessToken && !refreshToken) {
-      window.location.href = '/log-in';
-    }
+    // else if (!accessToken && !refreshToken) {
+    //   window.location.href = '/log-in';
+    // }
   }, []);
 
   return (
-    <div className="neon-text h-screen w-screen bg-black overflow-x-hidden">
-      Organizations
+    <div className="neon-text h-screen w-screen bg-black overflow-x-hidden flex justify-start items-start">
+    <div className=""><Side_menu/></div>
+      
       <ListAllOrgs />
     </div>
   );
