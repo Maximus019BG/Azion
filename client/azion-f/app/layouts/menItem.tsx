@@ -1,8 +1,8 @@
 import React from "react";
 
-// Define prop types
+
 interface MenuItemProps {
-  icon: React.ReactNode; // This can be any React node (like an SVG element)
+  icon: React.ReactNode; 
   text: string;
   tooltip: string;
 }

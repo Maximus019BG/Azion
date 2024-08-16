@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
@@ -151,28 +150,64 @@ const Register = () => {
   };
 
   const inputFields: InputField<any>[] = [
-    { label: "Enter your username:", value: name, onChange: setName, type: "text" },
-    { label: "Enter your email:", value: email, onChange: setEmail, type: "email" },
+    {
+      label: "Enter your username:",
+      value: name,
+      onChange: setName,
+      type: "text",
+    },
+    {
+      label: "Enter your email:",
+      value: email,
+      onChange: setEmail,
+      type: "email",
+    },
     { label: "Enter your age:", value: age, onChange: setAge, type: "date" },
-    { label: "Password:", value: password, onChange: setPassword, type: "password", combinedWith: "Confirm Password:" },
-    { label: "Confirm Password:", value: password2, onChange: setPassword2, type: "password", combinedWith: "Password:" },
-    { label: "I'm an organization owner", value: isOrgOwner, onChange: setIsOrgOwner, type: "checkbox" }
+    {
+      label: "Password:",
+      value: password,
+      onChange: setPassword,
+      type: "password",
+      combinedWith: "Confirm Password:",
+    },
+    {
+      label: "Confirm Password:",
+      value: password2,
+      onChange: setPassword2,
+      type: "password",
+      combinedWith: "Password:",
+    },
+    {
+      label: "I'm an organization owner",
+      value: isOrgOwner,
+      onChange: setIsOrgOwner,
+      type: "checkbox",
+    },
   ];
 
   const getCurrentFields = () => {
     if (step === 3) {
-      // Group fields based on the `combinedWith` property
-      return inputFields.filter(field =>
-        field.label === "Password:" || field.label === "Confirm Password:"
+      // Group fields
+      return inputFields.filter(
+        (field) =>
+          field.label === "Password:" || field.label === "Confirm Password:"
       );
     }
-  
-    // For other steps, display fields individually
+
+    // оther steps
     return [inputFields[step]];
   };
 
+  const stepLabels = [
+    "Register",
+    "Enter Details",
+    "Password",
+    "Organization?",
+    "Submit",
+  ];
+
   return (
-    <div className="w-screen h-screen flex justify-center items-center">
+    <div className="lg:w-screen lg:h-screen flex flex-col lg:flex-row justify-center items-center">
       <div className="w-1/2 h-full order-2">
         <video
           className="w-full h-full object-cover"
@@ -186,26 +221,45 @@ const Register = () => {
         </video>
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-center">
-        <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-evenly items-center p-5 md:p-10">
+        <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-center items-center gap-24 p-5 md:p-10">
           <Link className="absolute left-6 top-6" href="/">
-            <FontAwesomeIcon className="text-4xl text-lightAccent" icon={faCircleLeft} />
+            <FontAwesomeIcon
+              className="text-4xl text-lightAccent"
+              icon={faCircleLeft}
+            />
           </Link>
           <h1
             className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
           >
             Register
           </h1>
-          <div className="w-full flex flex-col justify-center items-center gap-12">
-            <div className="w-full flex flex-col justify-center items-center gap-3">
-              <progress value={step} max={inputFields.length - 1} className="progress progress-accent w-5/6 mb-8 bg-slate-400"></progress>
+          <div className="w-full flex flex-col justify-center gap-10 items-center">
+            {/* Vertical Steps */}
+            <ul className="steps steps-vertical lg:steps-horizontal ">
+              {stepLabels.map((label, index) => (
+                <li
+                  key={index}
+                  className={`step ${index <= step ? "step-primary" : ""}`}
+                >
+                  {label}
+                </li>
+              ))}
+            </ul>
+            {/* Form Fields */}
+            <div className="w-[30vw] flex flex-col justify-center items-center gap-3">
               {getCurrentFields().map((field, index) => (
-                <div key={index} className="w-full flex flex-col justify-center items-center gap-3">
+                <div
+                  key={index}
+                  className="w-full flex flex-col justify-center items-center gap-3"
+                >
                   {field.type === "checkbox" ? (
                     <label className="text-background">
                       <input
                         type="checkbox"
                         checked={field.value as boolean}
-                        onChange={(e) => field.onChange(e.target.checked as any)}
+                        onChange={(e) =>
+                          field.onChange(e.target.checked as any)
+                        }
                         className="mr-2"
                       />
                       {field.label}
@@ -223,24 +277,26 @@ const Register = () => {
                 </div>
               ))}
             </div>
-            <div className="w-full flex justify-center items-center gap-3">
-              {step < inputFields.length - 1 && (
-                <abbr title="click to move to the next one"
-                  onClick={handleNextStep}
-                  className="bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
-                >
-                  Next
-                </abbr>
-              )}
-              {step === inputFields.length - 1 && (
-                <abbr title="click to submit"
-                  onClick={handleSubmit}
-                  className="bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
-                >
-                  Submit
-                </abbr>
-              )}
-            </div>
+          </div>
+          <div className="w-full flex justify-center items-center gap-3">
+            {step < inputFields.length - 1 && (
+              <button
+                title="click to move to the next one"
+                onClick={handleNextStep}
+                className="bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
+              >
+                Next
+              </button>
+            )}
+            {step === inputFields.length - 1 && (
+              <button
+                title="click to submit"
+                onClick={handleSubmit}
+                className="bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
+              >
+                Submit
+              </button>
+            )}
           </div>
         </div>
       </div>

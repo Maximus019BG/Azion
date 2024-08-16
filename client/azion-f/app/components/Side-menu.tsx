@@ -63,7 +63,7 @@ const SideMenu = () => {
             text="Home"
             tooltip="Home"
           />
-          {/* Add more MenuItem components as needed */}
+          {/* Add more */}
         </ul>
       </div>
     </div>

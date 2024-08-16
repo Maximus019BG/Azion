@@ -11,7 +11,7 @@ interface Organization {
   orgType: string;
 }
 
-const ListAllOrgs = () => {
+const ListAllOrgs = (searchTerm:any) => {
     const [orgs, setOrgs] = useState<Organization[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -26,7 +26,7 @@ const ListAllOrgs = () => {
                 console.error(error.response ? error.response : error);
             });
     }, []);
-    if(loading) {return <h2></h2>}
+    if(loading) {return <h2>Loading...</h2>}
 
     if (orgs.length === 0&& !loading) {
         return <h2>No organizations to display</h2>

@@ -55,7 +55,10 @@ const PartOfOrg = () => {
     });
 }
 
-const Home = () => {
+const Organizations = () => {
+
+  const [result, setResult] = React.useState([]);
+
   useEffect(() => {
     const refreshToken = Cookies.get('azionRefreshToken');
     const accessToken = Cookies.get('azionAccessToken');
@@ -77,4 +80,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Organizations;
