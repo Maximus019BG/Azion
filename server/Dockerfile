@@ -1,11 +1,7 @@
-FROM openjdk:17-jdk
+FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY ./Azion/target/Azion-0.0.1-SNAPSHOT.jar /app/
+COPY target/Azion-0.0.1-SNAPSHOT.jar /app/Azion-0.0.1-SNAPSHOT.jar
 
-COPY .env /app/
-
-EXPOSE 8080
-
-CMD ["java", "-jar", "Azion-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/Azion-0.0.1-SNAPSHOT.jar"]

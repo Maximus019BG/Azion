@@ -23,58 +23,67 @@ const Register_Organisation = () => {
         <div className="w-full flex flex-col justify-center items-center gap-12">
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
-            //   onChange={(e) => setName(e.target.value)}
-              type="text"
-              placeholder="Enter your username:"
-              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                //   onChange={(e) => setName(e.target.value)}
+                type="text"
+                placeholder="Organization Name:"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
-            //   onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              placeholder="Input your Email:"
-              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                //   onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                placeholder="Organization Email:"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+            />
+          </div>
+
+          <div className="w-full flex flex-col justify-center items-center gap-3">
+            <input
+                //   onChange={(e) => setPassword(e.target.value)}
+                placeholder="Organization Address:"
+                type="password"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
-            //   onChange={(e) => setAge(e.target.value)}
-              placeholder="Born At:"
-              type="date"
-              className="pl-5 bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                //   onChange={(e) => setPassword2(e.target.value)}
+                placeholder="Type of Organization:"
+                type="password"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
-            //   onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password:"
-              type="password"
-              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                //   onChange={(e) => setPassword2(e.target.value)}
+                placeholder="Organization Phone:"
+                type="password"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
-            //   onChange={(e) => setPassword2(e.target.value)}
-              placeholder="Repeat Password:"
-              type="password"
-              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                //   onChange={(e) => setPassword2(e.target.value)}
+                placeholder="Organization Description:"
+                type="password"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <label className="text-neonAccent">
               <input
-                type="checkbox"
-                // onChange={handleCheckboxChange}
-                className="mr-2"
+                  type="checkbox"
+                  // onChange={handleCheckboxChange}
+                  className="mr-2"
               />
               I&apos;m an organization owner
             </label>
           </div>
         </div>
         <button
-        //   onClick={handleSubmit}
-          className="bg-background w-fit text-neonAccent hover:border-2 hover:border-neonAccent font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
+            //   onClick={handleSubmit}
+            className="bg-background w-fit text-neonAccent hover:border-2 hover:border-neonAccent font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
         >
           Submit
         </button>
