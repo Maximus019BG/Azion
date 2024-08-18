@@ -17,34 +17,30 @@ interface Token {
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
-const AxiosFunction = (data: any, isOwner: boolean) => {
+const AxiosFunction = (data: any) => {
   axios
-    .post(`${apiUrl}/auth/register`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then(function (response: AxiosResponse) {
-      const accessToken = response.data.accessToken;
-      const refreshToken = response.data.refreshToken;
-      if (!isOwner) {
-        window.location.href = "/organizations";
-      } else if (isOwner) {
-        window.location.href = "/register-organization";
-      }
+      .post(`${apiUrl}/auth/login`, data, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(function (response: AxiosResponse) {
+        const accessToken = response.data.accessToken;
+        const refreshToken = response.data.refreshToken;
+        window.location.href = '/organizations';
+        Cookies.set('azionAccessToken', accessToken, {
+          secure: true,
+          sameSite: "None",
+        });
+        Cookies.set('azionRefreshToken', refreshToken, {
+          secure: true,
+          sameSite: "None",
+        });
 
-      Cookies.set("azionAccessToken", accessToken, {
-        secure: true,
-        sameSite: "Strict",
+      })
+      .catch(function (error: any) {
+        console.log(error.response ? error.response : error);
       });
-      Cookies.set("azionRefreshToken", refreshToken, {
-        secure: true,
-        sameSite: "Strict",
-      });
-    })
-    .catch(function (error: any) {
-      console.log(error.response ? error.response : error);
-    });
 };
 
 const SessionCheck = () => {
@@ -66,7 +62,6 @@ const SessionCheck = () => {
 
       if (message === "newAccessToken generated") {
         const accessToken = response.data.accessToken;
-
         Cookies.set("azionAccessToken", accessToken, {
           secure: true,
           sameSite: "Strict",
@@ -100,45 +95,22 @@ const SessionCheck = () => {
 };
 
 const Login = () => {
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [age, setAge] = useState("");
   const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
-  const [isOrgOwner, setIsOrgOwner] = useState(false);
-  const [role, setRole] = useState("");
-  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     SessionCheck();
   }, []);
 
-  const handleSubmit = () => {
-    if (isOrgOwner) {
-      setRole("owner");
-    } else if (!isOrgOwner) {
-      setRole("none");
-    }
+  const handleSubmit = (otp:string) => {
     const userData = {
-      name,
       email,
-      age,
       password,
-      role,
-      mfaEnabled: true,
+      OTP: otp
     };
-    if (password === password2) {
-      AxiosFunction(userData, isOrgOwner);
-    }
+      AxiosFunction(userData);
   };
 
-  const handleContinue = () => {
-    setOpenModal(true);
-  };
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsOrgOwner(e.target.checked);
-  };
 
   const showModal = () => {
     const modal = document.getElementById(
@@ -178,10 +150,10 @@ const Login = () => {
           <div className="w-full flex flex-col justify-center items-center gap-12">
             <div className="w-full flex flex-col justify-center items-center gap-3">
               <input
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 type="text"
                 style={{ outline: "none" }}
-                placeholder="Enter your username:"
+                placeholder="Enter your email:"
                 className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
               />
             </div>

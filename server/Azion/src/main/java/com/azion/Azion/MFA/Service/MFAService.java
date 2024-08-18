@@ -282,16 +282,18 @@ public class MFAService {
     public String compareFaceEncoding(double[] newFaceEncoding) {
         List<User> users = userRepository.findAll();
         for (User user : users) {
-            try {
-                double[] storedFaceEncoding = user.getDecryptedFaceID();
-                double distance = calculateEuclideanDistance(newFaceEncoding, storedFaceEncoding);
-                log.debug("Comparing with known face: " + user.getEmail() + ", distance: " + distance);
-                if (distance < THRESHOLD) {
-                    log.debug("Recognized user: " + user.getEmail() + " with distance: " + distance);
-                    return user.getEmail();
+            if(user.getFaceID()!=null) {
+                try {
+                    double[] storedFaceEncoding = user.getDecryptedFaceID();
+                    double distance = calculateEuclideanDistance(newFaceEncoding, storedFaceEncoding);
+                    log.debug("Comparing with known face: " + user.getEmail() + ", distance: " + distance);
+                    if (distance < THRESHOLD) {
+                        log.debug("Recognized user: " + user.getEmail() + " with distance: " + distance);
+                        return user.getEmail();
+                    }
+                } catch (Exception e) {
+                    log.error("Error decrypting face ID for user: " + user.getEmail(), e);
                 }
-            } catch (Exception e) {
-                log.error("Error decrypting face ID for user: " + user.getEmail(), e);
             }
         }
         return null;

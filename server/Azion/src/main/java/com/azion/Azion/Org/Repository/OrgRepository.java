@@ -4,6 +4,7 @@ import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.Org.OrgProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Optional;
 public interface OrgRepository extends JpaRepository<Org, String> {
     Optional<Org> findOrgByOrgConnectString(String orgConnectString);
     Optional<Org> findOrgByOrgName(String orgName);
+    Optional<Org> findOrgByOrgAddress(String orgID);
  
     @Query("SELECT o FROM Org o")
     List<OrgProjection> findAllOrgs();
