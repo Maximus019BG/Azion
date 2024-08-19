@@ -28,7 +28,6 @@ public class UserService {
     private final TokenService tokenService;
     
     
-    //Constructor
     @Autowired
     public UserService(UserRepository userRepository,UserReturns userReturns, MFAService mfaService, TokenService tokenService) {
         this.userRepository = userRepository;
@@ -37,10 +36,8 @@ public class UserService {
         this.tokenService = tokenService;
     }
 
- 
     
     public void logoutUser(HttpServletResponse response) {
-        
         Cookie jwtCookie = new Cookie("jwt", null);
         jwtCookie.setMaxAge(0);
         Cookie refreshTokenCookie = new Cookie("refreshToken", null);

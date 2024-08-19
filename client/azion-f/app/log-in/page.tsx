@@ -1,9 +1,14 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
 import { Poppins } from "next/font/google";
 import OTP from "../components/OTP";
+import Cookies from "js-cookie";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleLeft } from "@fortawesome/free-solid-svg-icons";
 
 interface Token {
   refreshToken: string;
@@ -12,33 +17,35 @@ interface Token {
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
-const AxiosFunction = (data: any, isOwner: boolean) => {
+const AxiosFunction = (data: any) => {
   axios
-    .post(`${apiUrl}/auth/register`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then(function (response: AxiosResponse) {
-      const accessToken = response.data.accessToken;
-      const refreshToken = response.data.refreshToken;
-      if (!isOwner) {
-        window.location.href = "/organizations";
-      } else if (isOwner) {
-        window.location.href = "/register-organization";
-      }
+      .post(`${apiUrl}/auth/login`, data, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(function (response: AxiosResponse) {
+        const accessToken = response.data.accessToken;
+        const refreshToken = response.data.refreshToken;
+        window.location.href = '/organizations';
+        Cookies.set('azionAccessToken', accessToken, {
+          secure: true,
+          sameSite: "None",
+        });
+        Cookies.set('azionRefreshToken', refreshToken, {
+          secure: true,
+          sameSite: "Strict",
+        });
 
-      localStorage.setItem("azionAccessToken", accessToken);
-      localStorage.setItem("azionRefreshToken", refreshToken);
-    })
-    .catch(function (error: any) {
-      console.log(error.response ? error.response : error);
-    });
+      })
+      .catch(function (error: any) {
+        console.log(error.response ? error.response : error);
+      });
 };
 
 const SessionCheck = () => {
-  const refreshToken: string | null = localStorage.getItem("azionRefreshToken");
-  const accessToken: string | null = localStorage.getItem("azionAccessToken");
+  const refreshToken: string | undefined = Cookies.get("azionRefreshToken");
+  const accessToken: string | undefined = Cookies.get("azionAccessToken");
 
   const data: Token = {
     refreshToken: refreshToken ? refreshToken : "",
@@ -55,17 +62,19 @@ const SessionCheck = () => {
 
       if (message === "newAccessToken generated") {
         const accessToken = response.data.accessToken;
-
-        localStorage.setItem("azionAccessToken", accessToken);
+        Cookies.set("azionAccessToken", accessToken, {
+          secure: true,
+          sameSite: "Strict",
+        });
         window.location.href = "/organizations";
       } else if (message === "success") {
         window.location.href = "/organizations";
       } else if (message === "sessionCheck failed") {
-        localStorage.removeItem("azionAccessToken");
-        localStorage.removeItem("azionRefreshToken");
+        Cookies.remove("azionAccessToken");
+        Cookies.remove("azionRefreshToken");
       } else {
-        localStorage.removeItem("azionAccessToken");
-        localStorage.removeItem("azionRefreshToken");
+        Cookies.remove("azionAccessToken");
+        Cookies.remove("azionRefreshToken");
       }
     })
     .catch(function (error: any) {
@@ -73,11 +82,11 @@ const SessionCheck = () => {
         const message = error.response.data.message;
 
         if (message === "sessionCheck failed") {
-          localStorage.removeItem("azionAccessToken");
-          localStorage.removeItem("azionRefreshToken");
+          Cookies.remove("azionAccessToken");
+          Cookies.remove("azionRefreshToken");
         } else {
-          localStorage.removeItem("azionAccessToken");
-          localStorage.removeItem("azionRefreshToken");
+          Cookies.remove("azionAccessToken");
+          Cookies.remove("azionRefreshToken");
         }
       } else {
         console.log("An error occurred, but no server response was received.");
@@ -85,46 +94,23 @@ const SessionCheck = () => {
     });
 };
 
-const Sign_up = () => {
-  const [name, setName] = useState("");
+const Login = () => {
   const [email, setEmail] = useState("");
-  const [age, setAge] = useState("");
   const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
-  const [isOrgOwner, setIsOrgOwner] = useState(false);
-  const [role, setRole] = useState("");
-  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     SessionCheck();
   }, []);
 
-  const handleSubmit = () => {
-    if (isOrgOwner) {
-      setRole("owner");
-    } else if (!isOrgOwner) {
-      setRole("none");
-    }
+  const handleSubmit = (otp:string) => {
     const userData = {
-      name,
       email,
-      age,
       password,
-      role,
-      mfaEnabled: true,
+      OTP: otp
     };
-    if (password === password2) {
-      AxiosFunction(userData, isOrgOwner);
-    }
+      AxiosFunction(userData);
   };
 
-  const handleContiniue = () => {
-    setOpenModal(true);
-  };
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsOrgOwner(e.target.checked);
-  };
 
   const showModal = () => {
     const modal = document.getElementById(
@@ -152,38 +138,53 @@ const Sign_up = () => {
         </video>
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-center">
-        <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-around items-center p-5 md:p-10">
+        <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-evenly items-center p-3 md:p-10">
+          <Link className="absolute right-6 top-6" href="/">
+            <FontAwesomeIcon className=" text-4xl text-lightAccent" icon={faCircleLeft} />
+          </Link>
           <h1
-            className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
+            className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-8xl ${headerText.className}`}
           >
             Login
           </h1>
           <div className="w-full flex flex-col justify-center items-center gap-12">
             <div className="w-full flex flex-col justify-center items-center gap-3">
               <input
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 type="text"
-                style={{outline: 'none'}}
-                placeholder="Enter your username:"
+                style={{ outline: "none" }}
+                placeholder="Enter your email:"
                 className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
               />
             </div>
-            <div className="w-full flex  flex-col justify-center items-center gap-3">
+            <div className="w-full flex flex-col justify-center items-center gap-3">
               <input
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password:"
                 type="password"
-                className="bg-[#ebe9e5] text-black pl-6 border-b-4 border-lightAccent placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-sm hover:bg-[#d1cfcc]"
                 style={{ outline: "none" }}
+                placeholder="Password:"
+                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
               />
             </div>
           </div>
-          <button
-            onClick={showModal}
-            className="bg-accent w-fit text-[#cbccc4] font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
-          >
-            Continiue
-          </button>
+          <div className=" flex flex-col justify-center items-center gap-5">
+            <button
+              onClick={showModal}
+              className="bg-accent w-fit text-[#cbccc4] font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
+            >
+              Continue
+            </button>
+
+            <h1 className="text-black">
+              If you don&apos;t have an existing account go to{" "}
+              <Link
+                href="/register"
+                className=" text-lightAccent hover:text-[#51bbb6] font-extrabold text-xl underline"
+              >
+                Register
+              </Link>
+            </h1>
+          </div>
 
           <dialog
             id="my_modal_5"
@@ -222,4 +223,4 @@ const Sign_up = () => {
   );
 };
 
-export default Sign_up;
+export default Login;

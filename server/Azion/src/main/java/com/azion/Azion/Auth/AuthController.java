@@ -73,7 +73,6 @@ public class AuthController {
         user.setAge(dateFormat.parse(bornAt, pos));
         user.setEmail(email);
         user.setPassword(password);
-        user.setFaceID("hardcodedFaceID");
         user.setRole(role);
         user.setMfaEnabled(mfaEnabled);
         
@@ -89,10 +88,11 @@ public class AuthController {
         return ResponseEntity.ok(tokens);
     }
     
+    
     @Transactional
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, Object> request,  @RequestHeader(value = "User-Agent") String UserAgent) {
-        log.info("Login attempt");
+        log.debug("Login attempt");
         String email = (String) request.get("email");
         String password = (String) request.get("password");
         String OTP = (String) request.get("OTP");
@@ -133,7 +133,36 @@ public class AuthController {
 
         return ResponseEntity.ok(tokens);
     }
+@Transactional
+@PostMapping("/fast-login")
+public ResponseEntity<?> fastLogin(@RequestBody Map<String, Object> requestBody, @RequestHeader(value = "User-Agent") String UserAgent) {
+    log.debug("Fast login attempt");
+    Map<String, String> payload = (Map<String, String>) requestBody.get("payload");
+    User user = null;
+    try {
+        String base64Image = payload.get("image");
+        String userEmail = mfaService.faceRecognition(base64Image);
+        if (userEmail == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Face not recognized");
+        }
+        user = userRepository.findByEmail(userEmail);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not exist");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+    }
 
+    String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
+    String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
+
+    Map<String, String> tokens = new HashMap<>();
+    tokens.put("accessToken", accessToken);
+    tokens.put("refreshToken", refreshToken);
+
+    return ResponseEntity.ok(tokens);
+}
 
     @GetMapping("/forgot-password")
     public String forgotPassword() {

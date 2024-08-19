@@ -5,10 +5,8 @@ type InputProps = {
   onComplete: (pin: string) => void;
 };
 
-const OTP = ({ length = 4, onComplete }: InputProps) => {
-  // Declare the type of the ref elements as HTMLInputElement | null
+const OTP = ({ length = 6, onComplete }: InputProps) => {
   const inputRef = useRef<(HTMLInputElement | null)[]>(Array(length).fill(null));
-
   const [OTP, setOTP] = useState<string[]>(Array(length).fill(''));
 
   const handleTextChange = (input: string, index: number) => {
@@ -48,5 +46,4 @@ const OTP = ({ length = 4, onComplete }: InputProps) => {
     </div>
   );
 };
-
 export default OTP;

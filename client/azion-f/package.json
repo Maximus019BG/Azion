@@ -9,11 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@heroicons/react": "^1.0.6",
     "@radix-ui/react-navigation-menu": "^1.2.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.2",
+    "js-cookie": "^3.0.5",
     "lucide-react": "^0.408.0",
     "next": "14.2.3",
     "next-fonts": "^1.5.1",
@@ -23,6 +27,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "20.12.12",
     "@types/react": "^18",
     "@types/react-dom": "^18",

@@ -40,7 +40,7 @@
 			<artifactId>opencv</artifactId>
 			<version>4.5.1</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/../../libs/jars/opencv-4.5.1.jar</systemPath>
+			<systemPath>${project.basedir}/src/main/resources/libs/jars/opencv-4.5.1.jar</systemPath>
 		</dependency>
 
 		<dependency>
@@ -48,9 +48,13 @@
 			<artifactId>opencv</artifactId>
 			<version>4.5.1</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/../../libs/jars/opencv-4.5.1-contrib.jar</systemPath>
+			<systemPath>${project.basedir}/src/main/resources/libs/jars/opencv-4.5.1-contrib.jar</systemPath>
 		</dependency>
-
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.15</version>
+		</dependency>
 		<dependency>
 			<groupId>dev.samstevens.totp</groupId>
 			<artifactId>totp</artifactId>

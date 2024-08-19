@@ -3,6 +3,7 @@ package com.azion.Azion.Token;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.Objects;
 
 import static com.azion.Azion.Token.TokenType.ACCESS_TOKEN;
 
+@Slf4j
 @RequestMapping("/api/token")
 @Controller
 public class TokenController {

@@ -1,5 +1,6 @@
 package com.azion.Azion.MFA.Service;
 
+import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Util.UserUtility;
@@ -29,12 +30,13 @@ import static org.opencv.imgproc.Imgproc.rectangle;
 @Slf4j
 public class MFAService {
     private final UserRepository userRepository;
-    private final Map<String, double[]> knownFaces = new HashMap<>();
     private static final double THRESHOLD = 8;
-
+    private final TokenRepo tokenRepo;
+    
     @Autowired
-    public MFAService(UserRepository userRepository) {
+    public MFAService(UserRepository userRepository, TokenRepo tokenRepo) {
         this.userRepository = userRepository;
+        this.tokenRepo = tokenRepo;
     }
 
     public String generateQRCodeImage(String secret, String email) {
@@ -95,10 +97,11 @@ public class MFAService {
             log.error("MFA secret not found for user: " + email);
             return false;
         }
-        log.info("User: " + email + " logging in with MFA");
+        log.debug("User: " + email + " logging in with MFA");
         return validateOtp(secret, submittedOtp);
     }
 
+    //For tests!!!
     public String faceLocation(String base64Image) throws IOException {
         CascadeClassifier faceDetector = new CascadeClassifier();
         faceDetector.load(getClass().getClassLoader().getResource("haarcascade_frontalface_alt.xml").getPath());
@@ -108,9 +111,9 @@ public class MFAService {
         faceDetector.detectMultiScale(mat, faceDetections);
 
         if (faceDetections.toArray().length > 0) {
-            log.info("Faces detected: " + faceDetections.toArray().length);
+            log.debug("Faces detected: " + faceDetections.toArray().length);
         } else if (faceDetections.toArray().length == 0) {
-            log.info("No faces detected");
+            log.debug("No faces detected");
             return "no faces detected";
         }
         for (Rect rect : faceDetections.toArray()) {
@@ -126,27 +129,27 @@ public class MFAService {
     public String faceRecognition(String base64Image) throws IOException {
         byte[] imageBytes = Base64.getDecoder().decode(base64Image);
         Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
-
+        
         URL modelConfigUrl = getClass().getClassLoader().getResource("deploy.prototxt");
         URL modelWeightsUrl = getClass().getClassLoader().getResource("res10_300x300_ssd_iter_140000.caffemodel");
-
+        
         if (modelConfigUrl == null || modelWeightsUrl == null) {
             log.error("Model configuration or weights file not found in resources.");
             throw new IOException("Model configuration or weights file not found in resources.");
         }
-
+        
         String modelConfiguration = modelConfigUrl.getPath();
         String modelWeights = modelWeightsUrl.getPath();
         Net net = Dnn.readNetFromCaffe(modelConfiguration, modelWeights);
-
+        
         Mat blob = Dnn.blobFromImage(mat, 1.0, new Size(300, 300), new Scalar(104.0, 177.0, 124.0), false, false);
         net.setInput(blob);
         Mat detections = net.forward();
-
+        
         int cols = mat.cols();
         int rows = mat.rows();
         detections = detections.reshape(1, (int) detections.total() / 7);
-
+        
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < detections.rows(); i++) {
             double confidence = detections.get(i, 2)[0];
@@ -157,28 +160,107 @@ public class MFAService {
                 int y2 = (int) (detections.get(i, 6)[0] * rows);
                 Rect rect = new Rect(new Point(x1, y1), new Point(x2, y2));
                 rectangle(mat, rect, new Scalar(0, 255, 0));
-
+                
                 Mat face = new Mat(mat, rect);
                 double[] faceEncoding = encodeFace(face);
-
+                
                 String recognizedPerson = compareFaceEncoding(faceEncoding);
                 if (recognizedPerson != null) {
                     result.append("User scanned before: ").append(recognizedPerson).append("\n");
-                    log.info("User scanned before: " + recognizedPerson);
+                    log.debug("User scanned before: " + recognizedPerson);
+                    User user = userRepository.findByEmail(recognizedPerson);
+                    if (user != null) {
+                        return user.getEmail();
+                    } else {
+                        log.debug("No user found");
+                        return null;
+                    }
                 } else {
-                    String newUserId = UUID.randomUUID().toString();
-                    knownFaces.put(newUserId, faceEncoding);
-                    result.append("New user remembered: ").append(newUserId).append("\n");
-                    log.info("New user remembered: " + newUserId);
+                    log.debug("No user found");
+                    return null;
                 }
             }
         }
-
+        return null;
+    }
+    public String faceIdMFAScan(String base64Image, String token) throws IOException {
+        if(token ==null){
+            log.error("Token is required");
+            return "Token is required";
+        }
+        User user = tokenRepo.findByToken(token).getSubject();
+        if(user == null){
+            log.error("User not found for token: " + token);
+            return "User not found for token: " + token;
+        }
+        
+        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+        Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
+        
+        URL modelConfigUrl = getClass().getClassLoader().getResource("deploy.prototxt");
+        URL modelWeightsUrl = getClass().getClassLoader().getResource("res10_300x300_ssd_iter_140000.caffemodel");
+        
+        if (modelConfigUrl == null || modelWeightsUrl == null) {
+            log.error("Model configuration or weights file not found in resources.");
+            throw new IOException("Model configuration or weights file not found in resources.");
+        }
+        
+        String modelConfiguration = modelConfigUrl.getPath();
+        String modelWeights = modelWeightsUrl.getPath();
+        Net net = Dnn.readNetFromCaffe(modelConfiguration, modelWeights);
+        
+        Mat blob = Dnn.blobFromImage(mat, 1.0, new Size(300, 300), new Scalar(104.0, 177.0, 124.0), false, false);
+        net.setInput(blob);
+        Mat detections = net.forward();
+        
+        int cols = mat.cols();
+        int rows = mat.rows();
+        detections = detections.reshape(1, (int) detections.total() / 7);
+        
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < detections.rows(); i++) {
+            double confidence = detections.get(i, 2)[0];
+            if (confidence > 0.3) {
+                int x1 = (int) (detections.get(i, 3)[0] * cols);
+                int y1 = (int) (detections.get(i, 4)[0] * rows);
+                int x2 = (int) (detections.get(i, 5)[0] * cols);
+                int y2 = (int) (detections.get(i, 6)[0] * rows);
+                Rect rect = new Rect(new Point(x1, y1), new Point(x2, y2));
+                rectangle(mat, rect, new Scalar(0, 255, 0));
+                
+                Mat face = new Mat(mat, rect);
+                double[] faceEncoding = encodeFace(face);
+                
+                if(user.getFaceID()==null){
+                    log.debug("User face ID not found");
+                    try{
+                        user.setFaceID(faceEncoding);
+                        userRepository.save(user);
+                    } catch (Exception e) {
+                        log.error("Error saving face ID for user: " + user.getEmail(), e);
+                    }
+                    log.debug("New user face ID saved");
+                }
+                else if(user.getFaceID()!=null) {
+                        return "User has face ID saved";
+                } else {
+                    try{
+                        user.setFaceID(faceEncoding);
+                        userRepository.save(user);
+                    } catch (Exception e) {
+                        log.error("Error saving face ID for user: " + user.getEmail(), e);
+                    }
+                    log.debug("New user face ID saved");
+                }
+            }
+        }
+        
         MatOfByte matOfByte = new MatOfByte();
         Imgcodecs.imencode(".jpg", mat, matOfByte);
         byte[] processedImageBytes = matOfByte.toArray();
         return Base64.getEncoder().encodeToString(processedImageBytes);
     }
+    
     private double[] encodeFace(Mat face) {
         Mat grayFace = new Mat();
         Imgproc.cvtColor(face, grayFace, Imgproc.COLOR_BGR2GRAY);
@@ -198,18 +280,24 @@ public class MFAService {
         return normalizedFaceEncoding;
     }
     public String compareFaceEncoding(double[] newFaceEncoding) {
-        for (Map.Entry<String, double[]> entry : knownFaces.entrySet()) {
-            double[] storedFaceEncoding = entry.getValue();
-            double distance = calculateEuclideanDistance(newFaceEncoding, storedFaceEncoding);
-            log.debug("Comparing with known face: " + entry.getKey() + ", distance: " + distance);
-            if (distance < THRESHOLD) {
-                log.info("Recognized user: " + entry.getKey() + " with distance: " + distance);
-                return entry.getKey();
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            if(user.getFaceID()!=null) {
+                try {
+                    double[] storedFaceEncoding = user.getDecryptedFaceID();
+                    double distance = calculateEuclideanDistance(newFaceEncoding, storedFaceEncoding);
+                    log.debug("Comparing with known face: " + user.getEmail() + ", distance: " + distance);
+                    if (distance < THRESHOLD) {
+                        log.debug("Recognized user: " + user.getEmail() + " with distance: " + distance);
+                        return user.getEmail();
+                    }
+                } catch (Exception e) {
+                    log.error("Error decrypting face ID for user: " + user.getEmail(), e);
+                }
             }
         }
         return null;
     }
-
     private double calculateEuclideanDistance(double[] vector1, double[] vector2) {
         if (vector1.length != vector2.length) {
             throw new IllegalArgumentException("Vector dimensions must match");

@@ -4,10 +4,12 @@ import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.Org.OrgProjection;
 import com.azion.Azion.Org.Repository.OrgRepository;
 import com.azion.Azion.Org.Service.OrgService;
+import com.azion.Azion.Org.Util.OrgUtility;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/api/org")
 public class OrgController {
@@ -48,10 +50,10 @@ public class OrgController {
         String orgDescription = (String) request.get("orgDescription");
         
         
-        Optional<Org> existingOrg = orgRepository.findOrgByOrgName(orgAddress);
+        Optional<Org> existingOrg = orgRepository.findOrgByOrgAddress(orgAddress);
 
         if (existingOrg.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("An organization with the same connection string already exists.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("An organization with the same address already exists.");
         }
 
         Org org = new Org();
@@ -62,10 +64,41 @@ public class OrgController {
         org.setOrgPhone(orgPhone);
         org.setOrgDescription(orgDescription);
         org.setUsers(new HashSet<>());
-
+        
         orgRepository.save(org);
-
         return ResponseEntity.ok(org);
+    }
+    
+    @PostMapping("/join")
+    @Transactional
+    public ResponseEntity<?> checkConnectString(@RequestBody Map<String, Object> request) {
+        String connectionString = (String) request.get("connString");
+        String accessToken = (String) request.get("accessToken");
+        Org org = orgService.findOrgByConnectString(connectionString);
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
+        }
+        User user = tokenService.getUserFromToken(accessToken);
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        else if(user.getOrgid() != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already part of an organization.");
+        }
+     
+        orgService.addUserToOrg(org, user);
+        
+        return ResponseEntity.ok("User added to organization.");
+    }
+    
+    @GetMapping("/decrypt")
+    public ResponseEntity<?> decryptString(@RequestParam String encryptedString) {
+        try {
+            String decryptedString = OrgUtility.decrypt(encryptedString);
+            return ResponseEntity.ok(decryptedString);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error decrypting string: " + e.getMessage());
+        }
     }
     
     @GetMapping("/invite/{email}")
@@ -85,12 +118,22 @@ public class OrgController {
     }
     
     @PostMapping("/partOfOrg")
+    @Transactional
     public ResponseEntity<?> getOrg(@RequestBody Map<String, Object> request) {
-        String token = (String) request.get("token");
+        String token = (String) request.get("accessToken");
         User user = tokenService.getUserFromToken(token);
-        Org org = orgService.findOrgByUser(user);
+        if (user == null) {
+            log.error("User not found for token: " + token);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        if (user.getOrgid() == null) {
+            log.error("Organization not found for user: " + user.getId());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+        }
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
         if (org == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
+            log.error("Organization not found for ID: " + user.getOrgid());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
         }
         return ResponseEntity.ok(org);
     }

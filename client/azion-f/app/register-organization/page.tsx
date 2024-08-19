@@ -1,10 +1,86 @@
-import React from 'react';
+"use client";
+import React, {useEffect, useState} from 'react';
 import background from "../../public/background2.jpeg"
 import { Poppins } from 'next/font/google';
+import axios, {AxiosResponse} from "axios";
+import {apiUrl} from "../api/config";
+import Cookies from "js-cookie";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
+const SessionCheck = () => {
+    const refreshToken = Cookies.get('azionRefreshToken');
+    const accessToken = Cookies.get('azionAccessToken');
+
+    const data = { refreshToken, accessToken };
+
+    const url = `${apiUrl}/token/session/check`
+    axios
+        .post(url, data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((response: AxiosResponse) => {
+            const { message, accessToken } = response.data;
+
+            if (message === 'newAccessToken generated') {
+                Cookies.set('azionAccessToken', accessToken, { secure: true, sameSite: 'Strict' });
+            }
+        })
+        .catch((error) => {
+            console.error(error.response ? error.response : error);
+            Cookies.remove('azionAccessToken');
+            Cookies.remove('azionRefreshToken');
+            window.location.href = '/log-in';
+        });
+};
+
 const Register_Organisation = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [type, setType] = useState("");
+  const [phone, setPhone] = useState("");
+  const [description, setDescription] = useState("");
+
+  const handleSubmit = () => {
+    if(name === "" || email === "" || address === "" || type === "" || phone === "" || description === ""){
+        alert(`Please fill in all fields.The following fields are missing: 
+        ${name === "" ? "Name" : ""}   ${email === "" ? "Email" : ""}   ${address === "" ? "Address" : ""}
+        ${type === "" ? "Type" : ""}   ${phone === "" ? "Phone" : ""}   ${description === "" ? "Description" : ""}`);
+        return;
+    }
+    const data = {
+        orgName: name,
+        orgEmail: email,
+        orgAddress: address,
+        orgType: type,
+        orgPhone: phone,
+        orgDescription: description
+    }
+    axios.post(`${apiUrl}/org/create`, data, {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }).then(function (response) {
+            console.log(response.data);
+        }).catch(function (error) {
+            alert("An error occurred, please try again. Error: " + error.response.data.message);
+        });
+  }
+
+    useEffect(() => {
+        const refreshToken = Cookies.get('azionRefreshToken');
+        const accessToken = Cookies.get('azionAccessToken');
+        if (refreshToken && accessToken) {
+            SessionCheck();
+        }
+        else if(!accessToken && !refreshToken) {
+            window.location.href = '/log-in';
+        }
+    }, []);
+
   return (
     <div
       style={{
@@ -23,58 +99,57 @@ const Register_Organisation = () => {
         <div className="w-full flex flex-col justify-center items-center gap-12">
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
-            //   onChange={(e) => setName(e.target.value)}
-              type="text"
-              placeholder="Enter your username:"
-              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                onChange={(e) => setName(e.target.value)}
+                type="text"
+                placeholder="Organization Name:"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
-            //   onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              placeholder="Input your Email:"
-              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                placeholder="Organization Email:"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+            />
+          </div>
+
+          <div className="w-full flex flex-col justify-center items-center gap-3">
+            <input
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Organization Address:"
+                type="address"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
-            //   onChange={(e) => setAge(e.target.value)}
-              placeholder="Born At:"
-              type="date"
-              className="pl-5 bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                onChange={(e) => setType(e.target.value)}
+                placeholder="Type of Organization:"
+                type="type"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
-            //   onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password:"
-              type="password"
-              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Organization Phone:"
+                type="phone"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-3">
             <input
-            //   onChange={(e) => setPassword2(e.target.value)}
-              placeholder="Repeat Password:"
-              type="password"
-              className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
+                 onChange={(e) => setDescription(e.target.value)}
+                placeholder="Organization Description:"
+                type="description"
+                className="bg-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#191b24]"
             />
-          </div>
-          <div className="w-full flex flex-col justify-center items-center gap-3">
-            <label className="text-neonAccent">
-              <input
-                type="checkbox"
-                // onChange={handleCheckboxChange}
-                className="mr-2"
-              />
-              I&apos;m an organization owner
-            </label>
           </div>
         </div>
         <button
-        //   onClick={handleSubmit}
-          className="bg-background w-fit text-neonAccent hover:border-2 hover:border-neonAccent font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
+            onClick={handleSubmit}
+            className="bg-background w-fit text-neonAccent hover:border-2 hover:border-neonAccent font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
         >
           Submit
         </button>
@@ -83,4 +158,4 @@ const Register_Organisation = () => {
   )
 }
 
-export default Register_Organisation
+export default Register_Organisation;
