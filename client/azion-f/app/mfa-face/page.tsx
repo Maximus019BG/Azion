@@ -14,7 +14,7 @@ interface Token {
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 
 
-const sessionCheck = () => {
+const SessionCheck = () => {
   const refreshToken = Cookies.get('azionRefreshToken');
   const accessToken = Cookies.get('azionAccessToken');
 
@@ -51,7 +51,7 @@ export default function Camera() {
     const refreshToken = Cookies.get('azionRefreshToken');
     const accessToken = Cookies.get('azionAccessToken');
     if (refreshToken && accessToken) {
-      sessionCheck();
+      SessionCheck();
     }
     else if(!accessToken && !refreshToken) {
         window.location.href = '/log-in';
@@ -122,9 +122,6 @@ export default function Camera() {
       >
         Save face
       </button>
-      {imageSrc && (
-        <Image src={imageSrc} width={300} height={300} alt={altText} />
-      )}
     </div>
   );
 }

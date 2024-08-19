@@ -67,3 +67,5 @@ build/
 ### VS Code ###
 .vscode/
 /server/nohup.out
+/desktop/buildWin/
+/desktop/cmake-build-debug/

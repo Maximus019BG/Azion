@@ -1,11 +1,40 @@
 "use client";
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import background from "../../public/background2.jpeg"
 import { Poppins } from 'next/font/google';
-import axios  from "axios";
+import axios, {AxiosResponse} from "axios";
 import {apiUrl} from "../api/config";
+import Cookies from "js-cookie";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
+
+const SessionCheck = () => {
+    const refreshToken = Cookies.get('azionRefreshToken');
+    const accessToken = Cookies.get('azionAccessToken');
+
+    const data = { refreshToken, accessToken };
+
+    const url = `${apiUrl}/token/session/check`
+    axios
+        .post(url, data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((response: AxiosResponse) => {
+            const { message, accessToken } = response.data;
+
+            if (message === 'newAccessToken generated') {
+                Cookies.set('azionAccessToken', accessToken, { secure: true, sameSite: 'Strict' });
+            }
+        })
+        .catch((error) => {
+            console.error(error.response ? error.response : error);
+            Cookies.remove('azionAccessToken');
+            Cookies.remove('azionRefreshToken');
+            window.location.href = '/log-in';
+        });
+};
 
 const Register_Organisation = () => {
   const [name, setName] = useState("");
@@ -41,6 +70,16 @@ const Register_Organisation = () => {
         });
   }
 
+    useEffect(() => {
+        const refreshToken = Cookies.get('azionRefreshToken');
+        const accessToken = Cookies.get('azionAccessToken');
+        if (refreshToken && accessToken) {
+            SessionCheck();
+        }
+        else if(!accessToken && !refreshToken) {
+            window.location.href = '/log-in';
+        }
+    }, []);
 
   return (
     <div

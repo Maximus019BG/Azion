@@ -34,7 +34,7 @@ const AxiosFunction = (data: any) => {
         });
         Cookies.set('azionRefreshToken', refreshToken, {
           secure: true,
-          sameSite: "None",
+          sameSite: "Strict",
         });
 
       })
