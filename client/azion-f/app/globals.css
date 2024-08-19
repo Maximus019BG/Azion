@@ -46,4 +46,31 @@
     0 0 30px rgba(197, 198, 199, 0.2),
     0 0 40px rgba(197, 198, 199, 0.1);
 }
-  
+.radial-progress {
+  --size: 10rem;
+  --thickness: 1rem;
+  --value: 0;
+  --color-primary: theme('colors.blue.500'); 
+
+  position: relative;
+  display: inline-block;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: conic-gradient(var(--color-primary) calc(var(--value) * 1%), transparent 0);
+  mask: radial-gradient(farthest-side, transparent calc(100% - var(--thickness)), white 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--thickness)), white 0);
+}
+
+.radial-progress::before {
+  content: attr(data-progress);
+  position: absolute;
+  font-size: calc(var(--size) / 4); /* Adjust the font size relative to the circle size */
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-primary);
+  font-weight: bold;
+  text-align: center;
+}

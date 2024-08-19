@@ -233,9 +233,9 @@ const Register = () => {
           >
             Register
           </h1>
-          <div className="w-full flex flex-col justify-center gap-10 items-center">
+          <div className="w-full flex flex-col  justify-center gap-10 items-center">
             {/* Vertical Steps */}
-            <ul className="steps steps-vertical lg:steps-horizontal ">
+            <ul className="steps steps-vertical text-background lg:steps-horizontal ">
               {stepLabels.map((label, index) => (
                 <li
                   key={index}
@@ -277,6 +277,15 @@ const Register = () => {
                 </div>
               ))}
             </div>
+            <h1 className="text-black">
+              If you don&apos;t have an existing account go to{" "}
+              <Link
+                href="/log-in"
+                className=" text-lightAccent hover:text-[#51bbb6] font-extrabold text-xl underline"
+              >
+                Login
+              </Link>
+            </h1>
           </div>
           <div className="w-full flex justify-center items-center gap-3">
             {step < inputFields.length - 1 && (
