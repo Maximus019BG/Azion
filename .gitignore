@@ -2,6 +2,7 @@
 keys/
 */build/
 */build*/
+*/*build*/
 /.idea/
 
 vs/
