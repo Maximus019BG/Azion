@@ -1,5 +1,0 @@
-/home/max/IdeaProjects/Azion/desktop/buildWin/CMakeFiles/AzionDesktop.dir
-/home/max/IdeaProjects/Azion/desktop/buildWin/CMakeFiles/edit_cache.dir
-/home/max/IdeaProjects/Azion/desktop/buildWin/CMakeFiles/rebuild_cache.dir
-/home/max/IdeaProjects/Azion/desktop/buildWin/CMakeFiles/AzionDesktop_autogen_timestamp_deps.dir
-/home/max/IdeaProjects/Azion/desktop/buildWin/CMakeFiles/AzionDesktop_autogen.dir
