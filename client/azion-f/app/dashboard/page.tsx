@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
-import background from "../../public/background2.jpeg";
 import { Poppins } from "next/font/google";
 import Cookies from "js-cookie";
 import SideMenu from "../components/Side-menu";
