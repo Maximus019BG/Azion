@@ -5,6 +5,8 @@ import { apiUrl } from "../api/config";
 import { Poppins } from "next/font/google";
 import Cookies from "js-cookie";
 import SideMenu from "../components/Side-menu";
+import CircularProgress from "../components/diagram";
+
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
@@ -39,7 +41,7 @@ const SessionCheck = () => {
       console.error(error.response ? error.response : error);
       Cookies.remove("azionAccessToken");
       Cookies.remove("azionRefreshToken");
-      window.location.href = '/log-in';
+      // window.location.href = '/log-in';
     });
 };
 
@@ -68,20 +70,20 @@ const YourOrg = () => {
   const UserData = () => {
     const data = { accessToken: Cookies.get("azionAccessToken") };
     axios
-        .post(`${apiUrl}/user/data`, data, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then(function (response: AxiosResponse) {
-          setDisplayName(response.data.name);
+      .post(`${apiUrl}/user/data`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then(function (response: AxiosResponse) {
+        setDisplayName(response.data.name);
 
-          setLoading(false);
-        })
-        .catch(function (error: any) {
-          console.error(error.response ? error.response : error);
-        });
-  }
+        setLoading(false);
+      })
+      .catch(function (error: any) {
+        console.error(error.response ? error.response : error);
+      });
+  };
   useEffect(() => {
     const refreshToken = Cookies.get("azionRefreshToken");
     const accessToken = Cookies.get("azionAccessToken");
@@ -91,50 +93,43 @@ const YourOrg = () => {
       PartOfOrg();
       UserData();
     } else if (!accessToken && !refreshToken) {
-      window.location.href = '/log-in';
+      // window.location.href = '/log-in';
     }
   }, []);
 
+  useEffect(() => {
+    setLoading(false);
+  });
   return (
-      <>
+    <>
       {loading ? (
-          <div className="w-screen h-screen flex justify-center items-center">
-            <h1 className={`${headerText.className} text-foreground m-16 text-5xl`}>
-              Azion is loading
-            </h1>
-          </div>
+        <div className="w-screen h-screen flex justify-center items-center">
+          <h1
+            className={`${headerText.className} text-foreground m-16 text-5xl`}
+          >
+            Azion is loading
+          </h1>
+        </div>
       ) : (
         <div className="w-screen h-screen flex flex-col justify-center items-center">
           <div className="absolute left-0">
             <SideMenu />
           </div>
-          <h1 className={`${headerText.className} text-foreground m-16 text-5xl`}>
+          <h1
+            className={`${headerText.className} w-[35vw] h-32 flex justify-center items-center text-foreground m-16 text-5xl`}
+          >
             Hi, {displayName}!
           </h1>
-          <div className="w-[75vw] h-full flex justify-center items-center space-x-8">
-            <div
-              className="radial-progress text-primary"
-              style={{ '--value': 70 } as React.CSSProperties}
-              role="progressbar"
-              data-progress="70%"
-            >70%</div>
-          <div
-            className="radial-progress text-primary"
-            style={{ '--value': 70 } as React.CSSProperties}
-            role="progressbar"
-            data-progress="70%"
-          >70%</div>
-        <div
-            className="radial-progress text-primary"
-            style={{ '--value': 70 } as React.CSSProperties}
-            role="progressbar"
-            data-progress="70%"
-        >70%</div>
-      </div>
-  </div>
-        )};
-      </>
 
+          {/* Diagrams */}
+
+          <div className=" flex justify-center items-center">
+            <CircularProgress percentage={35} size={200} strokeWidth={4} />
+          </div>
+        </div>
+      )}
+      ;
+    </>
   );
 };
 
