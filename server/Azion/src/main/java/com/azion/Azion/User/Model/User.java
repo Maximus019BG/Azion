@@ -52,7 +52,7 @@ public class User {
     private String mfaSecret ;
     
     
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "users")
     private Set<Project> projects;
 
     public String getOrgid() {

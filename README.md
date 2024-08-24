@@ -1,23 +1,33 @@
-![Generate Version](https://github.com/Maximus019BG/Azion/workflows/Generate%20Version/badge.svg?branch=dev)
+[![License](https://img.shields.io/badge/License-GPL_v3-teal)](https://github.com/Maximus019BG/Azion/blob/master/LICENSE)
 
-# Azion - enterprise software 
+![Azion](https://maximus019bg.github.io/TopVideoGames/Azion.png)
+
+ **Azion** is a management application for organizations. The application is designed to help *organizations* with their management while protecting their sensitive information and keeping it *secure*.
+
+## Features
+- **Data access control**
+- **Role-based management**
+- **Multi-platform app**
+- **Security**
+- **MFA with face recognition**
+- **Role-based data access**
+- **Stats and analytics**
+
+
+## Platforms
+- **Windows**
+- **Linux (Debian-Based Distributions)**
+- **Web (Chromium, firefox, edge)**
+- **Android**
+  
+ <br/>
  
-<h1> Mission </h1>
-<hr/>
+> [!IMPORTANT]
+> - *MAC OS* and *Chrome OS* are **NOT** supported by the *desktop app*
+> - **Other** Linux distributions are not supported by the *desktop app*
+> - The *Azion mobile app* is not made for *IOS*
+> - The *desktop app* is tested on ***Windows 11*** and ***Ubuntu***
 
-### Our mission is helping *organizations* with their management <br> while protecting their sensitive information and keeping it ***secure***.
-<br>
-
-<h1> Features </h1>
-<hr/>
-
-### 1. One of the key features is the ***data access***- not everybody can <br> access all the date of the *company*
-
-### 2. *Role*-based management- the boss can assign **work** to different people
-
-### 3. Multi platform app- our app is on *Desktop (Windows 10/11)*, <br> *Mobile (Android)* and we have a *web* version. 
-
-<h1> Security </h1>
-<hr/>
-
-### Our *application* doesn't ***only*** have the bas *security* <br>  requirements like *hashing* passwords but some of the more **advanced** one like ***MFA*** with <br> face recognition. And as mentioned we have *role-based data access* so <br> you know who can see your *sensitive **information*** <br> and who can change some of the *data* and roles.         
+## Authors
+- [@Maximus019](https://github.com/Maximus019BG)
+- [@SimoSabev](https://github.com/SimoSabev)

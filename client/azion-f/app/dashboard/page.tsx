@@ -13,32 +13,6 @@ interface Token {
   accessToken: string;
 }
 
-const AxiosFunction = (data: any) => {
-  axios
-    .post(`${apiUrl}/auth/login`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then(function (response: AxiosResponse) {
-      const accessToken = response.data.accessToken;
-      const refreshToken = response.data.refreshToken;
-
-      Cookies.set("azionAccessToken", accessToken, {
-        secure: true,
-        sameSite: "Strict",
-      });
-      Cookies.set("azionRefreshToken", refreshToken, {
-        secure: true,
-        sameSite: "Strict",
-      });
-      window.location.href = "/organizations";
-    })
-    .catch(function (error: any) {
-      console.log(error.response ? error.response : error);
-    });
-};
-
 const SessionCheck = () => {
   const refreshToken = Cookies.get("azionRefreshToken");
   const accessToken = Cookies.get("azionAccessToken");
@@ -65,7 +39,7 @@ const SessionCheck = () => {
       console.error(error.response ? error.response : error);
       Cookies.remove("azionAccessToken");
       Cookies.remove("azionRefreshToken");
-      // window.location.href = '/log-in';
+      window.location.href = '/log-in';
     });
 };
 
@@ -88,6 +62,26 @@ const PartOfOrg = () => {
 };
 
 const YourOrg = () => {
+  const [displayName, setDisplayName] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const UserData = () => {
+    const data = { accessToken: Cookies.get("azionAccessToken") };
+    axios
+        .post(`${apiUrl}/user/data`, data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then(function (response: AxiosResponse) {
+          setDisplayName(response.data.name);
+
+          setLoading(false);
+        })
+        .catch(function (error: any) {
+          console.error(error.response ? error.response : error);
+        });
+  }
   useEffect(() => {
     const refreshToken = Cookies.get("azionRefreshToken");
     const accessToken = Cookies.get("azionAccessToken");
@@ -95,39 +89,52 @@ const YourOrg = () => {
     if (refreshToken && accessToken) {
       SessionCheck();
       PartOfOrg();
+      UserData();
     } else if (!accessToken && !refreshToken) {
-      // window.location.href = '/log-in';
+      window.location.href = '/log-in';
     }
   }, []);
+
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center">
-      <div className="absolute left-0">
-        <SideMenu />
+      <>
+      {loading ? (
+          <div className="w-screen h-screen flex justify-center items-center">
+            <h1 className={`${headerText.className} text-foreground m-16 text-5xl`}>
+              Azion is loading
+            </h1>
+          </div>
+      ) : (
+        <div className="w-screen h-screen flex flex-col justify-center items-center">
+          <div className="absolute left-0">
+            <SideMenu />
+          </div>
+          <h1 className={`${headerText.className} text-foreground m-16 text-5xl`}>
+            Hi, {displayName}!
+          </h1>
+          <div className="w-[75vw] h-full flex justify-center items-center space-x-8">
+            <div
+              className="radial-progress text-primary"
+              style={{ '--value': 70 } as React.CSSProperties}
+              role="progressbar"
+              data-progress="70%"
+            >70%</div>
+          <div
+            className="radial-progress text-primary"
+            style={{ '--value': 70 } as React.CSSProperties}
+            role="progressbar"
+            data-progress="70%"
+          >70%</div>
+        <div
+            className="radial-progress text-primary"
+            style={{ '--value': 70 } as React.CSSProperties}
+            role="progressbar"
+            data-progress="70%"
+        >70%</div>
       </div>
-      <h1 className={`${headerText.className} text-foreground m-16 text-5xl`}>
-        Hi, User
-      </h1>
-      <div className="w-[75vw] h-full flex justify-center items-center space-x-8">
-        <div
-          className="radial-progress text-primary"
-          style={{ '--value': 70 } as React.CSSProperties}
-          role="progressbar"
-          data-progress="70%"
-        >70%</div>
-        <div
-          className="radial-progress text-primary"
-          style={{ '--value': 70 } as React.CSSProperties}
-          role="progressbar"
-          data-progress="70%"
-        >70%</div>
-        <div
-          className="radial-progress text-primary"
-          style={{ '--value': 70 } as React.CSSProperties}
-          role="progressbar"
-          data-progress="70%"
-        >70%</div>
-      </div>
-    </div>
+  </div>
+        )};
+      </>
+
   );
 };
 

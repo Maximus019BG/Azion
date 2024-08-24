@@ -158,9 +158,6 @@ export default function FastLogIn() {
       >
         Login
       </button>
-      {imageSrc && (
-        <Image src={imageSrc} width={300} height={300} alt={altText} />
-      )}
     </div>
   );
 }
