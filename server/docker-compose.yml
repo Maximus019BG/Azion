@@ -1,9 +1,8 @@
-version: '3'
 services:
   aziondb:
     image: mysql:8.0.28
     environment:
-      MYSQL_DATABASE: 'aziondb'
+      MYSQL_DATABASE: '${DB_NAME}'
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
     ports:
       - "3307:3306"
@@ -26,6 +25,7 @@ services:
       SECRET_JWT: '${SECRET_JWT}'
       ISSUER_NAME: '${ISSUER_NAME}'
       SECRET_MFA: '${SECRET_MFA}'
+      OS: '${OS}'
     restart: always
 
 volumes:

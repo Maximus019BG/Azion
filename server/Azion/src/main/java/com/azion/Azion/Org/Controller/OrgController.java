@@ -132,7 +132,6 @@ public class OrgController {
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
         if (org == null) {
-            log.error("Organization not found for ID: " + user.getOrgid());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
         }
         return ResponseEntity.ok(org);
