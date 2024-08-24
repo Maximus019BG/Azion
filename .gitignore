@@ -4,6 +4,7 @@ keys/
 */build*/
 */*build*/
 /.idea/
+*/init-db.sql
 
 vs/
 /node_modules/
@@ -71,3 +72,4 @@ build/
 /server/nohup.out
 /desktop/buildWin/
 /desktop/cmake-build-debug/
+/server/init-db.sql
