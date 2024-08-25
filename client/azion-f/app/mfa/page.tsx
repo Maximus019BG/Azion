@@ -3,75 +3,90 @@ import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import Image from "next/image";
-import OTP from "../components/OTP"; 
+import OTP from "../components/OTP";
 import { apiUrl } from "../api/config";
 import { CheckMFA, DelCookie } from "../func/funcs";
 
-const VerifyMFAAxios = (data:any) => {
-  axios.post(`${apiUrl}/mfa/verify-qr`, data, {
+const VerifyMFAAxios = (data: any) => {
+  axios
+    .post(`${apiUrl}/mfa/verify-qr`, data, {
       headers: {
-          'Content-Type': 'application/json'
-      }
-  })
-  .then(function(response: AxiosResponse) {
+        "Content-Type": "application/json",
+      },
+    })
+    .then(function (response: AxiosResponse) {
       console.log(response.data);
-      Cookies.set('mfaChecked'+response.data.email, 'true', { secure: true, sameSite: 'Strict' });
-      Cookies.set('Azion_email', response.data.email, { secure: true, sameSite: 'Strict' });
-      if(Cookies.get('OrgOwner') === 'true') {
-        window.location.href = '/register-organization';
+      Cookies.set("mfaChecked" + response.data.email, "true", {
+        secure: true,
+        sameSite: "Strict",
+      });
+      Cookies.set("Azion_email", response.data.email, {
+        secure: true,
+        sameSite: "Strict",
+      });
+      if (Cookies.get("OrgOwner") === "true") {
+        window.location.href = "/register-organization";
+      } else {
+        window.location.href = "/organizations";
       }
-      else{
-       window.location.href = '/organizations';
-      }
-  }).catch(function(error: any) {
+    })
+    .catch(function (error: any) {
       console.log(error.response ? error.response : error);
-  });
+    });
 };
 
-  const verifyMFA = async (otp: string) => {
-    const userData = {
-      OTP: otp,
-      accessToken: Cookies.get('azionAccessToken')
-    };
-    if(Cookies.get('azionAccessToken') === undefined || Cookies.get('azionAccessToken') === null) {
-        console.log('Access Token is missing');
-        return;
-    }
-    else if(otp.length !== 6) {
-        console.log('OTP is invalid');
-        return;
-    }
-    else if(Cookies.get('azionAccessToken') !== undefined && Cookies.get('azionAccessToken') !== null && otp.length === 6) {
-      VerifyMFAAxios(userData);
+const verifyMFA = async (otp: string) => {
+  const userData = {
+    OTP: otp,
+    accessToken: Cookies.get("azionAccessToken"),
+  };
+  if (
+    Cookies.get("azionAccessToken") === undefined ||
+    Cookies.get("azionAccessToken") === null
+  ) {
+    console.log("Access Token is missing");
+    return;
+  } else if (otp.length !== 6) {
+    console.log("OTP is invalid");
+    return;
+  } else if (
+    Cookies.get("azionAccessToken") !== undefined &&
+    Cookies.get("azionAccessToken") !== null &&
+    otp.length === 6
+  ) {
+    VerifyMFAAxios(userData);
   }
-}
+};
 
 const sessionCheck = () => {
-const refreshToken = Cookies.get('azionRefreshToken');
-const accessToken = Cookies.get('azionAccessToken');
-CheckMFA(true);
+  const refreshToken = Cookies.get("azionRefreshToken");
+  const accessToken = Cookies.get("azionAccessToken");
+  CheckMFA(true);
 
-const data = { refreshToken, accessToken };
+  const data = { refreshToken, accessToken };
 
-const url = `${apiUrl}/token/session/check`;
-axios
-  .post(url, data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-  .then((response: AxiosResponse) => {
-    const { message, accessToken } = response.data;
-    if (message === 'newAccessToken generated') {
-      Cookies.set('azionAccessToken', accessToken, { secure: true, sameSite: 'Strict' });
-    }
-  })
-  .catch((error) => {
-    console.error(error.response ? error.response : error);
-    Cookies.remove('azionAccessToken');
-    Cookies.remove('azionRefreshToken');
-    window.location.href = '/log-in';
-  });
+  const url = `${apiUrl}/token/session/check`;
+  axios
+    .post(url, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response: AxiosResponse) => {
+      const { message, accessToken } = response.data;
+      if (message === "newAccessToken generated") {
+        Cookies.set("azionAccessToken", accessToken, {
+          secure: true,
+          sameSite: "Strict",
+        });
+      }
+    })
+    .catch((error) => {
+      console.error(error.response ? error.response : error);
+      Cookies.remove("azionAccessToken");
+      Cookies.remove("azionRefreshToken");
+      window.location.href = "/log-in";
+    });
 };
 
 const MfaSetupPage = () => {
@@ -96,7 +111,9 @@ const MfaSetupPage = () => {
         setLoading(false);
         return;
       }
-      const url = `${apiUrl}/mfa/qr-code?accessToken=${encodeURIComponent(accessToken)}`;
+      const url = `${apiUrl}/mfa/qr-code?accessToken=${encodeURIComponent(
+        accessToken
+      )}`;
       try {
         const response = await axios.get(url, {
           headers: {
@@ -117,7 +134,9 @@ const MfaSetupPage = () => {
         setLoading(false);
         return;
       }
-      const url = `${apiUrl}/mfa/mfa-code?accessToken=${encodeURIComponent(accessToken)}`;
+      const url = `${apiUrl}/mfa/mfa-code?accessToken=${encodeURIComponent(
+        accessToken
+      )}`;
       try {
         const response = await axios.get(url, {
           headers: {
@@ -141,25 +160,51 @@ const MfaSetupPage = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div>
-      <div className="h-screen">
-        <div className="flex items-center justify-center flex-col">
-          <h1 className="mt-20 mb-5 text-5xl font-black tracking-wide">MFA</h1>
-          <p>Azion requires you to have Multi Factor Authentication (MFA). Without MFA your organization data is not secure.</p>
-          <p>Scan the QR code below with your authenticator app.</p>
-          <p className="mb-5">If you don&apos;t have an authenticator app, you can download one from the app store.</p>
-          <Image src={qrCodeUri} alt="QR Code" width={400} height={400} className="rounded-md" />
-          <h2 className="text-3xl font-black">Or</h2>
-          <p>Enter the code below</p>
-          <p>{mfaCode}</p>
-          <h2 className="text-3xl font-black mt-5">Then</h2>
-          <p className="mt-3">Enter the One Time Password.</p>
+    <div className=" h-screen w-screen text-gray-400">
+      {/* MFA text */}
+      <div className="flex flex-col justify-center items-center gap-5">
+        <h1 className=" text-5xl font-black tracking-wide mt-16 text-lightAccent">MFA</h1>
+
+        <ul className=" text-center">
+          <li>
+            Azion requires you to have Multi Factor Authentication (MFA).
+            Without MFA your organization data is not secure.
+          </li>
+          <li>Scan the QR code below with your authenticator app.</li>
+          <li className="">
+            If you don&apos;t have an authenticator app, you can download one
+            from the app store.
+          </li>
+        </ul>
+
+        <Image
+          src={qrCodeUri}
+          alt="QR Code"
+          width={300}
+          height={300}
+          className="rounded-md"
+        />
+        <h2 className="text-3xl font-black text-lightAccent">Or</h2>
+        <div className=" text-center">
+          <p className=" text-lg">Enter the code below</p>
+          <p className="font-bold">{mfaCode}</p>
         </div>
-        <div className="mt-8">
-          <OTP length={6} onComplete={verifyMFA} />
-          <center>
-            <p className="mt-5"> &bull; <span className="font-black">DO NOT REMOVE</span> THE AZION FIELD FROM YOUR AUTHENTICATOR APP BECAUSE YOU WON&apos;T BE ABLE TO LOG BACK IN &bull;</p>
-          </center>
+      </div>
+      {/* OTP text */}
+      <div className="">
+        <div className=" flex flex-col justify-center items-center gap-2">
+          <div className=" h-1 w-56 bg-gray-400 rounded-3xl mt-4" />
+          <h2 className="text-3xl font-black text-lightAccent ">Then</h2>
+          <p className=" mb-3">Enter the One Time Password.</p>
+        </div>
+        <OTP length={6} onComplete={verifyMFA} />
+        <div className=" flex flex-col justify-center items-center">
+          <p className=" mt-10">
+            {" "}
+            &bull; <span className="font-black text-lightAccent">DO NOT REMOVE</span> THE AZION
+            FIELD FROM YOUR AUTHENTICATOR APP BECAUSE YOU WON&apos;T BE ABLE TO
+            LOG BACK IN &bull;
+          </p>
         </div>
       </div>
     </div>

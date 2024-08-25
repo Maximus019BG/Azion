@@ -24,7 +24,7 @@ const Join_Organization = () => {
                     "Content-Type": "application/json",
                 },
             }).then(function (response) {
-                console.log(response.data);
+                window.location.href = '/dashboard';
             }).catch(function (error) {
                 alert("An error occurred, please try again. Error: " + error.response.data.message);
             });

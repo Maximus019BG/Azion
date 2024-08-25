@@ -13,7 +13,6 @@ import ConString from "../components/ConString";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
-
 const PartOfOrg = async () => {
   const data = { accessToken: Cookies.get("azionAccessToken") };
   try {
@@ -73,7 +72,7 @@ const Register_Organisation = () => {
   const [conString, setConString] = useState("");
 
   CheckMFA(false);
-  
+
   useEffect(() => {
     const refreshToken = Cookies.get("azionRefreshToken");
     const accessToken = Cookies.get("azionAccessToken");
@@ -95,8 +94,12 @@ const Register_Organisation = () => {
     ) {
       alert(
         `Please fill in all fields. The following fields are missing: 
-        ${name === "" ? "Name" : ""} ${email === "" ? "Email" : ""} ${address === "" ? "Address" : ""}
-        ${type === "" ? "Type" : ""} ${phone === "" ? "Phone" : ""} ${description === "" ? "Description" : ""}`
+        ${name === "" ? "Name" : ""} ${email === "" ? "Email" : ""} ${
+          address === "" ? "Address" : ""
+        }
+        ${type === "" ? "Type" : ""} ${phone === "" ? "Phone" : ""} ${
+          description === "" ? "Description" : ""
+        }`
       );
       return;
     }
@@ -120,10 +123,13 @@ const Register_Organisation = () => {
       .then((response) => {
         console.log(response.data);
         setConString(response.data);
-        setIsSubmitted(true); 
+        setIsSubmitted(true);
       })
       .catch((error) => {
-        alert("An error occurred, please try again. Error: " + error.response.data.message);
+        alert(
+          "An error occurred, please try again. Error: " +
+            error.response.data.message
+        );
       });
   };
 
@@ -228,7 +234,7 @@ const Register_Organisation = () => {
             />
           </Link>
           <h1
-            className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
+            className={`mt-6 text-lightAccent text-center text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
           >
             Register Organization
           </h1>
@@ -247,7 +253,7 @@ const Register_Organisation = () => {
 
             {/* Form Fields or Thank You Message */}
             {isSubmitted ? (
-              <div className="absolute bottom-50 left-50">
+              <div className="fixed inset-32 flex justify-center items-center z-50">
                 <ConString value={conString} />
               </div>
             ) : (
@@ -300,7 +306,6 @@ const Register_Organisation = () => {
             )}
           </div>
         </div>
-      
       </div>
     </div>
   );
