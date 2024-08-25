@@ -77,7 +77,6 @@ public class MFAController {
         try {
             String userEmail = tokenService.getUserFromToken(accessToken).getEmail();
             String mfaCode = mfaService.generateManualEntryCode(userEmail);
-            log.debug("mfaCode:" + mfaCode);
             Map<String, String> response = new HashMap<>();
             response.put("mfaCode", mfaCode);
             return ResponseEntity.ok().body(response);
@@ -107,7 +106,11 @@ public class MFAController {
                 errorResponse.put("error", "Invalid OTP");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
             } else if (mfaService.checkMfaCredentials(user.getEmail(), OTP)) {
-                return ResponseEntity.ok("OTP verified");
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "OTP verified");
+                response.put("email", user.getEmail());
+                
+                return ResponseEntity.ok().body(response);  
             } else {
                 Map<String, String> errorResponse = new HashMap<>();
                 errorResponse.put("error", "Invalid OTP");

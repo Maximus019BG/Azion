@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import Image from "next/image";
-import OTP from "../components/OTP"; // Assuming OTP is a custom component
+import OTP from "../components/OTP"; 
 import { apiUrl } from "../api/config";
-import { CheckMFA } from "../func/funcs";
+import { CheckMFA, DelCookie } from "../func/funcs";
 
 const VerifyMFAAxios = (data:any) => {
   axios.post(`${apiUrl}/mfa/verify-qr`, data, {
@@ -15,7 +15,8 @@ const VerifyMFAAxios = (data:any) => {
   })
   .then(function(response: AxiosResponse) {
       console.log(response.data);
-      Cookies.set('mfaChecked', 'true', { secure: true, sameSite: 'Strict' });
+      Cookies.set('mfaChecked'+response.data.email, 'true', { secure: true, sameSite: 'Strict' });
+      Cookies.set('Azion_email', response.data.email, { secure: true, sameSite: 'Strict' });
       if(Cookies.get('OrgOwner') === 'true') {
         window.location.href = '/register-organization';
       }
@@ -49,6 +50,7 @@ const sessionCheck = () => {
 const refreshToken = Cookies.get('azionRefreshToken');
 const accessToken = Cookies.get('azionAccessToken');
 CheckMFA(true);
+
 const data = { refreshToken, accessToken };
 
 const url = `${apiUrl}/token/session/check`;
@@ -145,7 +147,7 @@ const MfaSetupPage = () => {
           <h1 className="mt-20 mb-5 text-5xl font-black tracking-wide">MFA</h1>
           <p>Azion requires you to have Multi Factor Authentication (MFA). Without MFA your organization data is not secure.</p>
           <p>Scan the QR code below with your authenticator app.</p>
-          <p className="mb-5">If you don't have an authenticator app, you can download one from the app store.</p>
+          <p className="mb-5">If you don&apos;t have an authenticator app, you can download one from the app store.</p>
           <Image src={qrCodeUri} alt="QR Code" width={400} height={400} className="rounded-md" />
           <h2 className="text-3xl font-black">Or</h2>
           <p>Enter the code below</p>
@@ -156,7 +158,7 @@ const MfaSetupPage = () => {
         <div className="mt-8">
           <OTP length={6} onComplete={verifyMFA} />
           <center>
-            <p className="mt-5"> &bull; <span className="font-black">DO NOT REMOVE</span> THE AZION FIELD FROM YOUR AUTHENTICATOR APP BECAUSE YOU WON'T BE ABLE TO LOG BACK IN &bull;</p>
+            <p className="mt-5"> &bull; <span className="font-black">DO NOT REMOVE</span> THE AZION FIELD FROM YOUR AUTHENTICATOR APP BECAUSE YOU WON&apos;T BE ABLE TO LOG BACK IN &bull;</p>
           </center>
         </div>
       </div>

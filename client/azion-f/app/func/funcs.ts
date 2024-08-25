@@ -2,8 +2,10 @@ import Cookies from 'js-cookie';
 
 //Checks if user has MFA
 const CheckMFA = async (onMFAPage:boolean) =>{
+    const email:string|undefined = Cookies.get('Azion_email');
+    const toCheck:string|undefined = Cookies.get('mfaChecked'+ email);
     if(onMFAPage){
-      if(Cookies.get('mfaChecked') === 'true') {
+      if(toCheck === 'true') {
         window.location.href = '/organizations';
       }
       else {
@@ -11,7 +13,7 @@ const CheckMFA = async (onMFAPage:boolean) =>{
       }
     }
     else if(!onMFAPage){
-      if(Cookies.get('mfaChecked') === 'true') {
+      if(toCheck === 'true') {
         return;
       }
       else {
