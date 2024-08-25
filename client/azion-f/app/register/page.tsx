@@ -34,7 +34,7 @@ const AxiosFunction = (data: any, isOwner: boolean) => {
       const accessToken = response.data.accessToken;
       const refreshToken = response.data.refreshToken;
       if (!isOwner) {
-        window.location.href = "/organizations";
+        window.location.href = "/mfa";
       } else if (isOwner) {
         window.location.href = "/register-organization";
       }

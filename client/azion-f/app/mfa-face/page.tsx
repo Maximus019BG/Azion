@@ -95,7 +95,7 @@ export default function Camera() {
                 if (response.data.image === 'no faces detected') {
                     setAltText('No faces detected');
                 } else {
-                    setAltText('Detected Face');
+                  window.location.href = "/organizations";
                 }
                 setImageSrc(processedImage);
             } catch (error) {
