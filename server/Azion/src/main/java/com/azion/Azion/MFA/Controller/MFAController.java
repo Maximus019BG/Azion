@@ -77,7 +77,7 @@ public class MFAController {
         try {
             String userEmail = tokenService.getUserFromToken(accessToken).getEmail();
             String mfaCode = mfaService.generateManualEntryCode(userEmail);
-            log.info("mfaCode:" + mfaCode);
+            log.debug("mfaCode:" + mfaCode);
             Map<String, String> response = new HashMap<>();
             response.put("mfaCode", mfaCode);
             return ResponseEntity.ok().body(response);
