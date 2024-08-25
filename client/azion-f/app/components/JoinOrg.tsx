@@ -36,7 +36,7 @@ const Join_Organization = () => {
 
 
     return (
-        <div>
+        <div className=' bg-background w-full h-full flex flex-col justify-center items-center rounded-badge'>
             <center>
                 <h1
                     className={`mt-6 text-neonAccent text-lg md:text-3xl lg:text-5xl ${headerText.className}`}

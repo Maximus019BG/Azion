@@ -1,12 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { apiUrl } from "../api/config";
 import ListAllOrgs from "../components/listAllOrgs";
 import Cookies from "js-cookie";
 import Side_menu from "../components/Side-menu";
 import Join_Organization from "../components/JoinOrg";
-import { CheckMFA, DelCookie } from "../func/funcs";
+import { CheckMFA } from "../func/funcs";
 
 const sessionCheck = async () => {
   const refreshToken = Cookies.get("azionRefreshToken");
@@ -14,8 +14,7 @@ const sessionCheck = async () => {
   const data = { refreshToken, accessToken };
 
   CheckMFA(false);
-  // DelCookie();
- 
+
   const url = `${apiUrl}/token/session/check`;
   try {
     const response = await axios.post(url, data, {
@@ -58,6 +57,7 @@ const PartOfOrg = async () => {
 
 const Organizations = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [showJoinOrg, setShowJoinOrg] = useState(false); // Moved here
 
   useEffect(() => {
     const CheckSessionAndOrg = async () => {
@@ -108,9 +108,21 @@ const Organizations = () => {
           <ListAllOrgs searchTerm={searchTerm} />
         </div>
       </div>
-      <div className="absolute right-2 top-5">
-        <Join_Organization />
-      </div>
+
+      {/* Toggle Button */}
+      <button
+        className="fixed bottom-10 right-10 bg-lightAccent text-white p-3 rounded-full"
+        onClick={() => setShowJoinOrg(!showJoinOrg)}
+      >
+        {showJoinOrg ? "Close Join Org" : "Join Organization"}
+      </button>
+
+      {/* Conditional Rendering of Join Organization */}
+      {showJoinOrg && (
+        <div className="fixed inset-32 flex justify-center items-center z-50">
+          <Join_Organization />
+        </div>
+      )}
     </div>
   );
 };
