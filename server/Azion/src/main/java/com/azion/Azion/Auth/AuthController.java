@@ -179,20 +179,22 @@ public ResponseEntity<?> fastLogin(@RequestBody Map<String, Object> requestBody,
         return "Change Password";
     }
 
+    @Transactional
     @PostMapping("/logout/{token}/{tokenR}")
-    public String logout(@PathVariable String token, @PathVariable String tokenR) {
+    public ResponseEntity<?> logout(@PathVariable String token, @PathVariable String tokenR) {
         if(tokenService.validateToken(token) && tokenService.validateToken(tokenR)) {
             if (!tokenService.isAccessTokenOutOfDate(token) && !tokenService.isRefreshTokenOutOfDate(tokenR)) {
                     tokenService.deleteTokens(token, tokenR);
-                    return "Logged out";
+                    return ResponseEntity.ok("Logged out");
             }
             else {
-                return "Tokens are out of date. Logged out.";
+                tokenService.deleteTokens(token, tokenR);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is out of date");
             }
             
         }
        else {
-           return "Invalid token";
+           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
        }
        
     }
