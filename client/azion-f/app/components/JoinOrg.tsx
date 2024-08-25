@@ -5,7 +5,7 @@ import axios  from "axios";
 import {apiUrl} from "../api/config";
 import Cookies from 'js-cookie';
 
-const headerText = Poppins({ subsets: ["latin"], weight: "900" });
+const headerText = Poppins({ subsets: ["latin"], weight: "800" });
 const Join_Organization = () => {
     const [connString, setConnString] = useState("");
 
@@ -30,15 +30,21 @@ const Join_Organization = () => {
             });
         }
 
+        const CreateOne = () => {
+            window.location.href = '/register-organization';
+        }
+
 
     return (
         <div>
-            <h1
-                className={`mt-6 text-neonAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
-            >
-                Join Org
-            </h1>
-            <div className="w-full flex flex-col justify-center items-center gap-12">
+            <center>
+                <h1
+                    className={`mt-6 text-neonAccent text-lg md:text-3xl lg:text-5xl ${headerText.className}`}
+                >
+                    Join Org
+                </h1>
+            </center>
+            <div className="w-full flex flex-col justify-center items-center gap-5 mt-5">
                 <input
                     type="text"
                     placeholder="Connection String"
@@ -53,6 +59,7 @@ const Join_Organization = () => {
                     Join
                 </button>
             </div>
+           <button onClick={CreateOne}>Create one</button>
         </div>
     );
 };

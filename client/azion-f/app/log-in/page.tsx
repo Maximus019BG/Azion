@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";

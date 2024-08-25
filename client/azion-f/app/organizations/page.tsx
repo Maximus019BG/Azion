@@ -5,12 +5,17 @@ import { apiUrl } from "../api/config";
 import ListAllOrgs from "../components/listAllOrgs";
 import Cookies from "js-cookie";
 import Side_menu from "../components/Side-menu";
+import Join_Organization from "../components/JoinOrg";
+import { CheckMFA, DelCookie } from "../func/funcs";
 
 const sessionCheck = async () => {
   const refreshToken = Cookies.get("azionRefreshToken");
   const accessToken = Cookies.get("azionAccessToken");
   const data = { refreshToken, accessToken };
 
+  CheckMFA(false);
+  // DelCookie();
+ 
   const url = `${apiUrl}/token/session/check`;
   try {
     const response = await axios.post(url, data, {
@@ -102,6 +107,9 @@ const Organizations = () => {
         <div className=" mt-10">
           <ListAllOrgs searchTerm={searchTerm} />
         </div>
+      </div>
+      <div className="absolute right-2 top-5">
+        <Join_Organization />
       </div>
     </div>
   );

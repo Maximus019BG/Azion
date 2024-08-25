@@ -1,82 +1,138 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import axios, { AxiosResponse } from 'axios';
+import { useEffect, useState } from "react";
+import axios, { AxiosResponse } from "axios";
+import Cookies from "js-cookie";
 import Image from "next/image";
-import { apiUrl } from '../api/config';
-import Link from "next/link";
-import Cookies from 'js-cookie';
+import OTP from "../components/OTP"; // Assuming OTP is a custom component
+import { apiUrl } from "../api/config";
+import { CheckMFA } from "../func/funcs";
 
-interface Token {
-  refreshToken: string;
-  accessToken: string;
+const VerifyMFAAxios = (data:any) => {
+  axios.post(`${apiUrl}/mfa/verify-qr`, data, {
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  })
+  .then(function(response: AxiosResponse) {
+      console.log(response.data);
+      Cookies.set('mfaChecked', 'true', { secure: true, sameSite: 'Strict' });
+      if(Cookies.get('OrgOwner') === 'true') {
+        window.location.href = '/register-organization';
+      }
+      else{
+       window.location.href = '/organizations';
+      }
+  }).catch(function(error: any) {
+      console.log(error.response ? error.response : error);
+  });
+};
+
+  const verifyMFA = async (otp: string) => {
+    const userData = {
+      OTP: otp,
+      accessToken: Cookies.get('azionAccessToken')
+    };
+    if(Cookies.get('azionAccessToken') === undefined || Cookies.get('azionAccessToken') === null) {
+        console.log('Access Token is missing');
+        return;
+    }
+    else if(otp.length !== 6) {
+        console.log('OTP is invalid');
+        return;
+    }
+    else if(Cookies.get('azionAccessToken') !== undefined && Cookies.get('azionAccessToken') !== null && otp.length === 6) {
+      VerifyMFAAxios(userData);
+  }
 }
 
 const sessionCheck = () => {
-  const refreshToken = Cookies.get('azionRefreshToken');
-  const accessToken = Cookies.get('azionAccessToken');
+const refreshToken = Cookies.get('azionRefreshToken');
+const accessToken = Cookies.get('azionAccessToken');
+CheckMFA(true);
+const data = { refreshToken, accessToken };
 
-  const data = { refreshToken, accessToken };
-
-  const url = `${apiUrl}/token/session/check`;
-  axios
-    .post(url, data, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then((response: AxiosResponse) => {
-      const { message, accessToken } = response.data;
-      if (message === 'newAccessToken generated') {
-        Cookies.set('azionAccessToken', accessToken, { secure: true, sameSite: 'Strict' });
-      }
-    })
-    .catch((error) => {
-      console.error(error.response ? error.response : error);
-      Cookies.remove('azionAccessToken');
-      Cookies.remove('azionRefreshToken');
-      window.location.href = '/log-in';
-    });
+const url = `${apiUrl}/token/session/check`;
+axios
+  .post(url, data, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then((response: AxiosResponse) => {
+    const { message, accessToken } = response.data;
+    if (message === 'newAccessToken generated') {
+      Cookies.set('azionAccessToken', accessToken, { secure: true, sameSite: 'Strict' });
+    }
+  })
+  .catch((error) => {
+    console.error(error.response ? error.response : error);
+    Cookies.remove('azionAccessToken');
+    Cookies.remove('azionRefreshToken');
+    window.location.href = '/log-in';
+  });
 };
 
 const MfaSetupPage = () => {
-  const [qrCodeUri, setQrCodeUri] = useState('');
+  const [qrCodeUri, setQrCodeUri] = useState("");
+  const [mfaCode, setMfaCode] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const refreshToken = Cookies.get('azionRefreshToken');
-    const accessToken = Cookies.get('azionAccessToken');
+    const refreshToken = Cookies.get("azionRefreshToken");
+    const accessToken = Cookies.get("azionAccessToken");
 
     if (refreshToken && accessToken) {
       sessionCheck();
     } else if (!accessToken && !refreshToken) {
-      window.location.href = '/log-in';
+      window.location.href = "/log-in";
     }
 
-    const fetchQrCodeUri = async () => {
-      const accessToken = Cookies.get('azionAccessToken');
+    const fetchQrCodeUri = async (accessToken: string | undefined) => {
       if (!accessToken) {
-        setError('Access Token is missing');
+        setError("Access Token is missing");
         setLoading(false);
         return;
       }
-
       const url = `${apiUrl}/mfa/qr-code?accessToken=${encodeURIComponent(accessToken)}`;
       try {
         const response = await axios.get(url, {
           headers: {
-            'Content-Type': 'application/json',
-          }
+            "Content-Type": "application/json",
+          },
         });
         setQrCodeUri(response.data.qrCodeUri);
-        setLoading(false);
+        fetchMFACode(accessToken);
       } catch (err) {
-        setError('Failed to fetch QR code URI');
+        setError("Failed to fetch QR code URI");
         setLoading(false);
       }
     };
 
-    fetchQrCodeUri();
+    const fetchMFACode = async (accessToken: string | undefined) => {
+      if (!accessToken) {
+        setError("Access Token is missing");
+        setLoading(false);
+        return;
+      }
+      const url = `${apiUrl}/mfa/mfa-code?accessToken=${encodeURIComponent(accessToken)}`;
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        setMfaCode(response.data.mfaCode);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000); // 1 second
+      } catch (err) {
+        setError("Failed to fetch MFA code");
+        setLoading(false);
+      }
+    };
+
+    fetchQrCodeUri(accessToken);
   }, []);
 
   if (loading) return <p>Loading...</p>;
@@ -84,13 +140,26 @@ const MfaSetupPage = () => {
 
   return (
     <div>
-      <h1>Setup MFA</h1>
-      <p>Scan the QR code below with your authenticator app</p>
-      <Image src={qrCodeUri} alt="QR Code" width={400} height={400} />
-
-      <Link href={"/organizations"}>
-        <p>Continue</p>
-      </Link>
+      <div className="h-screen">
+        <div className="flex items-center justify-center flex-col">
+          <h1 className="mt-20 mb-5 text-5xl font-black tracking-wide">MFA</h1>
+          <p>Azion requires you to have Multi Factor Authentication (MFA). Without MFA your organization data is not secure.</p>
+          <p>Scan the QR code below with your authenticator app.</p>
+          <p className="mb-5">If you don't have an authenticator app, you can download one from the app store.</p>
+          <Image src={qrCodeUri} alt="QR Code" width={400} height={400} className="rounded-md" />
+          <h2 className="text-3xl font-black">Or</h2>
+          <p>Enter the code below</p>
+          <p>{mfaCode}</p>
+          <h2 className="text-3xl font-black mt-5">Then</h2>
+          <p className="mt-3">Enter the One Time Password.</p>
+        </div>
+        <div className="mt-8">
+          <OTP length={6} onComplete={verifyMFA} />
+          <center>
+            <p className="mt-5"> &bull; <span className="font-black">DO NOT REMOVE</span> THE AZION FIELD FROM YOUR AUTHENTICATOR APP BECAUSE YOU WON'T BE ABLE TO LOG BACK IN &bull;</p>
+          </center>
+        </div>
+      </div>
     </div>
   );
 };

@@ -36,7 +36,8 @@ const AxiosFunction = (data: any, isOwner: boolean) => {
       if (!isOwner) {
         window.location.href = "/mfa";
       } else if (isOwner) {
-        window.location.href = "/register-organization";
+        window.location.href = "/mfa";
+        Cookies.set("OrgOwner", "true", { secure: true, sameSite: "Strict" });
       }
 
       Cookies.set("azionAccessToken", accessToken, {

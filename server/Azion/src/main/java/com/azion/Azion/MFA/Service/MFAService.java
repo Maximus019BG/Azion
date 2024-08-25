@@ -50,9 +50,8 @@ public class MFAService {
 
         String issuer = System.getProperty("issuerName");
         QrData data = new QrData.Builder()
-                .label(name + "/" + email)
+                .label("Azion:"+ name + "/" + email)
                 .secret(secret)
-                .issuer(issuer)
                 .algorithm(HashingAlgorithm.SHA1)
                 .digits(6)
                 .period(30)
@@ -68,7 +67,19 @@ public class MFAService {
         }
         return Utils.getDataUriForImage(imageData, generator.getImageMimeType());
     }
-
+    
+    //!Generate otp code !!!instead of qr code!!!
+    public String generateManualEntryCode(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            log.error("User not found for email: " + email);
+            return null;
+        }
+        String secret = getUserMFASecret(email);
+        String issuer = System.getProperty("issuerName");
+        return  secret;
+    }
+    
     public boolean validateOtp(String secret, String otp) {
         TimeProvider timeProvider = new SystemTimeProvider();
         CodeGenerator codeGenerator = new DefaultCodeGenerator();

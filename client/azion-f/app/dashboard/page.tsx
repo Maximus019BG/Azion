@@ -6,6 +6,7 @@ import { Poppins } from "next/font/google";
 import Cookies from "js-cookie";
 import SideMenu from "../components/Side-menu";
 import CircularProgress from "../components/diagram";
+import { CheckMFA } from "../func/funcs";
 
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
@@ -66,6 +67,8 @@ const PartOfOrg = () => {
 const YourOrg = () => {
   const [displayName, setDisplayName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  
+  CheckMFA(false);
 
   const UserData = () => {
     const data = { accessToken: Cookies.get("azionAccessToken") };
@@ -77,7 +80,6 @@ const YourOrg = () => {
       })
       .then(function (response: AxiosResponse) {
         setDisplayName(response.data.name);
-
         setLoading(false);
       })
       .catch(function (error: any) {
@@ -93,13 +95,10 @@ const YourOrg = () => {
       PartOfOrg();
       UserData();
     } else if (!accessToken && !refreshToken) {
-      // window.location.href = '/log-in';
+       window.location.href = '/log-in';
     }
   }, []);
 
-  useEffect(() => {
-    setLoading(false);
-  });
   return (
     <>
       {loading ? (

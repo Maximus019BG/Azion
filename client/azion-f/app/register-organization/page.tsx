@@ -8,15 +8,35 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleLeft } from "@fortawesome/free-solid-svg-icons";
 import background from "../../public/background2.jpeg";
+import { CheckMFA } from "../func/funcs";
+import ConString from "../components/ConString";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
+
+
+const PartOfOrg = async () => {
+  const data = { accessToken: Cookies.get("azionAccessToken") };
+  try {
+    await axios.post(`${apiUrl}/org/partOfOrg`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    window.location.href = "/dashboard";
+  } catch (error: any) {
+    if (error.response && error.response.status !== 500) {
+      console.error(error.response ? error.response : error);
+    }
+  }
+};
 
 const SessionCheck = () => {
   const refreshToken = Cookies.get("azionRefreshToken");
   const accessToken = Cookies.get("azionAccessToken");
 
-  const data = { refreshToken, accessToken };
+  PartOfOrg();
 
+  const data = { refreshToken, accessToken };
   axios
     .post(`${apiUrl}/token/session/check`, data, {
       headers: {
@@ -50,7 +70,10 @@ const Register_Organisation = () => {
   const [description, setDescription] = useState("");
   const [step, setStep] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [conString, setConString] = useState("");
 
+  CheckMFA(false);
+  
   useEffect(() => {
     const refreshToken = Cookies.get("azionRefreshToken");
     const accessToken = Cookies.get("azionAccessToken");
@@ -85,6 +108,7 @@ const Register_Organisation = () => {
       orgType: type,
       orgPhone: phone,
       orgDescription: description,
+      accessToken: Cookies.get("azionAccessToken"),
     };
 
     axios
@@ -95,7 +119,8 @@ const Register_Organisation = () => {
       })
       .then((response) => {
         console.log(response.data);
-        setIsSubmitted(true); // Set the submitted state to true on success
+        setConString(response.data);
+        setIsSubmitted(true); 
       })
       .catch((error) => {
         alert("An error occurred, please try again. Error: " + error.response.data.message);
@@ -205,7 +230,7 @@ const Register_Organisation = () => {
           <h1
             className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
           >
-            Register Org
+            Register Organization
           </h1>
           <div className="w-full flex flex-col  justify-center gap-10 items-center">
             {/* Vertical Steps */}
@@ -222,8 +247,8 @@ const Register_Organisation = () => {
 
             {/* Form Fields or Thank You Message */}
             {isSubmitted ? (
-              <div className="text-center text-2xl font-bold text-background">
-                Thank you for submitting your organization information!
+              <div className="absolute bottom-50 left-50">
+                <ConString value={conString} />
               </div>
             ) : (
               <div className="w-[30vw] flex flex-col justify-center items-center gap-3">
@@ -275,6 +300,7 @@ const Register_Organisation = () => {
             )}
           </div>
         </div>
+      
       </div>
     </div>
   );

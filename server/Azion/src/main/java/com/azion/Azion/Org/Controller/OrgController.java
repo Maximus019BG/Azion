@@ -39,7 +39,7 @@ public class OrgController {
     }
     
 
-    
+    @Transactional
     @PostMapping("/create")
     public ResponseEntity<?> createOrg(@RequestBody Map<String,Object> request) {
         String orgName = (String) request.get("orgName");
@@ -48,7 +48,7 @@ public class OrgController {
         String orgEmail = (String) request.get("orgEmail");
         String orgPhone = (String) request.get("orgPhone");
         String orgDescription = (String) request.get("orgDescription");
-        
+        String accessToken = (String) request.get("accessToken");
         
         Optional<Org> existingOrg = orgRepository.findOrgByOrgAddress(orgAddress);
 
@@ -66,7 +66,19 @@ public class OrgController {
         org.setUsers(new HashSet<>());
         
         orgRepository.save(org);
-        return ResponseEntity.ok(org);
+        
+        User user = tokenService.getUserFromToken(accessToken);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        
+        //!Fixes no session error
+        orgService.addUserToOrg(org, user);
+        
+        String encryptedString = org.getOrgConnectString();
+        String conSring = OrgUtility.decrypt(encryptedString);
+        
+        return ResponseEntity.ok(conSring);
     }
     
     @PostMapping("/join")
@@ -90,16 +102,16 @@ public class OrgController {
         
         return ResponseEntity.ok("User added to organization.");
     }
-    
-    @GetMapping("/decrypt")
-    public ResponseEntity<?> decryptString(@RequestParam String encryptedString) {
-        try {
-            String decryptedString = OrgUtility.decrypt(encryptedString);
-            return ResponseEntity.ok(decryptedString);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error decrypting string: " + e.getMessage());
-        }
-    }
+    //!DEBUG ONLY
+//    @GetMapping("/decrypt")
+//    public ResponseEntity<?> decryptString(@RequestParam String encryptedString) {
+//        try {
+//            String decryptedString = OrgUtility.decrypt(encryptedString);
+//            return ResponseEntity.ok(decryptedString);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error decrypting string: " + e.getMessage());
+//        }
+//    }
     
     @GetMapping("/invite/{email}")
     public ResponseEntity<?> inviteUserToOrg(@PathVariable String email) {
@@ -123,11 +135,11 @@ public class OrgController {
         String token = (String) request.get("accessToken");
         User user = tokenService.getUserFromToken(token);
         if (user == null) {
-            log.error("User not found for token: " + token);
+            log.debug("User not found for token: " + token);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
         if (user.getOrgid() == null) {
-            log.error("Organization not found for user: " + user.getId());
+            log.debug("Organization not found for user: " + user.getId());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
