@@ -35,7 +35,8 @@ const LogOutAxios = () => {
             window.location.href = "/log-in";
         })
         .catch(function (error: any) {
-
+            Cookies.remove("azionAccessToken");
+            Cookies.remove("azionRefreshToken");
             window.location.href = "/log-in";
         });
 
