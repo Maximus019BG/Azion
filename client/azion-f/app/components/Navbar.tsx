@@ -48,7 +48,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="navbar bg-lightAccent">
+    <div className="navbar bg-transparent">
       <div className="flex-none">
         {isLogged && (
           <button className="btn btn-square btn-ghost">
@@ -75,12 +75,12 @@ const Navbar = () => {
         {isLogged ? (
           <>
           <Link href={"/dashboard"}>
-            <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+            <button className="btn border-none neon-text text-lg shadow-none bg-transparent ">
               Dashboard
             </button>
             </Link>
               <Link href={"/organizations"}>
-                <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                <button className="btn border-none neon-text text-lg shadow-none bg-transparent ">
                     Organizations
                 </button>
             </Link>
@@ -88,12 +88,12 @@ const Navbar = () => {
         ) : (
           <>
           <Link href={"/register"}>
-                <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                <button className="btn border-none neon-text text-lg shadow-none bg-transparent ">
                     Register
                 </button>
             </Link>
             <Link href={"log-in"}>
-                <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                <button className="btn border-none neon-text text-lg shadow-none bg-transparent ">
                     Log-in
                 </button>
             </Link>

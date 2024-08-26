@@ -65,26 +65,39 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="h-screen w-full overflow-x-hidden">
-      <Navbar />
+    <div className="h-screen w-screen overflow-x-hidden">
+      <div className=" mt-6">
+        <Navbar />
+      </div>
       <motion.div
         initial={{ opacity: 0, y: -400 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className=" w-screen flex flex-col md:flex-row gap-36 justify-center items-center px-6 lg:px-36 py-10 lg:py-28 "
+        className=" h-[80vh] flex justify-start items-end p-16  "
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="max-w-5xl mt-20 flex flex-col justify-center items-center gap-8 text-center w-full"
+          className=" h-full max-w-3xl p-10 flex flex-col justify-center items-center text-center border-2 border-red-300"
         >
           <h1
-            className={`text-3xl gradient-text md:text-4xl lg:text-6xl ${HeaderText.className}`}
+            className={`text-2xl gradient-text md:text-3xl lg:text-5xl ${HeaderText.className}`}
           >
-            Improve your workflow and secure your company with{" "}
             <span
-              className={` neon-text text-5xl md:text-6xl lg:text-8xl ${azionText.className}`}
+              className={` neon-text text-2xl md:text-3xl lg:text-5xl ${azionText.className}`}
+            >
+              Improve
+            </span>{" "}
+            your workflow and{" "}
+            <span
+              className={` neon-text text-2xl md:text-4xl lg:text-5xl ${azionText.className}`}
+            >
+              Secure
+            </span>{" "}
+            your company with{" "}
+            <span
+              className={` neon-text text-3xl md:text-5xl lg:text-7xl ${azionText.className}`}
             >
               Azion.
             </span>
@@ -94,7 +107,7 @@ const Home = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="flex flex-col sm:flex-row justify-center items-start gap-4 md:gap-8 mt-8 md:mt-12 lg:mt-16 w-full"
+            className="flex flex-col sm:flex-row justify-start items-start gap-4 md:gap-8 mt-8 md:mt-12 lg:mt-16 w-full"
           >
             <motion.button
               whileHover={{ scale: 1.05 }}
