@@ -42,7 +42,7 @@ const SessionCheck = () => {
       console.error(error.response ? error.response : error);
       Cookies.remove("azionAccessToken");
       Cookies.remove("azionRefreshToken");
-      // window.location.href = '/log-in';
+      window.location.href = '/log-in';
     });
 };
 

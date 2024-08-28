@@ -1,33 +1,18 @@
 package com.azion.Azion.MFA.Controller;
 
 import com.azion.Azion.MFA.Service.MFAService;
-import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.User;
-import com.azion.Azion.User.Repository.UserRepository;
-import com.azion.Azion.User.Service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import java.util.Base64;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.azion.Azion.Token.TokenType.ACCESS_TOKEN;
-import static com.azion.Azion.Token.TokenType.REFRESH_TOKEN;
 
 @Slf4j
 @RestController
@@ -109,7 +94,7 @@ public class MFAController {
                 Map<String, String> response = new HashMap<>();
                 response.put("message", "OTP verified");
                 response.put("email", user.getEmail());
-                
+                user.setMfaEnabled(true);
                 return ResponseEntity.ok().body(response);  
             } else {
                 Map<String, String> errorResponse = new HashMap<>();
@@ -148,6 +133,25 @@ public class MFAController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing image");
+        }
+    }
+    
+    @Transactional
+    @PutMapping("/check/mfa")
+    public ResponseEntity<?> checkMFAEnabled(@RequestBody Map<Object,String> requestBody) {
+        log.debug("PUT /api/mfa/check/mfa");
+        String accessToken = (String) requestBody.get("accessToken");
+        if (accessToken == null) {
+            String errorResponse = "Access token is required";
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        try {
+            User user = tokenService.getUserFromToken(accessToken);
+            Boolean response = user.isMfaEnabled();
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            String errorResponse = "Could not check MFA status";
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
     

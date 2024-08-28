@@ -40,17 +40,17 @@ const AxiosFunction = (data: any, isOwner: boolean) => {
       Cookies.set("azionRefreshToken", refreshToken, {
         secure: true,
         sameSite: "Strict",
-  
+
       });
       Cookies.set("Azion_email", data.email, { secure: true, sameSite: "Strict" });
-   
+
     if (!isOwner) {
       window.location.href = "/mfa";
       Cookies.set("OrgOwner", "false", { secure: true, sameSite: "Strict" });
     } else if (isOwner) {
       window.location.href = "/mfa";
       Cookies.set("OrgOwner", "true", { secure: true, sameSite: "Strict" });
-    } 
+    }
   }).catch(function (error: any) {
       console.log(error.response ? error.response : error);
     });
@@ -134,7 +134,7 @@ const Register = () => {
       age,
       password,
       role,
-      mfaEnabled: true,
+      mfaEnabled: false,
     };
     if (password === password2) {
       AxiosFunction(userData, isOrgOwner);

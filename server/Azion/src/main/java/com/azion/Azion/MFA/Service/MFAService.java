@@ -142,6 +142,7 @@ public class MFAService {
         return Base64.getEncoder().encodeToString(processedImageBytes);
     }
     
+    //Face identification
     public String faceRecognition(String base64Image) throws IOException {
         byte[] imageBytes = Base64.getDecoder().decode(base64Image);
         Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
@@ -205,6 +206,8 @@ public class MFAService {
         }
         return null;
     }
+    
+    
     public String faceIdMFAScan(String base64Image, String token) throws IOException {
         if (token == null) {
             log.error("Token is required");
