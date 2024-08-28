@@ -10,6 +10,8 @@ import { apiUrl } from "./api/config";
 import { useEffect, useState } from "react";
 import Main_Services from "./components/main-services";
 import Footer from "./components/Footer";
+import Shape1 from "./components/shapes/shape1";
+
 
 interface Token {
   refreshToken: string;
@@ -79,10 +81,10 @@ const Home = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className=" h-full max-w-3xl p-10 flex flex-col justify-center items-center text-center border-2 border-red-300"
+          className=" h-full max-w-3xl p-10 flex flex-col justify-end items-center text-center"
         >
           <h1
-            className={`text-2xl gradient-text md:text-3xl lg:text-5xl ${HeaderText.className}`}
+            className={`text-2xl gradient-text md:text-3xl lg:text-5xl text-left  ${HeaderText.className}`}
           >
             <span
               className={` neon-text text-2xl md:text-3xl lg:text-5xl ${azionText.className}`}
@@ -112,19 +114,20 @@ const Home = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={` neon-text w-40 md:w-64 lg:w-80 h-10 md:h-12 lg:h-14 bg-[#18b7be] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#139299] ${HeaderText.className}`}
+              className={` neon-text w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-[#18b7be] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#139299] ${HeaderText.className}`}
             >
               <Link href={`/${ButtonText1.toLowerCase()}`}>{ButtonText1}</Link>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={` neon-text w-40 md:w-64 lg:w-80 h-10 md:h-12 lg:h-14 bg-[#072a40] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] ${HeaderText.className}`}
+              className={` neon-text w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-[#072a40] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] ${HeaderText.className}`}
             >
               <Link href={`/${ButtonText2.toLowerCase()}`}>{ButtonText2}</Link>
             </motion.button>
           </motion.div>
         </motion.div>
+        <Shape1/>
       </motion.div>
 
       <div className=" flex flex-col justify-center items-center mt-48">
