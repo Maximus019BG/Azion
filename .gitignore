@@ -74,3 +74,6 @@ build/
 /desktop/cmake-build-debug/
 /server/init-db.sql
 /server/Azion/src/test/
+/server/Azion/src/main/java/com/azion/Azion/cpp/cmake-build-debug/
+/server/Azion/src/main/java/com/azion/Azion/cpp/build/
+/server/Azion/src/main/java/com/azion/Azion/cpp/out/
