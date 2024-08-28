@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import Image from "next/image";
 import OTP from "../components/OTP";
 import { apiUrl } from "../api/config";
-import { CheckMFA, DelCookie } from "../func/funcs";
+import { CheckMFA } from "../func/funcs";
 
 const VerifyMFAAxios = (data: any) => {
   axios

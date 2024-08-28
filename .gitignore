@@ -73,3 +73,4 @@ build/
 /desktop/buildWin/
 /desktop/cmake-build-debug/
 /server/init-db.sql
+/server/Azion/src/test/
