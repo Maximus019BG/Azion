@@ -69,6 +69,7 @@ build/
 
 ### VS Code ###
 .vscode/
+*/.vs/
 /server/nohup.out
 /desktop/buildWin/
 /desktop/cmake-build-debug/
@@ -80,3 +81,5 @@ build/
 /server/Azion/src/main/java/com/azion/Azion/cpp/cmake-build-debug/*
 /server/Azion/src/main/java/com/azion/Azion/cpp/build/*
 /server/Azion/src/main/java/com/azion/Azion/cpp/out/*
+/server/Azion/src/main/java/com/azion/Azion/cpp/CMakeFiles/
+/server/Azion/src/main/java/com/azion/Azion/cpp/CMakeFiles/*
