@@ -20,8 +20,13 @@ import org.opencv.objdetect.CascadeClassifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import static org.opencv.imgproc.Imgproc.rectangle;
+
+import java.io.InputStream;
 import java.net.URL;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import static java.lang.System.loadLibrary;
 import static org.opencv.imgproc.Imgproc.rectangle;
@@ -45,9 +50,8 @@ public class MFAService {
 
         String issuer = System.getProperty("issuerName");
         QrData data = new QrData.Builder()
-                .label(name + "/" + email)
+                .label("Azion:"+ name + "/" + email)
                 .secret(secret)
-                .issuer(issuer)
                 .algorithm(HashingAlgorithm.SHA1)
                 .digits(6)
                 .period(30)
@@ -63,7 +67,19 @@ public class MFAService {
         }
         return Utils.getDataUriForImage(imageData, generator.getImageMimeType());
     }
-
+    
+    //!Generate otp code !!!instead of qr code!!!
+    public String generateManualEntryCode(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            log.error("User not found for email: " + email);
+            return null;
+        }
+        String secret = getUserMFASecret(email);
+        String issuer = System.getProperty("issuerName");
+        return  secret;
+    }
+    
     public boolean validateOtp(String secret, String otp) {
         TimeProvider timeProvider = new SystemTimeProvider();
         CodeGenerator codeGenerator = new DefaultCodeGenerator();
@@ -125,21 +141,28 @@ public class MFAService {
         byte[] processedImageBytes = matOfByte.toArray();
         return Base64.getEncoder().encodeToString(processedImageBytes);
     }
-
+    
+    //Face identification
     public String faceRecognition(String base64Image) throws IOException {
         byte[] imageBytes = Base64.getDecoder().decode(base64Image);
         Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
         
-        URL modelConfigUrl = getClass().getClassLoader().getResource("deploy.prototxt");
-        URL modelWeightsUrl = getClass().getClassLoader().getResource("res10_300x300_ssd_iter_140000.caffemodel");
+        InputStream modelConfigStream = getClass().getClassLoader().getResourceAsStream("deploy.prototxt");
+        InputStream modelWeightsStream = getClass().getClassLoader().getResourceAsStream("res10_300x300_ssd_iter_140000.caffemodel");
         
-        if (modelConfigUrl == null || modelWeightsUrl == null) {
+        if (modelConfigStream == null || modelWeightsStream == null) {
             log.error("Model configuration or weights file not found in resources.");
             throw new IOException("Model configuration or weights file not found in resources.");
         }
         
-        String modelConfiguration = modelConfigUrl.getPath();
-        String modelWeights = modelWeightsUrl.getPath();
+        Path tempModelConfigFile = Files.createTempFile("deploy", ".prototxt");
+        Path tempModelWeightsFile = Files.createTempFile("res10_300x300_ssd_iter_140000", ".caffemodel");
+        
+        Files.copy(modelConfigStream, tempModelConfigFile, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(modelWeightsStream, tempModelWeightsFile, StandardCopyOption.REPLACE_EXISTING);
+        
+        String modelConfiguration = tempModelConfigFile.toString();
+        String modelWeights = tempModelWeightsFile.toString();
         Net net = Dnn.readNetFromCaffe(modelConfiguration, modelWeights);
         
         Mat blob = Dnn.blobFromImage(mat, 1.0, new Size(300, 300), new Scalar(104.0, 177.0, 124.0), false, false);
@@ -183,40 +206,48 @@ public class MFAService {
         }
         return null;
     }
+    
+    
     public String faceIdMFAScan(String base64Image, String token) throws IOException {
-        if(token ==null){
+        if (token == null) {
             log.error("Token is required");
             return "Token is required";
         }
         User user = tokenRepo.findByToken(token).getSubject();
-        if(user == null){
+        if (user == null) {
             log.error("User not found for token: " + token);
             return "User not found for token: " + token;
         }
-        
+
         byte[] imageBytes = Base64.getDecoder().decode(base64Image);
         Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
-        
-        URL modelConfigUrl = getClass().getClassLoader().getResource("deploy.prototxt");
-        URL modelWeightsUrl = getClass().getClassLoader().getResource("res10_300x300_ssd_iter_140000.caffemodel");
-        
-        if (modelConfigUrl == null || modelWeightsUrl == null) {
+
+        InputStream modelConfigStream = getClass().getClassLoader().getResourceAsStream("deploy.prototxt");
+        InputStream modelWeightsStream = getClass().getClassLoader().getResourceAsStream("res10_300x300_ssd_iter_140000.caffemodel");
+
+        if (modelConfigStream == null || modelWeightsStream == null) {
             log.error("Model configuration or weights file not found in resources.");
             throw new IOException("Model configuration or weights file not found in resources.");
         }
-        
-        String modelConfiguration = modelConfigUrl.getPath();
-        String modelWeights = modelWeightsUrl.getPath();
+
+        Path tempModelConfigFile = Files.createTempFile("deploy", ".prototxt");
+        Path tempModelWeightsFile = Files.createTempFile("res10_300x300_ssd_iter_140000", ".caffemodel");
+
+        Files.copy(modelConfigStream, tempModelConfigFile, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(modelWeightsStream, tempModelWeightsFile, StandardCopyOption.REPLACE_EXISTING);
+
+        String modelConfiguration = tempModelConfigFile.toString();
+        String modelWeights = tempModelWeightsFile.toString();
         Net net = Dnn.readNetFromCaffe(modelConfiguration, modelWeights);
-        
+
         Mat blob = Dnn.blobFromImage(mat, 1.0, new Size(300, 300), new Scalar(104.0, 177.0, 124.0), false, false);
         net.setInput(blob);
         Mat detections = net.forward();
-        
+
         int cols = mat.cols();
         int rows = mat.rows();
         detections = detections.reshape(1, (int) detections.total() / 7);
-        
+
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < detections.rows(); i++) {
             double confidence = detections.get(i, 2)[0];
@@ -227,24 +258,23 @@ public class MFAService {
                 int y2 = (int) (detections.get(i, 6)[0] * rows);
                 Rect rect = new Rect(new Point(x1, y1), new Point(x2, y2));
                 rectangle(mat, rect, new Scalar(0, 255, 0));
-                
+
                 Mat face = new Mat(mat, rect);
                 double[] faceEncoding = encodeFace(face);
-                
-                if(user.getFaceID()==null){
+
+                if (user.getFaceID() == null) {
                     log.debug("User face ID not found");
-                    try{
+                    try {
                         user.setFaceID(faceEncoding);
                         userRepository.save(user);
                     } catch (Exception e) {
                         log.error("Error saving face ID for user: " + user.getEmail(), e);
                     }
                     log.debug("New user face ID saved");
-                }
-                else if(user.getFaceID()!=null) {
-                        return "User has face ID saved";
+                } else if (user.getFaceID() != null) {
+                    return "User has face ID saved";
                 } else {
-                    try{
+                    try {
                         user.setFaceID(faceEncoding);
                         userRepository.save(user);
                     } catch (Exception e) {
@@ -254,12 +284,12 @@ public class MFAService {
                 }
             }
         }
-        
-        MatOfByte matOfByte = new MatOfByte();
-        Imgcodecs.imencode(".jpg", mat, matOfByte);
-        byte[] processedImageBytes = matOfByte.toArray();
-        return Base64.getEncoder().encodeToString(processedImageBytes);
-    }
+    
+    MatOfByte matOfByte = new MatOfByte();
+    Imgcodecs.imencode(".jpg", mat, matOfByte);
+    byte[] processedImageBytes = matOfByte.toArray();
+    return Base64.getEncoder().encodeToString(processedImageBytes);
+}
     
     private double[] encodeFace(Mat face) {
         Mat grayFace = new Mat();

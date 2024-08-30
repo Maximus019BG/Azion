@@ -33,22 +33,25 @@ const AxiosFunction = (data: any, isOwner: boolean) => {
     .then(function (response: AxiosResponse) {
       const accessToken = response.data.accessToken;
       const refreshToken = response.data.refreshToken;
-      if (!isOwner) {
-        window.location.href = "/organizations";
-      } else if (isOwner) {
-        window.location.href = "/register-organization";
-      }
-
-      Cookies.set("azionAccessToken", accessToken, {
+        Cookies.set("azionAccessToken", accessToken, {
         secure: true,
         sameSite: "Strict",
       });
       Cookies.set("azionRefreshToken", refreshToken, {
         secure: true,
         sameSite: "Strict",
+
       });
-    })
-    .catch(function (error: any) {
+      Cookies.set("Azion_email", data.email, { secure: true, sameSite: "Strict" });
+
+    if (!isOwner) {
+      window.location.href = "/mfa";
+      Cookies.set("OrgOwner", "false", { secure: true, sameSite: "Strict" });
+    } else if (isOwner) {
+      window.location.href = "/mfa";
+      Cookies.set("OrgOwner", "true", { secure: true, sameSite: "Strict" });
+    }
+  }).catch(function (error: any) {
       console.log(error.response ? error.response : error);
     });
 };
@@ -131,7 +134,7 @@ const Register = () => {
       age,
       password,
       role,
-      mfaEnabled: true,
+      mfaEnabled: false,
     };
     if (password === password2) {
       AxiosFunction(userData, isOrgOwner);

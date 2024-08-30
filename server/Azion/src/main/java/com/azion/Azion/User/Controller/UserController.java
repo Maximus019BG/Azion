@@ -37,7 +37,7 @@ public class UserController {
         this.mfaService = mfaService;
         this.tokenRepo = tokenRepo;
     }
-    
+
     
     @GetMapping("/delete/{email}")
     public ResponseEntity<?> removeUserFromOrg(@PathVariable String email) {
@@ -49,6 +49,7 @@ public class UserController {
         return ResponseEntity.ok("User with email " + email + " deleted");
     }
     
+    //Request to get user data 
     @PostMapping("/data")
     @Transactional
     public ResponseEntity<?> getUserData(@RequestBody Map<String, Object> request) {
@@ -68,7 +69,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user associated with this token.");
             }
             
-            //This fixes the 500 error DO NOT REMOVE!!!
+            //!!!This fixes the 500 error DO NOT REMOVE!!!
             user.getName();
             
             UserData userData = new UserData();

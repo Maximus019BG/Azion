@@ -1,3 +1,0 @@
-/home/max/IdeaProjects/Azion/server/Azion/cpp/CMakeFiles/cpp_main.dir
-/home/max/IdeaProjects/Azion/server/Azion/cpp/CMakeFiles/edit_cache.dir
-/home/max/IdeaProjects/Azion/server/Azion/cpp/CMakeFiles/rebuild_cache.dir

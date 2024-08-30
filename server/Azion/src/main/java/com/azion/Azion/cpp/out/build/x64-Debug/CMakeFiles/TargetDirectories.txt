@@ -1,3 +1,0 @@
-D:/Azion/server/Azion/src/main/java/com/azion/Azion/cpp/out/build/x64-Debug/CMakeFiles/cpp.dir
-D:/Azion/server/Azion/src/main/java/com/azion/Azion/cpp/out/build/x64-Debug/CMakeFiles/edit_cache.dir
-D:/Azion/server/Azion/src/main/java/com/azion/Azion/cpp/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir

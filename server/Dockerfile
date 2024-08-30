@@ -1,7 +1,9 @@
-FROM openjdk:17-jdk-slim
+FROM ubuntu:latest
+
+RUN apt-get update && apt-get install -y maven openjdk-21-jdk libopencv-dev
 
 WORKDIR /app
 
-COPY target/Azion-0.0.1-SNAPSHOT.jar /app/Azion-0.0.1-SNAPSHOT.jar
+COPY ./Azion /app
 
-ENTRYPOINT ["java", "-jar", "/app/Azion-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["mvn", "spring-boot:run"]

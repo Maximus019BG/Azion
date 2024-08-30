@@ -2,6 +2,7 @@ import { apiUrl } from "../api/config";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import axios, { AxiosResponse } from "axios";
+import Cookies from "js-cookie";
 
 interface Token {
   refreshToken: string;
@@ -22,7 +23,7 @@ const Navbar = () => {
         .then((response: AxiosResponse) => {
           const { message, accessToken } = response.data;
           if (message === 'newAccessToken generated') {
-            localStorage.setItem('azionAccessToken', accessToken);
+            Cookies.set('azionAccessToken', accessToken);
             setIsLogged(true);
           } else if (message !== 'success') {
             setIsLogged(true);
@@ -36,8 +37,8 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    const refreshToken = localStorage.getItem("azionRefreshToken");
-    const accessToken = localStorage.getItem("azionAccessToken");
+      const refreshToken = Cookies.get("azionRefreshToken");
+      const accessToken = Cookies.get("azionAccessToken");
 
     if (refreshToken && accessToken) {
       const data = { refreshToken, accessToken };
@@ -48,7 +49,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="navbar bg-lightAccent">
+    <div className="navbar bg-transparent">
       <div className="flex-none">
         {isLogged && (
           <button className="btn btn-square btn-ghost">
@@ -75,12 +76,12 @@ const Navbar = () => {
         {isLogged ? (
           <>
           <Link href={"/dashboard"}>
-            <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+            <button className="btn border-none neon-text text-lg shadow-none bg-transparent ">
               Dashboard
             </button>
             </Link>
               <Link href={"/organizations"}>
-                <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                <button className="btn border-none neon-text text-lg shadow-none bg-transparent ">
                     Organizations
                 </button>
             </Link>
@@ -88,12 +89,12 @@ const Navbar = () => {
         ) : (
           <>
           <Link href={"/register"}>
-                <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                <button className="btn border-none neon-text text-lg shadow-none bg-transparent ">
                     Register
                 </button>
             </Link>
             <Link href={"log-in"}>
-                <button className="btn border-none neon-text text-lg shadow-none bg-[#45a29e] hover:bg-[#37817c]">
+                <button className="btn border-none neon-text text-lg shadow-none bg-transparent ">
                     Log-in
                 </button>
             </Link>

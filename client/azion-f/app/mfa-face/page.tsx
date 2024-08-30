@@ -5,6 +5,7 @@ import Image from "next/image";
 import { apiUrl } from '../api/config';
 import { Commissioner } from "next/font/google";
 import Cookies from 'js-cookie';
+import { CheckMFA } from '../func/funcs';
 
 interface Token {
   refreshToken: string;
@@ -42,10 +43,12 @@ const SessionCheck = () => {
     });
 };
 
-export default function Camera() {
+export default function MfaFace() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [imageSrc, setImageSrc] = useState('');
   const [altText, setAltText] = useState('');
+
+  CheckMFA(false);
 
   useEffect(() => {
     const refreshToken = Cookies.get('azionRefreshToken');
@@ -95,7 +98,7 @@ export default function Camera() {
                 if (response.data.image === 'no faces detected') {
                     setAltText('No faces detected');
                 } else {
-                    setAltText('Detected Face');
+                  window.location.href = "/organizations";
                 }
                 setImageSrc(processedImage);
             } catch (error) {

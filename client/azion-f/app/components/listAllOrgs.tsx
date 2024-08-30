@@ -1,4 +1,4 @@
-"use client";   
+"use client";
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
@@ -67,7 +67,7 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({ searchTerm }) => {
     ]
       .join(" ")
       .toLowerCase()
-      .includes(searchTerm.toLowerCase()) 
+      .includes(searchTerm.toLowerCase())
   );
 
   if (filteredOrgs.length === 0) {
@@ -75,17 +75,25 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({ searchTerm }) => {
   }
 
   return (
-    <div>
-      {filteredOrgs.map((org, index) => (
-        <div key={index} className="p-4 bg-gray-800 mb-2 rounded-lg">
-          <h2 className="text-white">{org.orgName}</h2>
-          <p className="text-white">{org.orgDescription}</p>
-          <p className="text-white">{org.orgAddress}</p>
-          <p className="text-white">{org.orgEmail}</p>
-          <p className="text-white">{org.orgPhone}</p>
-          <p className="text-white">{org.orgType}</p>
-        </div>
-      ))}
+    <div className="w-[50vw]">
+      {/* Grid container for responsive layout */}
+      <div className="grid grid-cols-1 gap-6 lg:gap-8">
+        {filteredOrgs.map((org, index) => (
+          <div
+            key={index}
+            className="flex flex-col line-clamp-2 justify-start items-start p-6 bg-lightAccent rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+          >
+            <h2 className="text-white text-xl font-semibold mb-2">
+              {org.orgName}
+            </h2>
+            <p className="text-white mb-1">{org.orgDescription}</p>
+            <p className="text-white mb-1">{org.orgAddress}</p>
+            <p className="text-white mb-1">{org.orgEmail}</p>
+            <p className="text-white mb-1">{org.orgPhone}</p>
+            <p className="text-white">{org.orgType}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

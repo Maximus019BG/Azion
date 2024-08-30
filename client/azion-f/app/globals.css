@@ -46,11 +46,14 @@
     0 0 30px rgba(197, 198, 199, 0.2),
     0 0 40px rgba(197, 198, 199, 0.1);
 }
+
+
+
 .radial-progress {
   --size: 10rem;
   --thickness: 1rem;
-  --value: 0;
-  --color-primary: theme('colors.blue.500'); 
+  --value: 70;
+  --color-primary: blue;
 
   position: relative;
   display: inline-block;
@@ -65,12 +68,18 @@
 .radial-progress::before {
   content: attr(data-progress);
   position: absolute;
-  font-size: calc(var(--size) / 4); /* Adjust the font size relative to the circle size */
-  inset: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: calc(var(--size) / 4);
   color: var(--color-primary);
   font-weight: bold;
   text-align: center;
+  z-index: 10;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
 }

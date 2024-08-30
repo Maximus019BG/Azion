@@ -10,6 +10,9 @@ import { apiUrl } from "./api/config";
 import { useEffect, useState } from "react";
 import Main_Services from "./components/main-services";
 import Footer from "./components/Footer";
+import Shape1 from "./components/shapes/shape1";
+import Cookies from "js-cookie";
+
 
 interface Token {
   refreshToken: string;
@@ -38,8 +41,8 @@ const Home = () => {
           setButtonText1("Dashboard");
           setButtonText2("Organizations");
         } else if (message !== "success") {
-          setButtonText1(" Dashboard");
-          setButtonText2(" Organizations");
+          setButtonText1("Dashboard");
+          setButtonText2("Organizations");
         } else {
           setButtonText1("Dashboard");
           setButtonText2("Organizations ");
@@ -51,11 +54,15 @@ const Home = () => {
       });
   };
 
+
+
   useEffect(() => {
-    const refreshToken = localStorage.getItem("azionRefreshToken");
-    const accessToken = localStorage.getItem("azionAccessToken");
+    const refreshToken = Cookies.get("azionRefreshToken");
+    const accessToken = Cookies.get("azionAccessToken");
 
     if (refreshToken && accessToken) {
+      setButtonText1("Dashboard");
+      setButtonText2("Organizations");
       const data = { refreshToken, accessToken };
       sessionCheck(data);
     } else if (!accessToken && !refreshToken) {
@@ -65,26 +72,39 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="h-screen w-full overflow-x-hidden">
-      <Navbar />
+    <div className="h-screen w-screen overflow-x-hidden">
+      <div className=" mt-6">
+        <Navbar />
+      </div>
       <motion.div
         initial={{ opacity: 0, y: -400 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className=" w-screen flex flex-col md:flex-row gap-36 justify-center items-center px-6 lg:px-36 py-10 lg:py-28 "
+        className=" h-[80vh] flex justify-start items-end p-16  "
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="max-w-5xl mt-20 flex flex-col justify-center items-center gap-8 text-center w-full"
+          className=" h-full max-w-3xl p-10 flex flex-col justify-end items-center text-center"
         >
           <h1
-            className={`text-3xl gradient-text md:text-4xl lg:text-6xl ${HeaderText.className}`}
+            className={`text-2xl gradient-text md:text-3xl lg:text-5xl text-left  ${HeaderText.className}`}
           >
-            Improve your workflow and secure your company with{" "}
             <span
-              className={` neon-text text-5xl md:text-6xl lg:text-8xl ${azionText.className}`}
+              className={` neon-text text-2xl md:text-3xl lg:text-5xl ${azionText.className}`}
+            >
+              Improve
+            </span>{" "}
+            your workflow and{" "}
+            <span
+              className={` neon-text text-2xl md:text-4xl lg:text-5xl ${azionText.className}`}
+            >
+              Secure
+            </span>{" "}
+            your company with{" "}
+            <span
+              className={` neon-text text-3xl md:text-5xl lg:text-7xl ${azionText.className}`}
             >
               Azion.
             </span>
@@ -94,24 +114,25 @@ const Home = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="flex flex-col sm:flex-row justify-center items-start gap-4 md:gap-8 mt-8 md:mt-12 lg:mt-16 w-full"
+            className="flex flex-col sm:flex-row justify-start items-start gap-4 md:gap-8 mt-8 md:mt-12 lg:mt-16 w-full"
           >
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={` neon-text w-40 md:w-64 lg:w-80 h-10 md:h-12 lg:h-14 bg-[#18b7be] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#139299] ${HeaderText.className}`}
+              className={` neon-text w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-[#18b7be] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#139299] ${HeaderText.className}`}
             >
               <Link href={`/${ButtonText1.toLowerCase()}`}>{ButtonText1}</Link>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={` neon-text w-40 md:w-64 lg:w-80 h-10 md:h-12 lg:h-14 bg-[#072a40] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] ${HeaderText.className}`}
+              className={` neon-text w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-[#072a40] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] ${HeaderText.className}`}
             >
               <Link href={`/${ButtonText2.toLowerCase()}`}>{ButtonText2}</Link>
             </motion.button>
           </motion.div>
         </motion.div>
+        <Shape1/>
       </motion.div>
 
       <div className=" flex flex-col justify-center items-center mt-48">

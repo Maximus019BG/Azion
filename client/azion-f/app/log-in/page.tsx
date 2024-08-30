@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
@@ -176,12 +175,21 @@ const Login = () => {
             </button>
 
             <h1 className="text-black">
-              If you don&apos;t have an existing account go to{" "}
+              If you don&apos;t have an existing account go to{"  "} 
               <Link
                 href="/register"
-                className=" text-lightAccent hover:text-[#51bbb6] font-extrabold text-xl underline"
+                className=" text-lightAccent hover:text-[#51bbb6] font-black text-xl underline"
               >
                 Register
+              </Link>
+            </h1>
+            <h1 className="text-black">
+              You can login using only {"  "} 
+              <Link
+                href="/login-fast"
+                className=" text-lightAccent hover:text-[#51bbb6] font-black text-xl underline"
+              >
+                Your Face
               </Link>
             </h1>
           </div>
