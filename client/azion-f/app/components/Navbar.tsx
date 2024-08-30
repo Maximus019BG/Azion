@@ -2,6 +2,7 @@ import { apiUrl } from "../api/config";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import axios, { AxiosResponse } from "axios";
+import Cookies from "js-cookie";
 
 interface Token {
   refreshToken: string;
@@ -22,7 +23,7 @@ const Navbar = () => {
         .then((response: AxiosResponse) => {
           const { message, accessToken } = response.data;
           if (message === 'newAccessToken generated') {
-            localStorage.setItem('azionAccessToken', accessToken);
+            Cookies.set('azionAccessToken', accessToken);
             setIsLogged(true);
           } else if (message !== 'success') {
             setIsLogged(true);
@@ -36,8 +37,8 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    const refreshToken = localStorage.getItem("azionRefreshToken");
-    const accessToken = localStorage.getItem("azionAccessToken");
+      const refreshToken = Cookies.get("azionRefreshToken");
+      const accessToken = Cookies.get("azionAccessToken");
 
     if (refreshToken && accessToken) {
       const data = { refreshToken, accessToken };

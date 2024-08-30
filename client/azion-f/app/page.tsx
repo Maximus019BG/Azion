@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import Main_Services from "./components/main-services";
 import Footer from "./components/Footer";
 import Shape1 from "./components/shapes/shape1";
+import Cookies from "js-cookie";
 
 
 interface Token {
@@ -40,8 +41,8 @@ const Home = () => {
           setButtonText1("Dashboard");
           setButtonText2("Organizations");
         } else if (message !== "success") {
-          setButtonText1(" Dashboard");
-          setButtonText2(" Organizations");
+          setButtonText1("Dashboard");
+          setButtonText2("Organizations");
         } else {
           setButtonText1("Dashboard");
           setButtonText2("Organizations ");
@@ -53,11 +54,15 @@ const Home = () => {
       });
   };
 
+
+
   useEffect(() => {
-    const refreshToken = localStorage.getItem("azionRefreshToken");
-    const accessToken = localStorage.getItem("azionAccessToken");
+    const refreshToken = Cookies.get("azionRefreshToken");
+    const accessToken = Cookies.get("azionAccessToken");
 
     if (refreshToken && accessToken) {
+      setButtonText1("Dashboard");
+      setButtonText2("Organizations");
       const data = { refreshToken, accessToken };
       sessionCheck(data);
     } else if (!accessToken && !refreshToken) {
