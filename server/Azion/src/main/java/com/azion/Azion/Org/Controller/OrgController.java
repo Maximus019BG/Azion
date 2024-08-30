@@ -74,7 +74,8 @@ public class OrgController {
         
         //!Fixes no session error
         orgService.addUserToOrg(org, user);
-        
+        user.setRole("owner");
+        userRepository.save(user);
         String encryptedString = org.getOrgConnectString();
         String conSring = OrgUtility.decrypt(encryptedString);
         

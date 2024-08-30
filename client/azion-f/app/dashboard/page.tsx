@@ -6,7 +6,7 @@ import { Poppins } from "next/font/google";
 import Cookies from "js-cookie";
 import SideMenu from "../components/Side-menu";
 import CircularProgress from "../components/diagram";
-import { CheckMFA } from "../func/funcs";
+import {CheckMFA, PartOfOrg, UserData} from "../func/funcs";
 
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
@@ -46,54 +46,28 @@ const SessionCheck = () => {
     });
 };
 
-const PartOfOrg = () => {
-  const data = { accessToken: Cookies.get("azionAccessToken") };
-  axios
-    .post(`${apiUrl}/org/partOfOrg`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then(function (response: AxiosResponse) {})
-    .catch(function (error) {
-      if (error.response && error.response.status === 500) {
-      } else {
-        console.error(error.response ? error.response : error);
-      }
-      window.location.href = "/organizations";
-    });
-};
-
-const YourOrg = () => {
+const Dashboard = () => {
   const [displayName, setDisplayName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  
   CheckMFA(false);
+  PartOfOrg(true);
 
-  const UserData = () => {
-    const data = { accessToken: Cookies.get("azionAccessToken") };
-    axios
-      .post(`${apiUrl}/user/data`, data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then(function (response: AxiosResponse) {
-        setDisplayName(response.data.name);
-        setLoading(false);
-      })
-      .catch(function (error: any) {
-        console.error(error.response ? error.response : error);
-      });
-  };
+
+
   useEffect(() => {
     const refreshToken = Cookies.get("azionRefreshToken");
     const accessToken = Cookies.get("azionAccessToken");
 
     if (refreshToken && accessToken) {
+      PartOfOrg(true).then();
       SessionCheck();
-      PartOfOrg();
-      UserData();
+      setTimeout(() => {
+        UserData().then((data) => {
+            setDisplayName(data.name);
+
+            setLoading(false);
+        });
+      }, 1000);
     } else if (!accessToken && !refreshToken) {
        window.location.href = '/log-in';
     }
@@ -121,7 +95,6 @@ const YourOrg = () => {
           </h1>
 
           {/* Diagrams */}
-
           <div className=" flex justify-center items-center">
             <CircularProgress percentage={35} size={200} strokeWidth={4} />
           </div>
@@ -132,4 +105,4 @@ const YourOrg = () => {
   );
 };
 
-export default YourOrg;
+export default Dashboard;

@@ -8,32 +8,16 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleLeft } from "@fortawesome/free-solid-svg-icons";
 import background from "../../public/background2.jpeg";
-import { CheckMFA } from "../func/funcs";
+import { CheckMFA,PartOfOrg } from "../func/funcs";
 import ConString from "../components/ConString";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
-
-const PartOfOrg = async () => {
-  const data = { accessToken: Cookies.get("azionAccessToken") };
-  try {
-    await axios.post(`${apiUrl}/org/partOfOrg`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    window.location.href = "/dashboard";
-  } catch (error: any) {
-    if (error.response && error.response.status !== 500) {
-      console.error(error.response ? error.response : error);
-    }
-  }
-};
 
 const SessionCheck = () => {
   const refreshToken = Cookies.get("azionRefreshToken");
   const accessToken = Cookies.get("azionAccessToken");
 
-  PartOfOrg();
+  PartOfOrg(false);
 
   const data = { refreshToken, accessToken };
   axios

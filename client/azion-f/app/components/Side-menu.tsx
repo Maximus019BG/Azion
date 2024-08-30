@@ -3,6 +3,7 @@ import MenuItem from "../layouts/menItem";
 import Image from "next/image";
 import logo from "../../public/logo.png";
 import { Commissioner } from "next/font/google";
+import Link from "next/link";
 
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 
@@ -44,6 +45,11 @@ const SideMenu = () => {
           </li>
           <li>
             <a>Sidebar Item 2</a>
+          </li>
+          <li>
+            <Link href={"/task"}>
+              Tasks
+            </Link>
           </li>
         </ul>
       </div>

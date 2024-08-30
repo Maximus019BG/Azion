@@ -6,7 +6,7 @@ import ListAllOrgs from "../components/listAllOrgs";
 import Cookies from "js-cookie";
 import Side_menu from "../components/Side-menu";
 import Join_Organization from "../components/JoinOrg";
-import { CheckMFA } from "../func/funcs";
+import { CheckMFA,PartOfOrg } from "../func/funcs";
 
 const sessionCheck = async () => {
   const refreshToken = Cookies.get("azionRefreshToken");
@@ -39,21 +39,6 @@ const sessionCheck = async () => {
   }
 };
 
-const PartOfOrg = async () => {
-  const data = { accessToken: Cookies.get("azionAccessToken") };
-  try {
-    await axios.post(`${apiUrl}/org/partOfOrg`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    window.location.href = "/dashboard";
-  } catch (error: any) {
-    if (error.response && error.response.status !== 500) {
-      console.error(error.response ? error.response : error);
-    }
-  }
-};
 
 const Organizations = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -63,7 +48,7 @@ const Organizations = () => {
     const CheckSessionAndOrg = async () => {
       const isSessionValid = await sessionCheck();
       if (isSessionValid) {
-        await PartOfOrg();
+        await PartOfOrg(false);
       }
     };
 
@@ -71,7 +56,7 @@ const Organizations = () => {
     const accessToken = Cookies.get("azionAccessToken");
 
     if (refreshToken && accessToken) {
-      CheckSessionAndOrg();
+      CheckSessionAndOrg().then();
     } else if (!accessToken && !refreshToken) {
       window.location.href = "/log-in";
     }
