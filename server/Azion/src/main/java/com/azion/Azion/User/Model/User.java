@@ -1,6 +1,7 @@
 package com.azion.Azion.User.Model;
 
 import com.azion.Azion.User.Util.UserUtility;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.Contract;
@@ -51,8 +52,8 @@ public class User {
     @Column
     private String mfaSecret ;
     
-    
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "users")
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
     private Set<Project> projects;
 
     public String getOrgid() {

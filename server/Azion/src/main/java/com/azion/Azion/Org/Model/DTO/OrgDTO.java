@@ -1,6 +1,6 @@
-package com.azion.Azion.Org;
+package com.azion.Azion.Org.Model.DTO;
 
-public interface OrgProjection {
+public interface OrgDTO {
     String getOrgName();
     String getOrgType();
     String getOrgAddress();

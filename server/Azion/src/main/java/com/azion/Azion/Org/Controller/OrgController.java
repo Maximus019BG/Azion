@@ -1,15 +1,19 @@
 package com.azion.Azion.Org.Controller;
 
 import com.azion.Azion.Org.Model.Org;
-import com.azion.Azion.Org.OrgProjection;
+import com.azion.Azion.Org.Model.DTO.OrgDTO;
 import com.azion.Azion.Org.Repository.OrgRepository;
 import com.azion.Azion.Org.Service.OrgService;
 import com.azion.Azion.Org.Util.OrgUtility;
+import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
+import com.azion.Azion.Projects.Model.Project;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.User;
+import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -130,10 +135,13 @@ public class OrgController {
         return ResponseEntity.ok("User with email " + email + " invited.");
     }
     
-    @PostMapping("/partOfOrg")
     @Transactional
+    @PostMapping("/partOfOrg")
     public ResponseEntity<?> getOrg(@RequestBody Map<String, Object> request) {
         String token = (String) request.get("accessToken");
+        if(token == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token not found.");
+        }
         User user = tokenService.getUserFromToken(token);
         if (user == null) {
             log.debug("User not found for token: " + token);
@@ -147,25 +155,71 @@ public class OrgController {
         if (org == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
         }
-        return ResponseEntity.ok(org);
+        Optional<OrgDTO> orgDTO = orgRepository.findByOrgAddress(org.getOrgAddress());
+        
+        
+        return ResponseEntity.ok(orgDTO);
     }
     
     @Transactional
     @GetMapping("/list/all")
     public ResponseEntity<?> listOrgs() {
-        List<OrgProjection> orgs = orgRepository.findAllOrgs();
+        List<OrgDTO> orgs = orgRepository.findAllOrgs();
         return ResponseEntity.ok(orgs);
     }
     
+    
+    @Transactional
     @GetMapping("/list/employees")
-    public ResponseEntity<?> listEmployees() {
-        Org org = orgRepository.findById("ce77d1227d6c43e5a72457de785e4a9b1715804886698").orElse(null);
-        if(org == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+    public ResponseEntity<?> listEmployees(@RequestHeader("authorization") String token) {
+        try {
+            if (token == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Authorization token not found.");
+            }
+            
+            User user = tokenService.getUserFromToken(token);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            }
+            
+            Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+            if (org == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+            }
+            Hibernate.initialize(org.getUsers());
+            org.getUsers().forEach(u -> {
+                Hibernate.initialize(u.getProjects());
+                u.getProjects().forEach(project -> Hibernate.initialize(project.getUsers())); // Initialize Project.users
+            });
+            
+            Set<UserDTO> userDTOs = org.getUsers().stream()
+                    .map(this::convertToUserData)
+                    .collect(Collectors.toSet());
+            
+            return ResponseEntity.ok(userDTOs);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
         }
-        Set<User> users = org.getUsers();
-        return ResponseEntity.ok(users);
     }
+    
+    private UserDTO convertToUserData(User user) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName(user.getName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setAge(user.getAge());
+        userDTO.setRole(user.getRole());
+        userDTO.setOrgid(user.getOrgid());
+        
+        Hibernate.initialize(user.getProjects());
+        Set<Project> projects = user.getProjects();
+        Set<ProjectsDTO> projectDTOs = userService.convertProjectsToDTO(projects);
+        userDTO.setProjects(projectDTOs);
+        
+        return userDTO;
+    }
+
+    
+    @Transactional
     @GetMapping("/remove/{email}")
     public ResponseEntity<?> removeUserFromOrg(@PathVariable String email) {
 

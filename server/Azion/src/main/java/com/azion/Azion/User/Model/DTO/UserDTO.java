@@ -1,18 +1,18 @@
-package com.azion.Azion.User.Model;
+package com.azion.Azion.User.Model.DTO;
 
+import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
 import com.azion.Azion.Projects.Model.Project;
-import lombok.Getter;
 
 import java.util.Date;
 import java.util.Set;
 
-public class UserData {
+public class UserDTO {
     private String name;
     private String email;
     private Date age;
     private String role;
     private String orgid;
-    private Set<Project> projects;
+    private Set<ProjectsDTO> projects;
     
     public String getName() {
         return name;
@@ -54,11 +54,11 @@ public class UserData {
         this.role = role;
     }
     
-    public Set<Project> getProjects() {
+    public Set<ProjectsDTO> getProjects() {
         return projects;
     }
     
-    public void setProjects(Set<Project> projects) {
+    public void setProjects(Set<ProjectsDTO> projects) {
         this.projects = projects;
     }
 }

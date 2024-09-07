@@ -1,35 +1,29 @@
 package com.azion.Azion.User.Controller;
 
-
 import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.User.Model.User;
-import com.azion.Azion.User.Model.UserData;
+import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Repository.UserRepository;
-import com.azion.Azion.User.Returns.UserReturns;
 import com.azion.Azion.User.Service.UserService;
 import com.azion.Azion.MFA.Service.MFAService;
 import jakarta.transaction.Transactional;
-import org.apache.coyote.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-
+    
     private final UserService userService;
     private final UserRepository userRepository;
     private final MFAService mfaService;
     private final TokenRepo tokenRepo;
-
+    
     @Autowired
     public UserController(UserService userService, UserRepository userRepository, MFAService mfaService, TokenRepo tokenRepo) {
         this.userService = userService;
@@ -37,7 +31,6 @@ public class UserController {
         this.mfaService = mfaService;
         this.tokenRepo = tokenRepo;
     }
-
     
     @GetMapping("/delete/{email}")
     public ResponseEntity<?> removeUserFromOrg(@PathVariable String email) {
@@ -49,7 +42,6 @@ public class UserController {
         return ResponseEntity.ok("User with email " + email + " deleted");
     }
     
-    //Request to get user data 
     @PostMapping("/data")
     @Transactional
     public ResponseEntity<?> getUserData(@RequestBody Map<String, Object> request) {
@@ -69,22 +61,19 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user associated with this token.");
             }
             
-            //!!!This fixes the 500 error DO NOT REMOVE!!!
-            user.getName();
+            UserDTO userDTO = new UserDTO();
+            userDTO.setName(user.getName());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setAge(user.getAge());
+            userDTO.setRole(user.getRole());
+            userDTO.setOrgid(user.getOrgid());
             
-            UserData userData = new UserData();
-            userData.setName(user.getName());
-            userData.setEmail(user.getEmail());
-            userData.setAge(user.getAge());
-            userData.setRole(user.getRole());
-            userData.setOrgid(user.getOrgid());
-            userData.setProjects(user.getProjects().stream().collect(Collectors.toSet()));
+            userDTO.setProjects(userService.convertProjectsToDTO(user.getProjects()));
             
-            return ResponseEntity.ok(userData);
+            return ResponseEntity.ok(userDTO);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
-
 }

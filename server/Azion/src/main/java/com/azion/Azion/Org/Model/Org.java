@@ -5,6 +5,7 @@ import com.azion.Azion.Org.Util.OrgUtility;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Util.UserUtility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -40,8 +41,7 @@ public class Org {
     private String orgDescription;
    
     //Employees
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "orgID")
     private Set<User> users;
 
