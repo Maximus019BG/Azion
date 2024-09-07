@@ -36,7 +36,6 @@ const CheckMFA = async (onMFAPage:boolean) =>{
 
 const PartOfOrg = async (afterDashboard:boolean) => {
     const data = { accessToken: Cookies.get("azionAccessToken") };
-
     axios
         .post(`${apiUrl}/org/partOfOrg`, data, {
             headers: {

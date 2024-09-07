@@ -2,14 +2,16 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../../api/config";
-import { Poppins } from "next/font/google";
 import Cookies from "js-cookie";
-import {CheckMFA, PartOfOrg, UserData} from "../../func/funcs";
+import { CheckMFA, PartOfOrg, UserData } from "../../func/funcs";
 
-
-const headerText = Poppins({ subsets: ["latin"], weight: "900" });
-
-
+interface User {
+    name: string;
+    email: string;
+    age: number;
+    role: string;
+    id: string;
+}
 
 const SessionCheck = () => {
     const refreshToken = Cookies.get("azionRefreshToken");
@@ -40,9 +42,33 @@ const SessionCheck = () => {
         });
 };
 
-
 const CreateTask = () => {
     const [admin, setAdmin] = useState(false);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [dueDate, setDueDate] = useState("");
+    const [priority, setPriority] = useState("");
+    const [source, setSource] = useState("");
+    const [users, setUsers] = useState<User[]>([]);
+    const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
+    const progress = 0;
+    const status = "Due";
+
+    const GetUsers = () => {
+        axios
+            .get(`${apiUrl}/org/list/employees`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": Cookies.get("azionAccessToken"),
+                },
+            })
+            .then((response: AxiosResponse) => {
+                setUsers(response.data);
+            })
+            .catch((error) => {
+                console.error(error.response ? error.response : error);
+            });
+    };
 
     useEffect(() => {
         const refreshToken = Cookies.get("azionRefreshToken");
@@ -52,19 +78,96 @@ const CreateTask = () => {
         } else if (!accessToken && !refreshToken) {
             window.location.href = "/log-in";
         }
+
+        GetUsers();
+
+        UserData().then((data) => {
+            if (data.role === "owner" || data.role === "admin") {
+                setAdmin(true);
+            } else {
+                window.location.href = "/task";
+            }
+        });
     }, []);
 
-    UserData().then((data)=>{
-        if(data.role=="owner" || data.role == "admin"){
-            setAdmin(true)
-        }
-        else{
-            window.location.href = "/task";
-        }
-    });
+    const handleCheckboxChange = (email: string) => {
+        setSelectedUsers((prevSelectedUsers) => {
+            const newSelectedUsers = new Set(prevSelectedUsers);
+            if (newSelectedUsers.has(email)) {
+                newSelectedUsers.delete(email);
+            } else {
+                newSelectedUsers.add(email);
+            }
+            return newSelectedUsers;
+        });
+    };
+
+    const TaskData = async () => {
+        const data = {
+            accessToken: Cookies.get("azionAccessToken"),
+            title,
+            description,
+            dueDate,
+            priority,
+            status,
+            progress,
+            source,
+            users: Array.from(selectedUsers),
+        };
+        axios
+            .post(`${apiUrl}/projects/create/new`, data, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then((response: AxiosResponse) => {
+                console.log(response.data);
+            });
+    };
+    const userList = Array.isArray(users) ? users : [];
+
     return (
         <div className="w-screen h-screen flex flex-col justify-center items-center">
             Create tasks here
+
+            <h1>Users</h1>
+            <ul>
+                {userList.map((user, index) => (
+                    <li key={index}>
+                        <label>
+                            <input
+                                type="checkbox"
+                                value={user.id}
+                                onChange={() => handleCheckboxChange(user.email)}
+                            />
+                            {user.name}
+                        </label>
+                    </li>
+                ))}
+            </ul>
+            <form onSubmit={(e) => { e.preventDefault(); TaskData(); }}>
+                <label>
+                    Title:
+                    <input type="text" name="title" value={title} onChange={(e) => setTitle(e.target.value)} />
+                </label>
+                <label>
+                    Description:
+                    <input type="text" name="description" value={description} onChange={(e) => setDescription(e.target.value)} />
+                </label>
+                <label>
+                    Due Date:
+                    <input type="text" name="dueDate" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+                </label>
+                <label>
+                    Priority:
+                    <input type="text" name="priority" value={priority} onChange={(e) => setPriority(e.target.value)} />
+                </label>
+                <label>
+                    Source:
+                    <input type="text" name="source" value={source} onChange={(e) => setSource(e.target.value)} />
+                </label>
+                <button type="submit">Submit</button>
+            </form>
         </div>
     );
 };

@@ -10,7 +10,24 @@ import Link from "next/link";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
+interface User {
+    name: string;
+    email: string;
+    age: string;
+    role: string;
+    orgid: string;
+    projects: any;
+}
 
+interface Task {
+    id: string;
+    name: string;
+    description: string;
+    project: string;
+    status: string;
+    date: string;
+    createdBy: User;
+}
 
 const SessionCheck = () => {
     const refreshToken = Cookies.get("azionRefreshToken");
@@ -41,9 +58,26 @@ const SessionCheck = () => {
         });
 };
 
-
 const Tasks = () => {
-    const[admin,setAdmin] = useState(false)
+    const [admin, setAdmin] = useState(false);
+    const [task, setTask] = useState<Task[]>([]);
+
+    const GetTasks = () => {
+        axios
+            .get(`${apiUrl}/projects/list`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": Cookies.get("azionAccessToken"),
+                },
+            })
+            .then((response: AxiosResponse) => {
+                console.log(response.data);
+                setTask(response.data);
+            })
+            .catch((error) => {
+                console.error(error.response ? error.response : error);
+            });
+    };
 
     useEffect(() => {
         const refreshToken = Cookies.get("azionRefreshToken");
@@ -53,24 +87,36 @@ const Tasks = () => {
         } else if (!accessToken && !refreshToken) {
             window.location.href = "/log-in";
         }
+        GetTasks();
     }, []);
 
-   UserData().then((data)=>{
-       if(data.role=="owner" || data.role == "admin"){
-           setAdmin(true)
-       }
-   });
+    UserData().then((data) => {
+        if (data.role == "owner" || data.role == "admin") {
+            setAdmin(true);
+        }
+    });
 
     return (
-      <div className="w-screen h-screen flex flex-col justify-center items-center">
-          Your tasks
-          {admin ? (
-          <Link href={"/task/create"}>
-              Create task
-          </Link>):(
-              <></>
-              )}
-      </div>
+        <div className="w-screen h-screen flex flex-col justify-center items-center">
+            Your tasks
+            {admin ? (
+                <Link href={"/task/create"}>
+                    Create task
+                </Link>
+            ) : (
+                <></>
+            )}
+            <h1>Tasks</h1>
+            {task.map((task) => (
+                <div key={task.id}>
+                    <h1>{task.name}</h1>
+                    <h2>{task.description}</h2>
+                    <h3>{task.status}</h3>
+                    <h4>{task.date}</h4>
+                    <h5>{task.createdBy.name}</h5>
+                </div>
+            ))}
+        </div>
     );
 };
 
