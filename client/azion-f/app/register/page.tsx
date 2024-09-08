@@ -33,25 +33,24 @@ const AxiosFunction = (data: any, isOwner: boolean) => {
     .then(function (response: AxiosResponse) {
       const accessToken = response.data.accessToken;
       const refreshToken = response.data.refreshToken;
-        Cookies.set("azionAccessToken", accessToken, {
+      Cookies.set("azionAccessToken", accessToken, {
         secure: true,
         sameSite: "Strict",
       });
       Cookies.set("azionRefreshToken", refreshToken, {
         secure: true,
         sameSite: "Strict",
-
       });
       Cookies.set("Azion_email", data.email, { secure: true, sameSite: "Strict" });
 
-    if (!isOwner) {
-      window.location.href = "/mfa";
-      Cookies.set("OrgOwner", "false", { secure: true, sameSite: "Strict" });
-    } else if (isOwner) {
-      window.location.href = "/mfa";
-      Cookies.set("OrgOwner", "true", { secure: true, sameSite: "Strict" });
-    }
-  }).catch(function (error: any) {
+      if (!isOwner) {
+        window.location.href = "/mfa";
+        Cookies.set("OrgOwner", "false", { secure: true, sameSite: "Strict" });
+      } else if (isOwner) {
+        window.location.href = "/mfa";
+        Cookies.set("OrgOwner", "true", { secure: true, sameSite: "Strict" });
+      }
+    }).catch(function (error: any) {
       console.log(error.response ? error.response : error);
     });
 };
@@ -111,7 +110,7 @@ const SessionCheck = () => {
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [age, setAge] = useState("");
+  const [age, setAge] = useState({ day: "1", month: "1", year: "2000" });
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [isOrgOwner, setIsOrgOwner] = useState(false);
@@ -131,7 +130,7 @@ const Register = () => {
     const userData = {
       name,
       email,
-      age,
+      age: `${age.year}-${age.month.padStart(2, '0')}-${age.day.padStart(2, '0')}`,
       password,
       role,
       mfaEnabled: false,
@@ -165,7 +164,12 @@ const Register = () => {
       onChange: setEmail,
       type: "email",
     },
-    { label: "Enter your age:", value: age, onChange: setAge, type: "date" },
+    {
+      label: "Enter your age:",
+      value: age,
+      onChange: (value: any) => setAge(value),
+      type: "date",
+    },
     {
       label: "Password:",
       value: password,
@@ -197,7 +201,7 @@ const Register = () => {
       );
     }
 
-    // оther steps
+    // other steps
     return [inputFields[step]];
   };
 
@@ -236,9 +240,9 @@ const Register = () => {
           >
             Register
           </h1>
-          <div className="w-full flex flex-col  justify-center gap-10 items-center">
+          <div className="w-full flex flex-col justify-center gap-10 items-center">
             {/* Vertical Steps */}
-            <ul className="steps steps-vertical text-background lg:steps-horizontal ">
+            <ul className="steps steps-vertical text-background lg:steps-horizontal">
               {stepLabels.map((label, index) => (
                 <li
                   key={index}
@@ -249,24 +253,57 @@ const Register = () => {
               ))}
             </ul>
             {/* Form Fields */}
-            <div className="w-[30vw] flex flex-col justify-center items-center gap-3">
+            <div className="w-[90%] max-w-md flex flex-col justify-center items-center gap-6">
               {getCurrentFields().map((field, index) => (
                 <div
                   key={index}
-                  className="w-full flex flex-col justify-center items-center gap-3"
+                  className="w-full flex flex-col justify-center items-center gap-4"
                 >
                   {field.type === "checkbox" ? (
-                    <label className="text-background">
+                    <label className="text-background flex items-center">
                       <input
                         type="checkbox"
                         checked={field.value as boolean}
                         onChange={(e) =>
                           field.onChange(e.target.checked as any)
                         }
-                        className="mr-2"
+                        className="mr-2 h-6 w-6"
                       />
                       {field.label}
                     </label>
+                  ) : field.type === "date" ? (
+                    <div className="flex flex-col gap-4">
+                      <div className="flex gap-4">
+                        <select
+                          value={age.day}
+                          onChange={(e) => setAge({ ...age, day: e.target.value })}
+                          className="bg-[#ceccc8] text-black pl-2 h-12 rounded-xl border border-gray-300"
+                        >
+                          {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                            <option key={day} value={day}>{day}</option>
+                          ))}
+                        </select>
+                        <select
+                          value={age.month}
+                          onChange={(e) => setAge({ ...age, month: e.target.value })}
+                          className="bg-[#ceccc8] text-black pl-2 h-12 rounded-xl border border-gray-300"
+                        >
+                          {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                            <option key={month} value={month}>{month}</option>
+                          ))}
+                        </select>
+                        <select
+                          value={age.year}
+                          onChange={(e) => setAge({ ...age, year: e.target.value })}
+                          className="bg-[#ceccc8] text-black pl-2 h-12 rounded-xl border border-gray-300"
+                        >
+                          {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                            <option key={year} value={year}>{year}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <span className="text-sm text-gray-500">Select your date of birth</span>
+                    </div>
                   ) : (
                     <input
                       type={field.type || "text"}
@@ -274,28 +311,28 @@ const Register = () => {
                       onChange={(e) => field.onChange(e.target.value as any)}
                       style={{ outline: "none" }}
                       placeholder={field.label}
-                      className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
+                      className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl border border-gray-300 focus:border-lightAccent focus:ring-lightAccent"
                     />
                   )}
                 </div>
               ))}
             </div>
-            <h1 className="text-black">
-              If you don&apos;t have an existing account go to{" "}
+            <h1 className="text-black mt-6">
+              If you don&apos;t have an existing account, go to{" "}
               <Link
                 href="/login"
-                className=" text-lightAccent hover:text-[#51bbb6] font-extrabold text-xl underline"
+                className="text-lightAccent hover:text-[#51bbb6] font-extrabold text-xl underline"
               >
                 Login
               </Link>
             </h1>
           </div>
-          <div className="w-full flex justify-center items-center gap-3">
+          <div className="w-full flex justify-center items-center gap-4 mt-6">
             {step < inputFields.length - 1 && (
               <button
                 title="click to move to the next one"
                 onClick={handleNextStep}
-                className="bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
+                className="bg-lightAccent text-slate-50 font-extrabold p-2 px-8 text-xl rounded-full hover:bg-accent transition-all duration-300"
               >
                 Next
               </button>
@@ -304,7 +341,7 @@ const Register = () => {
               <button
                 title="click to submit"
                 onClick={handleSubmit}
-                className="bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
+                className="bg-lightAccent text-slate-50 font-extrabold p-2 px-8 text-xl rounded-full hover:bg-accent transition-all duration-300"
               >
                 Submit
               </button>

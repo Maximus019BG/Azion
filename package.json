@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@types/stompjs": "^2.3.9",
     "axios": "^1.7.4",
     "next": "^14.2.3",
     "react": "^18.3.1",

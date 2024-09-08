@@ -13,8 +13,8 @@ interface OrgDetailsCardProps {
 
 const OrgDetailsCard: React.FC<OrgDetailsCardProps> = ({ orgName, orgAddress, orgEmail, orgType, orgPhone, orgDescription }) => {
     return (
-        <div className="max-w-sm rounded overflow-hidden shadow-lg p-6 bg-white">
-            <div className="font-bold text-xl mb-2 flex items-center">
+        <div className="max-w-sm rounded overflow-hidden shadow-lg p-6 bg-lightAccent ">
+            <div className="font-bold text-xl mb-2 flex items-center text-white">
                 <FaBuilding className="mr-2" /> {orgName}
             </div>
             <p className="text-gray-700 text-base flex items-center mb-2">

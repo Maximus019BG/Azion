@@ -5,6 +5,7 @@ import { apiUrl } from "../../api/config";
 import Cookies from "js-cookie";
 import { CheckMFA, PartOfOrg, UserData } from "../../func/funcs";
 import { Poppins } from "next/font/google";
+import SideMenu from "@/app/components/Side-menu";
 
 const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
 
@@ -50,10 +51,13 @@ const CreateTask = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [priority, setPriority] = useState("");
+  const [priority, setPriority] = useState("LOW");
   const [source, setSource] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
+  const [selectedMonth, setSelectedMonth] = useState("01");
+  const [selectedDay, setSelectedDay] = useState("01");
+  const [selectedYear, setSelectedYear] = useState("2024");
   const progress = 0;
   const status = "Due";
 
@@ -127,96 +131,149 @@ const CreateTask = () => {
         console.log(response.data);
       });
   };
+
+  const handleDueDateChange = () => {
+    setDueDate(`${selectedYear}-${selectedMonth}-${selectedDay}`);
+  };
+
   const userList = Array.isArray(users) ? users : [];
+  
+  // Generate options for months, days, and years
+  const months = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, "0"));
+  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, "0"));
+  const years = Array.from({ length: 10 }, (_, i) => (2024 - i).toString());
+
+  // Priority options
+  const priorities = ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"];
 
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center gap-16">
-      <h1 className=" text-5xl font-extrabold text-lightAccent">
-        Create tasks here
-      </h1>
-      <div className=" flex justify-startitems-start gap-48">
-        <div className=" flex flex-col justify-start items-center gap-5">
-          <h1 className="text-3xl font-extrabold">Users:</h1>
-          <ul>
-            {userList.map((user, index) => (
-              <li key={index}>
-                <label>
-                  <input
-                    type="checkbox"
-                    value={user.id}
-                    onChange={() => handleCheckboxChange(user.email)}
-                    className=" mr-2"
-                  />
-                  {user.name}
-                </label>
-              </li>
-            ))}
-          </ul>
+    <div className="w-screen h-screen flex overflow-hidden">
+      <div className="w-1/4 min-w-[250px] h-full">
+        <SideMenu />
+      </div>
+      <div className="w-3/4 p-6 overflow-auto flex justify-center items-center">
+        <div className="flex flex-col justify-center items-center gap-16">
+          <h1 className="text-5xl font-extrabold text-neonAccent">
+            Create tasks here
+          </h1>
+          <div className="flex justify-start items-start gap-48">
+            <div className="flex flex-col justify-start items-center gap-5">
+              <h1 className="text-3xl font-extrabold">Users:</h1>
+              <ul>
+                {userList.map((user, index) => (
+                  <li key={index}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        value={user.id}
+                        onChange={() => handleCheckboxChange(user.email)}
+                        className="mr-2"
+                      />
+                      {user.name}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleDueDateChange();
+                TaskData();
+              }}
+              className="flex flex-col justify-center items-center gap-10"
+            >
+              <label className="text-xl flex gap-5">
+                Title:
+                <input
+                  type="text"
+                  name="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="bg-lightAccent rounded-md text-white pl-2 ml-16"
+                />
+              </label>
+              <label className="text-xl flex gap-5">
+                Description:
+                <input
+                  type="text"
+                  name="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="bg-lightAccent rounded-md text-white pl-2"
+                />
+              </label>
+              <div className="w-full text-xl flex gap-5 items-center">
+                Due Date:
+                <div className="flex gap-2">
+                <select
+                    value={selectedDay}
+                    onChange={(e) => setSelectedDay(e.target.value)}
+                    className=" ml-5 bg-lightAccent rounded-md text-white"
+                  >
+                    {days.map((day) => (
+                      <option key={day} value={day}>
+                        {day}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={selectedMonth}
+                    onChange={(e) => setSelectedMonth(e.target.value)}
+                    className="bg-lightAccent rounded-md text-white"
+                  >
+                    {months.map((month) => (
+                      <option key={month} value={month}>
+                        {month}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    className="bg-lightAccent rounded-md text-white"
+                  >
+                    {years.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <label className=" w-full text-xl flex gap-5">
+                Priority:
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className="bg-lightAccent rounded-md text-white pl-2 ml-10"
+                >
+                  {priorities.map((prio) => (
+                    <option key={prio} value={prio}>
+                      {prio}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-xl flex gap-5">
+                Source:
+                <input
+                  type="text"
+                  name="source"
+                  value={source}
+                  onChange={(e) => setSource(e.target.value)}
+                  className="bg-lightAccent rounded-md text-white pl-2 ml-10"
+                />
+              </label>
+              <button
+                className={`neon-text w-full h-10 md:h-12 lg:h-14 bg-[#072a40] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] ${HeaderText.className}`}
+                type="submit"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
         </div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            TaskData();
-          }}
-          className="flex flex-col justify-center items-center gap-10"
-        >
-          <label className=" text-xl flex gap-5">
-            Title:
-            <input
-              type="text"
-              name="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className=" bg-lightAccent rounded-md text-white pl-2 ml-16"
-            />
-          </label>
-          <label className=" text-xl flex gap-5">
-            Description:
-            <input
-              type="text"
-              name="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className=" bg-lightAccent rounded-md text-white pl-2 "
-            />
-          </label>
-          <label className=" text-xl flex gap-5">
-            Due Date:
-            <input
-              type="text"
-              name="dueDate"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              className=" bg-lightAccent rounded-md text-white pl-2 ml-5"
-            />
-          </label>
-          <label className=" text-xl flex gap-5">
-            Priority:
-            <input
-              type="text"
-              name="priority"
-              value={priority}
-              onChange={(e) => setPriority(e.target.value)}
-              className=" bg-lightAccent rounded-md text-white pl-2 ml-10"
-            />
-          </label>
-          <label className=" text-xl flex gap-5">
-            Source:
-            <input
-              type="text"
-              name="source"
-              value={source}
-              onChange={(e) => setSource(e.target.value)}
-              className=" bg-lightAccent rounded-md text-white pl-2 ml-10"
-            />
-          </label>
-          <button
-            className={` neon-text w-full  h-10 md:h-12 lg:h-14 bg-[#072a40] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] ${HeaderText.className}`}
-            type="submit"
-          >
-            Submit
-          </button>
-        </form>
       </div>
     </div>
   );
