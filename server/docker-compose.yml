@@ -14,7 +14,7 @@ services:
   azionapp:
     build:
       context: .
-      dockerfile: server/Dockerfile
+      dockerfile: ./Dockerfile
     depends_on:
       - aziondb
     ports:
