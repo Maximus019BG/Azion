@@ -6,7 +6,7 @@ import { Poppins } from "next/font/google";
 import Cookies from "js-cookie";
 import {CheckMFA, PartOfOrg, UserData} from "../func/funcs";
 import Link from "next/link";
-
+import SideMenu from "../components/Side-menu";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
@@ -97,20 +97,29 @@ const Tasks = () => {
     });
 
     return (
-        <div className="w-screen h-screen flex flex-col justify-center items-center">
-            Your tasks
+        <div className="w-screen h-screen flex flex-col justify-center items-center gap-10">
+            <div className=" absolute left-0">
+            <SideMenu />
+            </div>
+            <h1 className=" text-5xl text-lightAccent font-black">Your tasks</h1>
             {admin ? (
-                <Link href={"/task/create"}>
+                <Link className={` neon-text w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-[#072a40] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] flex justify-center items-center ${headerText.className}`} href={"/task/create"}>
                     Create task
                 </Link>
             ) : (
                 <></>
             )}
-            <h1>Tasks</h1>
+            <h1 className="text-3xl font-bold text-lightAccent">Tasks: </h1>
+            <div className=" w-full h-full flex justify-center items-center gap-6"> 
+                <h1>Name:</h1>
+                <h1>Description:</h1>
+                <h1>Status:</h1>
+                <h1>Date:</h1>
+                <h1>Creator:</h1>
+            </div>
             {task.map((task) => (
-                <div key={task.id} className=" flex justify-center items-center gap-6">
-                    
-                    <h1 className="">{task.name}</h1>
+                <div key={task.id} className=" w-fit h-full flex justify-center items-center gap-6 bg-lightAccent">
+                    <h1 className=" text-white  ">{task.name}</h1>
                     <h2>{task.description}</h2>
                     <h3>{task.status}</h3>
                     <h4>{task.date}</h4>
