@@ -12,7 +12,9 @@ services:
     restart: always
 
   azionapp:
-    image: maximus019/azion-backend:latest
+    build:
+      context: .
+      dockerfile: server/Dockerfile
     depends_on:
       - aziondb
     ports:
