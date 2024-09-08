@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import {CheckMFA, PartOfOrg, UserData} from "../func/funcs";
 import Link from "next/link";
 import SideMenu from "../components/Side-menu";
+import TasksLayout from "../layouts/Tasks";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
@@ -110,22 +111,9 @@ const Tasks = () => {
                 <></>
             )}
             <h1 className="text-3xl font-bold text-lightAccent">Tasks: </h1>
-            <div className=" w-full h-full flex justify-center items-center gap-6"> 
-                <h1>Name:</h1>
-                <h1>Description:</h1>
-                <h1>Status:</h1>
-                <h1>Date:</h1>
-                <h1>Creator:</h1>
+            <div className=""> 
+            <TasksLayout/>
             </div>
-            {task.map((task) => (
-                <div key={task.id} className=" w-fit h-full flex justify-center items-center gap-6 bg-lightAccent">
-                    <h1 className=" text-white  ">{task.name}</h1>
-                    <h2>{task.description}</h2>
-                    <h3>{task.status}</h3>
-                    <h4>{task.date}</h4>
-                    <h5>{task.createdBy.name}</h5>
-                </div>
-            ))}
         </div>
     );
 };
