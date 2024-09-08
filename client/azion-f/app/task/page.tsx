@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import {CheckMFA, PartOfOrg, UserData} from "../func/funcs";
 import Link from "next/link";
 import SideMenu from "../components/Side-menu";
-import TasksLayout from "../layouts/Tasks";
+import TasksLayout from "../layouts/tasks";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 

@@ -44,9 +44,7 @@ const PartOfOrg = async (afterDashboard:boolean) => {
             },
         })
         .then(function (response: AxiosResponse) {
-            if(!afterDashboard){
-                window.location.href = '/dashboard';
-            }
+            //Do nothing
         })
         .catch(function (error) {
             if(afterDashboard){
