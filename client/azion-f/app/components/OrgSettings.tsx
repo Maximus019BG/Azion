@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import { apiUrl } from '@/app/api/config';
@@ -54,6 +54,19 @@ const OrgSettingsForm = () => {
             alert('Failed to update organization details');
         }
     };
+
+    useEffect(() => {
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            event.preventDefault();
+            event.returnValue = '';
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);
 
     return (
         <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded">
