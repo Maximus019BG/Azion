@@ -84,21 +84,21 @@ const Dashboard = () => {
           </h1>
         </div>
       ) : (
-        <div className="w-screen h-screen flex flex-col justify-center items-center">
-          <div className="absolute left-0">
-            <SideMenu />
-          </div>
-          <h1
-            className={`${headerText.className} w-[35vw] h-32 flex justify-center items-center text-foreground m-16 text-5xl`}
-          >
-            Hi, {displayName}!
-          </h1>
+          <div className="w-screen h-screen flex flex-col justify-center items-center">
+            <div className="absolute left-0">
+              <SideMenu/>
+            </div>
+            <h1
+                className={`${headerText.className} w-[35vw] h-32 flex justify-center items-center text-foreground m-16 text-5xl`}
+            >
+              Hi, {displayName}!
+            </h1>
 
-          {/* Diagrams */}
-          <div className=" flex justify-center items-center">
-            <CircularProgress percentage={35} size={200} strokeWidth={4} />
+            {/* Diagrams */}
+            <div className=" flex justify-center items-center">
+              <CircularProgress percentage={35} size={200} strokeWidth={4}/>
+            </div>
           </div>
-        </div>
       )}
       ;
     </>

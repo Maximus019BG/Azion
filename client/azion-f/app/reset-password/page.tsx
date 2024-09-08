@@ -28,6 +28,7 @@ const ResetPassword = () => {
 
   return (
     <div>
+      <title>Reset Password</title>
       <h1>Reset Password</h1>
       <form onSubmit={handleSubmit}>
         <input
