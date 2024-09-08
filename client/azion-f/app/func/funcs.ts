@@ -34,6 +34,7 @@ const CheckMFA = async (onMFAPage:boolean) =>{
 
 }
 
+//Check if user is in org...
 const PartOfOrg = async (afterDashboard:boolean) => {
     const data = { accessToken: Cookies.get("azionAccessToken") };
     axios
@@ -42,7 +43,11 @@ const PartOfOrg = async (afterDashboard:boolean) => {
                 "Content-Type": "application/json",
             },
         })
-        .then(function (response: AxiosResponse) {})
+        .then(function (response: AxiosResponse) {
+            if(!afterDashboard){
+                window.location.href = '/dashboard';
+            }
+        })
         .catch(function (error) {
             if(afterDashboard){
                 window.location.href = "/organizations";
@@ -52,6 +57,7 @@ const PartOfOrg = async (afterDashboard:boolean) => {
         });
 };
 
+//Get user data
 const UserData = async (): Promise<{ name: string, email: string, age: string, role: string, projects: string[] }> => {
     const data = { accessToken: Cookies.get("azionAccessToken") };
     return axios
@@ -73,6 +79,9 @@ const UserData = async (): Promise<{ name: string, email: string, age: string, r
             throw error;
         });
 };
+
+
+
 
 
 

@@ -4,6 +4,7 @@ import Image from "next/image";
 import logo from "../../public/logo.png";
 import { Commissioner } from "next/font/google";
 import Link from "next/link";
+import {Link2} from "lucide-react";
 
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 
@@ -42,7 +43,9 @@ const SideMenu = () => {
           {/* Sidebar content here */}
           <li>
             <Link href="/logout">Logout</Link>
-            
+          </li>
+          <li>
+            <Link href="/dashboard/settings">Organization</Link>
           </li>
           <li>
             <a>Sidebar Item 1</a>

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 import { apiUrl } from "../api/config";
 import ListAllOrgs from "../components/listAllOrgs";
 import Cookies from "js-cookie";
@@ -42,13 +42,14 @@ const sessionCheck = async () => {
 
 const Organizations = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [showJoinOrg, setShowJoinOrg] = useState(false); // Moved here
+  const [showJoinOrg, setShowJoinOrg] = useState(false);
+  const [partOfOrg, setPartOfOrg] = useState(false);
 
   useEffect(() => {
     const CheckSessionAndOrg = async () => {
       const isSessionValid = await sessionCheck();
       if (isSessionValid) {
-        await PartOfOrg(false);
+         await PartOfOrg(false);
       }
     };
 
@@ -61,6 +62,7 @@ const Organizations = () => {
       window.location.href = "/login";
     }
   }, []);
+
 
   return (
     <div className="neon-text h-screen w-screen bg-black overflow-x-hidden flex flex-col items-center">

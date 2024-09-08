@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface OrgRepository extends JpaRepository<Org, String> {
     Optional<Org> findOrgByOrgConnectString(String orgConnectString);
     Optional<Org> findOrgByOrgName(String orgName);
-    Optional<Org> findOrgByOrgAddress(String orgID);
+    Optional<Org> findOrgByOrgAddress(String orgAddress);
     Optional<OrgDTO>findByOrgAddress(String orgAddress);
  
     @Query("SELECT o FROM Org o")

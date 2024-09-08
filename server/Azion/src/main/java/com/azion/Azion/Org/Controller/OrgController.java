@@ -108,31 +108,70 @@ public class OrgController {
         
         return ResponseEntity.ok("User added to organization.");
     }
-    //!DEBUG ONLY
-//    @GetMapping("/decrypt")
-//    public ResponseEntity<?> decryptString(@RequestParam String encryptedString) {
-//        try {
-//            String decryptedString = OrgUtility.decrypt(encryptedString);
-//            return ResponseEntity.ok(decryptedString);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error decrypting string: " + e.getMessage());
-//        }
-//    }
     
-    @GetMapping("/invite/{email}")
-    public ResponseEntity<?> inviteUserToOrg(@PathVariable String email) {
-        
-        User user = userRepository.findByEmail(email);
-        
+    @Transactional
+    @GetMapping("/conn/{AccessToken}")
+    public ResponseEntity<?> connStringShow(@PathVariable String AccessToken) {
+        User user = tokenService.getUserFromToken(AccessToken);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+      
         
-        user.setOrgid("ce77d1227d6c43e5a72457de785e4a9b1715804886698");
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+        }
+        String encryptedString = org.getOrgConnectString();
+        String conSring = OrgUtility.decrypt(encryptedString);
+        return ResponseEntity.ok(conSring);
+    }
+    
+    @Transactional
+    @GetMapping("/{AccessToken}")
+    public ResponseEntity<?> orgData(@PathVariable String AccessToken) {
+         User user = tokenService.getUserFromToken(AccessToken);
+         if (user == null) {
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+         }
+         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+         
+         if (org == null) {
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+         }
+         Optional<OrgDTO> orgDTO = orgRepository.findByOrgAddress(org.getOrgAddress());
+         
+         return ResponseEntity.ok(orgDTO);
+    }
+    
+    @Transactional
+    @PutMapping("/update/{accessToken}")
+    public ResponseEntity<?> updateOrg(@RequestBody Map<String, Object> request, @PathVariable String accessToken) {
+        String orgName = (String) request.get("orgName");
+        String orgType = (String) request.get("orgType");
+        String orgAddress = (String) request.get("orgAddress");
+        String orgEmail = (String) request.get("orgEmail");
+        String orgPhone = (String) request.get("orgPhone");
+        String orgDescription = (String) request.get("orgDescription");
         
-        userRepository.save(user);
+        User user = tokenService.getUserFromToken(accessToken);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+        }
         
-        return ResponseEntity.ok("User with email " + email + " invited.");
+        org.setOrgName(orgName);
+        org.setOrgType(orgType);
+        org.setOrgAddress(orgAddress);
+        org.setOrgEmail(orgEmail);
+        org.setOrgPhone(orgPhone);
+        org.setOrgDescription(orgDescription);
+        orgRepository.save(org);
+        
+        return ResponseEntity.ok("Organization updated.");
     }
     
     @Transactional

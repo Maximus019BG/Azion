@@ -1,13 +1,16 @@
 "use client";
 import React, {useEffect, useState} from 'react';
 import { Poppins } from 'next/font/google';
-import axios  from "axios";
+import axios, {AxiosResponse} from "axios";
 import {apiUrl} from "../api/config";
 import Cookies from 'js-cookie';
+import {PartOfOrg} from "@/app/func/funcs";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "800" });
+
 const Join_Organization = () => {
     const [connString, setConnString] = useState("");
+    const [partOfOrg, setPartOfOrg] = useState(false);
 
     const handleSubmit = () => {
             if(connString === ""){
@@ -33,6 +36,7 @@ const Join_Organization = () => {
         const CreateOne = () => {
             window.location.href = '/register-organization';
         }
+
 
 
     return (
