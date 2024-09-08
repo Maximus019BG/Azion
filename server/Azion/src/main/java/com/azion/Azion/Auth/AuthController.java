@@ -205,12 +205,7 @@ public class AuthController {
         
         return ResponseEntity.ok("Password reset successfully");
     }
-
-    @GetMapping("/reset-password")
-    public String resetPassword() {
-        return "Reset Password";
-    }
-
+    
     @GetMapping("/change-password")
     public String changePassword() {
         return "Change Password";
