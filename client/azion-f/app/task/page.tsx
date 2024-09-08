@@ -54,7 +54,7 @@ const SessionCheck = () => {
             console.error(error.response ? error.response : error);
             Cookies.remove("azionAccessToken");
             Cookies.remove("azionRefreshToken");
-            window.location.href = "/log-in";
+            window.location.href = "/login";
         });
 };
 
@@ -85,7 +85,7 @@ const Tasks = () => {
         if (refreshToken && accessToken) {
             SessionCheck();
         } else if (!accessToken && !refreshToken) {
-            window.location.href = "/log-in";
+            window.location.href = "/login";
         }
         GetTasks();
     }, []);

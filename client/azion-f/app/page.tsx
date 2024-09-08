@@ -50,7 +50,7 @@ const Home = () => {
       })
       .catch((error) => {
         setButtonText1("Register");
-        setButtonText2("Log-in");
+        setButtonText2("Login");
       });
   };
 
@@ -67,7 +67,7 @@ const Home = () => {
       sessionCheck(data);
     } else if (!accessToken && !refreshToken) {
       setButtonText1("Register");
-      setButtonText2("Log-in");
+      setButtonText2("Login");
     }
   }, []);
 

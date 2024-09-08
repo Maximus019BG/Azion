@@ -34,7 +34,7 @@ const sessionCheck = async () => {
     console.error(error.response ? error.response : error);
     Cookies.remove("azionAccessToken");
     Cookies.remove("azionRefreshToken");
-    window.location.href = "/log-in";
+    window.location.href = "/login";
     return false;
   }
 };
@@ -58,7 +58,7 @@ const Organizations = () => {
     if (refreshToken && accessToken) {
       CheckSessionAndOrg().then();
     } else if (!accessToken && !refreshToken) {
-      window.location.href = "/log-in";
+      window.location.href = "/login";
     }
   }, []);
 

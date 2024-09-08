@@ -20,7 +20,7 @@ const ResetPassword = () => {
     try {
 
       const response = await axios.put(`${apiUrl}/auth/reset-password`, { token, password });
-      window.location.href = '/log-in';
+      window.location.href = '/login';
     } catch (error) {
       setMessage('Error resetting password');
     }

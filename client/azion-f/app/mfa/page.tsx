@@ -85,7 +85,7 @@ const sessionCheck = () => {
       console.error(error.response ? error.response : error);
       Cookies.remove("azionAccessToken");
       Cookies.remove("azionRefreshToken");
-      window.location.href = "/log-in";
+      window.location.href = "/login";
     });
 };
 
@@ -102,7 +102,7 @@ const MfaSetupPage = () => {
     if (refreshToken && accessToken) {
       sessionCheck();
     } else if (!accessToken && !refreshToken) {
-      window.location.href = "/log-in";
+      window.location.href = "/login";
     }
 
     const fetchQrCodeUri = async (accessToken: string | undefined) => {

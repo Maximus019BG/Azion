@@ -33,12 +33,12 @@ const LogOutAxios = () => {
         .then(function (response: AxiosResponse) {
             Cookies.remove("azionAccessToken");
             Cookies.remove("azionRefreshToken");
-            window.location.href = "/log-in";
+            window.location.href = "/login";
         })
         .catch(function (error: any) {
             Cookies.remove("azionAccessToken");
             Cookies.remove("azionRefreshToken");
-            window.location.href = "/log-in";
+            window.location.href = "/login";
         });
 
 };
@@ -73,11 +73,11 @@ const SessionCheck = () => {
             } else if (message === "sessionCheck failed") {
                 Cookies.remove("azionAccessToken");
                 Cookies.remove("azionRefreshToken");
-                window.location.href = "/log-in";
+                window.location.href = "/login";
             } else {
                 Cookies.remove("azionAccessToken");
                 Cookies.remove("azionRefreshToken");
-                window.location.href = "/log-in";
+                window.location.href = "/login";
             }
         })
         .catch(function (error: any) {
@@ -87,11 +87,11 @@ const SessionCheck = () => {
                 if (message === "sessionCheck failed") {
                     Cookies.remove("azionAccessToken");
                     Cookies.remove("azionRefreshToken");
-                    window.location.href = "/log-in";
+                    window.location.href = "/login";
                 } else {
                     Cookies.remove("azionAccessToken");
                     Cookies.remove("azionRefreshToken");
-                    window.location.href = "/log-in";
+                    window.location.href = "/login";
                 }
             } else {
                 console.log("An error occurred, but no server response was received.");

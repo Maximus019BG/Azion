@@ -283,7 +283,7 @@ const Register = () => {
             <h1 className="text-black">
               If you don&apos;t have an existing account go to{" "}
               <Link
-                href="/log-in"
+                href="/login"
                 className=" text-lightAccent hover:text-[#51bbb6] font-extrabold text-xl underline"
               >
                 Login

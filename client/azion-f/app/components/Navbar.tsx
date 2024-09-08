@@ -93,9 +93,9 @@ const Navbar = () => {
                     Register
                 </button>
             </Link>
-            <Link href={"log-in"}>
+            <Link href={"login"}>
                 <button className="btn border-none neon-text text-lg shadow-none bg-transparent ">
-                    Log-in
+                    Login
                 </button>
             </Link>
           </>

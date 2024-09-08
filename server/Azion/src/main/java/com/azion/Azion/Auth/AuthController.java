@@ -1,13 +1,8 @@
 package com.azion.Azion.Auth;
 
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
 import com.azion.Azion.MFA.Service.MFAService;
-import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenRepo;
-import com.azion.Azion.Token.TokenType;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.EmailService;
@@ -18,17 +13,13 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import com.azion.Azion.Token.TokenService;
 
-import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.Date;
 import java.util.UUID;
 
 import static com.azion.Azion.Token.TokenType.ACCESS_TOKEN;
@@ -136,6 +127,8 @@ public class AuthController {
 
         return ResponseEntity.ok(tokens);
     }
+    
+    //Login with face recognition
     @Transactional
     @PostMapping("/fast-login")
     public ResponseEntity<?> fastLogin(@RequestBody Map<String, Object> requestBody, @RequestHeader(value = "User-Agent") String UserAgent) {
