@@ -19,6 +19,8 @@ public class AzionApplication {
 		System.setProperty("issuerName", dotenv.get("ISSUER_NAME"));
 		System.setProperty("secretMFA", dotenv.get("SECRET_MFA"));
 		System.setProperty("os", dotenv.get("OS"));
+		System.setProperty("spring.mail.username", dotenv.get("EMAIL"));
+		System.setProperty("spring.mail.password", dotenv.get("EMAIL_PASSWORD"));
 		
 		SpringApplication.run(AzionApplication.class, args);
 	}

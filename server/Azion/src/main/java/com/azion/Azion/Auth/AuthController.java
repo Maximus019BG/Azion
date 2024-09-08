@@ -10,6 +10,7 @@ import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenType;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
+import com.azion.Azion.User.Service.EmailService;
 import com.azion.Azion.User.Service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -43,14 +44,16 @@ public class AuthController {
     private final TokenRepo tokenRepo;
     private final UserRepository userRepository;
     private final MFAService mfaService;
+    private final EmailService emailService;
     
     @Autowired
-    public AuthController(TokenService tokenService, UserService userService, TokenRepo tokenRepo, UserRepository userRepository, MFAService mfaService) {
+    public AuthController(TokenService tokenService, UserService userService, TokenRepo tokenRepo, UserRepository userRepository, MFAService mfaService, EmailService emailService) {
         this.tokenService = tokenService;
         this.userService = userService;
         this.tokenRepo = tokenRepo;
         this.userRepository = userRepository;
         this.mfaService = mfaService;
+        this.emailService = emailService;
     }
     
     @Transactional
@@ -133,40 +136,74 @@ public class AuthController {
 
         return ResponseEntity.ok(tokens);
     }
-@Transactional
-@PostMapping("/fast-login")
-public ResponseEntity<?> fastLogin(@RequestBody Map<String, Object> requestBody, @RequestHeader(value = "User-Agent") String UserAgent) {
-    log.debug("Fast login attempt");
-    Map<String, String> payload = (Map<String, String>) requestBody.get("payload");
-    User user = null;
-    try {
-        String base64Image = payload.get("image");
-        String userEmail = mfaService.faceRecognition(base64Image);
-        if (userEmail == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Face not recognized");
+    @Transactional
+    @PostMapping("/fast-login")
+    public ResponseEntity<?> fastLogin(@RequestBody Map<String, Object> requestBody, @RequestHeader(value = "User-Agent") String UserAgent) {
+        log.debug("Fast login attempt");
+        Map<String, String> payload = (Map<String, String>) requestBody.get("payload");
+        User user = null;
+        try {
+            String base64Image = payload.get("image");
+            String userEmail = mfaService.faceRecognition(base64Image);
+            if (userEmail == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Face not recognized");
+            }
+            user = userRepository.findByEmail(userEmail);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not exist");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
-        user = userRepository.findByEmail(userEmail);
+    
+        String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
+        String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
+    
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+        log.info("User logged in");
+        return ResponseEntity.ok(tokens);
+    }
+    
+    //Send the link to email
+    @PutMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<Object, String> request) {
+        String email = request.get("email");
+        
+        User user = userRepository.findByEmail(email);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not exist");
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        if (!user.isMfaEnabled()) {
+         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("MFA is not enabled for this user");
+        }
+        
+        String resetToken = UUID.randomUUID().toString();
+        user.setResetToken(resetToken);
+        userRepository.save(user);
+        emailService.sendResetPasswordEmail(user.getEmail(), resetToken);
+        
+        return ResponseEntity.ok("Password reset link sent to email");
     }
-
-    String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-    String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-
-    Map<String, String> tokens = new HashMap<>();
-    tokens.put("accessToken", accessToken);
-    tokens.put("refreshToken", refreshToken);
-    log.info("User logged in");
-    return ResponseEntity.ok(tokens);
-}
-
-    @GetMapping("/forgot-password")
-    public String forgotPassword() {
-        return "Forgot Password";
+    
+    //Reset the password
+    @PutMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<Object, String> request) {
+        String resetToken = request.get("token");
+        String newPassword = request.get("password");
+        
+        User user = userRepository.findByResetToken(resetToken);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid reset token");
+        }
+        
+        user.setPassword(newPassword);
+        user.setResetToken(null);
+        userRepository.save(user);
+        
+        return ResponseEntity.ok("Password reset successfully");
     }
 
     @GetMapping("/reset-password")

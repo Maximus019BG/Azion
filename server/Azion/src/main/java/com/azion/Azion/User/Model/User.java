@@ -52,6 +52,9 @@ public class User {
     @Column
     private String mfaSecret ;
     
+    @Column(nullable = true, columnDefinition = "TEXT")
+    private String resetToken;
+    
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
     private Set<Project> projects;
@@ -183,6 +186,14 @@ public class User {
         this.mfaSecret = "no Secret";
     }
 }
+    
+    public String getResetToken() {
+        return resetToken;
+    }
+    
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
     
 
     @PrePersist
