@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import { apiUrl } from '@/app/api/config';
+import CustomAlert from './CustomAlert';
 
 const OrgSettingsForm = () => {
     const [orgName, setOrgName] = useState('');
@@ -11,6 +12,7 @@ const OrgSettingsForm = () => {
     const [orgType, setOrgType] = useState('');
     const [orgPhone, setOrgPhone] = useState('');
     const [orgDescription, setOrgDescription] = useState('');
+    const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchOrgData = async () => {
@@ -48,10 +50,10 @@ const OrgSettingsForm = () => {
                     "Content-Type": "application/json",
                 },
             });
-            alert('Organization details updated successfully');
+            setAlertMessage('Organization details updated successfully');
         } catch (error) {
             console.error(error);
-            alert('Failed to update organization details');
+            setAlertMessage('Failed to update organization details');
         }
     };
 
@@ -130,6 +132,12 @@ const OrgSettingsForm = () => {
             >
                 Save
             </button>
+            {alertMessage && (
+                <CustomAlert
+                    message={alertMessage}
+                    onClose={() => setAlertMessage(null)}
+                />
+            )}
         </div>
     );
 };
