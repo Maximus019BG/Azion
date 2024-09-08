@@ -1,9 +1,8 @@
-package com.azion.Azion;
+package com.azion.Azion.Config;
 
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;

@@ -110,7 +110,6 @@ const Login = () => {
       AxiosFunction(userData);
   };
 
-
   const showModal = () => {
     const modal = document.getElementById(
       "my_modal_5"
@@ -168,39 +167,48 @@ const Login = () => {
           </div>
           <div className=" flex flex-col justify-center items-center gap-5">
             <button
-              onClick={showModal}
-              className="bg-accent w-fit text-[#cbccc4] font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
+                onClick={showModal}
+                className="bg-accent w-fit text-[#cbccc4] font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
             >
               Continue
             </button>
 
             <h1 className="text-black">
-              If you don&apos;t have an existing account go to{"  "} 
+              If you don&apos;t have an existing account go to{"  "}
               <Link
-                href="/register"
-                className=" text-lightAccent hover:text-[#51bbb6] font-black text-xl underline"
+                  href="/register"
+                  className=" text-lightAccent hover:text-[#51bbb6] font-black text-xl underline"
               >
                 Register
               </Link>
             </h1>
             <h1 className="text-black">
-              You can login using only {"  "} 
+              You can login using only {"  "}
               <Link
-                href="/login-fast"
-                className=" text-lightAccent hover:text-[#51bbb6] font-black text-xl underline"
+                  href="/login-fast"
+                  className=" text-lightAccent hover:text-[#51bbb6] font-black text-xl underline"
               >
                 Your Face
+              </Link>
+            </h1>
+            <h1 className="text-black">
+                Forgot your {"  "}
+              <Link
+                  href="/forgot-password"
+                  className=" text-lightAccent hover:text-[#51bbb6] font-black text-xl underline"
+              >
+                Password?
               </Link>
             </h1>
           </div>
 
           <dialog
-            id="my_modal_5"
-            className="modal modal-bottom sm:modal-middle"
+              id="my_modal_5"
+              className="modal modal-bottom sm:modal-middle"
           >
             <div className="modal-box flex flex-col justify-center items-center h-full ">
               <div className=" flex flex-col justify-center items-center gap-6 mb-5">
-                <p className=" absolute left-0 top-0 p-5 font-black">
+              <p className=" absolute left-0 top-0 p-5 font-black">
                   Esc to go back
                 </p>
                 <h1 className=" text-2xl text-center font-black">

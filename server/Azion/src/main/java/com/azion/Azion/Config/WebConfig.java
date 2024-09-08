@@ -1,4 +1,4 @@
-package com.azion.Azion;
+package com.azion.Azion.Config;
 
 
 import org.springframework.context.annotation.Configuration;
