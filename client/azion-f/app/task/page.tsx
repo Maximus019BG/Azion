@@ -108,8 +108,9 @@ const Tasks = () => {
             )}
             <h1>Tasks</h1>
             {task.map((task) => (
-                <div key={task.id}>
-                    <h1>{task.name}</h1>
+                <div key={task.id} className=" flex justify-center items-center gap-6">
+                    
+                    <h1 className="">{task.name}</h1>
                     <h2>{task.description}</h2>
                     <h3>{task.status}</h3>
                     <h4>{task.date}</h4>

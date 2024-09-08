@@ -41,6 +41,10 @@ const SideMenu = () => {
         <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
           {/* Sidebar content here */}
           <li>
+            <Link href="/logout">Logout</Link>
+            
+          </li>
+          <li>
             <a>Sidebar Item 1</a>
           </li>
           <li>

@@ -201,7 +201,7 @@ const MfaSetupPage = () => {
         <div className=" flex flex-col justify-center items-center">
           <p className=" mt-10">
             {" "}
-            &bull; <span className="font-black text-lightAccent">DO NOT REMOVE</span> THE AZION
+            &bull; <span className="font-black text-lightAccent uppercase">DO NOT REMOVE</span> THE AZION
             FIELD FROM YOUR AUTHENTICATOR APP BECAUSE YOU WON&apos;T BE ABLE TO
             LOG BACK IN &bull;
           </p>
