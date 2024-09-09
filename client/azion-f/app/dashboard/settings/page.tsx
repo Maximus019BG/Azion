@@ -86,7 +86,7 @@ const OrgSettings = () => {
             ) : (
                 <div className="w-screen h-screen flex flex-col justify-center items-center">
                     <OrgSettingsForm />
-                    <h2 className="text-foreground text-3xl">
+                    <h2 className="text-foreground text-3xl text-white">
                         Connection String: {conString}
                     </h2>
                 </div>

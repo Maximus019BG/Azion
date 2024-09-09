@@ -71,59 +71,59 @@ const OrgSettingsForm = () => {
     }, []);
 
     return (
-        <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded">
-            <h2 className="text-2xl font-bold mb-4">Organization Settings</h2>
+        <div className="w-[30vw] h-8/12 p-10 bg-slate-900 shadow-md rounded-badge">
+            <h2 className="text-5xl text-center font-black text-neonAccent mb-4">Organization Settings</h2>
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Name</label>
+                <label className="block text-white text-lg font-bold mb-2">Name:</label>
                 <input
                     type="text"
                     value={orgName}
                     onChange={(e) => setOrgName(e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 bg-lightAccent text-white leading-tight focus:outline-none focus:shadow-outline"
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Address</label>
+                <label className="block text-white text-lg font-bold mb-2">Address:</label>
                 <input
                     type="text"
                     value={orgAddress}
                     onChange={(e) => setOrgAddress(e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 bg-lightAccent text-white leading-tight focus:outline-none focus:shadow-outline"
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                <label className="block text-white text-lg font-bold mb-2">Email:</label>
                 <input
                     type="email"
                     value={orgEmail}
                     onChange={(e) => setOrgEmail(e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 bg-lightAccent text-white leading-tight focus:outline-none focus:shadow-outline"
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Type</label>
+                <label className="block text-white text-lg font-bold mb-2">Type:</label>
                 <input
                     type="text"
                     value={orgType}
                     onChange={(e) => setOrgType(e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 bg-lightAccent text-white leading-tight focus:outline-none focus:shadow-outline"
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Phone</label>
+                <label className="block text-white text-lg font-bold mb-2">Phone:</label>
                 <input
                     type="text"
                     value={orgPhone}
                     onChange={(e) => setOrgPhone(e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 bg-lightAccent text-white leading-tight focus:outline-none focus:shadow-outline"
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Description</label>
+                <label className="block text-white text-lg font-bold mb-2">Description:</label>
                 <textarea
                     value={orgDescription}
                     onChange={(e) => setOrgDescription(e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 bg-lightAccent text-white leading-tight focus:outline-none focus:shadow-outline"
                 />
             </div>
             <button

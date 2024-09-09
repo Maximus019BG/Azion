@@ -45,13 +45,16 @@ const SideMenu = () => {
             <Link href="/logout">Logout</Link>
           </li>
           <li>
-            <Link href="/dashboard/settings">Organization</Link>
+            <Link href="/dashboard/settings">Settings</Link>
           </li>
           <li>
-            <a>Sidebar Item 1</a>
+            <Link href="/organizations">Organization</Link>
           </li>
           <li>
-            <a>Sidebar Item 2</a>
+          <Link href="/mfa-face">Face-Register</Link>
+          </li>
+          <li>
+          <Link href="/dashboard">Dashboard</Link>
           </li>
           <li>
             <Link href={"/task"}>

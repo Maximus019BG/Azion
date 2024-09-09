@@ -253,7 +253,7 @@ const Register_Organisation = () => {
                     className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
                   />
                 ))}
-              </div>
+              </div>  
             )}
 
             {/* Navigation Buttons */}

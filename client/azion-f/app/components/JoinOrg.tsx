@@ -40,7 +40,7 @@ const Join_Organization = () => {
 
 
     return (
-        <div className=' bg-background w-full h-full flex flex-col justify-center items-center rounded-badge'>
+        <div className=' bg-background w-full h-full flex flex-col justify-center gap-16 items-center rounded-badge'>
             <center>
                 <h1
                     className={`mt-6 text-neonAccent text-lg md:text-3xl lg:text-5xl ${headerText.className}`}
@@ -48,22 +48,23 @@ const Join_Organization = () => {
                     Join Org
                 </h1>
             </center>
-            <div className="w-full flex flex-col justify-center items-center gap-5 mt-5">
+            <div className="w-full flex flex-col justify-center items-center gap-5 ">
                 <input
                     type="text"
                     placeholder="Connection String"
-                    className="w-96 h-12 rounded-3xl p-3 text-black"
+                    className="w-96 h-12 rounded-3xl p-3 text-white"
                     value={connString}
                     onChange={(e) => setConnString(e.target.value)}
                 />
                 <button
-                    className="w-96 h-12 rounded-3xl bg-neonAccent text-black"
+                    className={` neon-text w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-[#072a40] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] ${headerText.className}`}
                     onClick={handleSubmit}
                 >
                     Join
                 </button>
+                <button onClick={CreateOne} className={` neon-text w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-[#18b7be] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#139299] ${headerText.className}`}>Create one</button>
             </div>
-           <button onClick={CreateOne}>Create one</button>
+           
         </div>
     );
 };
