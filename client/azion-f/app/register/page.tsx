@@ -25,34 +25,28 @@ const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
 const AxiosFunction = (data: any, isOwner: boolean) => {
   axios
-    .post(`${apiUrl}/auth/register`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then(function (response: AxiosResponse) {
-      const accessToken = response.data.accessToken;
-      const refreshToken = response.data.refreshToken;
-      Cookies.set("azionAccessToken", accessToken, {
-        secure: true,
-        sameSite: "Strict",
-      });
-      Cookies.set("azionRefreshToken", refreshToken, {
-        secure: true,
-        sameSite: "Strict",
-      });
-      Cookies.set("Azion_email", data.email, { secure: true, sameSite: "Strict" });
+      .post(`${apiUrl}/auth/register`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then(function (response: AxiosResponse) {
+        const accessToken = response.data.accessToken;
+        const refreshToken = response.data.refreshToken;
+        Cookies.set("azionAccessToken", accessToken, {
+          secure: true,
+          sameSite: "Strict",
+        });
+        Cookies.set("azionRefreshToken", refreshToken, {
+          secure: true,
+          sameSite: "Strict",
+        });
+        Cookies.set("Azion_email", data.email, { secure: true, sameSite: "Strict" });
 
-      if (!isOwner) {
-        window.location.href = "/mfa";
-        Cookies.set("OrgOwner", "false", { secure: true, sameSite: "Strict" });
-      } else if (isOwner) {
-        window.location.href = "/mfa";
-        Cookies.set("OrgOwner", "true", { secure: true, sameSite: "Strict" });
-      }
-    }).catch(function (error: any) {
-      console.log(error.response ? error.response : error);
-    });
+      })
+      .catch(function (error: any) {
+        console.log(error.response ? error.response : error);
+      });
 };
 
 const SessionCheck = () => {
@@ -64,47 +58,73 @@ const SessionCheck = () => {
     accessToken: accessToken ? accessToken : "",
   };
   axios
-    .post(`${apiUrl}/token/session/check`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then(function (response: AxiosResponse) {
-      const message = response.data.message;
+      .post(`${apiUrl}/token/session/check`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then(function (response: AxiosResponse) {
+        const message = response.data.message;
 
-      if (message === "newAccessToken generated") {
-        const accessToken = response.data.accessToken;
+        if (message === "newAccessToken generated") {
+          const accessToken = response.data.accessToken;
 
-        Cookies.set("azionAccessToken", accessToken, {
-          secure: true,
-          sameSite: "Strict",
-        });
-        window.location.href = "/organizations";
-      } else if (message === "success") {
-        window.location.href = "/organizations";
-      } else if (message === "sessionCheck failed") {
-        Cookies.remove("azionAccessToken");
-        Cookies.remove("azionRefreshToken");
-      } else {
-        Cookies.remove("azionAccessToken");
-        Cookies.remove("azionRefreshToken");
-      }
-    })
-    .catch(function (error: any) {
-      if (error.response) {
-        const message = error.response.data.message;
-
-        if (message === "sessionCheck failed") {
+          Cookies.set("azionAccessToken", accessToken, {
+            secure: true,
+            sameSite: "Strict",
+          });
+          window.location.href = "/organizations";
+        } else if (message === "success") {
+          window.location.href = "/organizations";
+        } else if (message === "sessionCheck failed") {
           Cookies.remove("azionAccessToken");
           Cookies.remove("azionRefreshToken");
         } else {
           Cookies.remove("azionAccessToken");
           Cookies.remove("azionRefreshToken");
         }
-      } else {
-        console.log("An error occurred, but no server response was received.");
-      }
-    });
+      })
+      .catch(function (error: any) {
+        if (error.response) {
+          const message = error.response.data.message;
+
+          if (message === "sessionCheck failed") {
+            Cookies.remove("azionAccessToken");
+            Cookies.remove("azionRefreshToken");
+          }
+        } else {
+          console.log("An error occurred, but no server response was received.");
+        }
+      });
+};
+
+//TODO: fix the date validation
+const isLeapYear = (year: number): boolean => {
+  return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+};
+
+const isValidDate = (day: string, month: string, year: string): boolean => {
+  const dayInt = parseInt(day);
+  const monthInt = parseInt(month);
+  const yearInt = parseInt(year);
+
+  const currentDate = new Date();
+  const selectedDate = new Date(yearInt, monthInt - 1, dayInt);
+
+  if (selectedDate > currentDate) {
+    return false;
+  }
+
+  if (monthInt === 2) {
+    if (isLeapYear(yearInt)) {
+      return dayInt <= 29;
+    } else {
+      return dayInt <= 28;
+    }
+  }
+
+  const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  return dayInt <= daysInMonth[monthInt - 1];
 };
 
 const Register = () => {
@@ -116,10 +136,44 @@ const Register = () => {
   const [isOrgOwner, setIsOrgOwner] = useState(false);
   const [role, setRole] = useState("");
   const [step, setStep] = useState(0);
+  const [selectedDay, setSelectedDay] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
+  const [days, setDays] = useState<string[]>([]);
+  const [months, setMonths] = useState<string[]>([]);
+  const [years, setYears] = useState<string[]>([]);
 
   useEffect(() => {
     SessionCheck();
   }, []);
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+    const currentDay = currentDate.getDate().toString().padStart(2, "0");
+
+    // Generate years
+    const newYears = Array.from({ length: 100 }, (_, i) => (currentYear - i).toString());
+    setYears(newYears);
+
+    // Generate months
+    const newMonths = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, "0"))
+        .filter(month =>
+            selectedYear < currentYear.toString() ||
+            (selectedYear === currentYear.toString() && parseInt(month) <= parseInt(currentMonth))
+        );
+    setMonths(newMonths);
+
+    // Generate days
+    const newDays = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, "0"))
+        .filter(day => isValidDate(day, selectedMonth, selectedYear) &&
+            ((selectedYear < currentYear.toString() ||
+                    (selectedYear === currentYear.toString() && parseInt(selectedMonth) < parseInt(currentMonth))) ||
+                (selectedYear === currentYear.toString() && selectedMonth === currentMonth && parseInt(day) <= parseInt(currentDay))));
+    setDays(newDays);
+
+  }, [selectedYear, selectedMonth]);
 
   const handleSubmit = () => {
     if (isOrgOwner) {
@@ -157,6 +211,18 @@ const Register = () => {
       value: name,
       onChange: setName,
       type: "text",
+    },
+    {
+      label: "Enter your email:",
+      value: email,
+      onChange: setEmail,
+      type: "email",
+    },
+    {
+      label: "Enter your age:",
+      value: age,
+      onChange: (value: any) => setAge(value),
+      type: "date",
     },
     {
       label: "Enter your email:",
@@ -279,27 +345,31 @@ const Register = () => {
                           onChange={(e) => setAge({ ...age, day: e.target.value })}
                           className="bg-[#ceccc8] text-black pl-2 h-12 rounded-xl border border-gray-300"
                         >
-                          {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
-                            <option key={day} value={day}>{day}</option>
-                          ))}
+                          {Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, "0"))
+                            .filter(day => isValidDate(day, age.month, age.year))
+                            .map(day => (
+                              <option key={day} value={day}>{day}</option>
+                            ))}
                         </select>
                         <select
                           value={age.month}
                           onChange={(e) => setAge({ ...age, month: e.target.value })}
                           className="bg-[#ceccc8] text-black pl-2 h-12 rounded-xl border border-gray-300"
                         >
-                          {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
-                            <option key={month} value={month}>{month}</option>
-                          ))}
+                          {Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, "0"))
+                            .map(month => (
+                              <option key={month} value={month}>{month}</option>
+                            ))}
                         </select>
                         <select
                           value={age.year}
                           onChange={(e) => setAge({ ...age, year: e.target.value })}
                           className="bg-[#ceccc8] text-black pl-2 h-12 rounded-xl border border-gray-300"
                         >
-                          {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
-                            <option key={year} value={year}>{year}</option>
-                          ))}
+                          {Array.from({ length: 100 }, (_, i) => (new Date().getFullYear() - i).toString())
+                            .map(year => (
+                              <option key={year} value={year}>{year}</option>
+                            ))}
                         </select>
                       </div>
                       <span className="text-sm text-gray-500">Select your date of birth</span>

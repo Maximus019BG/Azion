@@ -83,7 +83,7 @@ const CreateTask = () => {
     if (refreshToken && accessToken) {
       SessionCheck();
     } else if (!accessToken && !refreshToken) {
-      window.location.href = "/log-in";
+      window.location.href = "/login";
     }
 
     GetUsers();
@@ -132,18 +132,53 @@ const CreateTask = () => {
       });
   };
 
-  const handleDueDateChange = () => {
-    setDueDate(`${selectedYear}-${selectedMonth}-${selectedDay}`);
+  //*Date
+  const isLeapYear = (year: number): boolean => {
+    return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
   };
 
-  const userList = Array.isArray(users) ? users : [];
-  
-  // Generate options for months, days, and years
-  const months = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, "0"));
-  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, "0"));
-  const years = Array.from({ length: 10 }, (_, i) => (2024 - i).toString());
+  const isValidDate = (day: string, month: string, year: string): boolean => {
+    const dayInt = parseInt(day);
+    const monthInt = parseInt(month);
+    const yearInt = parseInt(year);
 
-  // Priority options
+    if (monthInt === 2) {
+      if (isLeapYear(yearInt)) {
+        return dayInt <= 29;
+      } else {
+        return dayInt <= 28;
+      }
+    }
+
+    const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    return dayInt <= daysInMonth[monthInt - 1];
+  };
+
+  const handleDueDateChange = () => {
+    if (isValidDate(selectedDay, selectedMonth, selectedYear)) {
+      setDueDate(`${selectedMonth}/${selectedDay}/${selectedYear}`);
+    } else {
+      alert("Invalid date selected. Please choose a valid date.");
+    }
+  };
+
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+  const currentDay = currentDate.getDate().toString().padStart(2, "0");
+
+  const months = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, "0"))
+    .filter(month => parseInt(selectedYear) > currentYear || parseInt(month) >= parseInt(currentMonth));
+
+  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, "0"))
+    .filter(day => isValidDate(day, selectedMonth, selectedYear) &&
+      ((parseInt(selectedMonth) > parseInt(currentMonth) || parseInt(selectedYear) > currentYear) || parseInt(day) >= parseInt(currentDay)));
+
+  const years = Array.from({ length: 11 }, (_, i) => (currentYear + i).toString());
+
+  //!User list
+  const userList = Array.isArray(users) ? users : [];
+  //!Priority options
   const priorities = ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"];
 
   return (

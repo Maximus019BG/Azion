@@ -74,9 +74,13 @@ public class ProjectsController {
        try {
            project.setDate(LocalDate.parse(dueDate, formatter));
        } catch (DateTimeParseException e) {
-           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format");
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date");
        }
+       
+       //!This fixes error 500
+       //!DO NOT REMOVE
        user.getEmail();
+       
        project.setOrg(org);
        project.setPriority(priority);
        project.setStatus(status);

@@ -9,6 +9,7 @@ import axios, {AxiosResponse} from "axios";
 import {Poppins} from "next/font/google";
 import OrgSettingsForm from "@/app/components/OrgSettings";
 import {OrgConnString} from "@/app/func/org";
+import Side_menu from "@/app/components/Side-menu";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
@@ -75,6 +76,9 @@ const OrgSettings = () => {
     }, []);
     return (
         <>
+            <div className="absolute left-0 top-0">
+                <Side_menu/>
+            </div>
             {loading ? (
                 <div className="w-screen h-screen flex justify-center items-center">
                     <h1
@@ -85,7 +89,7 @@ const OrgSettings = () => {
                 </div>
             ) : (
                 <div className="w-screen h-screen flex flex-col justify-center items-center">
-                    <OrgSettingsForm />
+                    <OrgSettingsForm/>
                     <h2 className="text-foreground text-3xl text-white">
                         Connection String: {conString}
                     </h2>

@@ -5,6 +5,7 @@ import { apiUrl } from "../api/config";
 import { Poppins } from "next/font/google";
 import Cookies from "js-cookie";
 import { CheckMFA } from "../func/funcs";
+import {FaSignOutAlt} from "react-icons/fa";
 
 
 interface Token {
@@ -48,7 +49,7 @@ const SessionCheck = () => {
     const accessToken: string | undefined = Cookies.get("azionAccessToken");
 
     CheckMFA(false);
-    
+
     const data: Token = {
         refreshToken: refreshToken ? refreshToken : "",
         accessToken: accessToken ? accessToken : "",
@@ -107,7 +108,7 @@ const LogOut = () => {
 
     return (
         <>
-        <button onClick={LogOutAxios}>Log out</button>
+            <button onClick={LogOutAxios} > <FaSignOutAlt className={"text-xl"} /> Log out</button>
         </>
     );
 };

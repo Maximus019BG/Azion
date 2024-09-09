@@ -65,11 +65,11 @@ const Organizations = () => {
 
 
   return (
-    <div className="neon-text h-screen w-screen bg-black overflow-x-hidden flex flex-col items-center">
+    <div className=" h-screen w-screen bg-black overflow-x-hidden flex flex-col items-center">
       <div className="absolute left-0 top-0">
         <Side_menu />
       </div>
-      <div className="w-full flex flex-col items-center mt-8">
+      <div className="neon-text w-full flex flex-col items-center mt-8">
         <label className="input w-2/6 input-bordered flex items-center gap-2 mb-4">
           <input
             type="text"

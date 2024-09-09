@@ -1,11 +1,12 @@
 "use client";
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import Image from "next/image";
-import { apiUrl } from '../api/config';
+import { apiUrl } from '../../api/config';
 import { Commissioner } from "next/font/google";
 import Cookies from 'js-cookie';
-import { CheckMFA } from '../func/funcs';
+import { CheckMFA } from '../../func/funcs';
+import Side_menu from "@/app/components/Side-menu";
 
 interface Token {
   refreshToken: string;
@@ -108,23 +109,26 @@ export default function MfaFace() {
     }
 };
   return (
-    <div className=" w-screen h-screen flex flex-col justify-center items-center gap-16 bg-background">
-      <video
-        className="rounded-full custom-oval"
-        ref={videoRef}
-        autoPlay
-      ></video>
-      <h1
-        className={` text-white mb-5 text-5xl md:text-6xl lg:text-8xl ${azionText.className}`}
-      >
-        Azion<span className="text-neonAccent">Cam</span>.
-      </h1>
-      <button
-        className="text-white bg-lightAccent w-fit font-black text-2xl px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
-        onClick={captureAndSendFrame}
-      >
-        Save face
-      </button>
-    </div>
+      <div className=" w-screen h-screen flex flex-col justify-center items-center gap-16 bg-background">
+          <div className="absolute left-0 top-0">
+              <Side_menu/>
+          </div>
+          <video
+              className="rounded-full custom-oval"
+              ref={videoRef}
+              autoPlay
+          ></video>
+          <h1
+              className={` text-white mb-5 text-5xl md:text-6xl lg:text-8xl ${azionText.className}`}
+          >
+              Azion<span className="text-neonAccent">Cam</span>.
+          </h1>
+          <button
+              className="text-white bg-lightAccent w-fit font-black text-2xl px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
+              onClick={captureAndSendFrame}
+          >
+              Save face
+          </button>
+      </div>
   );
 }

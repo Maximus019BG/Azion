@@ -1,10 +1,8 @@
 import React from "react";
-import MenuItem from "../layouts/menItem";
-import Image from "next/image";
-import logo from "../../public/logo.png";
 import { Commissioner } from "next/font/google";
 import Link from "next/link";
-import {Link2} from "lucide-react";
+import {FaSignOutAlt, FaUserCircle} from "react-icons/fa";
+import LogOut from "@/app/components/LogOut";
 
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 
@@ -13,7 +11,7 @@ const SideMenu = () => {
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col items-s justify-center">
-        {/* Page content here */}
+        {/* Page content */}
         <label
           htmlFor="my-drawer-2"
           className="btn btn-square text-white btn-ghost drawer-button lg:hidden"
@@ -39,27 +37,29 @@ const SideMenu = () => {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
-          {/* Sidebar content here */}
-          <li>
-            <Link href="/logout">Logout</Link>
-          </li>
+        <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4 flex flex-col">
+          {/* Sidebar content */}
+
           <li>
             <Link href="/dashboard/settings">Settings</Link>
           </li>
           <li>
-            <Link href="/organizations">Organization</Link>
+            <Link href="/organizations">Organizations</Link>
           </li>
           <li>
-          <Link href="/mfa-face">Face-Register</Link>
+            <Link href="/mfa/face">FaceID</Link>
           </li>
           <li>
-          <Link href="/dashboard">Dashboard</Link>
+            <Link href="/dashboard">Dashboard</Link>
           </li>
           <li>
-            <Link href={"/task"}>
-              Tasks
-            </Link>
+            <Link href="/task">Tasks</Link>
+          </li>
+          <li className="mt-auto">
+            <Link href="/account"> <FaUserCircle className={"text-xl"}/>Account</Link>
+          </li>
+          <li>
+            <LogOut />
           </li>
         </ul>
       </div>
