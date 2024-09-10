@@ -20,10 +20,6 @@ const VerifyMFAAxios = (data: any) => {
         secure: true,
         sameSite: "Strict",
       });
-      Cookies.set("Azion_email", response.data.email, {
-        secure: true,
-        sameSite: "Strict",
-      });
       if (Cookies.get("OrgOwner") === "true") {
         window.location.href = "/register-organization";
       } else {

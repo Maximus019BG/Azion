@@ -70,9 +70,15 @@ public class ProjectsController {
        Project project = new Project();
        project.setName(title);
        project.setDescription(description);
+       
+       //Date validation
        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
        try {
-           project.setDate(LocalDate.parse(dueDate, formatter));
+           LocalDate date = LocalDate.parse(dueDate, formatter);
+           if(!projectsService.dateIsValid(date, "MM/dd/yyyy", false)) {
+               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date");
+           }
+           project.setDate(date);
        } catch (DateTimeParseException e) {
            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date");
        }

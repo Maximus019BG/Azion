@@ -16,9 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.azion.Azion.Token.TokenService;
+import com.azion.Azion.Projects.Service.ProjectsService;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.UUID;
 
@@ -36,15 +40,17 @@ public class AuthController {
     private final UserRepository userRepository;
     private final MFAService mfaService;
     private final EmailService emailService;
+    private final ProjectsService projectsService;
     
     @Autowired
-    public AuthController(TokenService tokenService, UserService userService, TokenRepo tokenRepo, UserRepository userRepository, MFAService mfaService, EmailService emailService) {
+    public AuthController(TokenService tokenService, UserService userService, TokenRepo tokenRepo, UserRepository userRepository, MFAService mfaService, EmailService emailService, ProjectsService projectsService) {
         this.tokenService = tokenService;
         this.userService = userService;
         this.tokenRepo = tokenRepo;
         this.userRepository = userRepository;
         this.mfaService = mfaService;
         this.emailService = emailService;
+        this.projectsService = projectsService;
     }
     
     @Transactional
@@ -55,7 +61,18 @@ public class AuthController {
         String password = (String) request.get("password");
         String role = (String) request.get("role");
         boolean mfaEnabled = (boolean) request.get("mfaEnabled");
-        String bornAt =(String) request.get("age");
+        String bornAt = (String) request.get("age");
+        
+        //Date validation
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        try {
+            LocalDate date = LocalDate.parse(bornAt, formatter);
+            if(!projectsService.dateIsValid(date, "MM/dd/yyyy", true)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date");
+            }
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date");
+        }
 
         
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

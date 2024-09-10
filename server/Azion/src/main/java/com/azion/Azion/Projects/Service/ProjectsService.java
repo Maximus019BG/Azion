@@ -8,6 +8,7 @@ import com.azion.Azion.User.Model.User;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -72,5 +73,34 @@ public class ProjectsService {
         dto.setOrgid(user.getOrgid());
         
         return dto;
+    }
+    
+    public boolean dateIsValid(LocalDate date, String pattern, boolean isPastDate) {
+        if(date == null) {
+            return false;
+        }
+        else if(pattern == null) {
+            return false;
+        }
+        if(isPastDate) {
+            if(date.isBefore(LocalDate.now())) {
+                //*Check date format
+                return date.toString().matches(pattern);
+            }
+            else {
+                return false;
+            }
+            
+        }
+        else if(!isPastDate) {
+            if(date.isAfter(LocalDate.now())) {
+                //*Check date format
+                return date.toString().matches(pattern);
+            }
+            else {
+                return false;
+            }
+        }
+        return false;
     }
 }
