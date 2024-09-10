@@ -53,7 +53,7 @@ const SideMenu = () => {
             <Link href="/dashboard">Dashboard</Link>
           </li>
           <li>
-            <Link href="/task">Tasks</Link>
+            <Link href="/dashboard/task">Tasks</Link>
           </li>
           <li className="mt-auto">
             <Link href="/account"> <FaUserCircle className={"text-xl"}/>Account</Link>

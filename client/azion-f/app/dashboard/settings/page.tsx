@@ -13,6 +13,12 @@ import Side_menu from "@/app/components/Side-menu";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
+
+//Simo sega trqbva da izvikash UserData() i da proverish dali usera e owner ili admin na organizaciqta
+//Ako e owner ili admin da ne stava nishto
+//Ako ne e owner ili admin da go prenasochvash kum stranicata kym /dashboard
+//Kogato si gotov tuk se prehvyrli na /client/azion-f/app/dashboard/task/page.tsx red 15
+
 const SessionCheck = () => {
     const refreshToken = Cookies.get("azionRefreshToken");
     const accessToken = Cookies.get("azionAccessToken");

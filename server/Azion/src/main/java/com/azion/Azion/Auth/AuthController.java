@@ -64,11 +64,11 @@ public class AuthController {
         String bornAt = (String) request.get("age");
         
         //Date validation
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
             LocalDate date = LocalDate.parse(bornAt, formatter);
-            if(!projectsService.dateIsValid(date, "MM/dd/yyyy", true)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date");
+            if(!projectsService.dateIsValid(date, true)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date.");
             }
         } catch (DateTimeParseException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date");

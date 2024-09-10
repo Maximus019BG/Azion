@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import { apiUrl } from "../../api/config";
+import { apiUrl } from "@/app/api/config";
 import Cookies from "js-cookie";
-import { CheckMFA, PartOfOrg, UserData } from "../../func/funcs";
+import { CheckMFA, PartOfOrg, UserData } from "@/app/func/funcs";
 import { Poppins } from "next/font/google";
 import SideMenu from "@/app/components/Side-menu";
+import CustomAlert from "@/app/components/CustomAlert";
 
 const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
 
@@ -42,7 +43,7 @@ const SessionCheck = () => {
       console.error(error.response ? error.response : error);
       Cookies.remove("azionAccessToken");
       Cookies.remove("azionRefreshToken");
-      window.location.href = "/log-in";
+      window.location.href = "/login";
     });
 };
 
@@ -50,14 +51,16 @@ const CreateTask = () => {
   const [admin, setAdmin] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("LOW");
   const [source, setSource] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
-  const [selectedMonth, setSelectedMonth] = useState("01");
-  const [selectedDay, setSelectedDay] = useState("01");
-  const [selectedYear, setSelectedYear] = useState("2024");
+  const [selectedMonth, setSelectedMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, "0"));
+  const [selectedDay, setSelectedDay] = useState(new Date().getDate().toString().padStart(2, "0"));
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
+  const [dueDate, setDueDate] = useState(`${selectedMonth}/${selectedDay}/${selectedYear}`);
+  const [alert, setAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
   const progress = 0;
   const status = "Due";
 
@@ -92,7 +95,7 @@ const CreateTask = () => {
       if (data.role === "owner" || data.role === "admin") {
         setAdmin(true);
       } else {
-        window.location.href = "/task";
+        window.location.href = "/dashboard/task";
       }
     });
   }, []);
@@ -110,6 +113,16 @@ const CreateTask = () => {
   };
 
   const TaskData = async () => {
+      const missingFields = [];
+      if (!title) missingFields.push("Title");
+      if (!description) missingFields.push("Description");
+      if (!source) missingFields.push("Source");
+
+      if (missingFields.length > 0) {
+        setAlert(true);
+        setAlertMessage("Please fill in the following fields: " + missingFields.join(", "));
+        return;
+      }
     const data = {
       accessToken: Cookies.get("azionAccessToken"),
       title,
@@ -128,11 +141,14 @@ const CreateTask = () => {
         },
       })
       .then((response: AxiosResponse) => {
-        console.log(response.data);
+        setAlert(true);
+        setAlertMessage("Task created");
+      }).catch((error) => {
+        setAlert(true);
+        setAlertMessage("Error creating task: " + error.response.data);
       });
   };
 
-  //*Date
   const isLeapYear = (year: number): boolean => {
     return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
   };
@@ -158,27 +174,25 @@ const CreateTask = () => {
     if (isValidDate(selectedDay, selectedMonth, selectedYear)) {
       setDueDate(`${selectedMonth}/${selectedDay}/${selectedYear}`);
     } else {
-      alert("Invalid date selected. Please choose a valid date.");
+      setAlert(true);
+      setAlertMessage("Invalid date");
     }
   };
 
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-  const currentDay = currentDate.getDate().toString().padStart(2, "0");
+  useEffect(() => {
+    handleDueDateChange();
+  }, [selectedDay, selectedMonth, selectedYear]);
 
   const months = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, "0"))
-    .filter(month => parseInt(selectedYear) > currentYear || parseInt(month) >= parseInt(currentMonth));
+    .filter(month => parseInt(selectedYear) > new Date().getFullYear() || parseInt(month) >= (new Date().getMonth() + 1));
 
   const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, "0"))
     .filter(day => isValidDate(day, selectedMonth, selectedYear) &&
-      ((parseInt(selectedMonth) > parseInt(currentMonth) || parseInt(selectedYear) > currentYear) || parseInt(day) >= parseInt(currentDay)));
+      ((parseInt(selectedMonth) > (new Date().getMonth() + 1) || parseInt(selectedYear) > new Date().getFullYear()) || parseInt(day) >= new Date().getDate()));
 
-  const years = Array.from({ length: 11 }, (_, i) => (currentYear + i).toString());
+  const years = Array.from({ length: 11 }, (_, i) => (new Date().getFullYear() + i).toString());
 
-  //!User list
   const userList = Array.isArray(users) ? users : [];
-  //!Priority options
   const priorities = ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"];
 
   return (
@@ -187,6 +201,12 @@ const CreateTask = () => {
         <SideMenu />
       </div>
       <div className="w-3/4 p-6 overflow-auto flex justify-center items-center">
+        {alert && (
+          <CustomAlert
+            message={alertMessage}
+            onClose={() => setAlert(false)}
+          />
+        )}
         <div className="flex flex-col justify-center items-center gap-16">
           <h1 className="text-5xl font-extrabold text-neonAccent">
             Create tasks here
@@ -213,7 +233,6 @@ const CreateTask = () => {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                handleDueDateChange();
                 TaskData();
               }}
               className="flex flex-col justify-center items-center gap-10"
@@ -241,7 +260,7 @@ const CreateTask = () => {
               <div className="w-full text-xl flex gap-5 items-center">
                 Due Date:
                 <div className="flex gap-2">
-                <select
+                  <select
                     value={selectedDay}
                     onChange={(e) => setSelectedDay(e.target.value)}
                     className=" ml-5 bg-lightAccent rounded-md text-white"

@@ -11,6 +11,12 @@ interface Token {
   accessToken: string;
 }
 
+//A simo ti li si
+//Nameri nachin da pokajesh po nqkakyv nachin che moje chovek da ima faceID i da se logva s nego
+//Ako ti se zanimava de
+//I nezabravqi da mahnesh comentarite koito bqh taka dobyr da ostavq
+
+
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 
 const sessionCheck = () => {

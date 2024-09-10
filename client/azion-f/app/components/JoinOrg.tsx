@@ -34,7 +34,7 @@ const Join_Organization = () => {
         }
 
         const CreateOne = () => {
-            window.location.href = '/register-organization';
+            window.location.href = '/register/organization';
         }
 
 

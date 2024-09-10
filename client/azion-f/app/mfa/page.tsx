@@ -21,7 +21,7 @@ const VerifyMFAAxios = (data: any) => {
         sameSite: "Strict",
       });
       if (Cookies.get("OrgOwner") === "true") {
-        window.location.href = "/register-organization";
+        window.location.href = "/register/organization";
       } else {
         window.location.href = "/organizations";
       }

@@ -5,7 +5,6 @@ import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
 import com.azion.Azion.Projects.Model.Project;
 import com.azion.Azion.Projects.Repository.ProjectsRepository;
 import com.azion.Azion.Projects.Service.ProjectsService;
-import com.azion.Azion.Projects.Type.ProjectPriority;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -65,6 +64,9 @@ public class ProjectsController {
        if (user == null) {
            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
        }
+       if(title == null || description == null || dueDate == null || priority == null || status == null || source == null || usersArr == null) {
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing required fields");
+       }
        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
        
        Project project = new Project();
@@ -73,10 +75,11 @@ public class ProjectsController {
        
        //Date validation
        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+  
        try {
            LocalDate date = LocalDate.parse(dueDate, formatter);
-           if(!projectsService.dateIsValid(date, "MM/dd/yyyy", false)) {
-               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date");
+           if(!projectsService.dateIsValid(date, false)) {
+               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date.");
            }
            project.setDate(date);
        } catch (DateTimeParseException e) {
@@ -86,7 +89,6 @@ public class ProjectsController {
        //!This fixes error 500
        //!DO NOT REMOVE
        user.getEmail();
-       
        project.setOrg(org);
        project.setPriority(priority);
        project.setStatus(status);

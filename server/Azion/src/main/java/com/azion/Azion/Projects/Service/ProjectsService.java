@@ -6,6 +6,7 @@ import com.azion.Azion.Projects.Repository.ProjectsRepository;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ProjectsService {
     
@@ -75,32 +77,19 @@ public class ProjectsService {
         return dto;
     }
     
-    public boolean dateIsValid(LocalDate date, String pattern, boolean isPastDate) {
+    public boolean dateIsValid(LocalDate date, boolean isPastDate) {
         if(date == null) {
-            return false;
-        }
-        else if(pattern == null) {
-            return false;
+            return true;
         }
         if(isPastDate) {
-            if(date.isBefore(LocalDate.now())) {
-                //*Check date format
-                return date.toString().matches(pattern);
-            }
-            else {
-                return false;
-            }
+            log.debug("Date is in the past "+date+" "+LocalDate.now()+" "+date.isBefore(LocalDate.now()));
+            return date.isBefore(LocalDate.now());
             
         }
         else if(!isPastDate) {
-            if(date.isAfter(LocalDate.now())) {
-                //*Check date format
-                return date.toString().matches(pattern);
-            }
-            else {
-                return false;
-            }
+            log.debug("Date is in the future "+date+" "+LocalDate.now()+" "+date.isAfter(LocalDate.now())+" "+date.isBefore(LocalDate.now())+" "+date.isEqual(LocalDate.now()));
+            return date.isAfter(LocalDate.now()) || date.isEqual(LocalDate.now());
         }
-        return false;
+        return true;
     }
 }
