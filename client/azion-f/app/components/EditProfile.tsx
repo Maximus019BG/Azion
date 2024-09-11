@@ -23,7 +23,7 @@ const EditProfile = () => {
   };
 
   return (
-    <div className=" border-y-2 p-16 w-full h-full flex flex-col justify-center items-center gap-5">
+    <div className=" bg-gray-900 rounded-xl p-16 w-full h-full flex flex-col justify-center items-center gap-5">
       <h1 className=" text-3xl text-neonAccent font-black">
         Edit your profile
       </h1>

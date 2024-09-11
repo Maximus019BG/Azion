@@ -77,7 +77,7 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({ searchTerm }) => {
   return (
     <div className="w-[50vw]">
       {/* Grid container for responsive layout */}
-      <div className="grid grid-cols-1 gap-6 lg:gap-8">
+      <div className="grid grid-cols-2 gap-6 lg:gap-8">
         {filteredOrgs.map((org, index) => (
           <div
             key={index}

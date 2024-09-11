@@ -185,7 +185,7 @@ const Login = () => {
             <h1 className="text-black">
               You can login using only {"  "}
               <Link
-                  href="/login-fast"
+                  href="/login/fast"
                   className=" text-lightAccent hover:text-[#51bbb6] font-black text-xl underline"
               >
                 Your Face

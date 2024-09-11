@@ -54,7 +54,7 @@ const Account = () => {
         <SideMenu />
       </div>
       <div className="w-full h-full flex flex-col justify-center items-start">
-        <div className=" flex flex-col justify-center items-center gap-16">
+        <div className=" flex flex-col justify-center items-start gap-10">
           <div className=" ">
             <ProfilePicture />
           </div>
@@ -64,7 +64,7 @@ const Account = () => {
         </div>
       </div>
        <div>
-        
+
        </div>
 
     </div>

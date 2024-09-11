@@ -17,8 +17,8 @@ const ProfilePicture = () => {
   };
 
   return (
-    <div className="w-fit h-fit flex flex-col items-center justify-center">
-      <div className="relative w-fit h-fit border-y-2 border-white flex flex-col justify-center items-center p-8 space-y-4">
+    <div className="w-fit h-fit bg-gray-900 rounded-xl flex flex-col items-center justify-center">
+      <div className="relative w-fit h-fit  flex flex-col justify-center items-center p-8 space-y-4">
         <div className="relative flex flex-col justify-center items-center">
           <Image
             src={profileImage || "/user.png"}

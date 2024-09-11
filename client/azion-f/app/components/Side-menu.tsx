@@ -18,9 +18,9 @@ const SideMenu = () => {
     setRole(response.role);
   });
   return (
-    <div className="drawer lg:drawer-open">
+    <div className=" w-fit h-fit drawer lg:drawer-open ">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col items-s justify-center">
+      <div className="drawer-content flex flex-col items-s justify-center ">
         {/* Page content */}
         <label
           htmlFor="my-drawer-2"
@@ -41,7 +41,7 @@ const SideMenu = () => {
           </svg>
         </label>
       </div>
-      <div className="drawer-side">
+      <div className="drawer-side ">
         <label
           htmlFor="my-drawer-2"
           aria-label="close sidebar"
