@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Image from "next/image";
-import { apiUrl } from "../api/config";
+import { apiUrl } from "../../api/config";
 import Cookies from "js-cookie";
 import { Commissioner } from "next/font/google";
 

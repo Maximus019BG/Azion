@@ -1,20 +1,82 @@
-import React from 'react';
+"use client";
+import React, { useEffect, useState, useRef } from "react";
+import axios, { AxiosResponse } from "axios";
+import { apiUrl } from "@/app/api/config";
+import Cookies from "js-cookie";
+import { CheckMFA, PartOfOrg, UserData } from "@/app/func/funcs";
+import SideMenu from "../components/Side-menu";
+import ProfilePicture from "../components/Profile-picture";
+import EditProfile from "../components/EditProfile";
 
-//Tova e nachaloto
-//Simo trqbva mi stranica za account v koqto da pokazvam informaciq za user-a
-// ne stava da izvikash UserData() tuk shte ima endpoint po-kusno
-//informaciq za user-a trqbva da se vzima ot servera na endpoint .... nali vijdash gorniq red
-//informaciqta e ime na user-a, email, role, godini i organizaciq
-// informaciqta za organizaciqta e ime, adres, email (samo za tazi stranica e tova)
-//informaciqta za role e samo ime. Ako e admin ili owner da ima pravo da se prenasochva kum stranicata za organizaciq(/dashboard/settings)
-//Sega se prehvyrli na /client/azion-f/app/dashboard/settings/page.tsx red 17
+const SessionCheck = () => {
+  const refreshToken = Cookies.get("azionRefreshToken");
+  const accessToken = Cookies.get("azionAccessToken");
+  PartOfOrg(false);
+  const data = { refreshToken, accessToken };
+  axios
+    .post(`${apiUrl}/token/session/check`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response: AxiosResponse) => {
+      const { message, accessToken } = response.data;
+
+      if (message === "newAccessToken generated") {
+        Cookies.set("azionAccessToken", accessToken, {
+          secure: true,
+          sameSite: "Strict",
+        });
+      }
+    })
+    .catch((error) => {
+      console.error(error.response ? error.response : error);
+      Cookies.remove("azionAccessToken");
+      Cookies.remove("azionRefreshToken");
+      window.location.href = "/login";
+    });
+};
 
 const Account = () => {
-    return (
-        <div>
+  useEffect(() => {
+    const refreshToken = Cookies.get("azionRefreshToken");
+    const accessToken = Cookies.get("azionAccessToken");
+    if (refreshToken && accessToken) {
+      SessionCheck();
+    } else if (!accessToken && !refreshToken) {
+      window.location.href = "/login";
+    }
+  });
 
+  return (
+    <div className="w-screen h-screen flex justify-center">
+      {/* SIDE-MENU SECTION */}
+
+      <div className="w-fit h-full mr-10">
+        <SideMenu />
+      </div>
+
+      {/* ACCOUNT SECTION */}
+
+      <div className="w-full h-full flex flex-col justify-center items-start">
+        <div className=" flex flex-col justify-center items-center gap-16">
+          <div className=" ">
+            <ProfilePicture />
+          </div>
+          <div className="">
+            <EditProfile />
+          </div>
         </div>
-    );
+      </div>
+
+       {/* USER'S INTERFACE */}
+
+       <div>
+        
+       </div>
+
+    </div>
+  );
 };
 
 export default Account;
