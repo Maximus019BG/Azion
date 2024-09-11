@@ -7,12 +7,22 @@ import java.util.Date;
 import java.util.Set;
 
 public class UserDTO {
+    private String id;
     private String name;
     private String email;
     private Date age;
     private String role;
+    private Integer roleLevel;
     private String orgid;
     private Set<ProjectsDTO> projects;
+    
+    public String getId() {
+        return id;
+    }
+    
+    public void setId(String id) {
+        this.id = id;
+    }
     
     public String getName() {
         return name;
@@ -52,6 +62,14 @@ public class UserDTO {
     
     public void setRole(String role) {
         this.role = role;
+    }
+    
+    public Integer getRoleLevel() {
+        return roleLevel;
+    }
+    
+    public void setRoleLevel(Integer roleLevel) {
+        this.roleLevel = roleLevel;
     }
     
     public Set<ProjectsDTO> getProjects() {

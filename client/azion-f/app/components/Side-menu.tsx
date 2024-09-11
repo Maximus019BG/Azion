@@ -3,10 +3,20 @@ import { Commissioner } from "next/font/google";
 import Link from "next/link";
 import {FaSignOutAlt, FaUserCircle} from "react-icons/fa";
 import LogOut from "@/app/components/LogOut";
+import { UserData} from "@/app/func/funcs";
+
 
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 
+
+
+
 const SideMenu = () => {
+  const [role, setRole] = React.useState("");
+
+  UserData().then((response) => {
+    setRole(response.role);
+  });
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />

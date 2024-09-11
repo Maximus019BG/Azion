@@ -58,7 +58,10 @@ public class User {
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
     private Set<Project> projects;
-
+    
+    @Column(name = "roleLevel", nullable = true, columnDefinition = "INTEGER DEFAULT 0")
+    private Integer roleLevel;
+    
     public String getOrgid() {
         return orgid;
     }
@@ -195,7 +198,14 @@ public class User {
         this.resetToken = resetToken;
     }
     
-
+    public Integer getRoleLevel() {
+        return roleLevel;
+    }
+    
+    public void setRoleLevel(Integer roleLevel) {
+        this.roleLevel = roleLevel;
+    }
+    
     @PrePersist
     public void prePersist() {
         generateId();

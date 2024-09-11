@@ -50,14 +50,9 @@ const Account = () => {
 
   return (
     <div className="w-screen h-screen flex justify-center">
-      {/* SIDE-MENU SECTION */}
-
       <div className="w-fit h-full mr-10">
         <SideMenu />
       </div>
-
-      {/* ACCOUNT SECTION */}
-
       <div className="w-full h-full flex flex-col justify-center items-start">
         <div className=" flex flex-col justify-center items-center gap-16">
           <div className=" ">
@@ -68,9 +63,6 @@ const Account = () => {
           </div>
         </div>
       </div>
-
-       {/* USER'S INTERFACE */}
-
        <div>
         
        </div>
