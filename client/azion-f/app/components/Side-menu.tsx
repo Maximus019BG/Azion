@@ -18,13 +18,21 @@ import Image from "next/image";
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 
 const SideMenu = () => {
-  const [role, setRole] = useState("");
+  const [roleLevel, setRoleLevel] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     UserData().then((response) => {
-      setRole(response.role);
+      setRoleLevel(response.roleLevel);
+      setLoading(false);
     });
   }, []);
+
+  if(!loading) {
+    if (roleLevel < 1 && roleLevel > 3) {
+      window.location.href = "/dashboard";
+    }
+  }
 
   return (
     <div className="w-fit h-fit drawer lg:drawer-open">

@@ -10,18 +10,18 @@ import SideMenu from "@/app/components/Side-menu";
 
 const RoleEdit = () => {
     const [role, setRole] = React.useState("");
+    const [roleLevel, setRoleLevel] = React.useState(0);
     const [loading, setLoading] = React.useState(true);
 
     UserData().then((response) => {
-        console.log(response.role);
-        setRole(response.role);
+        console.log(response.roleLevel);
+        setRoleLevel(response.roleLevel);
         setLoading(false);
     });
 
     if(!loading) {
-        if (role !== "admin" && role !== null && role !== "owner" && role !== undefined) {
-            console.log(role);
-
+        if (roleLevel < 1 && roleLevel > 3) {
+            window.location.href = "/dashboard";
         }
     }
 

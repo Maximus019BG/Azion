@@ -67,6 +67,8 @@ public class UserController {
             userDTO.setAge(user.getAge());
             userDTO.setRole(user.getRole());
             userDTO.setOrgid(user.getOrgid());
+            userDTO.setId(user.getId());
+            userDTO.setRoleLevel(user.getRoleLevel());
             
             userDTO.setProjects(userService.convertProjectsToDTO(user.getProjects()));
             

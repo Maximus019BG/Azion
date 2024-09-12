@@ -56,7 +56,7 @@ const PartOfOrg = async (afterDashboard:boolean) => {
 };
 
 //Get user data
-const UserData = async (): Promise<{ name: string, email: string, age: string, role: string, projects: string[] }> => {
+const UserData = async (): Promise<{ name: string, email: string, age: string, role: string, roleLevel: number, projects: string[] }> => {
     const data = { accessToken: Cookies.get("azionAccessToken") };
     return axios
         .post(`${apiUrl}/user/data`, data, {
@@ -65,11 +65,13 @@ const UserData = async (): Promise<{ name: string, email: string, age: string, r
             },
         })
         .then((response: AxiosResponse) => {
+            console.log(response.data);
             return {
                 name: response.data.name,
                 email: response.data.email,
                 age: response.data.age,
                 role: response.data.role,
+                roleLevel: response.data.roleLevel,
                 projects: response.data.projects
             };
         })
