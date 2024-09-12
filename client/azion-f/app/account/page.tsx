@@ -7,6 +7,7 @@ import { CheckMFA, PartOfOrg, UserData } from "@/app/func/funcs";
 import SideMenu from "../components/Side-menu";
 import ProfilePicture from "../components/Profile-picture";
 import EditProfile from "../components/EditProfile";
+import Badge from "../components/BadgeTest";
 
 const SessionCheck = () => {
   const refreshToken = Cookies.get("azionRefreshToken");
@@ -55,18 +56,16 @@ const Account = () => {
       </div>
       <div className="w-full h-full flex flex-col justify-center items-start">
         <div className=" flex flex-col justify-center items-start gap-10">
-          <div className=" ">
-            <ProfilePicture />
-          </div>
           <div className="">
             <EditProfile />
           </div>
         </div>
       </div>
-       <div>
-
-       </div>
-
+      <div>
+        <div className="container mx-auto p-4 flex justify-center items-center min-h-screen">
+          <Badge />
+        </div>
+      </div>
     </div>
   );
 };
