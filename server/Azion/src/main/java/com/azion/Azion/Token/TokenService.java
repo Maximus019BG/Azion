@@ -39,14 +39,12 @@ public class TokenService {
         }
       
         try {
-            
             Token tokenObj = new Token();
             //setToken() is lower in code
             tokenObj.setTokenType(tokenType);
-            tokenObj.setSubject(user);// use ID
+            tokenObj.setSubject(user);
             tokenObj.setIssuedAt(new Date(System.currentTimeMillis()));
             Algorithm algorithm = Algorithm.HMAC512(secret);
-            
             
             token = JWT.create()
                     .withIssuer(issuer)
@@ -55,11 +53,11 @@ public class TokenService {
                     .withSubject(tokenObj.getSubject().getId())
                     .withIssuedAt(tokenObj.getIssuedAt())
                     .withExpiresAt(new Date(System.currentTimeMillis() + time))
-                    .withClaim("UserAgent", UserAgent)
                     .sign(algorithm);
             
             tokenObj.setToken(token);
-           
+            tokenObj.setUserAgent(UserAgent);
+            
             tokenRepo.save(tokenObj);
             
             
@@ -149,6 +147,7 @@ public class TokenService {
             return true;
         } else return tokenObj.getTokenType() != TokenType.ACCESS_TOKEN || jwt.getExpiresAt().getTime() <= System.currentTimeMillis();
     }
+    
     public boolean isRefreshTokenOutOfDate(String token) {
         Token tokenObj = tokenRepo.findByToken(token);
         DecodedJWT jwt = JWT.decode(token);
@@ -156,10 +155,12 @@ public class TokenService {
             return true;
         } else return tokenObj.getTokenType() != TokenType.REFRESH_TOKEN || jwt.getExpiresAt().getTime() <= System.currentTimeMillis();
     }
+    
     public User getUserFromToken(String token) {
         Token tokenObj = tokenRepo.findByToken(token);
         return tokenObj.getSubject();
     }
+    
     public String regenerateAccessToken(String refreshToken, String UserAgent) {
         Token refreshTok = tokenRepo.findByToken(refreshToken);
         if (refreshTok != null && !isRefreshTokenOutOfDate(refreshToken)) {
@@ -167,6 +168,17 @@ public class TokenService {
             return generateToken(TokenType.ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
         }
         return null;
+    }
+    
+    public void deleteToken(String token) {
+        
+        
+        Token tokenObj = tokenRepo.findBySubject(user);
+        if (tokenObj != null) {
+            tokenObj.setSubject(null);
+            tokenRepo.save(tokenObj);
+            tokenRepo.delete(tokenObj);
+        }
     }
     
 }

@@ -77,10 +77,11 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
         
-        //!Fixes no session error
         orgService.addUserToOrg(org, user);
         user.setRole("owner");
+        user.setRoleLevel(1);
         userRepository.save(user);
+        
         String encryptedString = org.getOrgConnectString();
         String conSring = OrgUtility.decrypt(encryptedString);
         

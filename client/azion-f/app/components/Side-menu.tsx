@@ -12,7 +12,6 @@ import {
 } from "react-icons/fa";
 import LogOut from "@/app/components/LogOut";
 import { UserData } from "@/app/func/funcs";
-import Image from "next/image";
 
 // Font setup
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });

@@ -8,10 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.HashMap;
@@ -67,5 +64,17 @@ public class TokenController {
                 response.put("message", "sessionCheck failed");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
+    }
+    
+    @Transactional
+    @GetMapping("/seesions/show/{email}")
+    public ResponseEntity<?> showSessions(@PathVariable String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        tokenService.deleteTokens(user);
+        
+        return ResponseEntity.ok(tokenRepo.findBySubject(user));
     }
 }
