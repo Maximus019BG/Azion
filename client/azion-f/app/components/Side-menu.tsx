@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { Commissioner } from "next/font/google";
 import Link from "next/link";
@@ -9,6 +10,8 @@ import {
   FaUserSecret,
   FaClipboard,
   FaTasks,
+  FaChevronDown,
+  FaPlusCircle, // Import additional icon for "Create Task"
 } from "react-icons/fa";
 import LogOut from "@/app/components/LogOut";
 import { UserData } from "@/app/func/funcs";
@@ -21,6 +24,8 @@ const SideMenu = () => {
   const [roleLevel, setRoleLevel] = useState(0);
   const [loading, setLoading] = useState(true);
   const [admin, setAdmin] = useState(false);
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false); // State for Dashboard dropdown
+  const [isTasksOpen, setIsTasksOpen] = useState(false); // State for Tasks dropdown
 
   useEffect(() => {
     UserData().then((response) => {
@@ -29,11 +34,20 @@ const SideMenu = () => {
     });
   }, []);
 
-  if(!loading) {
+  if (!loading) {
     if (roleLevel > 1 && roleLevel < 3) {
       setAdmin(true);
     }
   }
+
+  // Toggle dropdowns
+  const toggleDashboardDropdown = () => {
+    setIsDashboardOpen(!isDashboardOpen);
+  };
+
+  const toggleTasksDropdown = () => {
+    setIsTasksOpen(!isTasksOpen);
+  };
 
   return (
     <div className="w-fit h-fit drawer lg:drawer-open">
@@ -48,7 +62,7 @@ const SideMenu = () => {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            className="inline-block h-8 w-8 stroke-current"
+            className="inline-block h-2 w-2 stroke-current"
           >
             <path
               strokeLinecap="round"
@@ -68,39 +82,86 @@ const SideMenu = () => {
         <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-6 flex flex-col justify-center items-start">
           {/* Sidebar content */}
           <div className="w-full flex flex-col justify-center items-start gap-4">
-            <li className="p-2 text-lg w-full">
-              <Link href="/dashboard/settings">
-                <FaCog className="text-xl mr-2" />
-                Settings
-              </Link>
+            {/* Dashboard Dropdown */}
+            <li className="p-2 text-lg w-full relative">
+              <div className="flex items-center justify-between w-full">
+                <Link href="/dashboard" className="flex items-center w-full">
+                  <FaClipboard className="text-xl mr-2" />
+                  Dashboard
+                </Link>
+                <button onClick={toggleDashboardDropdown} className="ml-2">
+                  <FaChevronDown
+                    className={`text-md transition-transform duration-200 ${
+                      isDashboardOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+              </div>
+              {isDashboardOpen && (
+                <ul className="mt-2 space-y-2 w-full">
+                  <li className="p-2 text-lg w-full">
+                    <Link href="/dashboard/settings" className="flex items-center w-full">
+                      <FaCog className="text-xl mr-2" />
+                      Settings
+                    </Link>
+                  </li>
+                  <li className="p-2 text-lg w-full">
+                    <Link href="/dashboard/settings/roles" className="flex items-center w-full">
+                      <FaUserSecret className="text-xl mr-2" />
+                      Roles
+                    </Link>
+                  </li>
+                </ul>
+              )}
             </li>
+
             <li className="p-2 text-lg w-full">
-              <Link href="/organizations">
+              <Link href="/organizations" className="flex items-center w-full">
                 <FaBuilding className="text-xl mr-2" />
                 Organizations
               </Link>
             </li>
             <li className="p-2 text-lg w-full">
-              <Link href="/mfa/face">
+              <Link href="/mfa/face" className="flex items-center w-full">
                 <FaUserSecret className="text-xl mr-2" />
                 FaceID
               </Link>
             </li>
-            <li className="p-2 text-lg w-full">
-              <Link href="/dashboard">
-                <FaClipboard className="text-xl mr-2" />
-                Dashboard
-              </Link>
-            </li>
-            <li className="p-2 text-lg w-full">
-              <Link href="/dashboard/task">
-                <FaTasks className="text-xl mr-2" />
-                Tasks
-              </Link>
+
+            {/* Tasks Dropdown */}
+            <li className="p-2 text-lg w-full relative">
+              <div className="flex items-center justify-between w-full">
+                <button onClick={toggleTasksDropdown} className="flex items-center w-full">
+                  <FaTasks className="text-xl mr-2" />
+                  Tasks
+                  <FaChevronDown
+                    className={`text-md ml-auto transition-transform duration-200 ${
+                      isTasksOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+              </div>
+              {isTasksOpen && (
+                <ul className="mt-2 space-y-2 w-full">
+                  <li className="p-2 text-lg w-full">
+                    <Link href="/dashboard/task" className="flex items-center w-full">
+                      <FaTasks className="text-xl mr-2" />
+                      Your Task
+                    </Link>
+                  </li>
+                  <li className="p-2 text-lg w-full">
+                    <Link href="/dashboard/create-task" className="flex items-center w-full">
+                      <FaPlusCircle className="text-xl mr-2" />
+                      Create Task
+                    </Link>
+                  </li>
+                </ul>
+              )}
             </li>
           </div>
+
           <li className="mt-auto p-2 text-lg w-full">
-            <Link href="/account">
+            <Link href="/account" className="flex items-center w-full">
               <FaUserCircle className="text-xl mr-2" />
               Account
             </Link>
