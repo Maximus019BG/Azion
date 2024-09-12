@@ -8,13 +8,19 @@ import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.UserService;
 import com.azion.Azion.MFA.Service.MFAService;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -42,9 +48,48 @@ public class UserController {
         return ResponseEntity.ok("User with email " + email + " deleted");
     }
     
+
+
+
     @PostMapping("/data")
     @Transactional
     public ResponseEntity<?> getUserData(@RequestBody Map<String, Object> request) {
+        try {
+            String token = (String) request.get("accessToken");
+            if (token == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Access token is missing.");
+            }
+    
+            Token tokenObj = tokenRepo.findByToken(token);
+            if (tokenObj == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token not found.");
+            }
+    
+            User user = tokenObj.getSubject();
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user associated with this token.");
+            }
+    
+            UserDTO userDTO = new UserDTO();
+            userDTO.setName(user.getName());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setAge(user.getAge().toString());
+            userDTO.setRole(user.getRole());
+            userDTO.setOrgid(user.getOrgid());
+            userDTO.setId(user.getId());
+            userDTO.setRoleLevel(user.getRoleLevel());
+            userDTO.setProjects(userService.convertProjectsToDTO(user.getProjects()));
+    
+            return ResponseEntity.ok(userDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
+        }
+    }
+    
+    @Transactional
+    @PutMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody Map<String, Object> request) {
         try {
             String token = (String) request.get("accessToken");
             if (token == null) {
@@ -61,21 +106,46 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user associated with this token.");
             }
             
-            UserDTO userDTO = new UserDTO();
-            userDTO.setName(user.getName());
-            userDTO.setEmail(user.getEmail());
-            userDTO.setAge(user.getAge());
-            userDTO.setRole(user.getRole());
-            userDTO.setOrgid(user.getOrgid());
-            userDTO.setId(user.getId());
-            userDTO.setRoleLevel(user.getRoleLevel());
+            String name = (String) request.get("name");
+            String email = (String) request.get("email");
+            String dateOfBirth = (String) request.get("dateOfBirth");
+         
             
-            userDTO.setProjects(userService.convertProjectsToDTO(user.getProjects()));
+            boolean dateOfBirthValid = false;
+            if (dateOfBirth != null) {
+                if (dateOfBirth.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                    dateOfBirthValid = true;
+                }
+            }
             
-            return ResponseEntity.ok(userDTO);
+            if (!dateOfBirthValid && dateOfBirth != null) {
+                String[] date = dateOfBirth.split("/");
+                dateOfBirth = date[2] + "-" + date[1] + "-" + date[0];
+            }
+           
+            
+            if (name != null) {
+                user.setName(name);
+            }
+            if (email != null) {
+                user.setEmail(email);
+            }
+            if (dateOfBirth != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    Date dob = sdf.parse(dateOfBirth);
+                    user.setAge(dob);
+                } catch (ParseException e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format.");
+                }
+            }
+            
+            userRepository.save(user);
+            return ResponseEntity.ok("User updated successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
+   
 }

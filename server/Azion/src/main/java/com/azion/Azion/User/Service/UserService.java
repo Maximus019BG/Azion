@@ -80,7 +80,7 @@ public class UserService {
             UserDTO userDTO = new UserDTO();
             userDTO.setName(project.getCreatedBy().getName());
             userDTO.setEmail(project.getCreatedBy().getEmail());
-            userDTO.setAge(project.getCreatedBy().getAge());
+            userDTO.setAge(project.getCreatedBy().getAge().toString());
             userDTO.setRole(project.getCreatedBy().getRole());
             userDTO.setOrgid(project.getCreatedBy().getOrgid());
             dto.setCreatedBy(userDTO);

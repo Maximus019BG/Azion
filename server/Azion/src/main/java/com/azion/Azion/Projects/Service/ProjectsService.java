@@ -52,7 +52,7 @@ public class ProjectsService {
             UserDTO userDTO = new UserDTO();
             userDTO.setName(project.getCreatedBy().getName());
             userDTO.setEmail(project.getCreatedBy().getEmail());
-            userDTO.setAge(project.getCreatedBy().getAge());
+            userDTO.setAge(project.getCreatedBy().getAge().toString());
             userDTO.setRole(project.getCreatedBy().getRole());
             userDTO.setOrgid(project.getCreatedBy().getOrgid());
             dto.setCreatedBy(userDTO);
@@ -70,7 +70,7 @@ public class ProjectsService {
         UserDTO dto = new UserDTO();
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
-        dto.setAge(user.getAge());
+        dto.setAge(user.getAge().toString());
         dto.setRole(user.getRole());
         dto.setOrgid(user.getOrgid());
         

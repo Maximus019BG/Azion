@@ -65,7 +65,6 @@ const UserData = async (): Promise<{ name: string, email: string, age: string, r
             },
         })
         .then((response: AxiosResponse) => {
-            console.log(response.data);
             return {
                 name: response.data.name,
                 email: response.data.email,
@@ -81,8 +80,21 @@ const UserData = async (): Promise<{ name: string, email: string, age: string, r
 };
 
 
+const DeleteSession = async () => {
+    const data = { accessToken: Cookies.get("azionAccessToken"), refreshToken: Cookies.get("azionRefreshToken") };
+    axios
+        .put(`${apiUrl}/token/sessions/delete`, data, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(function (response: AxiosResponse) {
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+}
 
 
 
-
-export {CheckMFA, PartOfOrg, UserData};
+export {CheckMFA, PartOfOrg, UserData, DeleteSession};

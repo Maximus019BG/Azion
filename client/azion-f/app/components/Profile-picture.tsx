@@ -34,7 +34,6 @@ const ProfilePicture = () => {
             onChange={handleImageChange}
             className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
           />
-          <h1 className=" text-neonAccent font-extrabold">ROLE</h1>
         </div>
       </div>
     </div>

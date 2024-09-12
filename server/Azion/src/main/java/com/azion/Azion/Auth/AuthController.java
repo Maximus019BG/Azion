@@ -173,7 +173,6 @@ public class AuthController {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
-        log.info("User logged in");
         return ResponseEntity.ok(tokens);
     }
     

@@ -10,7 +10,7 @@ public class UserDTO {
     private String id;
     private String name;
     private String email;
-    private Date age;
+    private String age;
     private String role;
     private Integer roleLevel;
     private String orgid;
@@ -40,11 +40,11 @@ public class UserDTO {
         this.email = email;
     }
     
-    public Date getAge() {
+    public String getAge() {
         return age;
     }
     
-    public void setAge(Date age) {
+    public void setAge(String age) {
         this.age = age;
     }
     

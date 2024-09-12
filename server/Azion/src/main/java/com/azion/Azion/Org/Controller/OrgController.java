@@ -247,7 +247,7 @@ public class OrgController {
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
         userDTO.setEmail(user.getEmail());
-        userDTO.setAge(user.getAge());
+        userDTO.setAge(user.getAge().toString());
         userDTO.setRole(user.getRole());
         userDTO.setOrgid(user.getOrgid());
         userDTO.setRoleLevel(user.getRoleLevel());
