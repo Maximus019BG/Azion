@@ -125,7 +125,6 @@ const RoleList = () => {
         });
     };
 
-    //TODO: fix redirection on roleLevel and see /user/data in backend
     return (
         <div className="w-full p-6 bg-slate-900 shadow-md rounded-lg flex gap-24">
             <div className="w-1/2 p-4">

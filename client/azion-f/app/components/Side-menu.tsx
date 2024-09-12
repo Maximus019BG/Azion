@@ -20,6 +20,7 @@ const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 const SideMenu = () => {
   const [roleLevel, setRoleLevel] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
     UserData().then((response) => {
@@ -29,8 +30,8 @@ const SideMenu = () => {
   }, []);
 
   if(!loading) {
-    if (roleLevel < 1 && roleLevel > 3) {
-      window.location.href = "/dashboard";
+    if (roleLevel > 1 && roleLevel < 3) {
+      setAdmin(true);
     }
   }
 
