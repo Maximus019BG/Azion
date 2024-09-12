@@ -30,7 +30,7 @@ const RoleEdit = () => {
     <div className="w-1/4">
         <SideMenu/>
     </div>
-    <div className="w-3/4 mt-8 mr-8">
+    <div className="w-3/4 flex justify-center items-start mt-8 mr-10">
         <div className="">
             <RoleList/>
         </div>

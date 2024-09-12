@@ -1,3 +1,4 @@
+"use client"
 import { useState, useEffect } from "react";
 import Draggable from "react-draggable";
 import ProfilePicture from "./Profile-picture";
@@ -18,6 +19,9 @@ const Badge = () => {
   const [roleLevel, setRoleLevel] = useState(0);
   const [isEditing, setIsEditing] = useState({ name: false, email: false, dateOfBirth: false });
   const [prevValues, setPrevValues] = useState({ name: "", email: "", dateOfBirth: "" });
+
+  // Position state to keep track of the badge's position
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     UserData().then((response) => {
@@ -59,99 +63,108 @@ const Badge = () => {
     }
   };
 
+  // Function to handle drag stop and reset position
+  const handleDragStop = () => {
+    setPosition({ x: 0, y: 0 });
+  };
+
   return (
-  <Draggable>
-    <div className="relative bg-blue-600 w-[25vw] h-[70vh] rounded-xl flex flex-col justify-between p-8 text-white shadow-lg cursor-grab">
-      {/* Header */}
-      <div className="relative z-10">
-        <div className="flex justify-between items-center">
-          <div className="text-xl font-bold">
-            <h1
-              className={` flex justify-center items-end gap-3 neon-text text-xl md:text-2xl lg:text-4xl ${azionText.className}`}
-            >
-              AZION
-              <span className="border border-white text-white text-xs p-1 rounded">
-                RL-{roleLevel}
-              </span>
-            </h1>
-          </div>
-          <div className="text-3xl font-bold">A</div>
-        </div>
-      </div>
-
-      <div className=" w-fit">
-        <ProfilePicture />
-      </div>
-
-      {/* Name Section */}
-      <div className="relative z-10 w-fit">
-        {isEditing.name ? (
-          <div className="relative w-full">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 bg-transparent focus:outline-none text-white border-b border-white border-opacity-50"
-            />
-            <FaPencilAlt className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white" />
-          </div>
-        ) : (
-          <h2 className="text-3xl font-bold" onDoubleClick={() => setIsEditing({ ...isEditing, name: true })}>
-            {prevValues.name}
-          </h2>
-        )}
-        {isEditing.email ? (
-          <div className="relative w-full">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 bg-transparent focus:outline-none text-white border-b border-white border-opacity-50"
-            />
-            <FaPencilAlt className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white" />
-          </div>
-        ) : (
-          <h2 className="text-xl font-semibold" onDoubleClick={() => setIsEditing({ ...isEditing, email: true })}>
-            {prevValues.email}
-          </h2>
-        )}
-        <p className="text-sm mt-2 uppercase">{role}</p>
-      </div>
-
-      {/* Date and Event Type */}
-      <div className="relative z-10">
-        <div className="uppercase text-sm">
-          <div className="relative z-10 w-fit">
-            {isEditing.dateOfBirth ? (
-              <div className="relative w-full">
-                <input
-                  type="date"
-                  value={dateOfBirth}
-                  onChange={(e) => setDateOfBirth(e.target.value)}
-                  className="w-full px-3 py-2 bg-transparent focus:outline-none text-white border-b border-white border-opacity-50"
-                />
-                <FaPencilAlt className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white" />
-              </div>
-            ) : (
-              <p className="uppercase text-sm" onDoubleClick={() => setIsEditing({ ...isEditing, dateOfBirth: true })}>
-                {prevValues.dateOfBirth}
-              </p>
-            )}
+    <Draggable
+      position={position}
+      onStop={handleDragStop}
+      onDrag={(e, data) => setPosition({ x: data.x, y: data.y })}
+    >
+      <div className="relative bg-blue-600 w-[25vw] h-[70vh] rounded-xl flex flex-col justify-between p-8 text-white shadow-lg cursor-grab">
+        {/* Header */}
+        <div className="relative z-10">
+          <div className="flex justify-between items-center">
+            <div className="text-xl font-bold">
+              <h1
+                className={` flex justify-center items-end gap-3 neon-text text-xl md:text-2xl lg:text-4xl ${azionText.className}`}
+              >
+                AZION
+                <span className="border border-white text-white text-xs p-1 rounded">
+                  RL-{roleLevel}
+                </span>
+              </h1>
+            </div>
+            <div className="text-3xl font-bold">A</div>
           </div>
         </div>
+
+        <div className=" w-fit">
+          <ProfilePicture />
+        </div>
+
+        {/* Name Section */}
+        <div className="relative z-10 w-fit">
+          {isEditing.name ? (
+            <div className="relative w-full">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-3 py-2 bg-transparent focus:outline-none text-white border-b border-white border-opacity-50"
+              />
+              <FaPencilAlt className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white" />
+            </div>
+          ) : (
+            <h2 className="text-3xl font-bold" onDoubleClick={() => setIsEditing({ ...isEditing, name: true })}>
+              {prevValues.name}
+            </h2>
+          )}
+          {isEditing.email ? (
+            <div className="relative w-full">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 py-2 bg-transparent focus:outline-none text-white border-b border-white border-opacity-50"
+              />
+              <FaPencilAlt className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white" />
+            </div>
+          ) : (
+            <h2 className="text-xl font-semibold" onDoubleClick={() => setIsEditing({ ...isEditing, email: true })}>
+              {prevValues.email}
+            </h2>
+          )}
+          <p className="text-sm mt-2 uppercase">{role}</p>
+        </div>
+
+        {/* Date and Event Type */}
+        <div className="relative z-10">
+          <div className="uppercase text-sm">
+            <div className="relative z-10 w-fit">
+              {isEditing.dateOfBirth ? (
+                <div className="relative w-full">
+                  <input
+                    type="date"
+                    value={dateOfBirth}
+                    onChange={(e) => setDateOfBirth(e.target.value)}
+                    className="w-full px-3 py-2 bg-transparent focus:outline-none text-white border-b border-white border-opacity-50"
+                  />
+                  <FaPencilAlt className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white" />
+                </div>
+              ) : (
+                <p className="uppercase text-sm" onDoubleClick={() => setIsEditing({ ...isEditing, dateOfBirth: true })}>
+                  {prevValues.dateOfBirth}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+        {/* Save Button */}
+        {(isEditing.name || isEditing.email || isEditing.dateOfBirth) && (
+          <button
+            onClick={handleSubmit}
+            className="bg-accent hover:bg-blue-950 text-neonAccent font-bold py-2 px-4 rounded"
+          >
+            Save
+          </button>
+        )}
       </div>
-      {/* Save Button */}
-      {(isEditing.name || isEditing.email || isEditing.dateOfBirth) && (
-        <button
-          onClick={handleSubmit}
-          className="bg-accent hover:bg-blue-950 text-neonAccent font-bold py-2 px-4 rounded"
-        >
-          Save
-        </button>
-      )}
-    </div>
-  </Draggable>
-);
+    </Draggable>
+  );
 };
 
 export default Badge;

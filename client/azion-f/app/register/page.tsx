@@ -417,7 +417,7 @@ const Register = () => {
               </Link>
             </h1>
           </div>
-          <div className="w-full flex justify-center items-center gap-4 ">
+          <div className="w-full flex justify-center items-center gap-4 mt-6">
             {step < inputFields.length - 1 && (
               <button
                 title="click to move to the next one"

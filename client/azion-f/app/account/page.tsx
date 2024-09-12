@@ -1,20 +1,22 @@
 "use client";
-import React, {useEffect, useState, useRef} from "react";
-import axios, {AxiosResponse} from "axios";
-import {apiUrl} from "@/app/api/config";
+import React, { useEffect } from "react";
+import axios, { AxiosResponse } from "axios";
+import { apiUrl } from "@/app/api/config";
 import Cookies from "js-cookie";
-import {CheckMFA, PartOfOrg, UserData} from "@/app/func/funcs";
+import { PartOfOrg } from "@/app/func/funcs";
 import SideMenu from "../components/Side-menu";
 import ProfilePicture from "../components/Profile-picture";
 import EditProfile from "../components/EditProfile";
 import Badge from "../components/BadgeTest";
 import SessionCards from "@/app/components/Session-cards";
+import { Canvas } from "@react-three/fiber";
+import { Physics } from "@react-three/rapier";
 
 const SessionCheck = () => {
     const refreshToken = Cookies.get("azionRefreshToken");
     const accessToken = Cookies.get("azionAccessToken");
     PartOfOrg(false);
-    const data = {refreshToken, accessToken};
+    const data = { refreshToken, accessToken };
     axios
         .post(`${apiUrl}/token/session/check`, data, {
             headers: {
@@ -22,7 +24,7 @@ const SessionCheck = () => {
             },
         })
         .then((response: AxiosResponse) => {
-            const {message, accessToken} = response.data;
+            const { message, accessToken } = response.data;
 
             if (message === "newAccessToken generated") {
                 Cookies.set("azionAccessToken", accessToken, {
@@ -48,22 +50,22 @@ const Account = () => {
         } else if (!accessToken && !refreshToken) {
             window.location.href = "/login";
         }
-    });
+    }, []); // Add dependency array to run the effect once
 
     return (
- <div className="w-screen h-screen flex">
-    <div className="w-1/4 h-full">
-        <SideMenu />
-    </div>
-    <div className="w-full h-full flex gap-x-56 ">
-        <div className="w-1/2 p-4 flex justify-center items-center">
-            <Badge />
+        <div className="w-screen h-screen flex">
+            <div className="w-1/4 h-full">
+                <SideMenu />
+            </div>
+            <div className="w-full h-full flex gap-x-56 ">
+                <div className="w-1/2 p-4 flex justify-center items-center">
+                  <Badge />
+                </div>
+                <div className="w-full p-4 flex justify-center items-center">
+                    <SessionCards />
+                </div>
+            </div>
         </div>
-        <div className="w-full p-4 flex justify-center items-center">
-            <SessionCards />
-        </div>
-    </div>
-</div>
     );
 };
 
