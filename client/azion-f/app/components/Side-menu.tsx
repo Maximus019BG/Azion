@@ -1,26 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Commissioner } from "next/font/google";
 import Link from "next/link";
-import {FaSignOutAlt, FaUserCircle} from "react-icons/fa";
+import {
+  FaSignOutAlt,
+  FaUserCircle,
+  FaCog,
+  FaBuilding,
+  FaUserSecret,
+  FaClipboard,
+  FaTasks,
+} from "react-icons/fa";
 import LogOut from "@/app/components/LogOut";
-import { UserData} from "@/app/func/funcs";
+import { UserData } from "@/app/func/funcs";
+import Image from "next/image";
 
-
+// Font setup
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 
-
-
-
 const SideMenu = () => {
-  const [role, setRole] = React.useState("");
+  const [role, setRole] = useState("");
 
-  UserData().then((response) => {
-    setRole(response.role);
-  });
+  useEffect(() => {
+    UserData().then((response) => {
+      setRole(response.role);
+    });
+  }, []);
+
   return (
-    <div className=" w-fit h-fit drawer lg:drawer-open ">
+    <div className="w-fit h-fit drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col items-s justify-center ">
+      <div className="drawer-content flex flex-col items-center justify-center">
         {/* Page content */}
         <label
           htmlFor="my-drawer-2"
@@ -41,34 +50,53 @@ const SideMenu = () => {
           </svg>
         </label>
       </div>
-      <div className="drawer-side ">
+      <div className="drawer-side">
         <label
           htmlFor="my-drawer-2"
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4 flex flex-col">
+        <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-6 flex flex-col justify-center items-start">
           {/* Sidebar content */}
-
-          <li>
-            <Link href="/dashboard/settings">Settings</Link>
+          <div className="w-full flex flex-col justify-center items-start gap-4">
+            <li className="p-2 text-lg w-full">
+              <Link href="/dashboard/settings">
+                <FaCog className="text-xl mr-2" />
+                Settings
+              </Link>
+            </li>
+            <li className="p-2 text-lg w-full">
+              <Link href="/organizations">
+                <FaBuilding className="text-xl mr-2" />
+                Organizations
+              </Link>
+            </li>
+            <li className="p-2 text-lg w-full">
+              <Link href="/mfa/face">
+                <FaUserSecret className="text-xl mr-2" />
+                FaceID
+              </Link>
+            </li>
+            <li className="p-2 text-lg w-full">
+              <Link href="/dashboard">
+                <FaClipboard className="text-xl mr-2" />
+                Dashboard
+              </Link>
+            </li>
+            <li className="p-2 text-lg w-full">
+              <Link href="/dashboard/task">
+                <FaTasks className="text-xl mr-2" />
+                Tasks
+              </Link>
+            </li>
+          </div>
+          <li className="mt-auto p-2 text-lg w-full">
+            <Link href="/account">
+              <FaUserCircle className="text-xl mr-2" />
+              Account
+            </Link>
           </li>
-          <li>
-            <Link href="/organizations">Organizations</Link>
-          </li>
-          <li>
-            <Link href="/mfa/face">FaceID</Link>
-          </li>
-          <li>
-            <Link href="/dashboard">Dashboard</Link>
-          </li>
-          <li>
-            <Link href="/dashboard/task">Tasks</Link>
-          </li>
-          <li className="mt-auto">
-            <Link href="/account"> <FaUserCircle className={"text-xl"}/>Account</Link>
-          </li>
-          <li>
+          <li className="p-2 text-lg w-full">
             <LogOut />
           </li>
         </ul>

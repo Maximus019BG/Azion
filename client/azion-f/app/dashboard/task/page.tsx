@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../../api/config";
@@ -7,16 +7,9 @@ import Cookies from "js-cookie";
 import { CheckMFA, PartOfOrg, UserData } from "../../func/funcs";
 import Link from "next/link";
 import SideMenu from "../../components/Side-menu";
-import TasksLayout from "../../layouts/tasks";
 import OrgDetailsCard from "../../layouts/OrgDetailsCard";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
-
-//Zdravej simo vijdame se otnovo
-//Tuk trqbva da promenish ikonite i eto kak shte stane tova
-//otivash no komponenta i izbirash podhodqshti ikoni za vsqko pole ot taska i
-// izvikai Kalata na pomosht
-//Sled kato si gotov otidi na /client/azion-f/app/login-fast/page.tsx red 14
 
 interface User {
   name: string;
@@ -109,8 +102,8 @@ const Tasks = () => {
       <div className="w-1/4 min-w-[250px] h-full">
         <SideMenu />
       </div>
-      <div className="w-3/4 p-6 overflow-auto ">
-        <div className="flex flex-col justify-center items-center gap-10">
+      <div className="w-3/4 p-6 overflow-auto flex justify-center items-center">
+        <div className="flex flex-col justify-center items-center gap-10 w-full max-w-5xl">
           <h1 className="text-5xl text-neonAccent font-black mt-16">Your tasks:</h1>
           {/* Main Grid Container for Tasks */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">

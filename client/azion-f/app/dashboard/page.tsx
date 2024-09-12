@@ -100,7 +100,6 @@ const Dashboard = () => {
             </div>
           </div>
       )}
-      ;
     </>
   );
 };

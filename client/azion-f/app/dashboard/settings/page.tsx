@@ -103,7 +103,7 @@ const OrgSettings = () => {
 
             )}
         </>
-    );
-};
+    )
+}
 
 export default OrgSettings;
