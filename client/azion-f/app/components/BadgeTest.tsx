@@ -1,7 +1,7 @@
-"use client"
+"use client";
 import { useState, useEffect } from "react";
 import Draggable from "react-draggable";
-import ProfilePicture from "./Profile-picture";
+import ProfilePicture from "../components/Profile-picture";
 import { Commissioner } from "next/font/google";
 import { UserData } from "../func/funcs";
 import axios from "axios";
@@ -20,7 +20,6 @@ const Badge = () => {
   const [isEditing, setIsEditing] = useState({ name: false, email: false, dateOfBirth: false });
   const [prevValues, setPrevValues] = useState({ name: "", email: "", dateOfBirth: "" });
 
-  // Position state to keep track of the badge's position
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -63,7 +62,6 @@ const Badge = () => {
     }
   };
 
-  // Function to handle drag stop and reset position
   const handleDragStop = () => {
     setPosition({ x: 0, y: 0 });
   };
@@ -74,7 +72,7 @@ const Badge = () => {
       onStop={handleDragStop}
       onDrag={(e, data) => setPosition({ x: data.x, y: data.y })}
     >
-      <div className="relative bg-blue-600 w-[25vw] h-[70vh] rounded-xl flex flex-col justify-between p-8 text-white shadow-lg cursor-grab">
+      <div className="relative bg-blue-600 w-[25vw] h-[70vh] rounded-xl flex flex-col justify-between p-8 text-white shadow-lg cursor-grab transform transition-transform hover:scale-105 hover:shadow-2xl">
         {/* Header */}
         <div className="relative z-10">
           <div className="flex justify-between items-center">
@@ -92,7 +90,7 @@ const Badge = () => {
           </div>
         </div>
 
-        <div className=" w-fit">
+        <div className="w-fit">
           <ProfilePicture />
         </div>
 
