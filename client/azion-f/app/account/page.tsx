@@ -7,10 +7,11 @@ import { PartOfOrg } from "@/app/func/funcs";
 import SideMenu from "../components/Side-menu";
 import ProfilePicture from "../components/Profile-picture";
 import EditProfile from "../components/EditProfile";
-import Badge from "../components/BadgeTest";
 import SessionCards from "@/app/components/Session-cards";
 import { Canvas } from "@react-three/fiber";
 import { Physics } from "@react-three/rapier";
+import Badge2 from "../components/BadgeTest";
+
 
 const SessionCheck = () => {
     const refreshToken = Cookies.get("azionRefreshToken");
@@ -59,7 +60,11 @@ const Account = () => {
             </div>
             <div className="w-full h-full flex gap-x-56 ">
                 <div className="w-1/2 p-4 flex justify-center items-center">
-                  <Badge />
+                <Canvas>
+                    <Physics>
+                  <Badge2/>
+                  </Physics>
+                  </Canvas>
                 </div>
                 <div className="w-full p-4 flex justify-center items-center">
                     <SessionCards />
