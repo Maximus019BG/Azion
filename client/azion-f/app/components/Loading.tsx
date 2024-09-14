@@ -21,9 +21,6 @@ const Loading = () => {
         <p className=" font-bold text-base">Be the BEST Organization</p>
         <p className=" font-bold text-base">In Azion EVERYTHING is Secured</p>
         <p className=" font-bold text-base">
-          Azion is the first free web app that serves organizations and has MFA
-        </p>
-        <p className=" font-bold text-base">
           Not only Organization workers can use Azion, EVERYBODY can
         </p>
       </div>

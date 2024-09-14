@@ -12,7 +12,6 @@ import Main_Services from "./components/main-services";
 import Footer from "./components/Footer";
 import Cookies from "js-cookie";
 
-
 interface Token {
   refreshToken: string;
   accessToken: string;
@@ -53,8 +52,6 @@ const Home = () => {
       });
   };
 
-
-
   useEffect(() => {
     const refreshToken = Cookies.get("azionRefreshToken");
     const accessToken = Cookies.get("azionAccessToken");
@@ -88,25 +85,9 @@ const Home = () => {
           className=" h-full max-w-3xl p-10 flex flex-col justify-end items-center text-center"
         >
           <h1
-            className={`text-2xl gradient-text md:text-3xl lg:text-5xl text-left  ${HeaderText.className}`}
+            className={`text-2xl text-white md:text-3xl lg:text-5xl text-left  ${HeaderText.className}`}
           >
-            <span
-              className={` neon-text text-2xl md:text-3xl lg:text-5xl ${azionText.className}`}
-            >
-              Improve
-            </span>{" "}
-            your workflow and{" "}
-            <span
-              className={` neon-text text-2xl md:text-4xl lg:text-5xl ${azionText.className}`}
-            >
-              Secure
-            </span>{" "}
-            your company with{" "}
-            <span
-              className={` neon-text text-3xl md:text-5xl lg:text-7xl ${azionText.className}`}
-            >
-              Azion.
-            </span>
+            Improve your workflow and Secure your company with Azion.
           </h1>
 
           <motion.div
@@ -118,19 +99,19 @@ const Home = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={` neon-text w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-[#18b7be] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#139299] ${HeaderText.className}`}
+              className={` text-white w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
             >
               <Link href={`/${ButtonText1.toLowerCase()}`}>{ButtonText1}</Link>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={` neon-text w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-[#072a40] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] ${HeaderText.className}`}
+              className={` text-white w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
             >
               <Link href={`/${ButtonText2.toLowerCase()}`}>{ButtonText2}</Link>
             </motion.button>
           </motion.div>
-        </motion.div> 
+        </motion.div>
       </motion.div>
 
       <div className=" flex flex-col justify-center items-center mt-48">
