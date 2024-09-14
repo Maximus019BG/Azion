@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import { Commissioner } from "next/font/google";
 import Link from "next/link";
@@ -15,7 +14,8 @@ import {
 } from "react-icons/fa";
 import LogOut from "@/app/components/LogOut";
 import { UserData } from "@/app/func/funcs";
-import {TbFaceId} from "react-icons/tb";
+import { TbFaceId } from "react-icons/tb";
+import {getOrgName} from "@/app/func/org";
 
 // Font setup
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
@@ -24,8 +24,9 @@ const SideMenu = () => {
   const [roleLevel, setRoleLevel] = useState(0);
   const [loading, setLoading] = useState(true);
   const [admin, setAdmin] = useState(false);
-  const [isDashboardOpen, setIsDashboardOpen] = useState(false); // State for Dashboard dropdown
-  const [isTasksOpen, setIsTasksOpen] = useState(false); // State for Tasks dropdown
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+  const [isTasksOpen, setIsTasksOpen] = useState(false);
+  const [org, setOrg] = useState("");
 
   useEffect(() => {
     UserData().then((response) => {
@@ -36,6 +37,15 @@ const SideMenu = () => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    const fetchOrgName = async () => {
+      const result: string = await getOrgName();
+      setOrg(result);
+    };
+    fetchOrgName();
+  }, [org]);
+
 
   // Toggle dropdowns
   const toggleDashboardDropdown = () => {
@@ -82,7 +92,7 @@ const SideMenu = () => {
             {/* Dashboard Dropdown */}
             <li className="p-2 text-md w-full relative">
               <div className="flex items-center justify-between w-full">
-                <Link href="/dashboard" className="flex items-center w-full">
+                <Link href={`/dashboard/${org}`} className="flex items-center w-full">
                   <FaClipboard className="text-lg mr-2" />
                   Dashboard
                 </Link>
@@ -97,13 +107,13 @@ const SideMenu = () => {
               {isDashboardOpen && (
                 <ul className="mt-2 space-y-2 w-full">
                   <li className="p-2 text-md w-full">
-                    <Link href="/dashboard/settings" className="flex items-center w-full">
+                    <Link href={`/dashboard/${org}/settings`} className="flex items-center w-full">
                       <FaCog className="text-lg mr-2" />
                       Settings
                     </Link>
                   </li>
                   <li className="p-2 text-md w-full">
-                    <Link href="/dashboard/settings/roles" className="flex items-center w-full">
+                    <Link href={`/dashboard/${org}/settings/roles`} className="flex items-center w-full">
                       <FaUserSecret className="text-lg mr-2" />
                       Roles
                     </Link>
@@ -141,13 +151,13 @@ const SideMenu = () => {
               {isTasksOpen && (
                 <ul className="mt-2 space-y-2 w-full">
                   <li className="p-2 text-md w-full">
-                    <Link href="/dashboard/task" className="flex items-center w-full">
+                    <Link href={`/dashboard/${org}/task`} className="flex items-center w-full">
                       <FaTasks className="text-lg mr-2" />
                       Your Task
                     </Link>
                   </li>
                   <li className="p-2 text-md w-full">
-                    <Link href="/dashboard/create-task" className="flex items-center w-full">
+                    <Link href={`/dashboard/${org}/task/create`} className="flex items-center w-full">
                       <FaPlusCircle className="text-lg mr-2" />
                       Create Task
                     </Link>

@@ -1,15 +1,15 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
-import { apiUrl } from "../../api/config";
-import { Poppins } from "next/font/google";
+import React, {useEffect, useState} from "react";
+import axios, {AxiosResponse} from "axios";
+import {apiUrl} from "@/app/api/config";
+import {Poppins} from "next/font/google";
 import Cookies from "js-cookie";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleLeft } from "@fortawesome/free-solid-svg-icons";
-import background from "../../../public/background2.jpeg";
-import { CheckMFA,PartOfOrg } from "../../func/funcs";
-import ConString from "../../components/ConString";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
+import background from "@/public/background2.jpeg";
+import {CheckMFA, PartOfOrg} from "@/app/func/funcs";
+import ConString from "../../../components/ConString";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 

@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import Image from "next/image";
-import OTP from "../components/OTP";
-import { apiUrl } from "../api/config";
-import { CheckMFA } from "../func/funcs";
+import OTP from "../../components/OTP";
+import { apiUrl } from "../../api/config";
+import { CheckMFA } from "../../func/funcs";
 
 const VerifyMFAAxios = (data: any) => {
   axios

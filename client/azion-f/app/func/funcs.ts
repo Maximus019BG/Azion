@@ -35,24 +35,23 @@ const CheckMFA = async (onMFAPage:boolean) =>{
 }
 
 //Check if user is in org...
-const PartOfOrg = async (afterDashboard:boolean) => {
+const PartOfOrg = async (afterDashboard: boolean) => {
     const data = { accessToken: Cookies.get("azionAccessToken") };
-    axios
-        .post(`${apiUrl}/org/partOfOrg`, data, {
+    try {
+        const response = await axios.post(`${apiUrl}/org/partOfOrg`, data, {
             headers: {
                 "Content-Type": "application/json",
             },
-        })
-        .then(function (response: AxiosResponse) {
-            //Do nothing
-        })
-        .catch(function (error) {
-            if(afterDashboard){
-                window.location.href = "/organizations";
-            }
-            else if(!afterDashboard){
-            }
         });
+        return response.data; // Ensure response data is returned
+    } catch (error) {
+        if (afterDashboard) {
+            window.location.href = "/organizations";
+        } else if (!afterDashboard) {
+            // Handle the case when afterDashboard is false
+        }
+        throw error; // Ensure error is thrown to be caught in fetchData
+    }
 };
 
 //Get user data

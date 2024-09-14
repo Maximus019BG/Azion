@@ -17,13 +17,6 @@ const Loading = () => {
         Azion is loading{" "}
         <span className="loading loading-spinner loading-lg"></span>
       </h1>
-      <div className=" flex flex-col justify-center items-center gap-3">
-        <p className=" font-bold text-base">Be the BEST Organization</p>
-        <p className=" font-bold text-base">In Azion EVERYTHING is Secured</p>
-        <p className=" font-bold text-base">
-          Not only Organization workers can use Azion, EVERYBODY can
-        </p>
-      </div>
     </div>
   );
 };

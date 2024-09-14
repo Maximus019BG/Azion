@@ -1,6 +1,7 @@
 import {apiUrl} from "@/app/api/config";
 import axios, {AxiosResponse} from "axios";
 import Cookies from "js-cookie";
+import {PartOfOrg} from "@/app/func/funcs";
 
 
 const OrgConnString = (): Promise<string> => {
@@ -22,5 +23,10 @@ const OrgConnString = (): Promise<string> => {
     });
 }
 
+const getOrgName = async () => {
+    const data = await PartOfOrg(true);
+    return data.orgName;
+}
 
-export {OrgConnString};
+
+export {OrgConnString, getOrgName};

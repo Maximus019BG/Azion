@@ -2,10 +2,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import Image from "next/image";
-import { apiUrl } from '../../api/config';
+import { apiUrl } from '@/app/api/config';
 import { Commissioner } from "next/font/google";
 import Cookies from 'js-cookie';
-import { CheckMFA } from '../../func/funcs';
+import { CheckMFA } from '@/app/func/funcs';
 import Side_menu from "@/app/components/Side-menu";
 
 interface Token {

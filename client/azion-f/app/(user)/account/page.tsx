@@ -4,8 +4,8 @@ import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "@/app/api/config";
 import Cookies from "js-cookie";
 import { PartOfOrg } from "@/app/func/funcs";
-import SideMenu from "../components/Side-menu";
-import Badge from "../components/BadgeTest";
+import SideMenu from "../../components/Side-menu";
+import Badge from "../../components/BadgeTest";
 import SessionCards from "@/app/components/Session-cards";
 
 const SessionCheck = () => {

@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import { apiUrl } from "../api/config";
+import { apiUrl } from "../../api/config";
 import { Poppins } from "next/font/google";
-import OTP from "../components/OTP";
+import OTP from "../../components/OTP";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

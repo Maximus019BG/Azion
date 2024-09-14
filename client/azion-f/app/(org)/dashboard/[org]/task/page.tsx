@@ -1,13 +1,14 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, {FC, useEffect, useState} from "react";
 import axios, { AxiosResponse } from "axios";
-import { apiUrl } from "../../api/config";
+import { apiUrl } from "@/app/api/config";
 import { Poppins } from "next/font/google";
 import Cookies from "js-cookie";
-import { CheckMFA, PartOfOrg, UserData } from "../../func/funcs";
+import { CheckMFA, PartOfOrg, UserData } from "@/app/func/funcs";
 import Link from "next/link";
-import SideMenu from "../../components/Side-menu";
-import OrgDetailsCard from "../../layouts/OrgDetailsCard";
+import SideMenu from "@/app/components/Side-menu";
+import OrgDetailsCard from "@/app/layouts/OrgDetailsCard";
+import {getOrgName} from "@/app/func/org";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
@@ -29,7 +30,11 @@ interface Task {
   date: string;
   createdBy: User;
 }
-
+interface PageProps {
+    params: {
+        org: string;
+    };
+}
 const SessionCheck = () => {
   const refreshToken = Cookies.get("azionRefreshToken");
   const accessToken = Cookies.get("azionAccessToken");
@@ -59,9 +64,11 @@ const SessionCheck = () => {
     });
 };
 
-const Tasks = () => {
+const Tasks: FC<PageProps> = ({params}) => {
   const [admin, setAdmin] = useState(false);
   const [task, setTask] = useState<Task[]>([]);
+  const [orgNameCheck, setOrgNameCheck] = useState<string>("");
+  const orgName = params.org;
 
   const GetTasks = () => {
     axios
@@ -92,10 +99,25 @@ const Tasks = () => {
   }, []);
 
   UserData().then((data) => {
-    if (data.role == "owner" || data.role == "admin") {
+    if (data.roleLevel > 0 && data.roleLevel < 3) {
       setAdmin(true);
     }
   });
+
+  useEffect(() => {
+    const fetchOrgName = async () => {
+      const result: string = await getOrgName();
+      setOrgNameCheck(result);
+    };
+
+    fetchOrgName();
+  }, [orgName]);
+
+  useEffect(() => {
+    if (orgNameCheck && orgNameCheck !== orgName) {
+      window.location.href = `/dashboard/${orgNameCheck}/task`;
+    }
+  }, [orgNameCheck, orgName]);
 
   return (
     <div className="w-screen h-screen flex overflow-hidden">

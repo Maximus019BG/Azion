@@ -1,13 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import { apiUrl } from "../api/config";
-import ListAllOrgs from "../components/listAllOrgs";
+import { apiUrl } from "../../api/config";
+import ListAllOrgs from "../../components/listAllOrgs";
 import Cookies from "js-cookie";
-import SideMenu from "../components/Side-menu";
-import Join_Organization from "../components/JoinOrg";
-import { CheckMFA, PartOfOrg } from "../func/funcs";
-import Loading from "../components/Loading";
+import SideMenu from "../../components/Side-menu";
+import Join_Organization from "../../components/JoinOrg";
+import { CheckMFA, PartOfOrg } from "../../func/funcs";
+import Loading from "../../components/Loading";
 
 const sessionCheck = async () => {
   const refreshToken = Cookies.get("azionRefreshToken");

@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Image from "next/image";
-import { apiUrl } from "../../api/config";
+import { apiUrl } from "@/app/api/config";
 import Cookies from "js-cookie";
 import { Commissioner } from "next/font/google";
 
@@ -10,12 +10,6 @@ interface Token {
   refreshToken: string;
   accessToken: string;
 }
-
-//A simo ti li si
-//Nameri nachin da pokajesh po nqkakyv nachin che moje chovek da ima faceID i da se logva s nego
-//Ako ti se zanimava de
-//I nezabravqi da mahnesh comentarite koito bqh taka dobyr da ostavq
-
 
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 
