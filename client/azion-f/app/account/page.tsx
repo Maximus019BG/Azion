@@ -5,13 +5,8 @@ import { apiUrl } from "@/app/api/config";
 import Cookies from "js-cookie";
 import { PartOfOrg } from "@/app/func/funcs";
 import SideMenu from "../components/Side-menu";
-import ProfilePicture from "../components/Profile-picture";
-import EditProfile from "../components/EditProfile";
+import Badge from "../components/BadgeTest";
 import SessionCards from "@/app/components/Session-cards";
-import { Canvas } from "@react-three/fiber";
-import { Physics } from "@react-three/rapier";
-import Badge2 from "../components/BadgeTest";
-
 
 const SessionCheck = () => {
     const refreshToken = Cookies.get("azionRefreshToken");
@@ -51,7 +46,7 @@ const Account = () => {
         } else if (!accessToken && !refreshToken) {
             window.location.href = "/login";
         }
-    }, []); // Add dependency array to run the effect once
+    }, []);
 
     return (
         <div className="w-screen h-screen flex">
@@ -60,11 +55,7 @@ const Account = () => {
             </div>
             <div className="w-full h-full flex gap-x-56 ">
                 <div className="w-1/2 p-4 flex justify-center items-center">
-                <Canvas>
-                    <Physics>
-                  <Badge2/>
-                  </Physics>
-                  </Canvas>
+                    <Badge/>
                 </div>
                 <div className="w-full p-4 flex justify-center items-center">
                     <SessionCards />
