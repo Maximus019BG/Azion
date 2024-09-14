@@ -77,6 +77,12 @@ public class ProjectsService {
         return dto;
     }
     
+    public Set<UserDTO> convertToUserDTOSet(Set<User> users) {
+        return users.stream()
+                .map(this::convertToUserDTO)
+                .collect(Collectors.toSet());
+    }
+    
     public boolean dateIsValid(LocalDate date, boolean isPastDate) {
         if(date == null) {
             return true;

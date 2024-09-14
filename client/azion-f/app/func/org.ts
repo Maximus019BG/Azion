@@ -3,6 +3,24 @@ import axios, {AxiosResponse} from "axios";
 import Cookies from "js-cookie";
 import {PartOfOrg} from "@/app/func/funcs";
 
+interface User {
+    name: string;
+    email: string;
+    age: string;
+    role: string;
+    orgid: string;
+    projects: any;
+}
+
+interface Task {
+    id: string;
+    name: string;
+    description: string;
+    project: string;
+    status: string;
+    date: string;
+    createdBy?: User;
+}
 
 const OrgConnString = (): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -25,11 +43,28 @@ const OrgConnString = (): Promise<string> => {
 
 const getOrgName = async () => {
     const data = await PartOfOrg(true);
-    if(data === null){
+    if (data === null) {
         return null;
     }
     return data.orgName;
 }
 
+const getTasks = async (taskId: string): Promise<Task> => {
+    try {
+        const response = await axios.get(`${apiUrl}/projects/${taskId}`, {
+            headers: {
+                "Content-Type": "application/json",
+                authorization: Cookies.get("azionAccessToken")
+            },
+        });
+        const taskData: Task = response.data;
+        console.log('Task data:', taskData);
+        return taskData;
+    } catch (error) {
+        console.error('Failed to fetch task', error);
+        throw new Error('Failed to fetch task');
+    }
+};
 
-export {OrgConnString, getOrgName};
+
+export {OrgConnString, getOrgName, getTasks};

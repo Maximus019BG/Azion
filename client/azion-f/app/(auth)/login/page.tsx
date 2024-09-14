@@ -112,7 +112,7 @@ const Login = () => {
 
   const showModal = () => {
     const modal = document.getElementById(
-      "my_modal_5"
+      "modal_5"
     ) as HTMLDialogElement | null;
     if (modal) {
       modal.showModal();
@@ -136,7 +136,7 @@ const Login = () => {
         </video>
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-center">
-        <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-evenly items-center p-3 md:p-10">
+        <div className="h-full min-w-full bg-white flex flex-col justify-evenly items-center p-3 md:p-10">
           <Link className="absolute right-6 top-6" href="/">
             <FontAwesomeIcon className=" text-4xl text-lightAccent" icon={faCircleLeft} />
           </Link>
@@ -203,7 +203,7 @@ const Login = () => {
           </div>
 
           <dialog
-              id="my_modal_5"
+              id="modal_5"
               className="modal modal-bottom sm:modal-middle"
           >
             <div className="modal-box flex flex-col justify-center items-center h-full ">
@@ -225,7 +225,6 @@ const Login = () => {
                   <OTP length={6} onComplete={handleSubmit} />
                 </div>
                 <form method="dialog">
-                  {/* if there is a button in form, it will close the modal */}
                   <button className="btn px-24  bg-accent hover:bg-[#105380] rounded-2xl hover:scale-110 text-lg">
                     Submit
                   </button>

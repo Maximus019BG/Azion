@@ -6,6 +6,7 @@ import com.azion.Azion.Projects.Model.Project;
 import com.azion.Azion.Projects.Repository.ProjectsRepository;
 import com.azion.Azion.Projects.Service.ProjectsService;
 import com.azion.Azion.Token.TokenService;
+import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,11 +129,45 @@ public class ProjectsController {
     }
     
     
-    
+    @Transactional
     @GetMapping("/{id}")
-    public ResponseEntity<Project> getProjectById(@PathVariable String id) {
+    public ResponseEntity<?> getProjectById(@PathVariable String id, @RequestHeader("authorization") String token) {
+        User user = tokenService.getUserFromToken(token);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+        }
+        
         Optional<Project> project = projectsRepository.findById(id);
-        return project.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        ProjectsDTO projectDTO = new ProjectsDTO();
+        if (project.isPresent()) {
+            projectDTO.setId(project.get().getProjectID());
+            projectDTO.setName(project.get().getName());
+            projectDTO.setDescription(project.get().getDescription());
+            projectDTO.setDate(project.get().getDate());
+            projectDTO.setPriority(project.get().getPriority());
+            projectDTO.setStatus(project.get().getStatus());
+            projectDTO.setProgress(project.get().getProgress());
+            projectDTO.setSource(project.get().getSource());
+            projectDTO.setOrgId(project.get().getOrg().getOrgID());
+            if (project.get().getCreatedBy() != null) {
+                projectDTO.setCreatedBy(convertToUserDTO(project.get().getCreatedBy()));
+            }
+            projectDTO.setUsers(projectsService.convertToUserDTOSet(project.get().getUsers()));
+            return ResponseEntity.ok(projectDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+        
+    }
+    private UserDTO convertToUserDTO(User user) {
+        UserDTO dto = new UserDTO();
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setAge(user.getAge().toString());
+        dto.setRole(user.getRole());
+        dto.setOrgid(user.getOrgid());
+        
+        return dto;
     }
 
     @PostMapping

@@ -303,7 +303,7 @@ const Register = () => {
         </video>
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-center">
-        <div className="h-full min-w-full bg-[#ebe9e5] flex flex-col justify-center items-center gap-24 p-5 md:p-10">
+        <div className="h-full min-w-full bg-white flex flex-col justify-center items-center gap-24 p-5 md:p-10">
           <Link className="absolute left-6 top-6" href="/">
             <FontAwesomeIcon
               className="text-4xl text-lightAccent"
@@ -317,7 +317,7 @@ const Register = () => {
           </h1>
           <div className="w-full flex flex-col justify-center gap-10 items-center">
             {/* Vertical Steps */}
-            <ul className="steps steps-vertical text-background lg:steps-horizontal">
+            <ul className="steps steps-vertical text-black lg:steps-horizontal">
               {stepLabels.map((label, index) => (
                 <li
                   key={index}
@@ -335,7 +335,7 @@ const Register = () => {
                   className="w-full flex flex-col justify-center items-center gap-4"
                 >
                   {field.type === "checkbox" ? (
-                    <label className="text-background flex items-center">
+                    <label className="text-black flex items-center">
                       <input
                         type="checkbox"
                         checked={field.value as boolean}
