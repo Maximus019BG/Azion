@@ -231,7 +231,7 @@ const Register_Organisation = () => {
                         {/* Form Fields or Thank You Message */}
                         {isSubmitted ? (
                             <div className="fixed inset-32 flex justify-center items-center z-50">
-                                <ConString value={conString} />
+                                <ConString value={conString} name={name} />
                             </div>
                         ) : (
                             <div className="w-[30vw] flex flex-col justify-center items-center gap-3">

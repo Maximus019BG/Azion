@@ -7,13 +7,14 @@ import Cookies from "js-cookie";
 
 interface ConStringProps {
   value: string;
+  name: string;
 }
 
 const headerText = Poppins({ subsets: ["latin"], weight: "800" });
 
-const ConString: React.FC<ConStringProps> = ({ value }) => {
+const ConString: React.FC<ConStringProps> = ({ value, name}) => {
   const toDashboard = () => {
-    window.location.href = "/dashboard";
+    window.location.href = `/dashboard/${name}`;
   };
   return (
     <div className="w-full h-full flex flex-col justify-center items-center gap-8 bg-slate-950 rounded-badge max-w-full">

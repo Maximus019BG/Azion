@@ -80,7 +80,12 @@ public class UserController {
             userDTO.setId(user.getId());
             userDTO.setRoleLevel(user.getRoleLevel());
             userDTO.setProjects(userService.convertProjectsToDTO(user.getProjects()));
-            userDTO.setProfilePicture(Base64.getEncoder().encodeToString(user.getProfilePicture())); // Set as base64 string
+            if(user.getProfilePicture() != null) {
+                userDTO.setProfilePicture(Base64.getEncoder().encodeToString(user.getProfilePicture()));
+            }
+            else if(user.getProfilePicture() == null) {
+                userDTO.setProfilePicture(null);
+            }
             
             return ResponseEntity.ok(userDTO);
         } catch (Exception e) {

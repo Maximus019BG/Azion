@@ -15,7 +15,7 @@ import {
 import LogOut from "@/app/components/LogOut";
 import { UserData } from "@/app/func/funcs";
 import { TbFaceId } from "react-icons/tb";
-import {getOrgName} from "@/app/func/org";
+import { getOrgName } from "@/app/func/org";
 
 // Font setup
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
@@ -26,7 +26,7 @@ const SideMenu = () => {
   const [admin, setAdmin] = useState(false);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isTasksOpen, setIsTasksOpen] = useState(false);
-  const [org, setOrg] = useState("");
+  const [org, setOrg] = useState<string | null>("");
 
   useEffect(() => {
     UserData().then((response) => {
@@ -41,11 +41,14 @@ const SideMenu = () => {
   useEffect(() => {
     const fetchOrgName = async () => {
       const result: string = await getOrgName();
-      setOrg(result);
+      if (result === null) {
+        setOrg(null);
+      } else {
+        setOrg(result);
+      }
     };
     fetchOrgName();
-  }, [org]);
-
+  }, []);
 
   // Toggle dropdowns
   const toggleDashboardDropdown = () => {
@@ -89,38 +92,74 @@ const SideMenu = () => {
         <ul className="menu bg-gray-800 text-base-content min-h-full w-80 p-6 flex flex-col justify-center items-start">
           {/* Sidebar content */}
           <div className="w-full flex flex-col justify-center items-start gap-4">
-            {/* Dashboard Dropdown */}
-            <li className="p-2 text-md w-full relative">
-              <div className="flex items-center justify-between w-full">
-                <Link href={`/dashboard/${org}`} className="flex items-center w-full">
-                  <FaClipboard className="text-lg mr-2" />
-                  Dashboard
-                </Link>
-                <button onClick={toggleDashboardDropdown} className="ml-2">
-                  <FaChevronDown
-                    className={`text-sm transition-transform duration-200 ${
-                      isDashboardOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-              </div>
-              {isDashboardOpen && (
-                <ul className="mt-2 space-y-2 w-full">
-                  <li className="p-2 text-md w-full">
-                    <Link href={`/dashboard/${org}/settings`} className="flex items-center w-full">
-                      <FaCog className="text-lg mr-2" />
-                      Settings
+            {/* Conditionally render Dashboard and Tasks sections */}
+            {org && (
+              <>
+                {/* Dashboard Dropdown */}
+                <li className="p-2 text-md w-full relative">
+                  <div className="flex items-center justify-between w-full">
+                    <Link href={`/dashboard/${org}`} className="flex items-center w-full">
+                      <FaClipboard className="text-lg mr-2" />
+                      Dashboard
                     </Link>
-                  </li>
-                  <li className="p-2 text-md w-full">
-                    <Link href={`/dashboard/${org}/settings/roles`} className="flex items-center w-full">
-                      <FaUserSecret className="text-lg mr-2" />
-                      Roles
-                    </Link>
-                  </li>
-                </ul>
-              )}
-            </li>
+                    <button onClick={toggleDashboardDropdown} className="ml-2">
+                      <FaChevronDown
+                        className={`text-sm transition-transform duration-200 ${
+                          isDashboardOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                  </div>
+                  {isDashboardOpen && (
+                    <ul className="mt-2 space-y-2 w-full">
+                      <li className="p-2 text-md w-full">
+                        <Link href={`/dashboard/${org}/settings`} className="flex items-center w-full">
+                          <FaCog className="text-lg mr-2" />
+                          Settings
+                        </Link>
+                      </li>
+                      <li className="p-2 text-md w-full">
+                        <Link href={`/dashboard/${org}/settings/roles`} className="flex items-center w-full">
+                          <FaUserSecret className="text-lg mr-2" />
+                          Roles
+                        </Link>
+                      </li>
+                    </ul>
+                  )}
+                </li>
+
+                {/* Tasks Dropdown */}
+                <li className="p-2 text-md w-full relative">
+                  <div className="flex items-center justify-between w-full">
+                    <button onClick={toggleTasksDropdown} className="flex items-center w-full">
+                      <FaTasks className="text-lg mr-2" />
+                      Tasks
+                      <FaChevronDown
+                        className={`text-sm ml-auto transition-transform duration-200 ${
+                          isTasksOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                  </div>
+                  {isTasksOpen && (
+                    <ul className="mt-2 space-y-2 w-full">
+                      <li className="p-2 text-md w-full">
+                        <Link href={`/dashboard/${org}/task`} className="flex items-center w-full">
+                          <FaTasks className="text-lg mr-2" />
+                          Your Task
+                        </Link>
+                      </li>
+                      <li className="p-2 text-md w-full">
+                        <Link href={`/dashboard/${org}/task/create`} className="flex items-center w-full">
+                          <FaPlusCircle className="text-lg mr-2" />
+                          Create Task
+                        </Link>
+                      </li>
+                    </ul>
+                  )}
+                </li>
+              </>
+            )}
 
             <li className="p-2 text-md w-full">
               <Link href="/organizations" className="flex items-center w-full">
@@ -133,37 +172,6 @@ const SideMenu = () => {
                 <TbFaceId className="text-lg mr-2" />
                 FaceID
               </Link>
-            </li>
-
-            {/* Tasks Dropdown */}
-            <li className="p-2 text-md w-full relative">
-              <div className="flex items-center justify-between w-full">
-                <button onClick={toggleTasksDropdown} className="flex items-center w-full">
-                  <FaTasks className="text-lg mr-2" />
-                  Tasks
-                  <FaChevronDown
-                    className={`text-sm ml-auto transition-transform duration-200 ${
-                      isTasksOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-              </div>
-              {isTasksOpen && (
-                <ul className="mt-2 space-y-2 w-full">
-                  <li className="p-2 text-md w-full">
-                    <Link href={`/dashboard/${org}/task`} className="flex items-center w-full">
-                      <FaTasks className="text-lg mr-2" />
-                      Your Task
-                    </Link>
-                  </li>
-                  <li className="p-2 text-md w-full">
-                    <Link href={`/dashboard/${org}/task/create`} className="flex items-center w-full">
-                      <FaPlusCircle className="text-lg mr-2" />
-                      Create Task
-                    </Link>
-                  </li>
-                </ul>
-              )}
             </li>
           </div>
 

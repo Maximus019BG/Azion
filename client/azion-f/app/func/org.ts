@@ -25,6 +25,9 @@ const OrgConnString = (): Promise<string> => {
 
 const getOrgName = async () => {
     const data = await PartOfOrg(true);
+    if(data === null){
+        return null;
+    }
     return data.orgName;
 }
 

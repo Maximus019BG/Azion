@@ -43,14 +43,15 @@ const PartOfOrg = async (afterDashboard: boolean) => {
                 "Content-Type": "application/json",
             },
         });
-        return response.data; // Ensure response data is returned
-    } catch (error) {
-        if (afterDashboard) {
+        return response.data;
+    } catch (error: any) {
+        if (afterDashboard && window.location.pathname !== "/organizations") {
             window.location.href = "/organizations";
-        } else if (!afterDashboard) {
-            // Handle the case when afterDashboard is false
         }
-        throw error; // Ensure error is thrown to be caught in fetchData
+        if (error.response.status === 404) {
+            return null;
+        }
+        return null;
     }
 };
 
