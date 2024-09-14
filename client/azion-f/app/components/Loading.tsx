@@ -15,7 +15,7 @@ const Loading = () => {
       ></Image>
       <h1 className={`${headerText.className} text-foreground m-16 text-5xl`}>
         Azion is loading{" "}
-        <span className="loading loading-spinner loading-lg"></span>
+        <span className="ml-6 loading loading-spinner loading-lg"></span>
       </h1>
     </div>
   );
