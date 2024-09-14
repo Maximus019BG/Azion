@@ -10,13 +10,17 @@ import com.azion.Azion.MFA.Service.MFAService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.xml.crypto.Data;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
@@ -48,28 +52,25 @@ public class UserController {
         return ResponseEntity.ok("User with email " + email + " deleted");
     }
     
-
-
-
-    @PostMapping("/data")
     @Transactional
+    @PostMapping("/data")
     public ResponseEntity<?> getUserData(@RequestBody Map<String, Object> request) {
         try {
             String token = (String) request.get("accessToken");
             if (token == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Access token is missing.");
             }
-    
+            
             Token tokenObj = tokenRepo.findByToken(token);
             if (tokenObj == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token not found.");
             }
-    
+            
             User user = tokenObj.getSubject();
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user associated with this token.");
             }
-    
+            
             UserDTO userDTO = new UserDTO();
             userDTO.setName(user.getName());
             userDTO.setEmail(user.getEmail());
@@ -79,7 +80,8 @@ public class UserController {
             userDTO.setId(user.getId());
             userDTO.setRoleLevel(user.getRoleLevel());
             userDTO.setProjects(userService.convertProjectsToDTO(user.getProjects()));
-    
+            userDTO.setProfilePicture(Base64.getEncoder().encodeToString(user.getProfilePicture())); // Set as base64 string
+            
             return ResponseEntity.ok(userDTO);
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,9 +91,9 @@ public class UserController {
     
     @Transactional
     @PutMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> updateUser(@RequestParam Map<String, String> request, @RequestParam("file") MultipartFile file) {
         try {
-            String token = (String) request.get("accessToken");
+            String token = request.get("accessToken");
             if (token == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Access token is missing.");
             }
@@ -106,10 +108,12 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user associated with this token.");
             }
             
-            String name = (String) request.get("name");
-            String email = (String) request.get("email");
-            String dateOfBirth = (String) request.get("dateOfBirth");
-         
+            String name = request.get("name");
+            String email = request.get("email");
+            String dateOfBirth = request.get("dateOfBirth");
+            
+            byte[] profilePicture = userService.convertToBytes(file);
+            user.setProfilePicture(profilePicture);
             
             boolean dateOfBirthValid = false;
             if (dateOfBirth != null) {
@@ -117,12 +121,10 @@ public class UserController {
                     dateOfBirthValid = true;
                 }
             }
-            
             if (!dateOfBirthValid && dateOfBirth != null) {
                 String[] date = dateOfBirth.split("/");
                 dateOfBirth = date[2] + "-" + date[1] + "-" + date[0];
             }
-           
             
             if (name != null) {
                 user.setName(name);
@@ -142,10 +144,12 @@ public class UserController {
             
             userRepository.save(user);
             return ResponseEntity.ok("User updated successfully.");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing profile picture.");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
-   
+    
 }

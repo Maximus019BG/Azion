@@ -1,5 +1,4 @@
-"use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Draggable from "react-draggable";
 import ProfilePicture from "../components/Profile-picture";
 import { Commissioner } from "next/font/google";
@@ -19,6 +18,9 @@ const Badge = () => {
   const [roleLevel, setRoleLevel] = useState(0);
   const [isEditing, setIsEditing] = useState({ name: false, email: false, dateOfBirth: false });
   const [prevValues, setPrevValues] = useState({ name: "", email: "", dateOfBirth: "" });
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+  const [displayImage, setDisplayImage] = useState<string | null>(null);
+  const [isImageChanged, setIsImageChanged] = useState(false);
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
@@ -30,22 +32,27 @@ const Badge = () => {
       setRoleLevel(response.roleLevel);
       setDateOfBirth(response.age.substring(0, 10));
       setPrevValues({ name: response.name, email: response.email, dateOfBirth: response.age.substring(0, 10) });
+      setDisplayImage(response.profilePicture);
     });
   }, []);
 
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     const token = Cookies.get("azionAccessToken");
 
+    const formData = new FormData();
+    formData.append("accessToken", token || "");
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("dateOfBirth", dateOfBirth);
+    if (profilePicture) {
+      formData.append("file", profilePicture);
+    }
+
     try {
-      const response = await axios.put(`${apiUrl}/user/update`, {
-        accessToken: token,
-        name,
-        email,
-        dateOfBirth,
-      }, {
+      const response = await axios.put(`${apiUrl}/user/update`, formData, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       });
 
@@ -53,6 +60,7 @@ const Badge = () => {
         alert("User updated successfully");
         setIsEditing({ name: false, email: false, dateOfBirth: false });
         setPrevValues({ name, email, dateOfBirth });
+        setIsImageChanged(false);
       } else {
         alert("Failed to update user");
       }
@@ -91,7 +99,7 @@ const Badge = () => {
         </div>
 
         <div className="w-fit">
-          <ProfilePicture />
+          <ProfilePicture displayImage={displayImage} onFileChange={(file) => { setProfilePicture(file); setIsImageChanged(true); }} />
         </div>
 
         {/* Name Section */}
@@ -152,7 +160,7 @@ const Badge = () => {
           </div>
         </div>
         {/* Save Button */}
-        {(isEditing.name || isEditing.email || isEditing.dateOfBirth) && (
+        {(isEditing.name || isEditing.email || isEditing.dateOfBirth || isImageChanged) && (
           <button
             onClick={handleSubmit}
             className="bg-accent hover:bg-blue-950 text-neonAccent font-bold py-2 px-4 rounded"

@@ -15,6 +15,8 @@ public class UserDTO {
     private Integer roleLevel;
     private String orgid;
     private Set<ProjectsDTO> projects;
+    private String profilePicture;
+    
     
     public String getId() {
         return id;
@@ -78,5 +80,13 @@ public class UserDTO {
     
     public void setProjects(Set<ProjectsDTO> projects) {
         this.projects = projects;
+    }
+    
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+    
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }

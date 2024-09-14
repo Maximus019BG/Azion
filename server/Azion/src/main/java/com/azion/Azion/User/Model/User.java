@@ -43,7 +43,7 @@ public class User {
     private String orgid;
     
     @Lob
-    @Column(name = "profilePicture")
+    @Column(name = "profilePicture", columnDefinition = "LONGBLOB")
     private byte[] profilePicture;
     
     @Column

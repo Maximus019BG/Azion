@@ -1,9 +1,14 @@
-"use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
-const ProfilePicture = () => {
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+const ProfilePicture = ({ displayImage, onFileChange }: { displayImage: string | null, onFileChange: (file: File | null) => void }) => {
+  const [profileImage, setProfileImage] = useState<string | null>(displayImage);
+
+  useEffect(() => {
+    if (displayImage) {
+      setProfileImage(`data:image/png;base64,${displayImage}`);
+    }
+  }, [displayImage]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -13,12 +18,15 @@ const ProfilePicture = () => {
         setProfileImage(reader.result as string);
       };
       reader.readAsDataURL(file);
+      onFileChange(file);
+    } else {
+      onFileChange(null);
     }
   };
 
   return (
     <div className="w-fit h-fit flex flex-col items-center justify-center">
-      <div className="relative w-fit h-fit  flex flex-col justify-center items-center">
+      <div className="relative w-fit h-fit flex flex-col justify-center items-center">
         <div className="relative flex flex-col justify-center items-center">
           <Image
             src={profileImage || "/user.png"}
@@ -27,7 +35,6 @@ const ProfilePicture = () => {
             height={128}
             className="rounded-full object-cover border-2 border-gray-300"
           />
-          {/* Invisible file input positioned over the image */}
           <input
             type="file"
             accept="image/*"

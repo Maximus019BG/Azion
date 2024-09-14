@@ -17,7 +17,9 @@ import jakarta.persistence.NonUniqueResultException;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -42,16 +44,6 @@ public class UserService {
         this.mfaService = mfaService;
         this.tokenService = tokenService;
     }
-
-    
-    public void logoutUser(HttpServletResponse response) {
-        Cookie jwtCookie = new Cookie("jwt", null);
-        jwtCookie.setMaxAge(0);
-        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
-        refreshTokenCookie.setMaxAge(0);
-        response.addCookie(jwtCookie);
-        response.addCookie(refreshTokenCookie);
-    }
     
     public User updateProfilePicture(String id, byte[] profilePicture) {
         Optional<User> optionalUser = userRepository.findById(id);
@@ -63,6 +55,9 @@ public class UserService {
         return null;
     }
     
+    public byte[] convertToBytes(MultipartFile file) throws IOException {
+        return file.getBytes();
+    }
     
     public ProjectsDTO convertToProjectsDTO(Project project) {
         ProjectsDTO dto = new ProjectsDTO();
