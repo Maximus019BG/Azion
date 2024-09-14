@@ -10,7 +10,6 @@ import { apiUrl } from "./api/config";
 import { useEffect, useState } from "react";
 import Main_Services from "./components/main-services";
 import Footer from "./components/Footer";
-import Shape1 from "./components/shapes/shape1";
 import Cookies from "js-cookie";
 
 
@@ -131,8 +130,7 @@ const Home = () => {
               <Link href={`/${ButtonText2.toLowerCase()}`}>{ButtonText2}</Link>
             </motion.button>
           </motion.div>
-        </motion.div>
-        <Shape1/>
+        </motion.div> 
       </motion.div>
 
       <div className=" flex flex-col justify-center items-center mt-48">

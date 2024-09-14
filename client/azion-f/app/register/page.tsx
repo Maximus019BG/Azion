@@ -220,6 +220,12 @@ const Register = () => {
     }
   };
 
+  const handleBackStep = () => {
+    if (step > 0) {
+      setStep(step - 1);
+    }
+  };
+
   const inputFields: InputField<any>[] = [
     {
       label: "Enter your username:",
@@ -416,26 +422,36 @@ const Register = () => {
                 Login
               </Link>
             </h1>
-          </div>
-          <div className="w-full flex justify-center items-center gap-4 mt-6">
-            {step < inputFields.length - 1 && (
-              <button
-                title="click to move to the next one"
-                onClick={handleNextStep}
-                className="bg-lightAccent text-slate-50 font-extrabold p-2 px-8 text-xl rounded-full hover:bg-accent transition-all duration-300"
-              >
-                Next
-              </button>
-            )}
-            {step === inputFields.length - 1 && (
-              <button
-                title="click to submit"
-                onClick={handleSubmit}
-                className="bg-lightAccent text-slate-50 font-extrabold p-2 px-8 text-xl rounded-full hover:bg-accent transition-all duration-300"
-              >
-                Submit
-              </button>
-            )}
+
+            <div className="w-full flex justify-center items-center gap-4 mt-6">
+              {step > 0 && (
+                <button
+                  title="click to move to the previous one"
+                  onClick={handleBackStep}
+                  className="bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
+                >
+                  Back
+                </button>
+              )}
+              {step < inputFields.length - 1 && (
+                <button
+                  title="click to move to the next one"
+                  onClick={handleNextStep}
+                  className="bg-lightAccent text-slate-50 font-extrabold py-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
+                >
+                  Next
+                </button>
+              )}
+              {step === inputFields.length - 1 && (
+                <button
+                  title="click to submit"
+                  onClick={handleSubmit}
+                  className=" bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
+                >
+                  Submit
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

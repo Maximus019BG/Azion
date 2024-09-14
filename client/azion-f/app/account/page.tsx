@@ -54,7 +54,7 @@ const Account = () => {
                 <SideMenu />
             </div>
             <div className="w-full h-full flex gap-x-56 ">
-                <div className="w-1/2 p-4 flex justify-center items-center">
+                <div className="w-1/2 p-4 ml-8 flex justify-center items-center">
                     <Badge/>
                 </div>
                 <div className="w-full p-4 flex justify-center items-center">

@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import SideMenu from "../components/Side-menu";
 import CircularProgress from "../components/diagram";
 import {CheckMFA, PartOfOrg, UserData} from "../func/funcs";
-
+import Loading from "../components/Loading";
 
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
@@ -77,11 +77,7 @@ const Dashboard = () => {
     <>
       {loading ? (
         <div className="w-screen h-screen flex justify-center items-center">
-          <h1
-            className={`${headerText.className} text-foreground m-16 text-5xl`}
-          >
-            Azion is loading
-          </h1>
+          <Loading/>
         </div>
       ) : (
           <div className="w-screen h-screen flex flex-col justify-center items-center">
