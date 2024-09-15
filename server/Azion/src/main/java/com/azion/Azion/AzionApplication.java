@@ -21,6 +21,8 @@ public class AzionApplication {
 		System.setProperty("os", dotenv.get("OS"));
 		System.setProperty("spring.mail.username", dotenv.get("EMAIL"));
 		System.setProperty("spring.mail.password", dotenv.get("EMAIL_PASSWORD"));
+		System.setProperty("requestOrigin", dotenv.get("REQUEST_ORIGIN"));
+		System.setProperty("requestOriginMobile", dotenv.get("REQUEST_ORIGIN_MOBILE"));
 		
 		SpringApplication.run(AzionApplication.class, args);
 	}

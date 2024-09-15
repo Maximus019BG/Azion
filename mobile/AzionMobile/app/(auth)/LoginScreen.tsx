@@ -1,20 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
-import { apiUrl } from '@/api/config'; 
+import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity, Platform } from 'react-native';
+import axios, { AxiosResponse } from 'axios';
+import { apiUrl, originUrl } from '@/api/config'; 
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from './types';
+import { RootStackParamList } from '../types';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { Stack } from 'expo-router';
+import {saveSecureData, getSecureData, deleteSecureData, SessionCheckResponse} from '@/func/funcs';
 
-interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-}
 
-interface SessionCheckResponse {
-  message: string;
-  accessToken?: string;
-}
+const AxiosFunction = (data: any, navigation: NavigationProp<RootStackParamList>) => {
+  axios
+    .post(`${apiUrl}/auth/login`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Origin': originUrl,
+        'User-Agent': `AzionMobile/1.0 ${Platform.OS}/${Platform.Version}`,
+      }
+    })
+    .then(function (response: AxiosResponse) {
+      const accessToken = response.data.accessToken;
+      const refreshToken = response.data.refreshToken;
+      saveSecureData('azionAccessToken', accessToken);
+      saveSecureData('azionRefreshToken', refreshToken);
+      navigation.navigate('(tabs)');
+    })
+    .catch(function (error: any) {
+      console.log('Error:', error.message);
+      console.log('Error Details:', error);
+    });
+};
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -23,62 +38,19 @@ const LoginScreen: React.FC = () => {
   const [isOtpSent, setIsOtpSent] = useState<boolean>(false);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const saveSecureData = async (key: string, value: string) => {
-    try {
-      await SecureStore.setItemAsync(key, value);
-    } catch (e) {
-      console.error('Failed to save secure data', e);
-    }
-  };
 
-  const getSecureData = async (key: string) => {
-    try {
-      const value = await SecureStore.getItemAsync(key);
-      if (value) {
-        return value;
-      }
-    } catch (e) {
-      console.error('Failed to fetch secure data', e);
-    }
-  };
 
   const handleLogin = () => {
-    const data = { email, password };
-
-    axios.post<LoginResponse>(`${apiUrl}/auth/login`, data, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    .then((response) => {
-      const { accessToken, refreshToken } = response.data;
-      saveSecureData('azionAccessToken', accessToken);
-      saveSecureData('azionRefreshToken', refreshToken);
-      setIsOtpSent(true);
-      Alert.alert('Login Successful', 'Please enter the OTP sent to your email.');
-    })
-    .catch((error) => {
-      console.error(error.response ? error.response : error);
-      Alert.alert('Login Failed', 'Please check your credentials and try again.');
-    });
+    setIsOtpSent(true); 
   };
 
-  const handleVerifyOtp = () => {
-    const data = { email, otp };
-
-    axios.post(`${apiUrl}/auth/verify-otp`, data, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    .then((response) => {
-      Alert.alert('OTP Verified', 'You have been logged in successfully.');
-      navigation.navigate('Home');
-    })
-    .catch((error) => {
-      console.error(error.response ? error.response : error);
-      Alert.alert('OTP Verification Failed', 'Please check your OTP and try again.');
-    });
+  const handleSubmit = () => {
+    const userData = {
+      email,
+      password,
+      OTP: otp
+    };
+    AxiosFunction(userData, navigation);
   };
 
   useEffect(() => {
@@ -89,7 +61,9 @@ const LoginScreen: React.FC = () => {
         const data = { accessToken, refreshToken };
         axios.post<SessionCheckResponse>(`${apiUrl}/token/session/check`, data, {
           headers: {
+            'setUserAgent': 'AzionMobile',
             'Content-Type': 'application/json',
+            'Origin': originUrl
           },
         })
         .then((response) => {
@@ -99,9 +73,9 @@ const LoginScreen: React.FC = () => {
           }
         })
         .catch((error) => {
-          console.error(error.response ? error.response : error);
-          SecureStore.deleteItemAsync('azionAccessToken');
-          SecureStore.deleteItemAsync('azionRefreshToken');
+          // console.error(error.response ? error.response : error);
+          deleteSecureData('azionAccessToken');
+          deleteSecureData('azionRefreshToken');
         });
       }
     };
@@ -120,6 +94,7 @@ const LoginScreen: React.FC = () => {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            placeholderTextColor="#FFFFFF" 
             autoCapitalize="none"
           />
           <TextInput
@@ -127,20 +102,25 @@ const LoginScreen: React.FC = () => {
             placeholder="Password"
             value={password}
             onChangeText={setPassword}
-            secureTextEntry
+            placeholderTextColor="#FFFFFF"
+            secureTextEntry={true}
           />
           <Button title="Login" onPress={handleLogin} />
         </>
       ) : (
         <>
+        <TouchableOpacity style={styles.circularButton} onPress={() => setIsOtpSent(false)}>
+          <Icon name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
           <TextInput
             style={styles.input}
             placeholder="OTP"
             value={otp}
             onChangeText={setOtp}
+            placeholderTextColor="#FFFFFF" 
             keyboardType="numeric"
           />
-          <Button title="Verify OTP" onPress={handleVerifyOtp} />
+          <Button title="Verify OTP" onPress={handleSubmit} />
         </>
       )}
     </View>
@@ -152,6 +132,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
+    backgroundColor: '#000',
+  
   },
   header: {
     fontSize: 24,
@@ -161,9 +143,18 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     borderColor: 'gray',
+    color: 'white',
     borderWidth: 1,
     marginBottom: 12,
     paddingHorizontal: 8,
+  },
+  circularButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#000', 
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

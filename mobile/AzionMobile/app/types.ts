@@ -1,4 +1,7 @@
 export type RootStackParamList = {
+  AuthChoice: undefined;
   Login: undefined;
-  Home: undefined;
+  Register: undefined;
+  '(tabs)': undefined;
+  '(auth)': undefined;
 };

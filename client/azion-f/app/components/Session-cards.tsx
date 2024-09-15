@@ -4,6 +4,8 @@ import axios, {AxiosResponse} from "axios";
 import {apiUrl} from "@/app/api/config";
 import {FaDesktop, FaLaptop, FaMobileAlt} from "react-icons/fa";
 import {DeleteSession} from "@/app/func/funcs";
+import logo from "@/public/logo.png";
+import Image from "next/image";
 
 interface TokenDTO {
     token: string;
@@ -30,6 +32,12 @@ const getPlatformIcon = (platform: string) => {
         platform.toLowerCase().includes("ios")
     ) {
         return <FaMobileAlt className="text-8xl text-green-500 self-center"/>;
+    } else if (platform.toLowerCase().includes("azionmobile")) {
+        return (
+            <div className="flex items-center">
+                <Image src={logo} className="left-1" alt="AzionMobile" width={50} height={50}/>
+            </div>
+        );
     }
     return null;
 };
@@ -37,6 +45,7 @@ const getPlatformIcon = (platform: string) => {
 const SessionCards = () => {
     const [sessions, setSessions] = useState<Session[]>([]);
     const [loading, setLoading] = useState(true);
+    const [AzionMobile, setAzionMobile] = useState(false);
 
     useEffect(() => {
         const fetchSessions = async () => {
@@ -50,6 +59,7 @@ const SessionCards = () => {
                         },
                     }
                 );
+                console.log(response.data);
                 setSessions(response.data);
                 setLoading(false);
             } catch (error) {
@@ -89,7 +99,6 @@ const SessionCards = () => {
             </div>
         );
     }
-
     return (
         <div className="p-6 w-full max-w-4xl mx-auto flex flex-col gap-6">
             <h1 className="text-3xl font-bold text-white mb-4">Active Sessions</h1>
@@ -107,21 +116,29 @@ const SessionCards = () => {
                 {sessions.map((session, index) => (
                     <div
                         key={index}
-                        className="bg-white p-4 rounded-xl shadow-lg flex justify-center flex-col w-full"
+                        className="bg-white p-4 rounded-xl shadow-lg flex flex-col w-full h-48"
                     >
-                        <div className="flex gap-6 items-center justify-center mb-4">
+                        <div className="flex gap-6 items-center mb-4">
                             {getPlatformIcon(session.platform)}
                             <div>
                                 <p className="text-sm text-gray-500">
                                     {session.tokenDTO.userAgent}
                                 </p>
                                 <p className="text-sm text-gray-500 mt-1">
-                                    Platform: {session.platform}
+                                  {session.platform}
                                 </p>
                                 {session.tokenDTO.token === Cookies.get("azionRefreshToken") && (
-                                    <p className="text-sm text-red-500 font-semibold">
-                                        *Current Session
-                                    </p>
+                                    <div className={"flex"}>
+                                        <p className="text-sm text-red-500 font-semibold">
+                                            *Current Session
+                                        </p>
+                                        {/*TODO: fix this why does it not show*/}
+                                        {session.platform === "AzionMobile" && (
+                                            <p className="text-sm text-red-500 font-semibold">
+                                                *Our mobile app
+                                            </p>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         </div>
