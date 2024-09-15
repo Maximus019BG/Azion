@@ -26,14 +26,7 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [[
-      "@react-native-cookies/cookies",
-      {
-        "android": {
-          "package": "com.reactnativecommunity.cookies"
-        }
-      }
-    ],
+    "plugins": [
       "expo-router"
     ],
     "experiments": {
