@@ -189,6 +189,7 @@ public class TokenService {
         platformMap.put("Windows", "Windows");
         platformMap.put("Linux", "Linux");
         platformMap.put("Mac", "Mac");
+        platformMap.put("AzionMobile", "AzionMobile");
         
         List<TokenPlatformResponse> sortedTokens = new ArrayList<>();
         for (TokenDTO tokenDTO : tokensDTO) {
@@ -227,6 +228,9 @@ public class TokenService {
                             if (endIndex != -1) {
                                 model = "Mac " + platform.substring(startIndex, endIndex).trim();
                             }
+                        }
+                        else if (entry.getKey().equals("AzionMobile")) {
+                            model = "AzionMobile";
                         }
                         sortedTokens.add(new TokenPlatformResponse(tokenDTO, model));
                         break;

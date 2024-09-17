@@ -1,11 +1,18 @@
 import { Image, StyleSheet, Platform } from 'react-native';
-
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { saveSecureData, getSecureData, deleteSecureData } from '@/func/funcs';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { originUrl, apiUrl } from '@/api/config';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../types';
+
 
 export default function HomeScreen() {
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -16,7 +23,7 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Hello world!!!</ThemedText>
+        <ThemedText type="title">Hello world!!</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
