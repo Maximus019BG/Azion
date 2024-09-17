@@ -161,7 +161,7 @@ const Tasks: FC<PageProps> = ({ params }) => {
             </div>
             <div className="w-3/4 p-6 overflow-auto flex flex-col items-center">
                 <div className="flex flex-col justify-center items-center gap-10 w-full max-w-5xl">
-                    <h1 className="text-5xl text-neonAccent font-black mt-16">Your tasks:</h1>
+                    <h1 className="text-5xl font-black mt-16">Your tasks:</h1>
                     <SortMenu
                         sortCriteria={sortCriteria}
                         sortOrder={sortOrder}
@@ -184,7 +184,7 @@ const Tasks: FC<PageProps> = ({ params }) => {
                     </div>
                     {admin && (
                         <Link
-                            className={`neon-text w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-[#072a40] rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] flex justify-center items-center ${headerText.className}`}
+                            className={` w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] flex justify-center items-center ${headerText.className}`}
                             href={`/dashboard/${orgNameCheck}/task/create`}
                         >
                             Create task

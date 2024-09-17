@@ -30,12 +30,13 @@
   height: 100%;
 }
 
-.custom-oval {
-  width: auto;
-  height: auto;
-  border-radius: 100% / 100%;
-  object-fit: cover;
+.custom-circle {
+  width: 100px; /* Set a specific width */
+  height: 100px; /* Set the height to the same value */
+  border-radius: 50%; /* This makes it a perfect circle */
+  object-fit: cover; /* Ensures that any image inside fits well */
 }
+
 
 .neon-text {
   color: rgba(255, 255, 255, 0.9);

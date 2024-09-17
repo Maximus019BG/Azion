@@ -6,6 +6,7 @@ import { UserData } from "../func/funcs";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { apiUrl } from "@/app/api/config";
+import Image from "next/image";
 import { FaPencilAlt } from "react-icons/fa";
 
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
@@ -82,9 +83,9 @@ const Badge = () => {
     >
       <div className="relative bg-blue-600 w-[25vw] h-[70vh] rounded-xl flex flex-col justify-between p-8 text-white shadow-lg cursor-grab transform transition-transform hover:scale-105 hover:shadow-2xl">
         {/* Header */}
-        <div className="relative z-10">
-          <div className="flex justify-between items-center">
-            <div className="text-xl font-bold">
+        <div className="relative z-10 ">
+          <div className="flex justify-between items-center ">
+            <div className="text-xl font-bold flex justify-center items-center">
               <h1
                 className={` flex justify-center items-end gap-3 neon-text text-xl md:text-2xl lg:text-4xl ${azionText.className}`}
               >
@@ -94,7 +95,9 @@ const Badge = () => {
                 </span>
               </h1>
             </div>
-            <div className="text-3xl font-bold">A</div>
+            <div className="text-3xl font-bold flex justify-center items-center">
+              <Image src="/white-logo.png" alt="white-logo-azion" width={70} height={50}></Image>
+            </div>
           </div>
         </div>
 

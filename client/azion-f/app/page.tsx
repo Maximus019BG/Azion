@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import Main_Services from "./components/main-services";
 import Footer from "./components/Footer";
 import Cookies from "js-cookie";
+import { PartOfOrg } from "./func/funcs";
+import { getOrgName } from "./func/org";
 
 interface Token {
   refreshToken: string;
@@ -23,6 +25,8 @@ const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
 const Home = () => {
   const [ButtonText1, setButtonText1] = useState("");
   const [ButtonText2, setButtonText2] = useState("");
+
+  const [org, setOrg] = useState<string | null>("");
 
   const sessionCheck = (data: Token) => {
     const url = `${apiUrl}/token/session/check`;
@@ -67,6 +71,18 @@ const Home = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const fetchOrgName = async () => {
+      const result: string = await getOrgName();
+      if (result === null) {
+        setOrg(null);
+      } else {
+        setOrg(result);
+      }
+    };
+    fetchOrgName();
+  }, []);
+
   return (
     <div className="h-screen w-screen overflow-x-hidden">
       <div className=" mt-6">
@@ -101,14 +117,14 @@ const Home = () => {
               whileTap={{ scale: 0.95 }}
               className={` text-white w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
             >
-              <Link href={`/${ButtonText1.toLowerCase()}`}>{ButtonText1}</Link>
+              <Link href={`/dashboard/${org}`}>{ButtonText1}</Link>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className={` text-white w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
             >
-              <Link href={`/${ButtonText2.toLowerCase()}`}>{ButtonText2}</Link>
+              <Link href={`/organizations/${org}`}>{ButtonText2}</Link>
             </motion.button>
           </motion.div>
         </motion.div>

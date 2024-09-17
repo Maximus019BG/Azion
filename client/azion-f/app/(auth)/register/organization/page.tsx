@@ -221,7 +221,7 @@ const Register_Organisation = () => {
                             {stepLabels.map((label, index) => (
                                 <li
                                     key={index}
-                                    className={`step ${index <= step ? "step-primary" : ""}`}
+                                    className={`step ${index <= step ? "step-primary" : ""} text-black`}
                                 >
                                     {label}
                                 </li>

@@ -121,10 +121,10 @@ export default function MfaFace() {
           <h1
               className={` text-white mb-5 text-5xl md:text-6xl lg:text-8xl ${azionText.className}`}
           >
-              Azion<span className="text-neonAccent">Cam</span>.
+              Azion<span className="text-lightAccent">Cam</span>.
           </h1>
           <button
-              className="text-white bg-lightAccent w-fit font-black text-2xl px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
+              className="text-white bg-accent w-fit font-black text-2xl px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
               onClick={captureAndSendFrame}
           >
               Save face

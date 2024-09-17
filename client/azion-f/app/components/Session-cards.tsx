@@ -100,7 +100,7 @@ const SessionCards = () => {
         );
     }
     return (
-        <div className="p-6 w-full max-w-4xl mx-auto flex flex-col gap-6">
+        <div className="p-6 w-full max-w-4xl mx-auto flex flex-col justify-center items-center gap-6">
             <h1 className="text-3xl font-bold text-white mb-4">Active Sessions</h1>
             <p className="text-md text-gray-600 mb-4">
                 If you think your account is compromised, you can{" "}
@@ -112,11 +112,11 @@ const SessionCards = () => {
                 </a>
                 .
             </p>
-            <div className="flex flex-col gap-y-6">
+            <div className="flex flex-col justify-center items-center gap-y-6">
                 {sessions.map((session, index) => (
                     <div
                         key={index}
-                        className="bg-white p-4 rounded-xl shadow-lg flex flex-col w-full h-48"
+                        className="bg-white p-4 rounded-xl shadow-lg flex flex-col justify-center w-full h-48"
                     >
                         <div className="flex gap-6 items-center mb-4">
                             {getPlatformIcon(session.platform)}
