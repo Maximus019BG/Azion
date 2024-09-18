@@ -25,7 +25,6 @@ const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
 const Home = () => {
   const [ButtonText1, setButtonText1] = useState("");
   const [ButtonText2, setButtonText2] = useState("");
-
   const [org, setOrg] = useState<string | null>("");
 
   const sessionCheck = (data: Token) => {
@@ -42,15 +41,12 @@ const Home = () => {
           localStorage.setItem("azionAccessToken", accessToken);
           setButtonText1("Dashboard");
           setButtonText2("Organizations");
-        } else if (message !== "success") {
-          setButtonText1("Dashboard");
-          setButtonText2("Organizations");
         } else {
           setButtonText1("Dashboard");
-          setButtonText2("Organizations ");
+          setButtonText2("Organizations");
         }
       })
-      .catch((error) => {
+      .catch(() => {
         setButtonText1("Register");
         setButtonText2("Login");
       });
@@ -65,7 +61,7 @@ const Home = () => {
       setButtonText2("Organizations");
       const data = { refreshToken, accessToken };
       sessionCheck(data);
-    } else if (!accessToken && !refreshToken) {
+    } else {
       setButtonText1("Register");
       setButtonText2("Login");
     }
@@ -85,23 +81,24 @@ const Home = () => {
 
   return (
     <div className="h-screen w-screen overflow-x-hidden">
-      <div className=" mt-6">
+      <div className="mt-6 z-10">
         <Navbar />
       </div>
+
       <motion.div
         initial={{ opacity: 0, y: -400 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className=" h-[80vh] flex justify-start items-end p-16  "
+        className="h-[80vh] flex justify-start items-end p-16 relative"
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className=" h-full max-w-3xl p-10 flex flex-col justify-end items-center text-center"
+          className="h-full max-w-3xl p-10 flex flex-col justify-end items-center text-center z-10"
         >
           <h1
-            className={`text-2xl text-white md:text-3xl lg:text-5xl text-left  ${HeaderText.className}`}
+            className={`text-2xl text-white md:text-3xl lg:text-5xl text-left ${HeaderText.className}`}
           >
             Improve your workflow and Secure your company with Azion.
           </h1>
@@ -115,22 +112,31 @@ const Home = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={` text-white w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
+              className={`text-white w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
             >
               <Link href={`/dashboard/${org}`}>{ButtonText1}</Link>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={` text-white w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
+              className={`text-white w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
             >
               <Link href={`/organizations/${org}`}>{ButtonText2}</Link>
             </motion.button>
           </motion.div>
         </motion.div>
+
+        <div className="absolute top-0 left-24 w-full h-full opacity-75 ">
+          <Image
+            src="/images.png"
+            alt="Azion Images"
+            layout="fill"
+            objectFit="cover"
+          />
+        </div>
       </motion.div>
 
-      <div className=" flex flex-col justify-center items-center mt-48">
+      <div className="flex flex-col justify-center items-center mt-48">
         <Main_Services />
       </div>
       <Footer />

@@ -414,7 +414,7 @@ const Register = () => {
               ))}
             </div>
             <h1 className="text-black ">
-              If you don&apos;t have an existing account, go to{" "}
+              If you have an existing account, go to{" "}
               <Link
                 href="/login"
                 className="text-lightAccent hover:text-[#51bbb6] font-extrabold text-xl underline"
