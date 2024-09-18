@@ -87,7 +87,6 @@ const Tasks: FC<PageProps> = ({ params }) => {
                 },
             })
             .then((response: AxiosResponse) => {
-                console.log(response.data);
                 setTask(response.data);
                 setLoading(false);
             })

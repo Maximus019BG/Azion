@@ -67,7 +67,6 @@ const TasksLayout = () => {
         },
       })
       .then((response: AxiosResponse) => {
-        console.log(response.data);
         setTask(response.data);
       })
       .catch((error) => {

@@ -17,8 +17,6 @@ const RegisterScreen: React.FC = () => {
 
     try {
       const response = await axios.post(`${apiUrl}/register`, { email, password });
-      // Handle successful registration
-      console.log('Registration successful:', response.data);
     } catch (error) {
       console.error('Failed to register:', error);
       setError('Failed to register. Please try again.');

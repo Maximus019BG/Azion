@@ -49,6 +49,10 @@ public class Project {
     @Column(nullable = false)
     private String source;
     
+    @Lob
+    @Column(name = "fileData", columnDefinition = "LONGBLOB")
+    private byte[] fileData;
+    
     @PrePersist
     public void generateId() {
         String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -143,6 +147,15 @@ public class Project {
     public void setSource(String source) {
         this.source = source;
     }
+    
+    public byte[] getFileData() {
+        return fileData;
+    }
+    
+    public void setFileData(byte[] fileData) {
+        this.fileData = fileData;
+    }
+    
     public Project() {
     }
     public Project(String name, String description, LocalDate date, Set<User> users,Org org) {

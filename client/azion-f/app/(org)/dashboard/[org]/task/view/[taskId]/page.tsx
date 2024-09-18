@@ -3,6 +3,9 @@ import React, {FC, useEffect, useState} from 'react';
 import {getOrgName, getTasks} from "@/app/func/org";
 import Loading from "@/app/components/Loading";
 import SideMenu from "@/app/components/Side-menu";
+import {apiUrl} from "@/app/api/config";
+import axios, {AxiosResponse} from "axios";
+import Cookies from "js-cookie";
 
 interface PageProps {
     params: {
@@ -33,6 +36,77 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     const [orgName, setOrgName] = useState<string | null>(null);
     const [task, setTask] = useState<Task | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [file, setFile] = useState<File | null>(null);
+
+    const SubbmitTask = (taskId: string, file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('taskId', taskId);
+
+        axios.put(`${apiUrl}/projects/submit/${taskId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                authorization: Cookies.get("azionAccessToken"),
+            },
+        }).then((response) => {
+            alert('Task submitted successfully');
+        }).catch((error) => {
+            console.error(error);
+        });
+    }
+
+    useEffect(() => {
+        const SessionCheck = () => {
+            const refreshToken = Cookies.get("azionRefreshToken");
+            const accessToken = Cookies.get("azionAccessToken");
+
+            const data = {refreshToken, accessToken};
+
+            const url = `${apiUrl}/token/session/check`;
+            axios
+                .post(url, data, {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                .then((response: AxiosResponse) => {
+                    const {message, accessToken} = response.data;
+                    if (message === "newAccessToken generated") {
+                        Cookies.set("azionAccessToken", accessToken, {
+                            secure: true,
+                            sameSite: "Strict",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error(error.response ? error.response : error);
+                    Cookies.remove("azionAccessToken");
+                    Cookies.remove("azionRefreshToken");
+                    window.location.href = "/login";
+                });
+        };
+
+        if(!Cookies.get("azionAccessToken") || !Cookies.get("azionRefreshToken")) {
+            window.location.href = "/login";
+        }
+        else if(Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
+            SessionCheck();
+        }
+    }, []);
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            setFile(event.target.files[0]);
+        }
+    }
+
+    const handleSubmit = () => {
+        if (taskId && file) {
+            SubbmitTask(taskId, file);
+        } else {
+            alert('Please select a file to submit.');
+        }
+    }
 
     useEffect(() => {
         const orgNameFunc = async () => {
@@ -89,9 +163,10 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                     <p><strong>Date:</strong> {task.date}</p>
                     {task.createdBy && <p><strong>Created By:</strong> {task.createdBy.name}{task.createdBy.email && <span> ({task.createdBy.email})</span>}
                     </p>}
+                    <input type="file" onChange={handleFileChange} />
+                    <button onClick={handleSubmit}>Submit Task</button>
                 </div>
-            )
-            }
+            )}
         </div>
     );
 };

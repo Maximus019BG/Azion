@@ -59,7 +59,6 @@ const SessionCards = () => {
                         },
                     }
                 );
-                console.log(response.data);
                 setSessions(response.data);
                 setLoading(false);
             } catch (error) {

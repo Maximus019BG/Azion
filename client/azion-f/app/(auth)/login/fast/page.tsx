@@ -116,7 +116,6 @@ export default function FastLogIn() {
               },
             }
           );
-          console.log("Response from API: ", response);
 
           setAltText("Detected Face");
 

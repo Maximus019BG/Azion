@@ -58,7 +58,6 @@ const getTasks = async (taskId: string): Promise<Task> => {
             },
         });
         const taskData: Task = response.data;
-        console.log('Task data:', taskData);
         return taskData;
     } catch (error) {
         console.error('Failed to fetch task', error);

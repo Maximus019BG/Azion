@@ -98,7 +98,6 @@ const Register_Organisation = () => {
                 },
             })
             .then((response) => {
-                console.log(response.data);
                 setConString(response.data);
                 setIsSubmitted(true);
             })

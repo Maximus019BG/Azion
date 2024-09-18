@@ -19,6 +19,7 @@ public class ProjectsDTO {
     private Set<UserDTO> users;
     private String orgId;
     private UserDTO createdBy;
+    private boolean isCreator;
     
     public String getStatus() {
         return status;
@@ -105,5 +106,14 @@ public class ProjectsDTO {
     public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
+    
+    public boolean getIsCreator() {
+        return isCreator;
+    }
+    
+    public void setIsCreator(boolean isCreator) {
+        this.isCreator = isCreator;
+    }
+    
     
 }

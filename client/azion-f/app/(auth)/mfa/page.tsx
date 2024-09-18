@@ -15,7 +15,6 @@ const VerifyMFAAxios = (data: any) => {
       },
     })
     .then(function (response: AxiosResponse) {
-      console.log(response.data);
       Cookies.set("mfaChecked" + response.data.email, "true", {
         secure: true,
         sameSite: "Strict",
