@@ -197,6 +197,10 @@ public class ProjectsController extends FileSize {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
         }
+        boolean fileSafe = projectsService.isFileSafe(file);
+        if (!fileSafe) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File could be harmful");
+        }
         Optional<Project> project = projectsRepository.findById(id);
         if (project.isPresent()) {
             if (project.get().getCreatedBy().getEmail().equals(user.getEmail())) {
