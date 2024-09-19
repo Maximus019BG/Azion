@@ -6,8 +6,10 @@ import SideMenu from "@/app/components/Side-menu";
 import { apiUrl } from "@/app/api/config";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
+import AzionEditor from "./_editor/AzionEditor";
 
 import { Poppins } from "next/font/google";
+import { FaArrowAltCircleLeft } from "react-icons/fa";
 
 const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
 
@@ -41,11 +43,18 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
   const [task, setTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [file, setFile] = useState<File | null>(null);
+  const [inputMethod, setInputMethod] = useState<string>("file");
+  const [link, setLink] = useState<string>("");
+  const [editorContent, setEditorContent] = useState<string>("");
 
-  const SubbmitTask = (taskId: string, file: File) => {
+  const SubbmitTask = (taskId: string, file: File | null, link: string, editorContent: string) => {
     const formData = new FormData();
-    formData.append("file", file);
+    if (file) {
+      formData.append("file", file);
+    }
     formData.append("taskId", taskId);
+    formData.append("link", link);
+    formData.append("editorContent", editorContent);
 
     axios
       .put(`${apiUrl}/projects/submit/${taskId}`, formData, {
@@ -95,10 +104,7 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
 
     if (!Cookies.get("azionAccessToken") || !Cookies.get("azionRefreshToken")) {
       window.location.href = "/login";
-    } else if (
-      Cookies.get("azionAccessToken") &&
-      Cookies.get("azionRefreshToken")
-    ) {
+    } else if (Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
       SessionCheck();
     }
   }, []);
@@ -109,11 +115,18 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
     }
   };
 
+  //TODO:make backend logic
   const handleSubmit = () => {
-    if (taskId && file) {
-      SubbmitTask(taskId, file);
-    } else {
-      alert("Please select a file to submit.");
+    if (taskId) {
+      if (editorContent) {
+        SubbmitTask(taskId, null, "", editorContent);
+      } else if (inputMethod === "file" && file) {
+        SubbmitTask(taskId, file, "", "");
+      } else if (inputMethod === "link" && link) {
+        SubbmitTask(taskId, null, link, "");
+      } else {
+        alert("Please provide the required input.");
+      }
     }
   };
 
@@ -144,6 +157,7 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
     );
   }
 
+  console.log(editorContent);
   return (
     <div>
       {loading ? (
@@ -157,11 +171,7 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
           </div>
 
           <div className="flex flex-col justify-center items-start gap-10 bg-gray-800 p-20 rounded-xl">
-            <h1
-              className={`text-5xl ${HeaderText.className} w-full `}
-            >
-              Task Details
-            </h1>
+            <h1 className={`text-5xl ${HeaderText.className} w-full `}>Task Details</h1>
             <p className="flex justify-between p-5 items-center gap-3 text-xl w-full h-12 bg-accent">
               <span className="font-bold">Name</span>
               {task.name}
@@ -184,21 +194,73 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
                 <span className="font-bold">Created By:</span>
                 <div>
                   {task.createdBy.name}
-                  {task.createdBy.email && (
-                    <span> ({task.createdBy.email})</span>
-                  )}
+                  {task.createdBy.email && <span> ({task.createdBy.email})</span>}
                 </div>
               </p>
             )}
 
             {!task.status.toLowerCase().includes("submitted") && (
-              <input type="file" onChange={handleFileChange} className=" file:bg-gray-700 file:cursor-pointer hover:file:bg-gray-600 file:p-2 file:mr-4 file:rounded-btn file:border-none" />
+              <div className="flex flex-col gap-4">
+                <div className="flex gap-4">
+                  <label>
+                    <input
+                      type="radio"
+                      value="file"
+                      checked={inputMethod === "file"}
+                      onChange={() => setInputMethod("file")}
+                    />
+                    File
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value="editor"
+                      checked={inputMethod === "editor"}
+                      onChange={() => setInputMethod("editor")}
+                    />
+                    Azion Editor
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value="link"
+                      checked={inputMethod === "link"}
+                      onChange={() => setInputMethod("link")}
+                    />
+                    Link
+                  </label>
+                </div>
+
+                {inputMethod === "file" && (
+                  <input
+                    type="file"
+                    onChange={handleFileChange}
+                    className="file:bg-gray-700 file:cursor-pointer hover:file:bg-gray-600 file:p-2 file:mr-4 file:rounded-btn file:border-none"
+                  />
+                )}
+
+                {inputMethod === "editor" && (
+                  <div className="z-40 absolute w-screen h-screen bg-gray-700 p-4 top-0 left-0 rounded overflow-hidden">
+                    <button onClick={() => setInputMethod("")}>
+                      <FaArrowAltCircleLeft />
+                    </button>
+                    <AzionEditor value={editorContent} onChange={setEditorContent} />
+                  </div>
+                )}
+
+                {inputMethod === "link" && (
+                  <input
+                    type="text"
+                    value={link}
+                    onChange={(e) => setLink(e.target.value)}
+                    placeholder="Enter the link"
+                    className="p-2 bg-gray-700 rounded"
+                  />
+                )}
+              </div>
             )}
 
-            <button
-              onClick={handleSubmit}
-              className="bg-accent text-white p-3 text-xl font-bold rounded"
-            >
+            <button onClick={handleSubmit} className="bg-accent text-white p-3 text-xl font-bold rounded">
               Submit Task
             </button>
           </div>

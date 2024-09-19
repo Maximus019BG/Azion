@@ -146,7 +146,7 @@ const SideMenu = () => {
                       <li className="p-2 text-md w-full">
                         <Link href={`/dashboard/${org}/task`} className="flex items-center w-full">
                           <FaTasks className="text-lg mr-2" />
-                          Your Task
+                          Your Tasks
                         </Link>
                       </li>
                       <li className="p-2 text-md w-full">
