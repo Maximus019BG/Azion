@@ -89,13 +89,13 @@ const Home = () => {
         initial={{ opacity: 0, y: -400 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="h-[80vh] flex justify-start items-end p-16 relative"
+        className="h-[80vh] flex justify-start items-end border-2 p-16 relative"
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="h-full max-w-3xl p-10 flex flex-col justify-end items-center text-center z-10"
+          className="h-full max-w-3xl p-10 flex flex-col border-2 border-red-600 justify-end items-center text-center z-10"
         >
           <h1
             className={`text-2xl text-white md:text-3xl lg:text-5xl text-left ${HeaderText.className}`}
@@ -126,14 +126,28 @@ const Home = () => {
           </motion.div>
         </motion.div>
 
-        <div className="absolute top-0 left-24 w-full h-full opacity-75 ">
-          <Image
-            src="/images.png"
-            alt="Azion Images"
-            layout="fill"
-            objectFit="cover"
-          />
-        </div>
+          <motion.div
+            animate={{
+              x: [0, 0, 50, 50, 0],
+            }}
+            transition={{
+              duration: 2,
+              ease: "easeInOut",
+              times: [0, 0.2, 0.5, 0.8, 1],
+              repeat: Infinity,
+              repeatDelay: 1,
+            }}
+            className="absolute border-2 border-green-600 top-0 left-0 w-full h-full opacity-75 "
+          >
+            <Image
+              src="/images.png"
+              alt="Azion Images"
+              width={600}
+              height={600}
+              objectFit="cover"
+            />
+          </motion.div>
+
       </motion.div>
 
       <div className="flex flex-col justify-center items-center mt-48">

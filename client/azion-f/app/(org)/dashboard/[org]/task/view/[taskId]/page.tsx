@@ -44,20 +44,23 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
 
   const SubbmitTask = (taskId: string, file: File) => {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('taskId', taskId);
+    formData.append("file", file);
+    formData.append("taskId", taskId);
 
-    axios.put(`${apiUrl}/projects/submit/${taskId}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        authorization: Cookies.get("azionAccessToken"),
-      },
-    }).then((response) => {
-      alert('Task submitted successfully');
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
+    axios
+      .put(`${apiUrl}/projects/submit/${taskId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          authorization: Cookies.get("azionAccessToken"),
+        },
+      })
+      .then((response) => {
+        alert("Task submitted successfully");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   useEffect(() => {
     const SessionCheck = () => {
@@ -92,7 +95,10 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
 
     if (!Cookies.get("azionAccessToken") || !Cookies.get("azionRefreshToken")) {
       window.location.href = "/login";
-    } else if (Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
+    } else if (
+      Cookies.get("azionAccessToken") &&
+      Cookies.get("azionRefreshToken")
+    ) {
       SessionCheck();
     }
   }, []);
@@ -101,15 +107,15 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
     if (event.target.files && event.target.files.length > 0) {
       setFile(event.target.files[0]);
     }
-  }
+  };
 
   const handleSubmit = () => {
     if (taskId && file) {
       SubbmitTask(taskId, file);
     } else {
-      alert('Please select a file to submit.');
+      alert("Please select a file to submit.");
     }
-  }
+  };
 
   useEffect(() => {
     if (taskId) {
@@ -150,29 +156,31 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
             <SideMenu />
           </div>
 
-          <div className="flex flex-col justify-center items-start gap-10 bg-gray-800 p-24 rounded-xl">
-            <h1 className={`text-5xl ${HeaderText.className} w-full bg-gray-700 p-5`}>
+          <div className="flex flex-col justify-center items-start gap-10 bg-gray-800 p-20 rounded-xl">
+            <h1
+              className={`text-5xl ${HeaderText.className} w-full `}
+            >
               Task Details
             </h1>
-            <p className="flex justify-between p-5 items-center gap-3 text-xl w-full h-12 bg-gray-700">
+            <p className="flex justify-between p-5 items-center gap-3 text-xl w-full h-12 bg-accent">
               <span className="font-bold">Name</span>
               {task.name}
             </p>
-            <p className="flex justify-between p-5 items-center gap-3 text-xl w-full h-12 bg-gray-700">
+            <p className="flex justify-between p-5 items-center gap-3 text-xl w-full h-12 bg-accent">
               <span className="font-bold">Description</span>
               {task.description}
             </p>
-            <p className="flex justify-between p-5 items-center gap-3 text-xl w-full h-12 bg-gray-700">
+            <p className="flex justify-between p-5 items-center gap-3 text-xl w-full h-12 bg-accent">
               <span className="font-bold">Status</span>
               {task.status}
             </p>
-            <p className="flex justify-between p-5 items-center gap-3 text-xl w-full h-12 bg-gray-700">
+            <p className="flex justify-between p-5 items-center gap-3 text-xl w-full h-12 bg-accent">
               <span className="font-bold">Date</span>
               {task.date}
             </p>
 
             {task.createdBy && (
-              <p className="flex justify-between p-5 items-center gap-3 text-xl w-full h-12 bg-gray-700">
+              <p className="flex justify-between p-5 items-center gap-3 text-xl w-full h-12 bg-accent">
                 <span className="font-bold">Created By:</span>
                 <div>
                   {task.createdBy.name}
@@ -183,8 +191,14 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
               </p>
             )}
 
-            <input type="file" onChange={handleFileChange} />
-            <button onClick={handleSubmit} className="bg-blue-500 text-white p-2 rounded">
+            {!task.status.toLowerCase().includes("submitted") && (
+              <input type="file" onChange={handleFileChange} className=" file:bg-gray-700 file:cursor-pointer hover:file:bg-gray-600 file:p-2 file:mr-4 file:rounded-btn file:border-none" />
+            )}
+
+            <button
+              onClick={handleSubmit}
+              className="bg-accent text-white p-3 text-xl font-bold rounded"
+            >
               Submit Task
             </button>
           </div>
@@ -192,6 +206,6 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
       )}
     </div>
   );
-}
+};
 
 export default TaskView;
