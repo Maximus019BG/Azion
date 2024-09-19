@@ -126,10 +126,10 @@ public class ProjectsService {
                     name.contains(".vba-psh") || name.contains(".vbs") || name.contains(".war")) {
                 return false;
             }
-            else if (content.contains("rm -rf") || content.contains("rm -rf /") || content.contains("rm -rf /*") || content.contains("rm -rf /*.*") || content.contains("rm -rf *") || content.contains("rm ")) {
+            else if (content.contains("rm -rf") || content.contains("rm -rf /") || content.contains("rm -rf /*") || content.contains("rm -rf /*.*") || content.contains("rm -rf *") || content.contains(" rm ")) {
                 return false;
             }
-            else if (content.contains("del /f /s /q") || content.contains("del /f /s /q *") || content.contains("del /f /s /q *.*") || content.contains("del /f /s /q /f") || content.contains("del /f /s /q /f *") || content.contains("del /f /s /q /f *.*") || content.contains("del")) {
+            else if (content.contains("del /f /s /q") || content.contains("del /f /s /q *") || content.contains("del /f /s /q *.*") || content.contains("del /f /s /q /f") || content.contains("del /f /s /q /f *") || content.contains("del /f /s /q /f *.*") || content.contains(" del ")) {
                 return false;
             }
             
