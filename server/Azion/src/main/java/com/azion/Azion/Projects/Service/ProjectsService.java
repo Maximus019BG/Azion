@@ -101,19 +101,19 @@ public class ProjectsService {
         return true;
     }
     
-    //*File safety checks
+    //*ProjectFiles safety checks
     public boolean isFileSafe(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new RuntimeException("File is empty");
+            throw new RuntimeException("ProjectFiles is empty");
         }
         try {
             byte[] fileContent = file.getBytes();
             String content = new String(fileContent);
             String name = file.getOriginalFilename();
-            log.debug("File name: " + name);
+            log.info("ProjectFiles name: " + name);
             //Basic checks
             if (name == null || name.isEmpty()) {
-                log.debug("File name is empty");
+                log.debug("ProjectFiles name is empty");
                 return false;
             }
             else if (name.contains(".txt")) {
@@ -133,8 +133,8 @@ public class ProjectsService {
                 return false;
             }
             
-            log.debug("File type specific checks");
-            //File type specific checks
+            log.debug("ProjectFiles type specific checks");
+            //ProjectFiles type specific checks
             switch (name.substring(name.lastIndexOf('.'))) {
                 case ".pdf":
                     return fileSafePDF(content);
@@ -170,7 +170,7 @@ public class ProjectsService {
             return false;
         }
         //!Keywords for file operations
-        String[] fileOpK = {"File", "FileInputStream", "FileOutputStream", "FileReader",
+        String[] fileOpK = {"ProjectFiles", "FileInputStream", "FileOutputStream", "FileReader",
                 "FileWriter", "Files", "Path", "Paths", "BufferedReader", "BufferedWriter", "RandomAccessFile",
                 "FileChannel", "FileLock", "FileSystem", "FileSystems", "FileStore", "FileVisitor", "DirectoryStream",
                 "Stream", "Scanner", "PrintWriter", "PrintStream"};
@@ -208,7 +208,7 @@ public class ProjectsService {
     }
     
     public boolean fileSafeJava(String content) {
-        if (content.contains("Runtime.getRuntime()") || content.contains("ProcessBuilder") || content.contains("exec") || content.contains("System.exit") || content.contains("java.lang.reflect") || content.contains("java.io.File") || content.contains("java.io.FileInputStream") || content.contains("java.io.FileOutputStream") || content.contains("java.io.FileReader") || content.contains("java.io.FileWriter")) {
+        if (content.contains("Runtime.getRuntime()") || content.contains("ProcessBuilder") || content.contains("exec") || content.contains("System.exit") || content.contains("java.lang.reflect") || content.contains("java.io.ProjectFiles") || content.contains("java.io.FileInputStream") || content.contains("java.io.FileOutputStream") || content.contains("java.io.FileReader") || content.contains("java.io.FileWriter")) {
             return false;
         }
         
@@ -232,7 +232,7 @@ public class ProjectsService {
     }
     
     public boolean fileSafeRuby(String content) {
-        if (content.contains("system") || content.contains("exec") || content.contains("eval") || content.contains("open") || content.contains("IO.popen") || content.contains("Kernel.exec") || content.contains("Kernel.system") || content.contains("Kernel.eval") || content.contains("Kernel.open") || content.contains("File.open")) {
+        if (content.contains("system") || content.contains("exec") || content.contains("eval") || content.contains("open") || content.contains("IO.popen") || content.contains("Kernel.exec") || content.contains("Kernel.system") || content.contains("Kernel.eval") || content.contains("Kernel.open") || content.contains("ProjectFiles.open")) {
             return false;
         }
         

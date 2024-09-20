@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -49,9 +50,10 @@ public class Project {
     @Column(nullable = false)
     private String source;
     
-    @Lob
-    @Column(name = "fileData", columnDefinition = "LONGBLOB")
-    private byte[] fileData;
+    @JoinColumn
+    @OneToMany
+    private List<ProjectFiles> projectFiles;
+    
     
     @PrePersist
     public void generateId() {
@@ -148,13 +150,14 @@ public class Project {
         this.source = source;
     }
     
-    public byte[] getFileData() {
-        return fileData;
+    public List<ProjectFiles> getFiles() {
+        return projectFiles;
     }
     
-    public void setFileData(byte[] fileData) {
-        this.fileData = fileData;
+    public void setFiles(List<ProjectFiles> projectFiles) {
+        this.projectFiles = projectFiles;
     }
+    
     
     public Project() {
     }

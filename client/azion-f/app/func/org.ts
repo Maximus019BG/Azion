@@ -41,7 +41,7 @@ const OrgConnString = (): Promise<string> => {
     });
 }
 
-const getOrgName = async () => {
+const getOrgName = async (onHome?:boolean) => {
     const data = await PartOfOrg(true);
     if (data === null) {
         return null;

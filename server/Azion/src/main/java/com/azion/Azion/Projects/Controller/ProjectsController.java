@@ -2,20 +2,26 @@ package com.azion.Azion.Projects.Controller;
 
 import com.azion.Azion.Exception.FileSize;
 import com.azion.Azion.Org.Repository.OrgRepository;
+import com.azion.Azion.Projects.Model.DTO.FileDTO;
 import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
+import com.azion.Azion.Projects.Model.ProjectFiles;
 import com.azion.Azion.Projects.Model.Project;
+import com.azion.Azion.Projects.Repository.FileRepo;
 import com.azion.Azion.Projects.Repository.ProjectsRepository;
 import com.azion.Azion.Projects.Service.ProjectsService;
+import com.azion.Azion.Projects.Type.SubmitType;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
-import java.io.File;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -27,6 +33,7 @@ import com.azion.Azion.User.Model.User;
 import org.springframework.web.multipart.MultipartFile;
 
 
+@Slf4j
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectsController extends FileSize {
@@ -36,14 +43,16 @@ public class ProjectsController extends FileSize {
     private final UserRepository userRepository;
     private final TokenService tokenService;
     private final OrgRepository orgRepository;
+    private final FileRepo fileRepo;
     
     @Autowired
-    public ProjectsController(ProjectsRepository projectsRepository, ProjectsService projectsService, UserRepository userRepository, TokenService tokenService, OrgRepository orgRepository) {
+    public ProjectsController(ProjectsRepository projectsRepository, ProjectsService projectsService, UserRepository userRepository, TokenService tokenService, OrgRepository orgRepository, FileRepo fileRepo) {
         this.projectsService = projectsService;
         this.projectsRepository = projectsRepository;
         this.userRepository = userRepository;
         this.tokenService = tokenService;
         this.orgRepository = orgRepository;
+        this.fileRepo = fileRepo;
     }
     
     @GetMapping
@@ -153,14 +162,15 @@ public class ProjectsController extends FileSize {
             projectDTO.setProgress(project.get().getProgress());
             projectDTO.setSource(project.get().getSource());
             projectDTO.setOrgId(project.get().getOrg().getOrgID());
+            
             if (project.get().getCreatedBy() != null) {
                 projectDTO.setCreatedBy(convertToUserDTO(project.get().getCreatedBy()));
             }
             if (project.get().getCreatedBy() == user) {
                 projectDTO.setIsCreator(true);
                 projectDTO.setUsers(projectsService.convertToUserDTOSet(project.get().getUsers()));
-            }
-            else{
+                projectDTO.setFiles(convertToFileDTO(project.get().getFiles()));
+            } else {
                 projectDTO.setIsCreator(false);
                 projectDTO.setUsers(null);
             }
@@ -172,6 +182,7 @@ public class ProjectsController extends FileSize {
         
     }
     
+    //!Converting to Data Transfer Objects
     private UserDTO convertToUserDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setName(user.getName());
@@ -182,6 +193,21 @@ public class ProjectsController extends FileSize {
         
         return dto;
     }
+    private List<FileDTO> convertToFileDTO(List<ProjectFiles> files) {
+        List<FileDTO> dtos = new ArrayList<>();
+        
+        for (ProjectFiles file : files) {
+            FileDTO dto = new FileDTO();
+            dto.setFileData(file.getFileData());
+            dto.setLink(file.getLink());
+            dto.setUser(convertToUserDTO(file.getUser()));
+            dto.setSubmitType(file.getSubmitType());
+            dto.setProjectID(file.getProjectID());
+            dtos.add(dto);
+        }
+        
+        return dtos;
+    }
     
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable String id) {
@@ -191,40 +217,64 @@ public class ProjectsController extends FileSize {
     }
     
     @Transactional
-    @PutMapping("/submit/{id}")
-    public ResponseEntity<?> submitProject(@PathVariable String id, @RequestHeader("authorization") String token, @RequestBody MultipartFile file) {
+    @PutMapping(value = "/submit/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> submitProject(@PathVariable String id, @RequestHeader("authorization") String token, @RequestParam("file") MultipartFile file) {
         User user = tokenService.getUserFromToken(token);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
         }
         boolean fileSafe = projectsService.isFileSafe(file);
         if (!fileSafe) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File could be harmful");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ProjectFiles could be harmful");
         }
+        boolean typeLink = false;
         Optional<Project> project = projectsRepository.findById(id);
         if (project.isPresent()) {
             if (project.get().getCreatedBy().getEmail().equals(user.getEmail())) {
-                if (file == null) {
+                if (file.isEmpty()) {
                     project.get().setStatus("Marked as done");
                     return ResponseEntity.status(HttpStatus.OK).body("Marked as done");
                 }
                 try {
-                    project.get().setFileData(file.getBytes());
+                    ProjectFiles fileObj = new ProjectFiles();
+                    try {
+                        byte[] fileContent = file.getBytes();
+                        String content = new String(fileContent);
+                        String name = file.getOriginalFilename();
+                        if (name.equals("AzionLink.txt")) {
+                            fileObj.setLink(content);
+                            typeLink = true;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+                    }
+                    if (typeLink) {
+                        fileObj.setSubmitType(SubmitType.LINK);
+                    } else if (!typeLink) {
+                        fileObj.setSubmitType(SubmitType.FILE);
+                        fileObj.setFileData(file.getBytes());
+                    }
+                    fileObj.setUser(user);
+                    fileRepo.save(fileObj);
+                    
+                    Project proj = project.get();
+                    List<ProjectFiles> listProj = proj.getFiles();
+                    listProj.add(fileObj);
+                    proj.setFiles(listProj);
                 } catch (IOException e) {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving file");
+                    throw new RuntimeException(e);
                 }
-                if (Objects.equals(project.get().getStatus(), "Past")) {
-                    project.get().setStatus("Submitted Late");
-                } else {
-                    project.get().setStatus("Submitted");
-                }
-                projectsRepository.save(project.get());
-                return ResponseEntity.ok("Project submitted successfully");
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not the creator of this project");
             }
+            if (Objects.equals(project.get().getStatus(), "Past")) {
+                project.get().setStatus("Submitted Late");
+            } else {
+                project.get().setStatus("Submitted");
+            }
+            projectsRepository.save(project.get());
+            return ResponseEntity.ok("Project submitted successfully");
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not the creator of this project");
         }
     }
 }

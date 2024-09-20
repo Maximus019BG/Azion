@@ -4,6 +4,7 @@ import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -20,6 +21,7 @@ public class ProjectsDTO {
     private String orgId;
     private UserDTO createdBy;
     private boolean isCreator;
+    private List<FileDTO> files;
     
     public String getStatus() {
         return status;
@@ -115,5 +117,11 @@ public class ProjectsDTO {
         this.isCreator = isCreator;
     }
     
+    public List<FileDTO> getFiles() {
+        return files;
+    }
     
+    public void setFiles(List<FileDTO> files) {
+        this.files = files;
+    }
 }

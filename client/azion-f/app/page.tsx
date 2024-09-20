@@ -24,7 +24,8 @@ interface Token {
 const Home = () => {
   const [ButtonText1, setButtonText1] = useState("");
   const [ButtonText2, setButtonText2] = useState("");
-  const [org, setOrg] = useState<string | null>("");
+  const [org, setOrg] = useState<string | null>(null);
+  const [login, setLogin] = useState(false)
 
   const sessionCheck = (data: Token) => {
     const url = `${apiUrl}/token/session/check`;
@@ -64,19 +65,17 @@ const Home = () => {
       setButtonText1("Register");
       setButtonText2("Login");
     }
-  }, []);
 
-  useEffect(() => {
     const fetchOrgName = async () => {
       const result: string = await getOrgName();
-      if (result === null) {
-        setOrg(null);
-      } else {
+      if (result !== org) {
         setOrg(result);
       }
     };
     fetchOrgName();
   }, []);
+
+
 
   const getLoopAnimation = (delay: number) => ({
     animate: { y: [0, -15, 0] }, // Bounce effect
@@ -88,6 +87,7 @@ const Home = () => {
       delay: delay, // Delay start based on index
     },
   });
+
 
   return (
     <div className="">
@@ -175,14 +175,16 @@ const Home = () => {
               whileTap={{ scale: 0.95 }}
               className={`text-white w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
             >
-              <Link href={`/dashboard/${org}`}>{ButtonText1}</Link>
+              {org !== null && (<Link href={`/dashboard/${org}`}>{ButtonText1}</Link>)}
+              {org === null && (  <Link href={`/register`}>Register</Link>)}
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className={`text-white w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
             >
-              <Link href={`/organizations/${org}`}>{ButtonText2}</Link>
+              {org !== null && (<Link href={`/organizations/${org}`}>{ButtonText2}</Link>)}
+              {org === null && (  <Link href={`/login`}>Login</Link>)}
             </motion.button>
           </motion.div>
         </motion.div>
