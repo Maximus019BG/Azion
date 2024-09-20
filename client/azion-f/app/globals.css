@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --foreground: 242, 242, 242;
-    --background: linear-gradient(to bottom right, rgba(14, 20, 44, 0.9), rgba(0, 0, 0, 0.9));
+    --background: linear-gradient(to bottom , rgba(14, 20, 44, 0.9), rgba(0, 0, 0, 0.9));
     --muted: 115, 115, 115;
     --accent: 37, 99, 235;
     --lightAccent: 14, 165, 233;
@@ -19,9 +19,22 @@
 }
 
 .gradient-text {
-  background: linear-gradient(to right, rgba(14, 165, 233, 0.8), rgba(37, 99, 235, 0.7));
+  background: linear-gradient(to top, rgba(14, 165, 233, 0.8), rgba(37, 99, 235, 0.7));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .gradient-form {
@@ -37,10 +50,8 @@
   object-fit: cover; /* Ensures that any image inside fits well */
 }
 
-
 .neon-text {
   color: rgba(255, 255, 255, 0.9);
-
   text-shadow:
     0 0 1px rgba(215, 215, 216, 0.8),
     0 0 2px rgba(197, 198, 199, 0.7),

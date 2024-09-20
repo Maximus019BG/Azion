@@ -8,19 +8,18 @@ import background from "../public/background2.jpeg";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "./api/config";
 import { useEffect, useState } from "react";
-import Main_Services from "./components/main-services";
+import Main_Services from "./components/main-service";
 import Footer from "./components/Footer";
 import Cookies from "js-cookie";
 import { PartOfOrg } from "./func/funcs";
 import { getOrgName } from "./func/org";
 
+const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
+
 interface Token {
   refreshToken: string;
   accessToken: string;
 }
-
-const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
-const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
 
 const Home = () => {
   const [ButtonText1, setButtonText1] = useState("");
@@ -79,23 +78,85 @@ const Home = () => {
     fetchOrgName();
   }, []);
 
+  const getLoopAnimation = (delay: number) => ({
+    animate: { y: [0, -15, 0] }, // Bounce effect
+    transition: {
+      duration: 6.5, // Speed
+      ease: "easeInOut",
+      repeat: Infinity, // Animation loop
+      repeatDelay: 0.5, // Time between loops
+      delay: delay, // Delay start based on index
+    },
+  });
+
   return (
-    <div className="h-screen w-screen overflow-x-hidden">
-      <div className="mt-6 z-10">
+    <div className="">
+      <div className="z-10 p-6">
         <Navbar />
+      </div>
+
+      {/* IMAGES */}
+      <div className="w-full relative ml-6">
+        {[
+          { src: "/ArtBoard 2.svg", position: "right-5 top-[4vh]", delay: 0 },
+          {
+            src: "/ArtBoard 3.svg",
+            position: "right-[23vw] top-[5vh]",
+            delay: 0.3,
+          },
+          {
+            src: "/ArtBoard 4.svg",
+            position: "right-[2vw] top-[32vh]",
+            delay: 0.6,
+          },
+          {
+            src: "/ArtBoard 5.svg",
+            position: "right-[12vw] top-[58vh]",
+            delay: 0.9,
+          },
+          {
+            src: "/ArtBoard 6.svg",
+            position: "right-[24vw] top-[32vh]",
+            delay: 1.2,
+          },
+          {
+            src: "/ArtBoard 7.svg",
+            position: "right-[45vw] top-[0vh]",
+            delay: 1.5,
+          },
+          {
+            src: "/ArtBoard 8.svg",
+            position: "right-[34vw] top-[63vh]",
+            delay: 1.8,
+          },
+        ].map((svg, index) => (
+          <motion.div
+            key={index}
+            className={`absolute ${svg.position}`}
+            animate={getLoopAnimation(svg.delay).animate}
+            transition={getLoopAnimation(svg.delay).transition}
+          >
+            <Image
+              src={svg.src}
+              alt={`Azion svg ${index + 1}`}
+              width={300}
+              height={300}
+            />
+          </motion.div>
+        ))}
       </div>
 
       <motion.div
         initial={{ opacity: 0, y: -400 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="h-[80vh] flex justify-start items-end border-2 p-16 relative"
+        className="h-[80vh] flex justify-start items-end p-16 relative"
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="h-full max-w-3xl p-10 flex flex-col border-2 border-red-600 justify-end items-center text-center z-10"
+          className="h-full max-w-3xl p-10 flex flex-col justify-end items-center text-center z-10"
         >
           <h1
             className={`text-2xl text-white md:text-3xl lg:text-5xl text-left ${HeaderText.className}`}
@@ -125,32 +186,10 @@ const Home = () => {
             </motion.button>
           </motion.div>
         </motion.div>
-
-          <motion.div
-            animate={{
-              x: [0, 0, 50, 50, 0],
-            }}
-            transition={{
-              duration: 2,
-              ease: "easeInOut",
-              times: [0, 0.2, 0.5, 0.8, 1],
-              repeat: Infinity,
-              repeatDelay: 1,
-            }}
-            className="absolute border-2 border-green-600 top-0 left-0 w-full h-full opacity-75 "
-          >
-            <Image
-              src="/images.png"
-              alt="Azion Images"
-              width={600}
-              height={600}
-              objectFit="cover"
-            />
-          </motion.div>
-
       </motion.div>
-
-      <div className="flex flex-col justify-center items-center mt-48">
+      
+      <div className="w-full h-full flex flex-col justify-center items-center mt-48">
+      <div className="w-full h-48 bg-gradient-to-b from-[#06061000] via-[#06061078]  to-[#060610]"></div>
         <Main_Services />
       </div>
       <Footer />
