@@ -27,6 +27,7 @@ jobs:
           else
             git checkout -b dev
           fi
+          git pull origin dev || true
           git pull origin master
           git push origin dev
 
