@@ -1,0 +1,79 @@
+name: Update Branches
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  update-branches:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Update dev
+        run: |
+          git checkout dev
+          git pull origin master
+          git push origin dev
+
+      - name: Update dev-mobile
+        run: |
+          git checkout dev-mobile
+          git pull origin master
+          git push origin dev-mobile
+
+      - name: Update dev-desktop
+        run: |
+          git checkout dev-desktop
+          git pull origin master
+          git push origin dev-desktop
+
+      - name: Update test-dev
+        run: |
+          git checkout test-dev
+          git pull origin master
+          git push origin test-dev
+
+      - name: Update test-master
+        run: |
+          git checkout test-master
+          git pull origin master
+          git push origin test-master
+
+      - name: Update gh-community
+        run: |
+          git checkout gh-community
+          git pull origin master
+          git push origin gh-community
+
+      - name: Versioning
+        run: |
+          TAG=$(git describe --tags --abbrev=0)
+          TAG=${TAG#"v. "}
+          IFS='.' read -r major minor patch <<< "$TAG"
+          patch=$((patch + 1))
+          
+          if [ "$patch" -ge 10 ]; then
+          patch=0
+          minor=$((minor + 1))
+          fi
+          
+          if [ "$minor" -ge 10 ]; then
+          minor=0
+          major=$((major + 1))
+          fi
+          
+          NEW_TAG="v.$major.$minor.$patch"
+          git tag -a "$NEW_TAG" -m "New version of Azion"
+          
+          git push origin "$NEW_TAG"
+          
+          gh release create "$NEW_TAG" --title "$NEW_TAG" --notes "New version of Azion v$NEW_TAG"
