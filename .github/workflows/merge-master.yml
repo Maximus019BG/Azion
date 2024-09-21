@@ -20,39 +20,70 @@ jobs:
 
       - name: Update dev
         run: |
-          git checkout dev
+          if ! git rev-parse --verify dev; then
+            git checkout -b dev
+          else
+            git checkout dev
+          fi
           git pull origin master
           git push origin dev
 
       - name: Update dev-mobile
         run: |
-          git checkout dev-mobile
+          if ! git rev-parse --verify dev-mobile; then
+            git checkout -b dev-mobile
+          else
+            git checkout dev-mobile
+          fi
           git pull origin master
           git push origin dev-mobile
 
       - name: Update dev-desktop
         run: |
-          git checkout dev-desktop
+          if ! git rev-parse --verify dev-desktop; then
+            git checkout -b dev-desktop
+          else
+            git checkout dev-desktop
+          fi
           git pull origin master
           git push origin dev-desktop
 
       - name: Update test-dev
         run: |
-          git checkout test-dev
+          if ! git rev-parse --verify test-dev; then
+            git checkout -b test-dev
+          else
+            git checkout test-dev
+          fi
           git pull origin master
           git push origin test-dev
 
       - name: Update test-master
         run: |
-          git checkout test-master
+          if ! git rev-parse --verify test-master; then
+            git checkout -b test-master
+          else
+            git checkout test-master
+          fi
           git pull origin master
           git push origin test-master
 
       - name: Update gh-community
         run: |
-          git checkout gh-community
+          if ! git rev-parse --verify gh-community; then
+            git checkout -b gh-community
+          else
+            git checkout gh-community
+          fi
           git pull origin master
           git push origin gh-community
+
+  versioning:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+      - uses: actions/checkout@v2
 
       - name: Versioning
         run: |
