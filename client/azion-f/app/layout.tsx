@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import logo from "../public/logo.png"
+import logo from "../public/white-logo.png"
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,7 +21,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href={logo.src} />
       </head>
-      <body className={` ${inter.className} bg-background overflow-x-hidden  `}>
+      <body className={` ${inter.className} bg-background text-white overflow-x-hidden  `}>
         {children}
       </body>
     </html>

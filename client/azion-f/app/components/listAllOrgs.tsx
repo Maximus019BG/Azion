@@ -24,7 +24,6 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({ searchTerm }) => {
     axios
       .get(`${apiUrl}/org/list/all`)
       .then((response: AxiosResponse) => {
-        console.log("Fetched data:", response.data);
         setOrgs(response.data);
         setLoading(false);
       })
@@ -53,7 +52,11 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({ searchTerm }) => {
   }, []);
 
   if (loading) {
-    return <h2 className="text-white">Loading...</h2>;
+    return (
+      <div className="w-full h-full flex justify-center items-center text-white">
+        Loading...
+      </div>
+    );
   }
 
   const filteredOrgs = orgs.filter((org) =>
@@ -71,26 +74,30 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({ searchTerm }) => {
   );
 
   if (filteredOrgs.length === 0) {
-    return <h2 className="text-white">No organizations to display</h2>;
+    return (
+      <div className="w-full h-full flex justify-center items-center text-white">
+        No organizations to display
+      </div>
+    );
   }
 
   return (
-    <div className="w-[50vw]">
+    <div className="w-full max-w-7xl px-4 py-8 mx-auto">
       {/* Grid container for responsive layout */}
-      <div className="grid grid-cols-1 gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
         {filteredOrgs.map((org, index) => (
           <div
             key={index}
-            className="flex flex-col line-clamp-2 justify-start items-start p-6 bg-lightAccent rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+            className="flex flex-col p-6 bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
           >
-            <h2 className="text-white text-xl font-semibold mb-2">
+            <h2 className="text-white text-lg md:text-xl font-semibold mb-3">
               {org.orgName}
             </h2>
-            <p className="text-white mb-1">{org.orgDescription}</p>
-            <p className="text-white mb-1">{org.orgAddress}</p>
-            <p className="text-white mb-1">{org.orgEmail}</p>
-            <p className="text-white mb-1">{org.orgPhone}</p>
-            <p className="text-white">{org.orgType}</p>
+            <p className="text-gray-300 mb-2">{org.orgDescription}</p>
+            <p className="text-gray-300 mb-2">{org.orgAddress}</p>
+            <p className="text-gray-300 mb-2">{org.orgEmail}</p>
+            <p className="text-gray-300 mb-2">{org.orgPhone}</p>
+            <p className="text-gray-300">{org.orgType}</p>
           </div>
         ))}
       </div>

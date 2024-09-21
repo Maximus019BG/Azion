@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.*;
 import com.azion.Azion.Org.Repository.OrgRepository;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class OrgService {
@@ -47,6 +46,17 @@ public class OrgService {
             }
         }
         return null;
+    }
+    
+    public Map<String, Integer> getOrgRoles(Org org) {
+        List<User> users = org.getUsers().stream().toList();
+        Map<String, Integer> roleLevels = new HashMap<>();
+        for (User user : users) {
+            if (user.getRole() != null && user.getRole() != "none" && user.getRoleLevel() != null && user.getRoleLevel() != 0) {
+                roleLevels.put(user.getRole(), user.getRoleLevel());
+            }
+        }
+        return roleLevels;
     }
     
     public Org findOrgByUser(User user) {

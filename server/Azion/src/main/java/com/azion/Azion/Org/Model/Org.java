@@ -5,6 +5,7 @@ import com.azion.Azion.Org.Util.OrgUtility;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Util.UserUtility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -40,8 +41,7 @@ public class Org {
     private String orgDescription;
    
     //Employees
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "orgID")
     private Set<User> users;
 
@@ -118,15 +118,16 @@ public class Org {
         this.orgConnectString = OrgUtility.encrypt(orgConnectString);
     }
 
-    public void generateConString() {
-        String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 4);
-        String randomString = uuid.substring(0, Math.min(uuid.length(), 4)) + System.currentTimeMillis();
+public void generateConString() {
+    String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+    StringBuilder formattedString = new StringBuilder(uuid);
 
-        for (int i = 4; i < randomString.length(); i += 5) {
-            randomString = randomString.substring(0, i) + "-" + randomString.substring(i);
-        }
-        this.orgConnectString = OrgUtility.encrypt(randomString);
+    for (int i = 4; i < formattedString.length(); i += 5) {
+        formattedString.insert(i, "-");
     }
+
+    this.orgConnectString = OrgUtility.encrypt(formattedString.toString());
+}
     
     public String getOrgPhone() {
         return orgPhone;

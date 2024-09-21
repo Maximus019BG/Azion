@@ -17,6 +17,9 @@ public interface TokenRepo extends JpaRepository<Token, String> {
     @Query("SELECT COUNT(t) > 0 FROM Token t WHERE t.subject = :subject")
     boolean existsByUser(@Param("subject") User user);
     
+    List<Token> findAllBySubject(User user);
+    
+    User findSubjectByToken(String token);
     
     void deleteBySubject(User user);
 }

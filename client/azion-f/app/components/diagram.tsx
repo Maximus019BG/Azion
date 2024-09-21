@@ -3,17 +3,17 @@
 import React from 'react';
 
 interface CircularProgressProps {
-  percentage: number; // Percentage value (0 to 100)
-  size?: number; // Optional size for the circle
-  strokeWidth?: number; // Optional stroke width
+  percentage: number;
+  size?: number;
+  strokeWidth?: number;
 }
 
 const CircularProgress: React.FC<CircularProgressProps> = ({
   percentage,
-  size = 100, // Default size
-  strokeWidth = 8, // Default stroke width
+  size = 100,
+  strokeWidth = 8,
 }) => {
-  const radius = 15; // Radius of the circle
+  const radius = 15;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 

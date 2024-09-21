@@ -5,49 +5,63 @@
 @layer base {
   :root {
     --foreground: 242, 242, 242;
-    --background: 11, 12, 16;
+    --background: linear-gradient(to bottom , rgba(14, 20, 44, 0.9), rgba(0, 0, 0, 0.9));
     --muted: 115, 115, 115;
-    --accent: 7, 42, 64;
-    --lightAccent: 69, 162, 157;
+    --accent: 37, 99, 235;
+    --lightAccent: 14, 165, 233;
     --neonAccent: 102, 252, 242;
+  }
+  
+  body {
+    background: var(--background);
+    color: rgb(var(--foreground));
   }
 }
 
 .gradient-text {
-  background: linear-gradient(to right, rgba(102, 252, 241, 0.8), rgba(61, 209, 184, 0.7));
+  background: linear-gradient(to top, rgba(14, 165, 233, 0.8), rgba(37, 99, 235, 0.7));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .gradient-form {
   background: linear-gradient(to right, rgba(10, 56, 87, 0.7), rgba(33, 198, 231, 0.7));
-  /* Ensure the div takes up some space to show the gradient */
   width: 40%;
-  height: 100%; /* Full viewport height */
+  height: 100%;
 }
 
-.custom-oval {
-  width: auto;
-  height: auto;
-  border-radius: 100% / 100%; /* Adjust this to get the desired oval shape */
-  object-fit: cover; /* Ensures the video covers the oval shape correctly */
+.custom-circle {
+  width: 100px; /* Set a specific width */
+  height: 100px; /* Set the height to the same value */
+  border-radius: 50%; /* This makes it a perfect circle */
+  object-fit: cover; /* Ensures that any image inside fits well */
 }
-
 
 .neon-text {
   color: rgba(255, 255, 255, 0.9);
-  /* Lighter base color */
   text-shadow:
-    0 0 2px rgba(215, 215, 216, 0.8),
-    0 0 4px rgba(197, 198, 199, 0.7),
-    0 0 6px rgba(197, 198, 199, 0.6),
-    0 0 8px rgba(197, 198, 199, 0.5),
-    0 0 10px rgba(197, 198, 199, 0.4),
-    0 0 20px rgba(197, 198, 199, 0.3),
-    0 0 30px rgba(197, 198, 199, 0.2),
-    0 0 40px rgba(197, 198, 199, 0.1);
+    0 0 1px rgba(215, 215, 216, 0.8),
+    0 0 2px rgba(197, 198, 199, 0.7),
+    0 0 3px rgba(197, 198, 199, 0.6),
+    0 0 4px rgba(197, 198, 199, 0.5),
+    0 0 5px rgba(197, 198, 199, 0.4),
+    0 0 6px rgba(197, 198, 199, 0.3),
+    0 0 7px rgba(197, 198, 199, 0.2),
+    0 0 8px rgba(197, 198, 199, 0.1);
 }
-
-
 
 .radial-progress {
   --size: 10rem;
