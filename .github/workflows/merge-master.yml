@@ -87,9 +87,11 @@ jobs:
           git push origin gh-community
 
       - name: Versioning
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v.0.0.0")
-          TAG=${TAG#"v. "}
+          TAG=${TAG#"v."}
           IFS='.' read -r major minor patch <<< "$TAG"
           patch=$((patch + 1))
 
@@ -98,7 +100,7 @@ jobs:
             minor=$((minor + 1))
           fi
 
-          if [ "$minor" -ge 10]; then
+          if [ "$minor" -ge 10 ]; then
             minor=0
             major=$((major + 1))
           fi
