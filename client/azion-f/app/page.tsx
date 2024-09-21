@@ -98,30 +98,30 @@ const Home = () => {
       {/* IMAGES */}
       <div className="w-full relative ml-6">
         {[
-          { src: "/ArtBoard 2.svg", position: "right-5 top-[4vh]", delay: 0 },
+          { src: "/ArtBoard 2.svg", position: "right-[3vw] top-[0vh]", delay: 0 },
           {
             src: "/ArtBoard 3.svg",
-            position: "right-[23vw] top-[5vh]",
+            position: "right-[23vw] -top-[6vh]",
             delay: 0.3,
           },
           {
             src: "/ArtBoard 4.svg",
-            position: "right-[2vw] top-[32vh]",
+            position: "right-[27vw] top-[32vh]",
             delay: 0.6,
           },
           {
             src: "/ArtBoard 5.svg",
-            position: "right-[12vw] top-[58vh]",
+            position: "right-[9vw] top-[60vh]",
             delay: 0.9,
           },
           {
             src: "/ArtBoard 6.svg",
-            position: "right-[24vw] top-[32vh]",
+            position: "left-[0vw] top-[5vh]",
             delay: 1.2,
           },
           {
             src: "/ArtBoard 7.svg",
-            position: "right-[45vw] top-[0vh]",
+            position: "right-[3vw] top-[32vh]",
             delay: 1.5,
           },
           {
@@ -191,7 +191,7 @@ const Home = () => {
       </motion.div>
       
       <div className="w-full h-full flex flex-col justify-center items-center mt-48">
-      <div className="w-full h-48 bg-gradient-to-b from-[#06061000] via-[#06061078]  to-[#060610]"></div>
+      <div className="w-full h-48 bg-gradient-to-b from-[#06061000] via-[#06061078] to-[#060610]"></div>
         <Main_Services />
       </div>
       <Footer />
