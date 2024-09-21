@@ -20,6 +20,12 @@ jobs:
           git config --global pull.rebase false
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Maximus019BG/Azion.git
 
+      - name: Fix dev
+        run: |
+          git checkout dev
+          git pull origin master
+          git push origin dev
+
       - name: Update dev
         run: |
           if git show-ref --verify --quiet refs/heads/dev; then
