@@ -166,7 +166,7 @@ public class ProjectsController extends FileSize {
             if (project.get().getCreatedBy() != null) {
                 projectDTO.setCreatedBy(convertToUserDTO(project.get().getCreatedBy()));
             }
-            ;
+            
             if (project.get().getCreatedBy().getEmail().equals(user.getEmail()) || (user.getRoleLevel() >= 1 && user.getRoleLevel() <= 4) && user.getOrgid().equals(project.get().getOrg().getOrgID())) {
                 projectDTO.setIsCreator(true);
                 projectDTO.setUsers(projectsService.convertToUserDTOSet(project.get().getUsers()));
