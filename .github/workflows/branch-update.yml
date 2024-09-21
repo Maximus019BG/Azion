@@ -94,21 +94,21 @@ jobs:
           TAG=${TAG#"v."}
           IFS='.' read -r major minor patch <<< "$TAG"
           patch=$((patch + 1))
-        
+      
           if [ "$patch" -ge 10 ]; then
             patch=0
             minor=$((minor + 1))
           fi
-        
+      
           if [ "$minor" -ge 10 ]; then
             minor=0
             major=$((major + 1))
           fi
-        
+      
           NEW_TAG="v.$major.$minor.$patch"
           git tag -a "$NEW_TAG" -m "New version of Azion"
-        
+      
           git push origin ":refs/tags/$NEW_TAG" || true
           git push origin "$NEW_TAG"
-        
+      
           gh release create "$NEW_TAG" --title "$NEW_TAG" --notes "New version of Azion v$NEW_TAG"

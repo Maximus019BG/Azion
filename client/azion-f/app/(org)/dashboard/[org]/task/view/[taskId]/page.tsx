@@ -7,7 +7,7 @@ import {apiUrl} from "@/app/api/config";
 import axios, {AxiosResponse} from "axios";
 import Cookies from "js-cookie";
 import AzionEditor from "./_editor/AzionEditor";
-
+import {Task,User,ProjFile} from "@/app/types/types";
 import {Poppins} from "next/font/google";
 import {FaArrowAltCircleLeft} from "react-icons/fa";
 
@@ -20,23 +20,6 @@ interface PageProps {
     };
 }
 
-interface User {
-    name: string;
-    email: string;
-    age: string;
-    role: string;
-    orgid: string;
-    projects: any;
-}
-
-interface Task {
-    id: string;
-    name: string;
-    description: string;
-    status: string;
-    date: string;
-    createdBy?: User;
-}
 
 const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     const [orgName, setOrgName] = useState<string | null>(null);
@@ -53,16 +36,14 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
         formData.append("text", editorContent);
         if (file) {
             formData.append("file", file);
-        }
-        else if(editorContent){
+        } else if (editorContent) {
             const defaultFileContent = editorContent;
             const blob = new Blob([defaultFileContent], {type: 'text/plain'});
             formData.append("file", blob, "AzionEditorFile.txt");
-        }
-        else if (link){
-          const defaultFileContent = link;
-          const blob = new Blob([defaultFileContent], {type: 'text/plain'});
-          formData.append("file", blob, "AzionLink.txt");
+        } else if (link) {
+            const defaultFileContent = link;
+            const blob = new Blob([defaultFileContent], {type: 'text/plain'});
+            formData.append("file", blob, "AzionLink.txt");
         }
 
         axios
@@ -198,6 +179,10 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                             <span className="font-bold">Date</span>
                             {task.date}
                         </p>
+                        <p className="flex justify-between p-5 items-center gap-3 text-xl w-full h-12 bg-accent">
+                            <span className="font-bold">Source</span>
+                            <h1>{task.source}</h1>
+                        </p>
 
                         {task.createdBy && (
                             <p className="flex justify-between p-5 items-center gap-3 text-xl w-full h-12 bg-accent">
@@ -274,6 +259,28 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                             Submit Task
                         </button>
                     </div>
+                </div>
+            )}
+
+            {task.isCreator && (
+                <div className="flex flex-col gap-4">
+                    {/*Displaying the files*/}
+                    {task.files && task.files.map((file, index) => {
+                        const byteCharacters = atob(file.fileData || "");
+                        const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+                        const byteArray = new Uint8Array(byteNumbers);
+                        const blob = new Blob([byteArray], {type: file.contentType});
+                        const url = URL.createObjectURL(blob);
+
+                        return (
+                            <div key={index} className={`flex gap-3`}>
+                                <h1>{file.user.name}'s work:</h1>
+                                <a href={url} download={`${file.fileName}`}>
+                                    <button className="bg-accent text-white p-1 text-md font-bold rounded">{file.fileName}</button>
+                                </a>
+                            </div>
+                        );
+                    })}
                 </div>
             )}
         </div>

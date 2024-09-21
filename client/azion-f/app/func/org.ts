@@ -2,25 +2,7 @@ import {apiUrl} from "@/app/api/config";
 import axios, {AxiosResponse} from "axios";
 import Cookies from "js-cookie";
 import {PartOfOrg} from "@/app/func/funcs";
-
-interface User {
-    name: string;
-    email: string;
-    age: string;
-    role: string;
-    orgid: string;
-    projects: any;
-}
-
-interface Task {
-    id: string;
-    name: string;
-    description: string;
-    project: string;
-    status: string;
-    date: string;
-    createdBy?: User;
-}
+import {Task,User,ProjFile} from "@/app/types/types";
 
 const OrgConnString = (): Promise<string> => {
     return new Promise((resolve, reject) => {

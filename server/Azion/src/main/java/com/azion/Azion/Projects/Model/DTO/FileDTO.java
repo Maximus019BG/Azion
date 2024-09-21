@@ -11,6 +11,9 @@ public class FileDTO {
     private byte[] fileData;
     private String link;
     private SubmitType submitType;
+    private String fileName;
+    private String contentType;
+    
     
     public String getProjectID() {
         return projectID;
@@ -50,5 +53,21 @@ public class FileDTO {
     
     public void setSubmitType(SubmitType submitType) {
         this.submitType = submitType;
+    }
+    
+    public String getContentType() {
+        return contentType;
+    }
+    
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+    
+    public String getFileName() {
+        return fileName;
+    }
+    
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

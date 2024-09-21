@@ -110,10 +110,8 @@ public class ProjectsService {
             byte[] fileContent = file.getBytes();
             String content = new String(fileContent);
             String name = file.getOriginalFilename();
-            log.info("ProjectFiles name: " + name);
             //Basic checks
             if (name == null || name.isEmpty()) {
-                log.debug("ProjectFiles name is empty");
                 return false;
             }
             else if (name.contains(".txt")) {

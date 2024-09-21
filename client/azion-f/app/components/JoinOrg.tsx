@@ -29,7 +29,7 @@ const Join_Organization = ({ onClose }: { onClose: () => void }) => {
           "Content-Type": "application/json",
         },
       });
-      window.location.href = '/dashboard';
+      window.location.href = '/organizations';
     } catch (error: any) {
       alert("An error occurred, please try again. Error: " + error.response?.data?.message);
     }

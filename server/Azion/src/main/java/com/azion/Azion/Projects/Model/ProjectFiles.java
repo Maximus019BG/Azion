@@ -13,7 +13,7 @@ public class ProjectFiles {
     @Id
     private String projectID;
     
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = true)
     @ManyToOne
     private User user;
     
@@ -30,12 +30,19 @@ public class ProjectFiles {
     @Column
     private SubmitType submitType;
     
+    @Column
+    private String fileName;
+    
+    @Column
+    private String contentType;
+    
     
     @PrePersist
     public void generateId() {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         this.projectID = uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis();
     }
+    
     
     public String getProjectID() {
         return projectID;
@@ -71,6 +78,22 @@ public class ProjectFiles {
     
     public void setSubmitType(SubmitType submitType) {
         this.submitType = submitType;
+    }
+    
+    public String getFileName() {
+        return fileName;
+    }
+    
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+    
+    public String getContentType() {
+        return contentType;
+    }
+    
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
     
     
