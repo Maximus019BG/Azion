@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
+import {getOrgName} from "@/app/func/org";
 
 interface Token {
   refreshToken: string;
@@ -11,6 +12,7 @@ interface Token {
 
 const Navbar = () => {
   const [isLogged, setIsLogged] = useState(false);
+  const [org, setOrg] = useState<string | null>(null);
 
   const sessionCheck = (data: Token) => {
     const url = `${apiUrl}/token/session/check`;
@@ -47,6 +49,15 @@ const Navbar = () => {
       setIsLogged(false);
     }
   }, []);
+    useEffect(() => {
+    const fetchOrgName = async () => {
+        const result: string = await getOrgName();
+        if (result !== org) {
+            setOrg(result);
+        }
+    };
+    fetchOrgName();
+    }, []);
 
   return (
     <div className="navbar bg-transparent">
@@ -56,7 +67,7 @@ const Navbar = () => {
       <div className="flex justify-center gap-12 items-center mr-10">
         {isLogged ? (
           <>
-          <Link href={"/dashboard"}>
+          <Link href={`/dashboard/${org}`}>
             <button className="btn border-none neon-text text-lg shadow-none bg-transparent ">
               Dashboard
             </button>

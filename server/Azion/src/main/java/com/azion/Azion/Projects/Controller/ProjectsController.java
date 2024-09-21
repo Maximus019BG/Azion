@@ -166,7 +166,8 @@ public class ProjectsController extends FileSize {
             if (project.get().getCreatedBy() != null) {
                 projectDTO.setCreatedBy(convertToUserDTO(project.get().getCreatedBy()));
             }
-            if (project.get().getCreatedBy() == user) {
+            
+            if (project.get().getCreatedBy().getEmail().equals(user.getEmail()) || (user.getRoleLevel() >= 1 && user.getRoleLevel() <= 3) && user.getOrgid().equals(project.get().getOrg().getOrgID())) {
                 projectDTO.setIsCreator(true);
                 projectDTO.setUsers(projectsService.convertToUserDTOSet(project.get().getUsers()));
                 projectDTO.setFiles(convertToFileDTO(project.get().getFiles()));
@@ -203,6 +204,8 @@ public class ProjectsController extends FileSize {
             dto.setUser(convertToUserDTO(file.getUser()));
             dto.setSubmitType(file.getSubmitType());
             dto.setProjectID(file.getProjectID());
+            dto.setFileName(file.getFileName());
+            dto.setContentType(file.getContentType());
             dtos.add(dto);
         }
         
@@ -230,7 +233,6 @@ public class ProjectsController extends FileSize {
         boolean typeLink = false;
         Optional<Project> project = projectsRepository.findById(id);
         if (project.isPresent()) {
-            if (project.get().getCreatedBy().getEmail().equals(user.getEmail())) {
                 if (file.isEmpty()) {
                     project.get().setStatus("Marked as done");
                     return ResponseEntity.status(HttpStatus.OK).body("Marked as done");
@@ -254,7 +256,10 @@ public class ProjectsController extends FileSize {
                     } else if (!typeLink) {
                         fileObj.setSubmitType(SubmitType.FILE);
                         fileObj.setFileData(file.getBytes());
+                        fileObj.setFileName(file.getOriginalFilename());
+                        fileObj.setContentType(file.getContentType());
                     }
+                    
                     fileObj.setUser(user);
                     fileRepo.save(fileObj);
                     
@@ -265,7 +270,6 @@ public class ProjectsController extends FileSize {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            }
             if (Objects.equals(project.get().getStatus(), "Past")) {
                 project.get().setStatus("Submitted Late");
             } else {
@@ -273,8 +277,7 @@ public class ProjectsController extends FileSize {
             }
             projectsRepository.save(project.get());
             return ResponseEntity.ok("Project submitted successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not the creator of this project");
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Project not found");
     }
 }

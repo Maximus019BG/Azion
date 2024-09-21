@@ -104,9 +104,9 @@ public class OrgController {
         else if(user.getOrgid() != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already part of an organization.");
         }
-     
         orgService.addUserToOrg(org, user);
-        
+        user.setRoleLevel(4);
+        user.setRole("employee");
         return ResponseEntity.ok("User added to organization.");
     }
     

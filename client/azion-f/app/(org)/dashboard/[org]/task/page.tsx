@@ -107,7 +107,7 @@ const Tasks: FC<PageProps> = ({ params }) => {
     }, []);
 
     UserData().then((data) => {
-        if (data.roleLevel > 0 && data.roleLevel < 3) {
+        if (data.roleLevel >= 1 && data.roleLevel <= 3) {
             setAdmin(true);
         }
     });

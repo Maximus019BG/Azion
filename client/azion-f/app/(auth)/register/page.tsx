@@ -16,7 +16,7 @@ interface Token {
 interface InputField<T> {
   label: string;
   value: T;
-  onChange: (value: T) => void;
+    onChange: (value: T) => void;
   type?: "text" | "email" | "date" | "password" | "checkbox";
   combinedWith?: string;
 }
@@ -24,6 +24,7 @@ interface InputField<T> {
 const headerText = Poppins({ subsets: ["latin"], weight: "900" });
 
 const AxiosFunction = (data: any, isOwner: boolean) => {
+
   axios
     .post(`${apiUrl}/auth/register`, data, {
       headers: {
@@ -41,7 +42,6 @@ const AxiosFunction = (data: any, isOwner: boolean) => {
         secure: true,
         sameSite: "Strict",
       });
-
       window.location.href = "/mfa";
     })
     .catch(function (error: any) {
@@ -188,11 +188,6 @@ const Register = () => {
   }, [selectedYear, selectedMonth]);
 
   const handleSubmit = () => {
-    if (isOrgOwner) {
-      setRole("owner");
-    } else if (!isOrgOwner) {
-      setRole("none");
-    }
     const userData = {
       name,
       email,
@@ -201,10 +196,11 @@ const Register = () => {
         "0"
       )}`,
       password,
-      role,
+      role: isOrgOwner ? "owner" : "none",
       mfaEnabled: false,
     };
     if (password === password2) {
+      console.log(userData.role)
       AxiosFunction(userData, isOrgOwner);
     } else {
       alert("Passwords do not match.");
@@ -339,9 +335,7 @@ const Register = () => {
                       <input
                         type="checkbox"
                         checked={field.value as boolean}
-                        onChange={(e) =>
-                          field.onChange(e.target.checked as any)
-                        }
+                        onChange={(e) => setIsOrgOwner(e.target.checked)}
                         className="mr-2 h-6 w-6"
                       />
                       {field.label}

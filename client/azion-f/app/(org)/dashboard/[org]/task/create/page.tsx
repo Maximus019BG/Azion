@@ -109,7 +109,7 @@ const CreateTask: FC<PageProps> = ({ params }) => {
     GetUsers();
 
     UserData().then((data) => {
-      if (data.roleLevel > 0 && data.roleLevel < 3) {
+      if (data.roleLevel >= 1 && data.roleLevel <= 3) {
         setAdmin(true);
       } else {
         window.location.href = `/dashboard/${orgName}/task`;

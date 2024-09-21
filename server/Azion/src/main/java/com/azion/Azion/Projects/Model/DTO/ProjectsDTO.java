@@ -70,6 +70,7 @@ public class ProjectsDTO {
     public void setPriority(String priority) {
         this.priority = priority;
     }
+    
     public UserDTO getCreatedBy() {
         return createdBy;
     }
@@ -77,6 +78,7 @@ public class ProjectsDTO {
     public void setCreatedBy(UserDTO createdBy) {
         this.createdBy = createdBy;
     }
+    
     public int getProgress() {
         return progress;
     }
