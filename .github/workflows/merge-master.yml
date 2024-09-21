@@ -26,6 +26,7 @@ jobs:
           else
             git checkout -b dev
           fi
+          git pull origin dev || true
           git pull origin master
           git push origin dev
 
@@ -36,6 +37,7 @@ jobs:
           else
             git checkout -b dev-mobile
           fi
+          git pull origin dev-mobile || true
           git pull origin master
           git push origin dev-mobile
 
@@ -46,6 +48,7 @@ jobs:
           else
             git checkout -b dev-desktop
           fi
+          git pull origin dev-desktop || true
           git pull origin master
           git push origin dev-desktop
 
@@ -56,6 +59,7 @@ jobs:
           else
             git checkout -b test-dev
           fi
+          git pull origin test-dev || true
           git pull origin master
           git push origin test-dev
 
@@ -66,6 +70,7 @@ jobs:
           else
             git checkout -b test-master
           fi
+          git pull origin test-master || true
           git pull origin master
           git push origin test-master
 
@@ -76,6 +81,7 @@ jobs:
           else
             git checkout -b gh-community
           fi
+          git pull origin gh-community || true
           git pull origin master
           git push origin gh-community
 
