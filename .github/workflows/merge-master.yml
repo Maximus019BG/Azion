@@ -21,60 +21,60 @@ jobs:
 
       - name: Update dev
         run: |
-          if ! git rev-parse --verify dev; then
-            git checkout -b dev
-          else
+          if git show-ref --verify --quiet refs/heads/dev; then
             git checkout dev
+          else
+            git checkout -b dev
           fi
           git pull origin master
           git push origin dev
 
       - name: Update dev-mobile
         run: |
-          if ! git rev-parse --verify dev-mobile; then
-            git checkout -b dev-mobile
-          else
+          if git show-ref --verify --quiet refs/heads/dev-mobile; then
             git checkout dev-mobile
+          else
+            git checkout -b dev-mobile
           fi
           git pull origin master
           git push origin dev-mobile
 
       - name: Update dev-desktop
         run: |
-          if ! git rev-parse --verify dev-desktop; then
-            git checkout -b dev-desktop
-          else
+          if git show-ref --verify --quiet refs/heads/dev-desktop; then
             git checkout dev-desktop
+          else
+            git checkout -b dev-desktop
           fi
           git pull origin master
           git push origin dev-desktop
 
       - name: Update test-dev
         run: |
-          if ! git rev-parse --verify test-dev; then
-            git checkout -b test-dev
-          else
+          if git show-ref --verify --quiet refs/heads/test-dev; then
             git checkout test-dev
+          else
+            git checkout -b test-dev
           fi
           git pull origin master
           git push origin test-dev
 
       - name: Update test-master
         run: |
-          if ! git rev-parse --verify test-master; then
-            git checkout -b test-master
-          else
+          if git show-ref --verify --quiet refs/heads/test-master; then
             git checkout test-master
+          else
+            git checkout -b test-master
           fi
           git pull origin master
           git push origin test-master
 
       - name: Update gh-community
         run: |
-          if ! git rev-parse --verify gh-community; then
-            git checkout -b gh-community
-          else
+          if git show-ref --verify --quiet refs/heads/gh-community; then
             git checkout gh-community
+          else
+            git checkout -b gh-community
           fi
           git pull origin master
           git push origin gh-community
@@ -91,7 +91,7 @@ jobs:
             minor=$((minor + 1))
           fi
 
-          if [ "$minor" -ge 10 ]; then
+          if [ "$minor" -ge 10]; then
             minor=0
             major=$((major + 1))
           fi
@@ -102,4 +102,3 @@ jobs:
           git push origin "$NEW_TAG"
 
           gh release create "$NEW_TAG" --title "$NEW_TAG" --notes "New version of Azion v$NEW_TAG"
-
