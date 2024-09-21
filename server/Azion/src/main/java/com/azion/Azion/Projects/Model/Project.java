@@ -2,9 +2,11 @@ package com.azion.Azion.Projects.Model;
 
 import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.User.Model.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,12 +26,34 @@ public class Project {
     @Column(nullable = false)
     private LocalDate date;
     
+    @Column(nullable = false)
+    private String priority;
+    
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private User createdBy;
+    
+    @JsonIgnore
     @ManyToMany
     private Set<User> users;
     
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "orgID")
     private Org org;
+    
+    @Column(nullable = false)
+    private int progress;
+    
+    @Column(nullable = false)
+    private String status;
+    
+    @Column(nullable = false)
+    private String source;
+    
+    @JoinColumn
+    @OneToMany
+    private List<ProjectFiles> projectFiles;
+    
     
     @PrePersist
     public void generateId() {
@@ -77,6 +101,14 @@ public class Project {
         this.date = date;
     }
     
+    public String getPriority() {
+        return priority;
+    }
+    
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+    
     public Set<User> getUsers() {
         return users;
     }
@@ -85,9 +117,50 @@ public class Project {
         this.users = users;
     }
     
-    public Project() {
+ 
+    public int getProgress() {
+        return progress;
     }
     
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+    
+    public String getStatus() {
+        return status;
+    }
+    
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
+    public String getSource() {
+        return source;
+    }
+    
+    public User getCreatedBy() {
+        return createdBy;
+    }
+    
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
+    
+    public void setSource(String source) {
+        this.source = source;
+    }
+    
+    public List<ProjectFiles> getFiles() {
+        return projectFiles;
+    }
+    
+    public void setFiles(List<ProjectFiles> projectFiles) {
+        this.projectFiles = projectFiles;
+    }
+    
+    
+    public Project() {
+    }
     public Project(String name, String description, LocalDate date, Set<User> users,Org org) {
         setName(name);
         setDescription(description);
@@ -95,13 +168,5 @@ public class Project {
         setUsers(users);
         setOrg(org);
     }
-    
-  
-    
-    
-    
-    
-    
-    
     
 }

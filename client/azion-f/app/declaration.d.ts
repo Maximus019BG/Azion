@@ -5,5 +5,4 @@ declare module '@heroicons/react/outline' {
     export const XIcon: ComponentType<SVGProps<SVGSVGElement>>;
     export const ChevronDownIcon: ComponentType<SVGProps<SVGSVGElement>>;
     export const ChevronUpIcon: ComponentType<SVGProps<SVGSVGElement>>;
-    // Add other icons as needed
   }

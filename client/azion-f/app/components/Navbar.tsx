@@ -50,27 +50,8 @@ const Navbar = () => {
 
   return (
     <div className="navbar bg-transparent">
-      <div className="flex-none">
-        {isLogged && (
-          <button className="btn btn-square btn-ghost">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="inline-block neon-text h-7 w-7 stroke-current"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              ></path>
-            </svg>
-          </button>
-        )}
-      </div>
       <div className="flex-1">
-        <a className="btn btn-ghost neon-text text-3xl">Azion</a>
+        <a className="btn btn-ghost neon-text text-4xl ml-20">Azion</a>
       </div>
       <div className="flex justify-center gap-12 items-center mr-10">
         {isLogged ? (
@@ -93,9 +74,9 @@ const Navbar = () => {
                     Register
                 </button>
             </Link>
-            <Link href={"log-in"}>
+            <Link href={"login"}>
                 <button className="btn border-none neon-text text-lg shadow-none bg-transparent ">
-                    Log-in
+                    Login
                 </button>
             </Link>
           </>

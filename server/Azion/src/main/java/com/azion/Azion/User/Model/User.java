@@ -1,6 +1,7 @@
 package com.azion.Azion.User.Model;
 
 import com.azion.Azion.User.Util.UserUtility;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.Contract;
@@ -42,7 +43,7 @@ public class User {
     private String orgid;
     
     @Lob
-    @Column(name = "profilePicture")
+    @Column(name = "profilePicture", columnDefinition = "LONGBLOB")
     private byte[] profilePicture;
     
     @Column
@@ -51,10 +52,16 @@ public class User {
     @Column
     private String mfaSecret ;
     
+    @Column(nullable = true, columnDefinition = "TEXT")
+    private String resetToken;
     
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "users")
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
     private Set<Project> projects;
-
+    
+    @Column(name = "roleLevel", nullable = true, columnDefinition = "INTEGER DEFAULT 0")
+    private Integer roleLevel;
+    
     public String getOrgid() {
         return orgid;
     }
@@ -183,7 +190,22 @@ public class User {
     }
 }
     
-
+    public String getResetToken() {
+        return resetToken;
+    }
+    
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+    
+    public Integer getRoleLevel() {
+        return roleLevel;
+    }
+    
+    public void setRoleLevel(Integer roleLevel) {
+        this.roleLevel = roleLevel;
+    }
+    
     @PrePersist
     public void prePersist() {
         generateId();

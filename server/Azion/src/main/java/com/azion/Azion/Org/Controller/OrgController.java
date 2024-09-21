@@ -1,15 +1,19 @@
 package com.azion.Azion.Org.Controller;
 
 import com.azion.Azion.Org.Model.Org;
-import com.azion.Azion.Org.OrgProjection;
+import com.azion.Azion.Org.Model.DTO.OrgDTO;
 import com.azion.Azion.Org.Repository.OrgRepository;
 import com.azion.Azion.Org.Service.OrgService;
 import com.azion.Azion.Org.Util.OrgUtility;
+import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
+import com.azion.Azion.Projects.Model.Project;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.User;
+import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -72,8 +77,10 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
         
-        //!Fixes no session error
         orgService.addUserToOrg(org, user);
+        user.setRole("owner");
+        user.setRoleLevel(1);
+        userRepository.save(user);
         
         String encryptedString = org.getOrgConnectString();
         String conSring = OrgUtility.decrypt(encryptedString);
@@ -102,37 +109,79 @@ public class OrgController {
         
         return ResponseEntity.ok("User added to organization.");
     }
-    //!DEBUG ONLY
-//    @GetMapping("/decrypt")
-//    public ResponseEntity<?> decryptString(@RequestParam String encryptedString) {
-//        try {
-//            String decryptedString = OrgUtility.decrypt(encryptedString);
-//            return ResponseEntity.ok(decryptedString);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error decrypting string: " + e.getMessage());
-//        }
-//    }
     
-    @GetMapping("/invite/{email}")
-    public ResponseEntity<?> inviteUserToOrg(@PathVariable String email) {
-        
-        User user = userRepository.findByEmail(email);
-        
+    @Transactional
+    @GetMapping("/conn/{AccessToken}")
+    public ResponseEntity<?> connStringShow(@PathVariable String AccessToken) {
+        User user = tokenService.getUserFromToken(AccessToken);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+      
         
-        user.setOrgid("ce77d1227d6c43e5a72457de785e4a9b1715804886698");
-        
-        userRepository.save(user);
-        
-        return ResponseEntity.ok("User with email " + email + " invited.");
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+        }
+        String encryptedString = org.getOrgConnectString();
+        String conSring = OrgUtility.decrypt(encryptedString);
+        return ResponseEntity.ok(conSring);
     }
     
-    @PostMapping("/partOfOrg")
     @Transactional
+    @GetMapping("/{AccessToken}")
+    public ResponseEntity<?> orgData(@PathVariable String AccessToken) {
+         User user = tokenService.getUserFromToken(AccessToken);
+         if (user == null) {
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+         }
+         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+         
+         if (org == null) {
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+         }
+         Optional<OrgDTO> orgDTO = orgRepository.findByOrgAddress(org.getOrgAddress());
+         
+         return ResponseEntity.ok(orgDTO);
+    }
+    
+    @Transactional
+    @PutMapping("/update/{accessToken}")
+    public ResponseEntity<?> updateOrg(@RequestBody Map<String, Object> request, @PathVariable String accessToken) {
+        String orgName = (String) request.get("orgName");
+        String orgType = (String) request.get("orgType");
+        String orgAddress = (String) request.get("orgAddress");
+        String orgEmail = (String) request.get("orgEmail");
+        String orgPhone = (String) request.get("orgPhone");
+        String orgDescription = (String) request.get("orgDescription");
+        
+        User user = tokenService.getUserFromToken(accessToken);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+        }
+        
+        org.setOrgName(orgName);
+        org.setOrgType(orgType);
+        org.setOrgAddress(orgAddress);
+        org.setOrgEmail(orgEmail);
+        org.setOrgPhone(orgPhone);
+        org.setOrgDescription(orgDescription);
+        orgRepository.save(org);
+        
+        return ResponseEntity.ok("Organization updated.");
+    }
+    
+    @Transactional
+    @PostMapping("/partOfOrg")
     public ResponseEntity<?> getOrg(@RequestBody Map<String, Object> request) {
         String token = (String) request.get("accessToken");
+        if(token == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token not found.");
+        }
         User user = tokenService.getUserFromToken(token);
         if (user == null) {
             log.debug("User not found for token: " + token);
@@ -146,25 +195,74 @@ public class OrgController {
         if (org == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
         }
-        return ResponseEntity.ok(org);
+        Optional<OrgDTO> orgDTO = orgRepository.findByOrgAddress(org.getOrgAddress());
+        
+        
+        return ResponseEntity.ok(orgDTO);
     }
     
     @Transactional
     @GetMapping("/list/all")
     public ResponseEntity<?> listOrgs() {
-        List<OrgProjection> orgs = orgRepository.findAllOrgs();
+        List<OrgDTO> orgs = orgRepository.findAllOrgs();
         return ResponseEntity.ok(orgs);
     }
     
+    
+    @Transactional
     @GetMapping("/list/employees")
-    public ResponseEntity<?> listEmployees() {
-        Org org = orgRepository.findById("ce77d1227d6c43e5a72457de785e4a9b1715804886698").orElse(null);
-        if(org == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+    public ResponseEntity<?> listEmployees(@RequestHeader("authorization") String token) {
+        try {
+            if (token == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Authorization token not found.");
+            }
+            
+            User user = tokenService.getUserFromToken(token);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            }
+            
+            Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+            if (org == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+            }
+            Hibernate.initialize(org.getUsers());
+            org.getUsers().forEach(u -> {
+                Hibernate.initialize(u.getProjects());
+                u.getProjects().forEach(project -> Hibernate.initialize(project.getUsers()));
+            });
+            
+            Set<UserDTO> userDTOs = org.getUsers().stream()
+                    .map(this::convertToUserData)
+                    .collect(Collectors.toSet());
+            
+            return ResponseEntity.ok(userDTOs);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
         }
-        Set<User> users = org.getUsers();
-        return ResponseEntity.ok(users);
     }
+    
+    private UserDTO convertToUserData(User user) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setName(user.getName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setAge(user.getAge().toString());
+        userDTO.setRole(user.getRole());
+        userDTO.setOrgid(user.getOrgid());
+        userDTO.setRoleLevel(user.getRoleLevel());
+    
+        
+        Hibernate.initialize(user.getProjects());
+        Set<Project> projects = user.getProjects();
+        Set<ProjectsDTO> projectDTOs = userService.convertProjectsToDTO(projects);
+        userDTO.setProjects(projectDTOs);
+        
+        return userDTO;
+    }
+
+    
+    @Transactional
     @GetMapping("/remove/{email}")
     public ResponseEntity<?> removeUserFromOrg(@PathVariable String email) {
 
@@ -191,4 +289,67 @@ public class OrgController {
         orgRepository.delete(org);
         return ResponseEntity.ok("Organization with id " + orgName + " deleted.");
     }
+    
+    @Transactional
+    @GetMapping("/list/roles/{accessToken}")
+    public ResponseEntity<?> listRoles(@PathVariable String accessToken) {
+        User user = tokenService.getUserFromToken(accessToken);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+        }
+        Map<String, Integer> roles = orgService.getOrgRoles(org);
+        return ResponseEntity.ok(roles);
+    }
+    
+    @Transactional
+    @PutMapping("/update/roles/{accessToken}")
+    public ResponseEntity<?> updateRole(@RequestBody Map<String, Object> request, @PathVariable String accessToken) {
+        User user = tokenService.getUserFromToken(accessToken);
+    
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        if (user.getRoleLevel() > 2 || user.getRoleLevel() < 1) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to update roles.");
+        }
+    
+        Map<String, Integer> roles = (Map<String, Integer>) request.get("roles");
+        Map<String, String> users = (Map<String, String>) request.get("users");
+    
+        if (roles == null || users == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Roles or users not found.");
+        }
+    
+        for (Map.Entry<String, String> entry : users.entrySet()) {
+            String email = entry.getKey();
+            String role = entry.getValue();
+            User u = userRepository.findByEmail(email);
+            if (u == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with email " + email + " not found.");
+            }
+            u.setRole(role);
+        }
+        for(Map.Entry<String, Integer> entry : roles.entrySet()) {
+            String role = entry.getKey();
+            Integer roleLevel = entry.getValue();
+            for (Map.Entry<String, String> userEntry : users.entrySet()) {
+                String email = userEntry.getKey();
+                String userRoles = userEntry.getValue();
+                User u = userRepository.findByEmail(email);
+                if (u == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with email " + email + " not found.");
+                }
+                String getRole = u.getRole();
+                if(getRole.equals(userRoles)) {
+                    u.setRoleLevel(roleLevel);
+                }
+            }
+        }
+        return ResponseEntity.ok("Roles and users updated.");
+    }
+    
 }

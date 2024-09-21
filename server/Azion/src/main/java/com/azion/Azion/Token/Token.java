@@ -27,8 +27,8 @@ public class Token {
     @Column(nullable = false)
     private Date issuedAt;
     
-    
-    
+    @Column(nullable = false)
+    private String UserAgent;
     
     @PrePersist
     public void generateId() {
@@ -74,6 +74,14 @@ public class Token {
     
     public void setIssuedAt(Date issuedAt) {
         this.issuedAt = issuedAt;
+    }
+    
+    public String getUserAgent() {
+        return UserAgent;
+    }
+    
+    public void setUserAgent(String userAgent) {
+        UserAgent = userAgent;
     }
     
     public Token() {

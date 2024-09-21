@@ -1,66 +1,94 @@
 "use client";
-import React, {useEffect, useState} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Poppins } from 'next/font/google';
-import axios  from "axios";
-import {apiUrl} from "../api/config";
+import axios from 'axios';
+import { apiUrl } from "../api/config";
 import Cookies from 'js-cookie';
 
 const headerText = Poppins({ subsets: ["latin"], weight: "800" });
-const Join_Organization = () => {
-    const [connString, setConnString] = useState("");
 
-    const handleSubmit = () => {
-            if(connString === ""){
-                alert(`Please fill in the connection string field.`);
-                return;
-            }
-            const accessToken = Cookies.get('azionAccessToken');
-            const data = {
-                connString: connString,
-                accessToken: accessToken
-            }
-            axios.post(`${apiUrl}/org/join`, data, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            }).then(function (response) {
-                window.location.href = '/dashboard';
-            }).catch(function (error) {
-                alert("An error occurred, please try again. Error: " + error.response.data.message);
-            });
-        }
+const Join_Organization = ({ onClose }: { onClose: () => void }) => {
+  const [connString, setConnString] = useState("");
+  const modalRef = useRef<HTMLDivElement>(null);
 
-        const CreateOne = () => {
-            window.location.href = '/register-organization';
-        }
+  const handleSubmit = async () => {
+    if (connString === "") {
+      alert("Please fill in the connection string field.");
+      return;
+    }
 
+    const accessToken = Cookies.get('azionAccessToken');
+    const data = {
+      connString: connString,
+      accessToken: accessToken
+    };
 
-    return (
-        <div className=' bg-background w-full h-full flex flex-col justify-center items-center rounded-badge'>
-            <center>
-                <h1
-                    className={`mt-6 text-neonAccent text-lg md:text-3xl lg:text-5xl ${headerText.className}`}
-                >
-                    Join Org
-                </h1>
-            </center>
-            <div className="w-full flex flex-col justify-center items-center gap-5 mt-5">
-                <input
-                    type="text"
-                    placeholder="Connection String"
-                    className="w-96 h-12 rounded-3xl p-3 text-black"
-                    value={connString}
-                    onChange={(e) => setConnString(e.target.value)}
-                />
-                <button
-                    className="w-96 h-12 rounded-3xl bg-neonAccent text-black"
-                    onClick={handleSubmit}
-                >
-                    Join
-                </button>
-            </div>
-           <button onClick={CreateOne}>Create one</button>
-        </div>
-    );
+    try {
+      await axios.post(`${apiUrl}/org/join`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      window.location.href = '/dashboard';
+    } catch (error: any) {
+      alert("An error occurred, please try again. Error: " + error.response?.data?.message);
+    }
+  };
+
+  const createOne = () => {
+    window.location.href = '/register/organization';
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscKey);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscKey);
+    };
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div ref={modalRef} className="w-full max-w-xl bg-gray-800 border-2 border-blue-600 shadow-2xl rounded-md p-8 flex flex-col items-center">
+        <h1 className={`text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-6 ${headerText.className}`}>
+          Join Organization
+        </h1>
+        <input
+          type="text"
+          placeholder="Connection String"
+          className="w-full bg-gray-700 text-white rounded-lg py-2 px-4 mb-4 border-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={connString}
+          onChange={(e) => setConnString(e.target.value)}
+        />
+        <button
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg mb-4 transition duration-200"
+          onClick={handleSubmit}
+        >
+          Join
+        </button>
+        <button
+          onClick={createOne}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+        >
+          Create One
+        </button>
+      </div>
+    </div>
+  );
 };
+
 export default Join_Organization;
