@@ -8,6 +8,8 @@ import Link from "next/link";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
 
+
+
 interface Token {
   refreshToken: string;
   accessToken: string;
@@ -187,6 +189,7 @@ const Register = () => {
     setDays(newDays);
   }, [selectedYear, selectedMonth]);
 
+  
   const handleSubmit = () => {
     if (isOrgOwner) {
       setRole("owner");
