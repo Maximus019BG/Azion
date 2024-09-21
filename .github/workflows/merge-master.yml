@@ -79,13 +79,6 @@ jobs:
           git pull origin master
           git push origin gh-community
 
-  versioning:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Versioning
         run: |
           TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v.0.0.0")
@@ -109,3 +102,4 @@ jobs:
           git push origin "$NEW_TAG"
 
           gh release create "$NEW_TAG" --title "$NEW_TAG" --notes "New version of Azion v$NEW_TAG"
+
