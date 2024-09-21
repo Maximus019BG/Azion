@@ -17,6 +17,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Maximus019BG/Azion.git
 
       - name: Update dev
         run: |
@@ -87,7 +88,7 @@ jobs:
 
       - name: Versioning
         run: |
-          TAG=$(git describe --tags --abbrev=0)
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v.0.0.0")
           TAG=${TAG#"v. "}
           IFS='.' read -r major minor patch <<< "$TAG"
           patch=$((patch + 1))
@@ -97,7 +98,7 @@ jobs:
             minor=$((minor + 1))
           fi
 
-          if [ "$minor" -ge 10]; then
+          if [ "$minor" -ge 10 ]; then
             minor=0
             major=$((major + 1))
           fi
