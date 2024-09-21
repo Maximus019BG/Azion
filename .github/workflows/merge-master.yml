@@ -22,7 +22,11 @@ jobs:
 
       - name: Fix dev
         run: |
-          git checkout dev
+          if git show-ref --verify --quiet refs/heads/dev; then
+            git checkout dev
+          else
+            git checkout -b dev
+          fi
           git pull origin master
           git push origin dev
 
