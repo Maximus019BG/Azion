@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import { apiUrl } from "@/app/api/config";
@@ -18,6 +18,7 @@ const RoleList = () => {
   const [newLevel, setNewLevel] = useState<number>(0);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [showNewRole, setShowNewRole] = useState<boolean>(false);
+  const refs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -76,7 +77,7 @@ const RoleList = () => {
         }
       );
       setAlertMessage("Roles and user roles updated successfully");
-      setTimeout(() => setAlertMessage(null), 2500); // Moved the semicolon here
+      setTimeout(() => setAlertMessage(null), 2500);
     } catch (error) {
       console.error(error);
       setAlertMessage("Failed to update roles and user roles");
@@ -98,11 +99,16 @@ const RoleList = () => {
       updatedRoles[newRole] = level;
       return updatedRoles;
     });
+    setTimeout(() => {
+      if (refs.current[newRole]) {
+        refs.current[newRole]?.focus();
+      }
+    }, 0);
   };
 
   const handleUserRoleChange = (userId: string, newRole: string) => {
     setUsers((prevUsers) => {
-      const updatedUsers = prevUsers.map((user) => {
+      return prevUsers.map((user) => {
         if (user.id === userId) {
           return {
             ...user,
@@ -111,12 +117,11 @@ const RoleList = () => {
         }
         return user;
       });
-      return updatedUsers;
     });
   };
 
   const handleAddRole = () => {
-    if (newRole && newLevel > 0) {
+    if (newRole && newLevel > 0 && !roles[newRole]) {
       setRoles((prevRoles) => ({
         ...prevRoles,
         [newRole]: newLevel,
@@ -124,6 +129,8 @@ const RoleList = () => {
       setNewRole("");
       setNewLevel(0);
       setShowNewRole(false);
+    } else {
+      setAlertMessage("Role already exists or invalid level.");
     }
   };
 
@@ -157,6 +164,9 @@ const RoleList = () => {
                     value={role}
                     onChange={(e) => handleRoleNameChange(role, e.target.value)}
                     className="bg-gray-700 text-white border-none focus:outline-none rounded w-full py-2 px-3"
+                    ref={(el) => {
+                      refs.current[role] = el;
+                    }}
                   />
                 </td>
                 <td className="py-4 px-6">
@@ -224,7 +234,7 @@ const RoleList = () => {
             {users.map((user) => (
               <tr key={user.id} className="border-b bg-gray-800 border-gray-700">
                 <td className="py-4 ">{user.name}</td>
-                <td className="py-4  ">
+                <td className="py-4">
                   <select
                     value={user.role}
                     onChange={(e) => handleUserRoleChange(user.id, e.target.value)}

@@ -88,7 +88,7 @@ const RoleEdit:FC<PageProps> = ({params}) => {
     }, [orgNameCheck, orgName]);
 
     if(!loading) {
-        if (roleLevel < 1 && roleLevel > 3) {
+        if (roleLevel < 1 || roleLevel > 3) {
             window.location.href = `/dashboard/${orgName}`;
         }
     }

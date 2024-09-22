@@ -33,7 +33,7 @@ public class OrgController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final TokenService tokenService;
-
+    
     @Autowired
     public OrgController(OrgService orgService, OrgRepository orgRepository, UserService userService, UserRepository userRepository, TokenService tokenService) {
         this.orgService = orgService;
@@ -43,10 +43,10 @@ public class OrgController {
         this.tokenService = tokenService;
     }
     
-
+    
     @Transactional
     @PostMapping("/create")
-    public ResponseEntity<?> createOrg(@RequestBody Map<String,Object> request) {
+    public ResponseEntity<?> createOrg(@RequestBody Map<String, Object> request) {
         String orgName = (String) request.get("orgName");
         String orgType = (String) request.get("orgType");
         String orgAddress = (String) request.get("orgAddress");
@@ -56,11 +56,11 @@ public class OrgController {
         String accessToken = (String) request.get("accessToken");
         
         Optional<Org> existingOrg = orgRepository.findOrgByOrgAddress(orgAddress);
-
+        
         if (existingOrg.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("An organization with the same address already exists.");
         }
-
+        
         Org org = new Org();
         org.setOrgName(orgName);
         org.setOrgType(orgType);
@@ -98,10 +98,9 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
         }
         User user = tokenService.getUserFromToken(accessToken);
-        if(user == null){
+        if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
-        }
-        else if(user.getOrgid() != null) {
+        } else if (user.getOrgid() != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already part of an organization.");
         }
         orgService.addUserToOrg(org, user);
@@ -118,7 +117,7 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
-      
+        
         
         if (org == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
@@ -131,18 +130,18 @@ public class OrgController {
     @Transactional
     @GetMapping("/{AccessToken}")
     public ResponseEntity<?> orgData(@PathVariable String AccessToken) {
-         User user = tokenService.getUserFromToken(AccessToken);
-         if (user == null) {
-             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
-         }
-         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
-         
-         if (org == null) {
-             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
-         }
-         Optional<OrgDTO> orgDTO = orgRepository.findByOrgAddress(org.getOrgAddress());
-         
-         return ResponseEntity.ok(orgDTO);
+        User user = tokenService.getUserFromToken(AccessToken);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+        
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+        }
+        Optional<OrgDTO> orgDTO = orgRepository.findByOrgAddress(org.getOrgAddress());
+        
+        return ResponseEntity.ok(orgDTO);
     }
     
     @Transactional
@@ -158,6 +157,9 @@ public class OrgController {
         User user = tokenService.getUserFromToken(accessToken);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        if (user.getRoleLevel() != 1) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not admin");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
         if (org == null) {
@@ -179,7 +181,7 @@ public class OrgController {
     @PostMapping("/partOfOrg")
     public ResponseEntity<?> getOrg(@RequestBody Map<String, Object> request) {
         String token = (String) request.get("accessToken");
-        if(token == null) {
+        if (token == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token not found.");
         }
         User user = tokenService.getUserFromToken(token);
@@ -251,7 +253,7 @@ public class OrgController {
         userDTO.setRole(user.getRole());
         userDTO.setOrgid(user.getOrgid());
         userDTO.setRoleLevel(user.getRoleLevel());
-    
+        
         
         Hibernate.initialize(user.getProjects());
         Set<Project> projects = user.getProjects();
@@ -260,22 +262,22 @@ public class OrgController {
         
         return userDTO;
     }
-
+    
     
     @Transactional
     @GetMapping("/remove/{email}")
     public ResponseEntity<?> removeUserFromOrg(@PathVariable String email) {
-
+        
         User user = userRepository.findByEmail(email);
-
+        
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
-
+        
         user.setOrgid(null);
-
+        
         userRepository.save(user);
-
+        
         return ResponseEntity.ok("User with email " + email + " removed.");
     }
     
@@ -309,21 +311,22 @@ public class OrgController {
     @PutMapping("/update/roles/{accessToken}")
     public ResponseEntity<?> updateRole(@RequestBody Map<String, Object> request, @PathVariable String accessToken) {
         User user = tokenService.getUserFromToken(accessToken);
-    
+        
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
-        if (user.getRoleLevel() > 2 || user.getRoleLevel() < 1) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to update roles.");
+        if (user.getRoleLevel() > 3 || user.getRoleLevel() < 1) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not have permission to update roles.");
         }
-    
         Map<String, Integer> roles = (Map<String, Integer>) request.get("roles");
         Map<String, String> users = (Map<String, String>) request.get("users");
-    
+        boolean isOwner = user.getRoleLevel() == 1;
+        boolean triedToChangeOwner = false;
+        
         if (roles == null || users == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Roles or users not found.");
         }
-    
+        
         for (Map.Entry<String, String> entry : users.entrySet()) {
             String email = entry.getKey();
             String role = entry.getValue();
@@ -331,25 +334,46 @@ public class OrgController {
             if (u == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with email " + email + " not found.");
             }
-            u.setRole(role);
+            if (isOwner) {
+                u.setRole(role);
+            } else {
+                if (!role.equals("owner")) {
+                    u.setRole(role);
+                }
+            }
         }
-        for(Map.Entry<String, Integer> entry : roles.entrySet()) {
+        
+        for (Map.Entry<String, Integer> entry : roles.entrySet()) {
             String role = entry.getKey();
             Integer roleLevel = entry.getValue();
             for (Map.Entry<String, String> userEntry : users.entrySet()) {
                 String email = userEntry.getKey();
-                String userRoles = userEntry.getValue();
+                String userRole = userEntry.getValue();
                 User u = userRepository.findByEmail(email);
                 if (u == null) {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with email " + email + " not found.");
                 }
-                String getRole = u.getRole();
-                if(getRole.equals(userRoles)) {
-                    u.setRoleLevel(roleLevel);
+                if (isOwner) {
+                    if (u.getRole().equals(role)) {
+                        u.setRoleLevel(roleLevel);
+                    }
+                }
+                else {
+                    if (u.getRoleLevel() != 1 && u.getRole().equals(role) && roleLevel != 1) {
+                        u.setRoleLevel(roleLevel);
+                    }
+                    else if(u.getRoleLevel() != 1 && u.getRole().equals(role) && roleLevel == 1){
+                        triedToChangeOwner = true;
+                    }
                 }
             }
         }
+        
+        orgService.ensureOwnerHasLevelOne(user.getOrgid());
+        
+        if(triedToChangeOwner){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Roles and user updated. Except for the roleLevel 1");
+        }
         return ResponseEntity.ok("Roles and users updated.");
     }
-    
 }

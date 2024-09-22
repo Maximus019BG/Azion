@@ -90,6 +90,7 @@ const DeleteSession = async () => {
             },
         })
         .then(function (response: AxiosResponse) {
+            window.location.href=window.location.pathname;
         })
         .catch(function (error) {
             console.error(error);

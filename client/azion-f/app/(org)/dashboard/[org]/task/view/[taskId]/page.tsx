@@ -221,7 +221,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                             </p>
                         )}
 
-                        {!task.status.toLowerCase().includes("done") || doneByUser && (
+                        {!task.status.toLowerCase().includes("done") && (
                             <>
                                 <div className="flex flex-col gap-4">
                                     <div className="flex gap-4">
