@@ -34,7 +34,6 @@ const SideMenu = () => {
       setRoleLevel(response.roleLevel);
       setLoading(false);
       if (response.roleLevel >= 1 && response.roleLevel <= 3) {
-        console.log("Admin");
         setAdmin(true);
       }
     });

@@ -37,6 +37,10 @@ public class Project {
     @ManyToMany
     private Set<User> users;
     
+    @JsonIgnore
+    @ManyToMany
+    private Set<User> doneBy;
+    
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "orgID")
     private Org org;
@@ -47,7 +51,7 @@ public class Project {
     @Column(nullable = false)
     private String status;
     
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String source;
     
     @JoinColumn
@@ -115,6 +119,14 @@ public class Project {
     
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+    
+    public Set<User> getDoneBy() {
+        return doneBy;
+    }
+    
+    public void setDoneBy(Set<User> doneBy) {
+        this.doneBy = doneBy;
     }
     
  

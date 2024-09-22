@@ -175,7 +175,7 @@ public class ProjectsController extends FileSize {
                 projectDTO.setIsCreator(false);
                 projectDTO.setUsers(null);
             }
-            
+            projectDTO.setDoneBy(projectsService.convertToUserDTOSet(project.get().getDoneBy()).stream().toList());
             return ResponseEntity.ok(projectDTO);
         } else {
             return ResponseEntity.notFound().build();
@@ -194,6 +194,7 @@ public class ProjectsController extends FileSize {
         
         return dto;
     }
+    
     private List<FileDTO> convertToFileDTO(List<ProjectFiles> files) {
         List<FileDTO> dtos = new ArrayList<>();
         
@@ -233,49 +234,71 @@ public class ProjectsController extends FileSize {
         boolean typeLink = false;
         Optional<Project> project = projectsRepository.findById(id);
         if (project.isPresent()) {
-                if (file.isEmpty()) {
-                    project.get().setStatus("Marked as done");
-                    return ResponseEntity.status(HttpStatus.OK).body("Marked as done");
-                }
-                try {
-                    ProjectFiles fileObj = new ProjectFiles();
-                    try {
-                        byte[] fileContent = file.getBytes();
-                        String content = new String(fileContent);
-                        String name = file.getOriginalFilename();
-                        if (name.equals("AzionLink.txt")) {
-                            fileObj.setLink(content);
-                            typeLink = true;
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-                    }
-                    if (typeLink) {
-                        fileObj.setSubmitType(SubmitType.LINK);
-                    } else if (!typeLink) {
-                        fileObj.setSubmitType(SubmitType.FILE);
-                        fileObj.setFileData(file.getBytes());
-                        fileObj.setFileName(file.getOriginalFilename());
-                        fileObj.setContentType(file.getContentType());
-                    }
-                    
-                    fileObj.setUser(user);
-                    fileRepo.save(fileObj);
-                    
-                    Project proj = project.get();
-                    List<ProjectFiles> listProj = proj.getFiles();
-                    listProj.add(fileObj);
-                    proj.setFiles(listProj);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            if (Objects.equals(project.get().getStatus(), "Past")) {
-                project.get().setStatus("Submitted Late");
-            } else {
-                project.get().setStatus("Submitted");
+            if (file.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.OK).body("Marked as done");
             }
-            projectsRepository.save(project.get());
+            try {
+                ProjectFiles fileObj = new ProjectFiles();
+                try {
+                    byte[] fileContent = file.getBytes();
+                    String content = new String(fileContent);
+                    String name = file.getOriginalFilename();
+                    if (name.equals("AzionLink.txt")) {
+                        fileObj.setLink(content);
+                        typeLink = true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+                }
+                if (typeLink) {
+                    fileObj.setSubmitType(SubmitType.LINK);
+                } else if (!typeLink) {
+                    fileObj.setSubmitType(SubmitType.FILE);
+                    fileObj.setFileData(file.getBytes());
+                    fileObj.setFileName(file.getOriginalFilename());
+                    fileObj.setContentType(file.getContentType());
+                }
+                
+                fileObj.setUser(user);
+                fileRepo.save(fileObj);
+                
+                Project proj = project.get();
+                List<ProjectFiles> listProj = proj.getFiles();
+                listProj.add(fileObj);
+                proj.setFiles(listProj);
+                
+                Set<User> doneUsers = proj.getDoneBy();
+                doneUsers.add(user);
+                
+                Set<User> allUsers = proj.getUsers();
+                
+                if (doneUsers.containsAll(allUsers)) {
+                    log.info("done");
+                    proj.setProgress(100);
+                    if (Objects.equals(proj.getStatus(), "Past")) {
+                        proj.setStatus("Done Late");
+                    } else {
+                        proj.setStatus("Done");
+                    }
+                } else {
+                    log.info("not done");
+                    List<User> notDoneUsers = new ArrayList<>();
+                    for (User aUser : allUsers) {
+                        if (!doneUsers.contains(aUser)) {
+                            notDoneUsers.add(aUser);
+                        }
+                    }
+                    int progress = 100 - (int) (((double) notDoneUsers.size() / allUsers.size()) * 100);
+                    log.info("not done " + notDoneUsers.size() + " all users " + allUsers.size());
+                    log.info("progress: " + progress);
+                    proj.setProgress(progress);
+                }
+                projectsRepository.save(proj);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            
             return ResponseEntity.ok("Project submitted successfully");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Project not found");

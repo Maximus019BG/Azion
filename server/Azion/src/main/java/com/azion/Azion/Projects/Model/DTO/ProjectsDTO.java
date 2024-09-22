@@ -22,6 +22,7 @@ public class ProjectsDTO {
     private UserDTO createdBy;
     private boolean isCreator;
     private List<FileDTO> files;
+    private List<UserDTO> doneBy;
     
     public String getStatus() {
         return status;
@@ -125,5 +126,13 @@ public class ProjectsDTO {
     
     public void setFiles(List<FileDTO> files) {
         this.files = files;
+    }
+    
+    public List<UserDTO> getDoneBy() {
+        return doneBy;
+    }
+    
+    public void setDoneBy(List<UserDTO> doneBy) {
+        this.doneBy = doneBy;
     }
 }
