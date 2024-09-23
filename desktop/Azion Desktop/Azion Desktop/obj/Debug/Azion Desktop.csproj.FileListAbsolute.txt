@@ -23,3 +23,5 @@ D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\Microsoft.Web.WebView2.Wi
 D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\Microsoft.Web.WebView2.Wpf.xml
 D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\Azion Desktop_Content.g.cs
 D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\Azion De.D56D3914.Up2Date
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\LoadingWindow.baml
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\LoadingWindow.g.cs
