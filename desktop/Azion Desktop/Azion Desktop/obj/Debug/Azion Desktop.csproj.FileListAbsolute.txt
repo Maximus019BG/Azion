@@ -1,0 +1,25 @@
+D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\Azion Desktop.exe.config
+D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\Azion Desktop.exe
+D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\Azion Desktop.pdb
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\Azion Desktop.csproj.AssemblyReference.cache
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\MainWindow.g.cs
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\App.g.cs
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\Azion Desktop_MarkupCompile.cache
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\MainWindow.baml
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\Azion Desktop.g.resources
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\Azion_Desktop.Properties.Resources.resources
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\Azion Desktop.csproj.GenerateResource.cache
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\Azion Desktop.csproj.CoreCompileInputs.cache
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\Azion Desktop.exe
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\Azion Desktop.pdb
+D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\runtimes\win-x86\native\WebView2Loader.dll
+D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\runtimes\win-x64\native\WebView2Loader.dll
+D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\runtimes\win-arm64\native\WebView2Loader.dll
+D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\Microsoft.Web.WebView2.Core.dll
+D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\Microsoft.Web.WebView2.WinForms.dll
+D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\Microsoft.Web.WebView2.Wpf.dll
+D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\Microsoft.Web.WebView2.Core.xml
+D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\Microsoft.Web.WebView2.WinForms.xml
+D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\Microsoft.Web.WebView2.Wpf.xml
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\Azion Desktop_Content.g.cs
+D:\Azion\desktop\Azion Desktop\Azion Desktop\obj\Debug\Azion De.D56D3914.Up2Date

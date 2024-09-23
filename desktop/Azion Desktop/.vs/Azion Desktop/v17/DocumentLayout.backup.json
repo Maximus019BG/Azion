@@ -1,0 +1,88 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Azion\\desktop\\Azion Desktop\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|d:\\azion\\desktop\\azion desktop\\azion desktop\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|solutionrelative:azion desktop\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|D:\\Azion\\desktop\\Azion Desktop\\azion desktop\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|solutionrelative:azion desktop\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|d:\\azion\\desktop\\azion desktop\\azion desktop\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|solutionrelative:azion desktop\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|Azion Desktop||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|d:\\azion\\desktop\\azion desktop\\azion desktop\\||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|5e9a8ac2-4f34-4521-858f-4c248ba31532"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 171,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "packages.config",
+              "DocumentMoniker": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\packages.config",
+              "RelativeDocumentMoniker": "Azion Desktop\\packages.config",
+              "ToolTip": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\packages.config",
+              "RelativeToolTip": "Azion Desktop\\packages.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2024-09-23T09:57:22.058Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "Azion Desktop\\MainWindow.xaml.cs",
+              "ToolTip": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\MainWindow.xaml.cs",
+              "RelativeToolTip": "Azion Desktop\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-23T09:55:54.428Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Azion Desktop",
+              "DocumentMoniker": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\Azion Desktop.csproj",
+              "RelativeDocumentMoniker": "Azion Desktop\\Azion Desktop.csproj",
+              "ToolTip": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\Azion Desktop.csproj",
+              "RelativeToolTip": "Azion Desktop\\Azion Desktop.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-09-23T09:51:35.647Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "Azion Desktop\\MainWindow.xaml",
+              "ToolTip": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\MainWindow.xaml",
+              "RelativeToolTip": "Azion Desktop\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-09-23T09:42:45.903Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

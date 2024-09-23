@@ -1,9 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Name=Azion Desktop
-Comment=Azion Desktop Application
-Exec=build/AzionDesktop
-Icon=assets/icon.png
-Terminal=false
-Type=Application
-Categories=Utility;
