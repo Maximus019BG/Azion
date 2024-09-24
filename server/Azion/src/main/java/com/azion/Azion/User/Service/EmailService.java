@@ -109,7 +109,6 @@ public class EmailService {
     }
     
     public void welcomeEmail(String to, String name) {
-     
         String htmlContent = "<!DOCTYPE html>" +
                 "<html lang=\"en\">" +
                 "<head>" +
