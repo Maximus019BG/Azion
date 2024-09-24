@@ -45,7 +45,7 @@ const PartOfOrg = async (afterDashboard: boolean,) => {
         });
         return response.data;
     } catch (error: any) {
-        if (afterDashboard && window.location.pathname !== "/organizations" && window.location.pathname !== "/" ) {
+        if (afterDashboard && window.location.pathname !== "/organizations" && window.location.pathname !== "/" && window.location.pathname !== "/account") {
             window.location.href = "/organizations";
         }
         if (error.response.status === 404) {
