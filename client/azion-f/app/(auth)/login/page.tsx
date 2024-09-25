@@ -168,7 +168,7 @@ const Login = () => {
           <div className=" flex flex-col justify-center items-center gap-5">
             <button
                 onClick={showModal}
-                className="bg-accent w-fit text-[#cbccc4] font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
+                className="bg-accent w-fit text-white font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
             >
               Continue
             </button>
@@ -225,7 +225,7 @@ const Login = () => {
                   <OTP length={6} onComplete={handleSubmit} />
                 </div>
                 <form method="dialog">
-                  <button className="btn px-24  bg-accent hover:bg-[#105380] rounded-2xl hover:scale-110 text-lg">
+                  <button className="btn px-24 text-white bg-accent hover:bg-[#105380] rounded-2xl hover:scale-110 text-lg">
                     Submit
                   </button>
                 </form>
