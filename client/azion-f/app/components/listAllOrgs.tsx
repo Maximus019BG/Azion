@@ -82,25 +82,20 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({ searchTerm }) => {
   }
 
   return (
-    <div className="w-full max-w-7xl px-4 py-8 mx-auto">
-      {/* Grid container for responsive layout */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
-        {filteredOrgs.map((org, index) => (
-          <div
-            key={index}
-            className="flex flex-col p-6 bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
-          >
-            <h2 className="text-white text-lg md:text-xl font-semibold mb-3">
-              {org.orgName}
-            </h2>
-            <p className="text-gray-300 mb-2">{org.orgDescription}</p>
-            <p className="text-gray-300 mb-2">{org.orgAddress}</p>
-            <p className="text-gray-300 mb-2">{org.orgEmail}</p>
-            <p className="text-gray-300 mb-2">{org.orgPhone}</p>
-            <p className="text-gray-300">{org.orgType}</p>
-          </div>
-        ))}
-      </div>
+    //  Grid container for responsive layout
+    <div className="flex gap-4 flex-wrap justify-center">
+      {filteredOrgs.map((org, index) => (
+        <div key={index} className="flex flex-col p-6 bg-gray-800 rounded-lg w-72">
+          <h2 className="text-white text-lg md:text-xl font-semibold mb-3">
+            {org.orgName}
+          </h2>
+          <p className="text-gray-300 mb-2">{org.orgDescription}</p>
+          <p className="text-gray-300 mb-2">{org.orgAddress}</p>
+          <p className="text-gray-300 mb-2">{org.orgEmail}</p>
+          <p className="text-gray-300 mb-2">{org.orgPhone}</p>
+          <p className="text-gray-300">{org.orgType}</p>
+        </div>
+      ))}
     </div>
   );
 };

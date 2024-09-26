@@ -74,8 +74,8 @@ const HorizontalScrollCarousel = () => {
             <h1
               className={`${HeaderText.className} text-5xl min-w-max uppercase leading-snug`}
             >
-              <span className="gradient-text">Azion secures every part</span> <br /> of
-              your account and <br /> organisation's account
+              <span className="gradient-text">Azion secures every part</span>{" "}
+              <br /> of your account and <br /> organisation's account
             </h1>
             <div className=" flex justify-center items-center gap-44">
               {food.map(([emoji, hueA, hueB]) => (

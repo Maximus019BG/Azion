@@ -60,11 +60,11 @@ const Navbar = () => {
     }, []);
 
   return (
-    <div className="navbar bg-transparent">
+    <div className="navbar bg-transparent px-16">
       <div className="flex-1">
-        <a className="btn btn-ghost neon-text text-4xl ml-20">Azion</a>
+        <a className="btn btn-ghost neon-text text-6xl">Azion</a>
       </div>
-      <div className="flex justify-center gap-12 items-center mr-10">
+      <div className="flex justify-center gap-12 items-center">
         {isLogged ? (
           <>
           <Link href={`/dashboard/${org}`}>

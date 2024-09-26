@@ -97,7 +97,7 @@ const SideMenu = () => {
             {org && (
               <>
                 {/* Dashboard Dropdown */}
-                <li className="p-2 text-md w-full relative">
+                <li className=" text-md w-full relative">
                   <div className="flex items-center justify-between w-full">
                     <Link
                       href={`/dashboard/${org}`}
@@ -144,7 +144,7 @@ const SideMenu = () => {
                 </li>
 
                 {/* Tasks Dropdown */}
-                <li className="p-2 text-md w-full relative">
+                <li className=" text-md w-full relative">
                   <div className="flex items-center justify-between w-full">
                     {admin && (
                       <button
@@ -198,13 +198,13 @@ const SideMenu = () => {
               </>
             )}
 
-            <li className="p-2 text-md w-full">
+            <li className=" text-md w-full">
               <Link href="/organizations" className="flex items-center w-full">
                 <FaBuilding className="text-lg mr-2" />
                 Organizations
               </Link>
             </li>
-            <li className="p-2 text-md w-full">
+            <li className=" text-md w-full">
               <Link href="/mfa/face" className="flex items-center w-full">
                 <TbFaceId className="text-lg mr-2" />
                 FaceID

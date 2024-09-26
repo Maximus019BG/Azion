@@ -116,7 +116,7 @@ const Home = () => {
           },
           {
             src: "/ArtBoard 6.svg",
-            position: "left-[0vw] top-[5vh]",
+            position: "left-[0vw] top-[50vh]",
             delay: 1.2,
           },
           {
@@ -156,7 +156,7 @@ const Home = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="h-full max-w-3xl p-10 flex flex-col justify-end items-center text-center z-10"
+          className="h-full max-w-3xl p-10 flex flex-col justify-start items-center text-center z-10"
         >
           <h1
             className={`text-2xl text-white md:text-3xl lg:text-5xl text-left ${HeaderText.className}`}

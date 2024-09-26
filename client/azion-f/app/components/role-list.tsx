@@ -145,7 +145,7 @@ const RoleList = () => {
   return (
     <div className="w-[75vw] h-full max-w-4xl p-8 bg-gray-800 shadow-lg rounded-md flex flex-col justify-center items-center gap-12">
       {/* Roles Section */}
-      <div className="w-full">
+      <div className="w-full flex flex-col ">
         <h2 className="text-2xl font-semibold text-white mb-6 text-center">Edit Roles</h2>
         <table className="w-full text-sm text-left text-gray-400">
           <thead className="text-xs uppercase bg-gray-700 text-gray-400">
@@ -156,8 +156,8 @@ const RoleList = () => {
             </tr>
           </thead>
           <tbody>
-            {Object.entries(roles).map(([role, level]) => (
-              <tr key={role} className="border-b bg-gray-800 border-gray-700">
+            {Object.entries(roles).map(([role, level], index) => (
+              <tr key={index} className="border-t bg-gray-900 even:bg-slate-950 border-gray-700">
                 <td className="py-4 px-6">
                   <input
                     type="text"
@@ -191,7 +191,7 @@ const RoleList = () => {
         </table>
         <button
           onClick={() => setShowNewRole(!showNewRole)}
-          className="mt-4 text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-full py-2 px-4 transition duration-200"
+          className="mt-4 text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-md py-2 px-4 transition duration-200 self-end"
         >
           {showNewRole ? "Cancel" : "Add New Role"}
         </button>
@@ -209,11 +209,11 @@ const RoleList = () => {
               value={newLevel}
               onChange={(e) => setNewLevel(parseInt(e.target.value))}
               placeholder="Level"
-              className="bg-gray-700 text-white border-none focus:outline-none rounded w-full py-2 px-3"
+              className="bg-gray-700 text-white border-none focus:outline-none rounded w-1/3 py-2 px-3"
             />
             <button
               onClick={handleAddRole}
-              className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition duration-200"
+              className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 w-1/5 rounded transition duration-200"
             >
               Add Role
             </button>

@@ -72,13 +72,13 @@ const Organizations = () => {
           <Loading />
         </div>
       ) : (
-        <div className="h-screen w-screen overflow-x-hidden flex bg-[#070914]">
+        <div className="h-screen w-screen overflow-hidden flex bg-[#070914]">
           <div className="w-1/4 bg-background">
             <SideMenu />
           </div>
-          <div className="w-3/4 flex flex-col items-center p-4">
-            <div className="neon-text w-full flex flex-col items-center mt-8">
-              <label className="input w-2/6 input-bordered flex items-center gap-2 mb-4">
+          <div className="relative w-full flex flex-col items-center p-4 overflow-y-auto">
+            <div className="w-full flex flex-col items-center gap-6">
+              <label className="input w-2/6 input-bordered flex items-center gap-2">
                 <input
                   type="text"
                   className="grow"
@@ -99,9 +99,7 @@ const Organizations = () => {
                   />
                 </svg>
               </label>
-              <div className="mt-10 w-full">
                 <ListAllOrgs searchTerm={searchTerm} />
-              </div>
             </div>
 
             {/* Toggle Button */}
