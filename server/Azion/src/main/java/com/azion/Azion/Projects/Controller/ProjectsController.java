@@ -270,11 +270,10 @@ public class ProjectsController extends FileSize {
                 
                 Set<User> doneUsers = proj.getDoneBy();
                 doneUsers.add(user);
-                
                 Set<User> allUsers = proj.getUsers();
                 
                 if (doneUsers.containsAll(allUsers)) {
-                    log.info("done");
+                    log.debug("done");
                     proj.setProgress(100);
                     if (Objects.equals(proj.getStatus(), "Past")) {
                         proj.setStatus("Done Late");
@@ -282,7 +281,7 @@ public class ProjectsController extends FileSize {
                         proj.setStatus("Done");
                     }
                 } else {
-                    log.info("not done");
+                    log.debug("not done");
                     List<User> notDoneUsers = new ArrayList<>();
                     for (User aUser : allUsers) {
                         if (!doneUsers.contains(aUser)) {
@@ -290,8 +289,8 @@ public class ProjectsController extends FileSize {
                         }
                     }
                     int progress = 100 - (int) (((double) notDoneUsers.size() / allUsers.size()) * 100);
-                    log.info("not done " + notDoneUsers.size() + " all users " + allUsers.size());
-                    log.info("progress: " + progress);
+                    log.debug("not done " + notDoneUsers.size() + " all users " + allUsers.size());
+                    log.debug("progress: " + progress);
                     proj.setProgress(progress);
                 }
                 projectsRepository.save(proj);

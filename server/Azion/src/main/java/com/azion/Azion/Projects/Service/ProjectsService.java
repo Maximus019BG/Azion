@@ -5,14 +5,25 @@ import com.azion.Azion.Projects.Model.Project;
 import com.azion.Azion.Projects.Repository.ProjectsRepository;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
+import java.io.*;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,6 +31,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class ProjectsService {
+    
+    //VirusTotal config
+    private static final String API_KEY = System.getProperty("virusTotalApiKey");
+    private static final String VIRUSTOTAL_URL = "https://www.virustotal.com/api/v3/files";
     
     private final ProjectsRepository projectsRepository;
     
@@ -107,147 +122,78 @@ public class ProjectsService {
             throw new RuntimeException("ProjectFiles is empty");
         }
         try {
-            byte[] fileContent = file.getBytes();
-            String content = new String(fileContent);
-            String name = file.getOriginalFilename();
-            //Basic checks
-            if (name == null || name.isEmpty()) {
+            File convertedFile = convertMultipartFileToFile(file);
+            String response = scanFile(convertedFile);
+            int positives = parsePositivesFromResponse(response);
+            if (positives > 0) {
+                log.debug("File is malicious: " + positives + " positives");
                 return false;
             }
-            else if (name.contains(".txt")) {
-                return true;
-            }
-            else if (name.contains(".sh") || name.contains(".exe") || name.contains(".bat") || name.contains(".cmd") || name.contains(".dll") || name.contains(".jar") || name.contains(".iso") || name.contains(".hex") ||
-                    name.contains(".asp") || name.contains(".aspx") || name.contains(".aspx-exe") || name.contains(".elf") || name.contains(".elf-so") || name.contains(".exe-only") ||
-                    name.contains(".exe-service") || name.contains(".exe-small") || name.contains(".hta-psh") || name.contains(".loop-vbs") || name.contains(".macho") || name.contains(".msi") || name.contains(".msi-nouac") ||
-                    name.contains(".osx-app") || name.contains(".psh") || name.contains(".psh-net") || name.contains(".psh-reflection") || name.contains(".psh-cmd") || name.contains(".vba") || name.contains(".vba-exe") ||
-                    name.contains(".vba-psh") || name.contains(".vbs") || name.contains(".war")) {
-                return false;
-            }
-            else if (content.contains("rm -rf") || content.contains("rm -rf /") || content.contains("rm -rf /*") || content.contains("rm -rf /*.*") || content.contains("rm -rf *") || content.contains(" rm ")) {
-                return false;
-            }
-            else if (content.contains("del /f /s /q") || content.contains("del /f /s /q *") || content.contains("del /f /s /q *.*") || content.contains("del /f /s /q /f") || content.contains("del /f /s /q /f *") || content.contains("del /f /s /q /f *.*") || content.contains(" del ")) {
-                return false;
-            }
-            
-            log.debug("ProjectFiles type specific checks");
-            //ProjectFiles type specific checks
-            switch (name.substring(name.lastIndexOf('.'))) {
-                case ".pdf":
-                    return fileSafePDF(content);
-                case ".py":
-                    return fileSafePython(content);
-                case ".js":
-                    return fileSafeJavaScript(content);
-                case ".java":
-                    return fileSafeJava(content);
-                case ".cpp":
-                case ".c":
-                case ".h":
-                    return fileSafeCpp(content);
-                case ".html":
-                    return fileSafeHtml(content);
-                case ".rb":
-                    return fileSafeRuby(content);
-                case ".go":
-                    return fileSafeGo(content);
-                case ".doc":
-                    return fileSafeDoc(content);
-                default:
-                    return true;
-            }
+            log.debug("File is clean: " + positives + " positives");
+            return true;
         } catch (IOException e) {
-            log.debug("Error reading file content:   "+e);
+            log.debug("Error reading file content: " + e);
             return false;
         }
     }
     
-    public boolean fileSafeMacro(String content) {
-        if (content.contains("AutoOpen") || content.contains("AutoExec") || content.contains("Document_Open") || content.contains("Workbook_Open") || content.contains("Application.Run") || content.contains("Shell") || content.contains("CreateObject") || content.contains("GetObject") || content.contains("ExecuteExcel4Macro")) {
-            return false;
-        }
-        //!Keywords for file operations
-        String[] fileOpK = {"ProjectFiles", "FileInputStream", "FileOutputStream", "FileReader",
-                "FileWriter", "Files", "Path", "Paths", "BufferedReader", "BufferedWriter", "RandomAccessFile",
-                "FileChannel", "FileLock", "FileSystem", "FileSystems", "FileStore", "FileVisitor", "DirectoryStream",
-                "Stream", "Scanner", "PrintWriter", "PrintStream"};
+    public static String scanFile(File file) throws IOException {
+        OkHttpClient client = new OkHttpClient();
         
-        for (String keyword : fileOpK) {
-            if (content.contains(keyword)) {
-                return false;
+        MediaType mediaType = MediaType.parse("multipart/form-data; boundary=---011000010111000001101001");
+        RequestBody fileBody = RequestBody.create(file, MediaType.parse("application/octet-stream"));
+        RequestBody body = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", file.getName(), fileBody)
+                .build();
+        
+        Request request = new Request.Builder()
+                .url(VIRUSTOTAL_URL)
+                .post(body)
+                .addHeader("accept", "application/json")
+                .addHeader("x-apikey", API_KEY)
+                .build();
+        
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Failed to scan file: " + response.code());
             }
+            return response.body().string();
         }
-        return true;
     }
     
-    public boolean fileSafePDF(String content) {
-        if (content.contains("javascript") || content.contains("obj") || content.contains("endobj") || content.contains("stream") || content.contains("endstream") || content.contains("xref") || content.contains("trailer") || content.contains("startxref") || content.contains("/JS") || content.contains("/JavaScript")) {
-            return false;
-        }
+    private int parsePositivesFromResponse(String response) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response);
+        String analysisId = rootNode.path("data").path("id").asText();
+        String analysisUrl = "https://www.virustotal.com/api/v3/analyses/" + analysisId;
         
-        return fileSafeMacro(content);
+        HttpURLConnection connection = (HttpURLConnection) new URL(analysisUrl).openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("x-apikey", API_KEY);
+        connection.setRequestProperty("accept", "application/json");
+        
+        int responseCode = connection.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                StringBuilder analysisResponse = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    analysisResponse.append(line);
+                }
+                JsonNode analysisRootNode = objectMapper.readTree(analysisResponse.toString());
+                return analysisRootNode.path("data").path("attributes").path("stats").path("malicious").asInt();
+            }
+        } else {
+            throw new IOException("Failed to get analysis results: " + responseCode);
+        }
     }
     
-    public boolean fileSafePython(String content) {
-        if (content.contains("import os") || content.contains("import sys") || content.contains("subprocess") || content.contains("eval") || content.contains("exec") || content.contains("pickle") || content.contains("os.system") || content.contains("os.popen") || content.contains("os.execvp") || content.contains("os.fork") || content.contains("os.kill")) {
-            return false;
+    public static File convertMultipartFileToFile(MultipartFile multipartFile) throws IOException {
+        File file = new File(multipartFile.getOriginalFilename());
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(multipartFile.getBytes());
         }
-        
-        return fileSafeMacro(content);
-    }
-    
-    public boolean fileSafeJavaScript(String content) {
-        if (content.contains("eval") || content.contains("Function") || content.contains("setTimeout") || content.contains("setInterval") || content.contains("XMLHttpRequest") || content.contains("ActiveXObject") || content.contains("document.write") || content.contains("document.execCommand") || content.contains("window.location") || content.contains("window.open")) {
-            return false;
-        }
-        
-        return fileSafeMacro(content);
-    }
-    
-    public boolean fileSafeJava(String content) {
-        if (content.contains("Runtime.getRuntime()") || content.contains("ProcessBuilder") || content.contains("exec") || content.contains("System.exit") || content.contains("java.lang.reflect") || content.contains("java.io.ProjectFiles") || content.contains("java.io.FileInputStream") || content.contains("java.io.FileOutputStream") || content.contains("java.io.FileReader") || content.contains("java.io.FileWriter")) {
-            return false;
-        }
-        
-        return fileSafeMacro(content);
-    }
-    
-    public boolean fileSafeCpp(String content) {
-        if (content.contains("system(") || content.contains("popen(") || content.contains("execvp(") || content.contains("fork(") || content.contains("kill(") || content.contains("execl(") || content.contains("execlp(") || content.contains("execle(") || content.contains("execv(") || content.contains("execve(") || content.contains("execvpe(")) {
-            return false;
-        }
-        
-        return fileSafeMacro(content);
-    }
-    
-    public boolean fileSafeHtml(String content) {
-        if (content.contains("<script>") || content.contains("javascript:") || content.contains("onerror=") || content.contains("onload=") || content.contains("onclick=") || content.contains("onmouseover=") || content.contains("onfocus=") || content.contains("onblur=") || content.contains("onchange=") || content.contains("onsubmit=")) {
-            return false;
-        }
-        
-        return fileSafeMacro(content);
-    }
-    
-    public boolean fileSafeRuby(String content) {
-        if (content.contains("system") || content.contains("exec") || content.contains("eval") || content.contains("open") || content.contains("IO.popen") || content.contains("Kernel.exec") || content.contains("Kernel.system") || content.contains("Kernel.eval") || content.contains("Kernel.open") || content.contains("ProjectFiles.open")) {
-            return false;
-        }
-        
-        return fileSafeMacro(content);
-    }
-    
-    public boolean fileSafeGo(String content) {
-        if (content.contains("os/exec") || content.contains("syscall") || content.contains("unsafe") || content.contains("eval") || content.contains("os.Remove") || content.contains("os.RemoveAll") || content.contains("os.Rename") || content.contains("os.Chmod") || content.contains("os.Chown") || content.contains("os.Create")) {
-            return false;
-        }
-        
-        return fileSafeMacro(content);
-    }
-    public boolean fileSafeDoc(String content) {
-        if (content.contains("ActiveXObject") || content.contains("Shell") || content.contains("CreateObject") || content.contains("GetObject") || content.contains("ExecuteExcel4Macro")) {
-            return false;
-        }
-        return fileSafeMacro(content);
+        return file;
     }
 }
