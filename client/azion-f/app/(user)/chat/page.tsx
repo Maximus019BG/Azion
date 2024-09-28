@@ -2,57 +2,79 @@
 import React, { useState, useEffect } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import axios from "axios";
 import { UserData } from "@/app/func/funcs";
-import { apiUrl } from "@/app/api/config";
+import {chatUrl} from "@/app/api/config";
 
 const ChatPage = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [input, setInput] = useState<string>("");
   const [receiver, setReceiver] = useState<string>("");
+  const [client, setClient] = useState<Client | null>(null);
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     UserData().then((data) => {
-      axios.get(`${apiUrl}/chat/messages?user=${data.email}`)
-        .then((response) => {
-          setMessages(response.data.map((msg: any) => `${msg.sender}: ${msg.message}`));
-        });
-
-      const socket = new SockJS(`${apiUrl}/chat`);
-      const client = new Client({
-        webSocketFactory: () => socket,
-        onConnect: () => {
-          client.subscribe(`/user/queue/messages`, (message) => {
-            setMessages((prevMessages) => [...prevMessages, message.body]);
-          });
-        },
-      });
-
-      client.activate();
-
-      return () => {
-        client.deactivate();
-      };
+      setUserEmail(data.email);
     });
   }, []);
 
-  const sendMessage = () => {
-    const socket = new SockJS(`${apiUrl}/chat/sendMessage`);
-    const client = new Client({
+  useEffect(() => {
+    if (!userEmail) return;
+
+    const socket = new SockJS(`${chatUrl}`);
+    const stompClient = new Client({
       webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+      onConnect: () => {
+        console.log("Connected");
+
+        stompClient.subscribe('/topic/messages', (message) => {
+          if (message.body) {
+            const newMessage = JSON.parse(message.body);
+            console.log("Public message received:", newMessage);
+            setMessages(prevMessages => [...prevMessages, `${newMessage.from}: ${newMessage.content}`]);
+          }
+        });
+
+        stompClient.subscribe(`/user/${userEmail}/private`, (message) => {
+          if (message.body) {
+            const newMessage = JSON.parse(message.body);
+            console.log("Private message received:", newMessage);
+            setMessages(prevMessages => [...prevMessages, `Private from ${newMessage.from} to ${newMessage.to}: ${newMessage.content}`]);
+          } else {
+            console.log("Received empty private message");
+          }
+        });
+      },
+      onStompError: (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      }
     });
 
-    client.onConnect = () => {
-      UserData().then((data) => {
-        client.publish({
-          destination: "/app/sendMessage",
-          body: JSON.stringify({ message: input, sender: data.email, receiver: receiver }),
-        });
-      });
-    };
+    stompClient.activate();
+    setClient(stompClient);
 
-    client.activate();
-    setInput("");
+    return () => {
+      if (stompClient) stompClient.deactivate();
+    };
+  }, [userEmail]);
+
+  const sendMessage = () => {
+    if (client && client.connected) {
+      const message = { content: input, from: userEmail };
+      client.publish({ destination: "/app/sendMessage", body: JSON.stringify(message) });
+      setInput("");
+    }
+  };
+
+  const sendPrivateMessage = () => {
+    if (client && client.connected && receiver) {
+      const message = { content: input, from: userEmail, to: receiver };
+      client.publish({ destination: "/app/privateMessage", body: JSON.stringify(message) });
+      console.log("Private message sent:", message);
+      setInput("");
+    }
   };
 
   return (
@@ -68,13 +90,18 @@ const ChatPage = () => {
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
-      <input
-        className="border-2 border-gray-300"
-        type="text"
-        value={receiver}
-        onChange={(e) => setReceiver(e.target.value)}
-      />
       <button onClick={sendMessage}>Send</button>
+
+      <div>
+        <input
+          className="border-2 border-gray-300"
+          type="text"
+          placeholder="Enter receiver email"
+          value={receiver}
+          onChange={(e) => setReceiver(e.target.value)}
+        />
+        <button onClick={sendPrivateMessage}>Send Private Message</button>
+      </div>
     </div>
   );
 };

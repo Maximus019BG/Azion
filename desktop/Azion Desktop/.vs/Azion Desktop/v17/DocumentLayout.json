@@ -3,19 +3,23 @@
   "WorkspaceRootPath": "D:\\Azion\\desktop\\Azion Desktop\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|d:\\azion\\desktop\\azion desktop\\azion desktop\\cookiesmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|solutionrelative:azion desktop\\cookiesmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|d:\\azion\\desktop\\azion desktop\\azion desktop\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|D:\\Azion\\desktop\\Azion Desktop\\azion desktop\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|solutionrelative:azion desktop\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|d:\\azion\\desktop\\azion desktop\\azion desktop\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|d:\\azion\\desktop\\azion desktop\\azion desktop\\loadingwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|solutionrelative:azion desktop\\loadingwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|D:\\Azion\\desktop\\Azion Desktop\\azion desktop\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|solutionrelative:azion desktop\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|d:\\azion\\desktop\\azion desktop\\azion desktop\\loadingwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\CookiesManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Azion Desktop\\CookiesManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|D:\\Azion\\desktop\\Azion Desktop\\azion desktop\\loadingwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{AAFFFDD9-71FC-4A81-96BC-4BF5D33A9A8D}|Azion Desktop\\Azion Desktop.csproj|solutionrelative:azion desktop\\loadingwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
@@ -42,30 +46,41 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "CookiesManager.cs",
-              "DocumentMoniker": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\CookiesManager.cs",
-              "RelativeDocumentMoniker": "Azion Desktop\\CookiesManager.cs",
-              "ToolTip": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\CookiesManager.cs*",
-              "RelativeToolTip": "Azion Desktop\\CookiesManager.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAABAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "LoadingWindow.xaml.cs",
+              "DocumentMoniker": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\LoadingWindow.xaml.cs",
+              "RelativeDocumentMoniker": "Azion Desktop\\LoadingWindow.xaml.cs",
+              "ToolTip": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\LoadingWindow.xaml.cs",
+              "RelativeToolTip": "Azion Desktop\\LoadingWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-24T20:14:03Z",
+              "WhenOpened": "2024-09-27T19:15:23.377Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
+              "Title": "CookiesManager.cs",
+              "DocumentMoniker": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\CookiesManager.cs",
+              "RelativeDocumentMoniker": "Azion Desktop\\CookiesManager.cs",
+              "ToolTip": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\CookiesManager.cs",
+              "RelativeToolTip": "Azion Desktop\\CookiesManager.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-24T20:14:03Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "MainWindow.xaml.cs",
               "DocumentMoniker": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "Azion Desktop\\MainWindow.xaml.cs",
               "ToolTip": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\MainWindow.xaml.cs",
               "RelativeToolTip": "Azion Desktop\\MainWindow.xaml.cs",
-              "ViewState": "AgIAABgAAAAAAAAAAAAswC8AAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAsAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-24T19:12:01.756Z",
               "EditorCaption": ""
@@ -84,19 +99,18 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "LoadingWindow.xaml",
               "DocumentMoniker": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\LoadingWindow.xaml",
               "RelativeDocumentMoniker": "Azion Desktop\\LoadingWindow.xaml",
               "ToolTip": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\LoadingWindow.xaml",
               "RelativeToolTip": "Azion Desktop\\LoadingWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-09-24T19:11:58.196Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-24T19:11:58.196Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "App.xaml",
               "DocumentMoniker": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\App.xaml",
               "RelativeDocumentMoniker": "Azion Desktop\\App.xaml",
@@ -108,7 +122,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "App.xaml.cs",
               "DocumentMoniker": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\App.xaml.cs",
               "RelativeDocumentMoniker": "Azion Desktop\\App.xaml.cs",
@@ -116,12 +130,11 @@
               "RelativeToolTip": "Azion Desktop\\App.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-23T19:01:03.494Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-23T19:01:03.494Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "packages.config",
               "DocumentMoniker": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\packages.config",
               "RelativeDocumentMoniker": "Azion Desktop\\packages.config",
@@ -133,7 +146,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "white-logo.png",
               "DocumentMoniker": "D:\\Azion\\desktop\\Azion Desktop\\Azion Desktop\\assets\\white-logo.png",
               "RelativeDocumentMoniker": "Azion Desktop\\assets\\white-logo.png",

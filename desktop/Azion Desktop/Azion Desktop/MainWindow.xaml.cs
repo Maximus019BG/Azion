@@ -11,8 +11,8 @@ namespace Azion_Desktop
     {
         public MainWindow()
         {
-            InitializeComponent();
-        }
+                InitializeComponent();
+            }
 
         public async Task InitializeWebViewAsync()
         {
