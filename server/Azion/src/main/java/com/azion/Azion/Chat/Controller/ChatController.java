@@ -23,7 +23,6 @@ public class ChatController {
 
     @MessageMapping("/privateMessage")
     public void sendPrivateMessage(Message message) {
-        System.out.println(message.getContent());
         messagingTemplate.convertAndSendToUser(message.getTo(), "/private", message);
     }
 }
