@@ -253,7 +253,7 @@ public class OrgController {
         userDTO.setRole(user.getRole());
         userDTO.setOrgid(user.getOrgid());
         userDTO.setRoleLevel(user.getRoleLevel());
-        
+        userDTO.setProfilePicture(Arrays.toString(user.getProfilePicture()));
         
         Hibernate.initialize(user.getProjects());
         Set<Project> projects = user.getProjects();
