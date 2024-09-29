@@ -1,15 +1,15 @@
 package com.azion.Azion.Org.Controller;
 
-import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.Org.Model.DTO.OrgDTO;
+import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.Org.Repository.OrgRepository;
 import com.azion.Azion.Org.Service.OrgService;
 import com.azion.Azion.Org.Util.OrgUtility;
 import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
 import com.azion.Azion.Projects.Model.Project;
 import com.azion.Azion.Token.TokenService;
-import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Model.DTO.UserDTO;
+import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +69,6 @@ public class OrgController {
         org.setOrgPhone(orgPhone);
         org.setOrgDescription(orgDescription);
         org.setUsers(new HashSet<>());
-        
         orgRepository.save(org);
         
         User user = tokenService.getUserFromToken(accessToken);
@@ -81,6 +80,7 @@ public class OrgController {
         user.setRole("owner");
         user.setRoleLevel(1);
         userRepository.save(user);
+        orgService.welcomeEmail(user.getEmail(), user.getName(), org.getOrgName());
         
         String encryptedString = org.getOrgConnectString();
         String conSring = OrgUtility.decrypt(encryptedString);
@@ -357,12 +357,10 @@ public class OrgController {
                     if (u.getRole().equals(role)) {
                         u.setRoleLevel(roleLevel);
                     }
-                }
-                else {
+                } else {
                     if (u.getRoleLevel() != 1 && u.getRole().equals(role) && roleLevel != 1) {
                         u.setRoleLevel(roleLevel);
-                    }
-                    else if(u.getRoleLevel() != 1 && u.getRole().equals(role) && roleLevel == 1){
+                    } else if (u.getRoleLevel() != 1 && u.getRole().equals(role) && roleLevel == 1) {
                         triedToChangeOwner = true;
                     }
                 }
@@ -371,7 +369,7 @@ public class OrgController {
         
         orgService.ensureOwnerHasLevelOne(user.getOrgid());
         
-        if(triedToChangeOwner){
+        if (triedToChangeOwner) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Roles and user updated. Except for the roleLevel 1");
         }
         return ResponseEntity.ok("Roles and users updated.");
