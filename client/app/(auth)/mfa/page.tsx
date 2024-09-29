@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import Image from "next/image";
 import OTP from "../../components/OTP";
 import {apiUrl} from "../../api/config";
-import {sessionCheck} from "../../func/funcs";
+import {mfaSessionCheck} from "../../func/funcs";
 
 const VerifyMFAAxios = (data: any) => {
     axios
@@ -62,9 +62,8 @@ const MfaSetupPage = () => {
         useEffect(() => {
             const refreshToken = Cookies.get("azionRefreshToken");
             const accessToken = Cookies.get("azionAccessToken");
-
             if (refreshToken && accessToken) {
-                sessionCheck();
+                mfaSessionCheck();
             } else if (!accessToken && !refreshToken) {
                 window.location.href = "/login";
             }

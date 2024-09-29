@@ -228,4 +228,36 @@ const sessionCheck = () => {
         });
 };
 
-export {CheckMFA, PartOfOrg, UserData, DeleteSession, authSessionCheck, orgSessionCheck, sessionCheck};
+//!mfa Only
+const mfaSessionCheck = () => {
+    const refreshToken = Cookies.get("azionRefreshToken");
+    const accessToken = Cookies.get("azionAccessToken");
+    CheckMFA(true);
+
+    const data = {refreshToken, accessToken};
+
+    const url = `${apiUrl}/token/session/check`;
+    axios
+        .post(url, data, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then((response: AxiosResponse) => {
+            const {message, accessToken} = response.data;
+            if (message === "newAccessToken generated") {
+                Cookies.set("azionAccessToken", accessToken, {
+                    secure: true,
+                    sameSite: "Strict",
+                });
+            }
+        })
+        .catch((error) => {
+            console.error(error.response ? error.response : error);
+            Cookies.remove("azionAccessToken");
+            Cookies.remove("azionRefreshToken");
+            window.location.href = "/login";
+        });
+};
+
+export {CheckMFA, PartOfOrg, UserData, DeleteSession, authSessionCheck, orgSessionCheck, sessionCheck, mfaSessionCheck};

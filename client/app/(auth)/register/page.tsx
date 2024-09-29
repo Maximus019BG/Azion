@@ -21,7 +21,6 @@ interface InputField<T> {
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
 const AxiosFunction = (data: any, isOwner: boolean) => {
-
     axios
         .post(`${apiUrl}/auth/register`, data, {
             headers: {
