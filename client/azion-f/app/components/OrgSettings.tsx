@@ -3,8 +3,6 @@ import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import { apiUrl } from "@/app/api/config";
-import CustomAlert from "./CustomAlert";
-import CircularProgress from "@/app/components/diagram";
 import { OrgConnString } from "@/app/func/org";
 import { CheckMFA, PartOfOrg, UserData } from "@/app/func/funcs";
 

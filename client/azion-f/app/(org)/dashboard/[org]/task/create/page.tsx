@@ -248,7 +248,7 @@ const CreateTask: FC<PageProps> = ({ params }) => {
       <div className="w-1/4 min-w-[250px] h-full">
         <SideMenu />
       </div>
-      <div className="w-3/4 p-6 overflow-auto flex justify-center items-center">
+      <div className="w-full p-6 overflow-auto flex justify-center items-center">
         {alert && (
           <CustomAlert message={alertMessage} onClose={() => setAlert(false)} />
         )}
@@ -266,16 +266,16 @@ const CreateTask: FC<PageProps> = ({ params }) => {
                     onClick={() => handleCheckboxChange(user.email)}
                     className={`p-2 cursor-pointer ${
                       selectedUsers.has(user.email)
-                        ? "w-36 flex justify-center items-center cursor-pointer bg-gray-800 rounded-lg"
-                        : "cursor-pointer"
+                        ? "w-36 flex justify-center items-center cursor-pointer bg-accent rounded-lg"
+                        : "w-36 flex justify-center items-center cursor-pointer rounded-lg border-2 border-gray-800 hover:bg-gray-800"
                     }`}
                   >
-                    <label className="flex items-center">
+                    <label className="flex items-center cursor-pointer">
                       <input
                         type="checkbox"
                         value={user.id}
                         onChange={() => handleCheckboxChange(user.email)}
-                        className="hidden"
+                        className="hidden cursor-pointer"
                       />
                       {user.name}
                     </label>

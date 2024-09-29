@@ -158,8 +158,8 @@ const Tasks: FC<PageProps> = ({ params }) => {
             <div className="w-1/4 min-w-[250px] h-full">
                 <SideMenu />
             </div>
-            <div className="w-3/4 p-6 overflow-auto flex flex-col items-center">
-                <div className="flex flex-col justify-center items-center gap-10 w-full max-w-5xl">
+            <div className="w-full p-6 overflow-auto flex flex-col items-center">
+                <div className="flex flex-col justify-around items-center gap-10 w-full h-full">
                     <h1 className="text-5xl font-black mt-16">Your tasks:</h1>
                     <SortMenu
                         sortCriteria={sortCriteria}
@@ -167,7 +167,7 @@ const Tasks: FC<PageProps> = ({ params }) => {
                         setSortCriteria={setSortCriteria}
                         setSortOrder={setSortOrder}
                     />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+                    <div className="w-full flex flex-wrap justify-center items-center gap-16">
                         {sortTasks(task).map((task) => (
                             <OrgDetailsCard
                                 key={task.id}
