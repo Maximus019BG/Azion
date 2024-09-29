@@ -205,9 +205,6 @@ const sessionCheck = () => {
             } else if (message === "sessionCheck failed") {
                 Cookies.remove("azionAccessToken");
                 Cookies.remove("azionRefreshToken");
-            } else {
-                Cookies.remove("azionAccessToken");
-                Cookies.remove("azionRefreshToken");
             }
         })
         .catch(function (error: any) {

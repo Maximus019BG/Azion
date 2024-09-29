@@ -8,7 +8,7 @@ import Link from "next/link";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
 import background from "@/public/background2.jpeg";
-import {CheckMFA, sessionCheck} from "@/app/func/funcs";
+import {CheckMFA, PartOfOrg, sessionCheck} from "@/app/func/funcs";
 import ConString from "../../../components/ConString";
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
@@ -33,6 +33,7 @@ const Register_Organisation = () => {
         if (refreshToken && accessToken) {
             //!User is already logged so it isn't authSessionCheck
             sessionCheck();
+            PartOfOrg(false);
         } else if (!accessToken && !refreshToken) {
             window.location.href = "/login";
         }
