@@ -1,5 +1,4 @@
-"use client"; // Ensure the "use client" directive is included at the top
-
+"use client";
 import React, {FC, useEffect, useState} from "react";
 import {getOrgName, getTasks} from "@/app/func/org";
 import Loading from "@/app/components/Loading";

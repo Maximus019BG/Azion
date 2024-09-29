@@ -1,4 +1,3 @@
-// types.ts
 export interface User {
     profilePicture: string;
     id: string | null;
