@@ -129,7 +129,7 @@ const Login = () => {
                             If you don&apos;t have an existing account go to{"  "}
                             <Link
                                 href="/register"
-                                className=" text-lightAccent hover:text-[#51bbb6] font-black text-xl underline"
+                                className=" text-lightAccent hover:text-sky-400 font-black text-xl underline"
                             >
                                 Register
                             </Link>
@@ -138,7 +138,7 @@ const Login = () => {
                             You can login using only {"  "}
                             <Link
                                 href="/login/fast"
-                                className=" text-lightAccent hover:text-[#51bbb6] font-black text-xl underline"
+                                className=" text-lightAccent hover:text-sky-400 font-black text-xl underline"
                             >
                                 Your Face
                             </Link>
@@ -147,7 +147,7 @@ const Login = () => {
                             Forgot your {"  "}
                             <Link
                                 href="/forgot-password"
-                                className=" text-lightAccent hover:text-[#51bbb6] font-black text-xl underline"
+                                className=" text-lightAccent hover:text-sky-400 font-black text-xl underline"
                             >
                                 Password?
                             </Link>
@@ -177,7 +177,8 @@ const Login = () => {
                                     <OTP length={6} onComplete={handleSubmit}/>
                                 </div>
                                 <form method="dialog">
-                                    <button className="btn px-24 text-white bg-accent hover:bg-[#105380] rounded-2xl hover:scale-110 text-lg">
+                                    <button
+                                        className="btn px-24 text-white bg-accent hover:bg-[#105380] rounded-2xl hover:scale-110 text-lg">
                                         Submit
                                     </button>
                                 </form>

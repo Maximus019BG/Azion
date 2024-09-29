@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import AzionEditor from "./_editor/AzionEditor";
 import {Task} from "@/app/types/types";
 import {Poppins} from "next/font/google";
-import {FaArrowAltCircleLeft} from "react-icons/fa";
+import {FaArrowAltCircleLeft, FaCompress, FaExpand} from "react-icons/fa";
 import {sessionCheck, UserData} from "@/app/func/funcs";
 import Link from "next/link";
 
@@ -32,6 +32,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     const [editorContent, setEditorContent] = useState<string>("");
     const [showFiles, setShowFiles] = useState<boolean>(false);
     const [doneByUser, setDoneByUser] = useState<boolean>(false);
+    const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
 
     const SubmitTask = (taskId: string, file: File | null, link: string, editorContent: string) => {
         const formData = new FormData();
@@ -132,12 +133,12 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     }
 
     return (
-        <div className="flex h-screen bg-gray-900 text-white">
+        <div className={`flex h-screen bg-gray-900 text-white ${isFullScreen ? "fixed inset-0 z-50" : ""}`}>
             <div className="w-1/4">
                 <SideMenu/>
             </div>
             <div className="w-full flex justify-center items-center p-8">
-                <div className="bg-gray-800 rounded-lg p-8 shadow-lg">
+                <div className="bg-gray-800 rounded-lg p-8 shadow-lg w-full h-full">
                     <h1 className={`text-4xl ${HeaderText.className} text-center mb-8`}>
                         Task Details
                     </h1>
@@ -231,6 +232,14 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                                     >
                                         <FaArrowAltCircleLeft className="inline mr-2"/>
                                         Back
+                                    </button>
+                                    <button
+                                        onClick={() => setIsFullScreen(!isFullScreen)}
+                                        className="text-blue-500 mb-2 ml-4"
+                                    >
+                                        {isFullScreen ? <FaCompress className="inline mr-2"/> :
+                                            <FaExpand className="inline mr-2"/>}
+                                        {isFullScreen ? "Exit Full Screen" : "Full Screen"}
                                     </button>
                                     <AzionEditor
                                         value={editorContent}

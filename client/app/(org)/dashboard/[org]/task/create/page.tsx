@@ -237,8 +237,8 @@ const CreateTask: FC<PageProps> = ({params}) => {
                                         onClick={() => handleCheckboxChange(user.email)}
                                         className={`p-2 cursor-pointer ${
                                             selectedUsers.has(user.email)
-                                                ? "w-36 flex justify-center items-center cursor-pointer bg-accent rounded-lg"
-                                                : "w-36 flex justify-center items-center cursor-pointer rounded-lg border-2 border-gray-800 hover:bg-gray-800"
+                                                ? "w-56 flex justify-center items-center cursor-pointer bg-accent rounded-lg"
+                                                : "w-56 flex justify-center items-center cursor-pointer rounded-lg border-2 border-gray-800 hover:bg-gray-800"
                                         }`}
                                     >
                                         <label className="flex items-center cursor-pointer">
