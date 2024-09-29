@@ -4,13 +4,13 @@ import {getOrgName, getTasks} from "@/app/func/org";
 import Loading from "@/app/components/Loading";
 import SideMenu from "@/app/components/Side-menu";
 import {apiUrl} from "@/app/api/config";
-import axios, {AxiosResponse} from "axios";
+import axios from "axios";
 import Cookies from "js-cookie";
 import AzionEditor from "./_editor/AzionEditor";
 import {Task} from "@/app/types/types";
 import {Poppins} from "next/font/google";
 import {FaArrowAltCircleLeft} from "react-icons/fa";
-import {UserData} from "@/app/func/funcs";
+import {sessionCheck, UserData} from "@/app/func/funcs";
 import Link from "next/link";
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
@@ -33,12 +33,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     const [showFiles, setShowFiles] = useState<boolean>(false);
     const [doneByUser, setDoneByUser] = useState<boolean>(false);
 
-    const SubmitTask = (
-        taskId: string,
-        file: File | null,
-        link: string,
-        editorContent: string
-    ) => {
+    const SubmitTask = (taskId: string, file: File | null, link: string, editorContent: string) => {
         const formData = new FormData();
         formData.append("taskId", taskId);
         formData.append("text", editorContent);
@@ -53,7 +48,6 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
             const blob = new Blob([defaultFileContent], {type: "text/plain"});
             formData.append("file", blob, "AzionLink.txt");
         }
-
         axios
             .put(`${apiUrl}/projects/submit/${taskId}`, formData, {
                 headers: {
@@ -71,43 +65,10 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     };
 
     useEffect(() => {
-        const SessionCheck = () => {
-            const refreshToken = Cookies.get("azionRefreshToken");
-            const accessToken = Cookies.get("azionAccessToken");
-
-            const data = {refreshToken, accessToken};
-
-            const url = `${apiUrl}/token/session/check`;
-            axios
-                .post(url, data, {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                })
-                .then((response: AxiosResponse) => {
-                    const {message, accessToken} = response.data;
-                    if (message === "newAccessToken generated") {
-                        Cookies.set("azionAccessToken", accessToken, {
-                            secure: true,
-                            sameSite: "Strict",
-                        });
-                    }
-                })
-                .catch((error) => {
-                    console.error(error.response ? error.response : error);
-                    Cookies.remove("azionAccessToken");
-                    Cookies.remove("azionRefreshToken");
-                    window.location.href = "/login";
-                });
-        };
-
-        if (!Cookies.get("azionAccessToken") || !Cookies.get("azionRefreshToken")) {
-            window.location.href = "/login";
-        } else if (
-            Cookies.get("azionAccessToken") &&
-            Cookies.get("azionRefreshToken")
-        ) {
-            SessionCheck();
+        if (Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
+            sessionCheck();
+        } else {
+            window.location.href = "/log-in";
         }
     }, []);
 
@@ -157,7 +118,6 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                 setDoneByUser(false);
             }
         };
-
         getUser();
     }, [org, taskId]);
 

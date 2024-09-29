@@ -39,3 +39,9 @@ export interface Task {
     users?: User[];
     doneBy?: User[];
 }
+
+//JWTokens
+export interface Token {
+    refreshToken: string;
+    accessToken: string;
+}

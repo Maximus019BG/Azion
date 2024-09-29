@@ -1,18 +1,18 @@
 "use client";
-import React, { FC, useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
-import { apiUrl } from "@/app/api/config";
-import { Poppins } from "next/font/google";
+import React, {FC, useEffect, useState} from "react";
+import axios, {AxiosResponse} from "axios";
+import {apiUrl} from "@/app/api/config";
+import {Poppins} from "next/font/google";
 import Cookies from "js-cookie";
-import { CheckMFA, PartOfOrg, UserData } from "@/app/func/funcs";
+import {sessionCheck, UserData} from "@/app/func/funcs";
 import Link from "next/link";
 import SideMenu from "@/app/components/Side-menu";
 import OrgDetailsCard from "@/app/layouts/OrgDetailsCard";
-import { getOrgName } from "@/app/func/org";
+import {getOrgName} from "@/app/func/org";
 import Loading from "@/app/components/Loading";
 import SortMenu from "@/app/components/_task/sort-menu";
 
-const headerText = Poppins({ subsets: ["latin"], weight: "900" });
+const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
 interface User {
     name: string;
@@ -40,36 +40,7 @@ interface PageProps {
     };
 }
 
-const SessionCheck = () => {
-    const refreshToken = Cookies.get("azionRefreshToken");
-    const accessToken = Cookies.get("azionAccessToken");
-    PartOfOrg(false);
-    const data = { refreshToken, accessToken };
-    axios
-        .post(`${apiUrl}/token/session/check`, data, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        .then((response: AxiosResponse) => {
-            const { message, accessToken } = response.data;
-
-            if (message === "newAccessToken generated") {
-                Cookies.set("azionAccessToken", accessToken, {
-                    secure: true,
-                    sameSite: "Strict",
-                });
-            }
-        })
-        .catch((error) => {
-            console.error(error.response ? error.response : error);
-            Cookies.remove("azionAccessToken");
-            Cookies.remove("azionRefreshToken");
-            window.location.href = "/login";
-        });
-};
-
-const Tasks: FC<PageProps> = ({ params }) => {
+const Tasks: FC<PageProps> = ({params}) => {
     const [admin, setAdmin] = useState(false);
     const [task, setTask] = useState<Task[]>([]);
     const [orgNameCheck, setOrgNameCheck] = useState<string>("");
@@ -99,7 +70,7 @@ const Tasks: FC<PageProps> = ({ params }) => {
         const refreshToken = Cookies.get("azionRefreshToken");
         const accessToken = Cookies.get("azionAccessToken");
         if (refreshToken && accessToken) {
-            SessionCheck();
+            sessionCheck();
         } else if (!accessToken && !refreshToken) {
             window.location.href = "/login";
         }
@@ -148,7 +119,7 @@ const Tasks: FC<PageProps> = ({ params }) => {
     if (loading) {
         return (
             <div className="w-screen h-screen flex justify-center items-center">
-                <Loading />
+                <Loading/>
             </div>
         );
     }
@@ -156,7 +127,7 @@ const Tasks: FC<PageProps> = ({ params }) => {
     return (
         <div className="w-screen h-screen flex overflow-hidden">
             <div className="w-1/4 min-w-[250px] h-full">
-                <SideMenu />
+                <SideMenu/>
             </div>
             <div className="w-full p-6 overflow-auto flex flex-col items-center">
                 <div className="flex flex-col justify-around items-center gap-10 w-full h-full">

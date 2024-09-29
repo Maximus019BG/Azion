@@ -1,6 +1,6 @@
 "use client";
 import React, {useEffect, useState} from "react";
-import axios, {AxiosResponse} from "axios";
+import axios from "axios";
 import {apiUrl} from "@/app/api/config";
 import {Poppins} from "next/font/google";
 import Cookies from "js-cookie";
@@ -8,41 +8,11 @@ import Link from "next/link";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
 import background from "@/public/background2.jpeg";
-import {CheckMFA, PartOfOrg} from "@/app/func/funcs";
+import {CheckMFA, sessionCheck} from "@/app/func/funcs";
 import ConString from "../../../components/ConString";
 
-const headerText = Poppins({ subsets: ["latin"], weight: "900" });
+const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
-const SessionCheck = () => {
-    const refreshToken = Cookies.get("azionRefreshToken");
-    const accessToken = Cookies.get("azionAccessToken");
-
-    PartOfOrg(false);
-
-    const data = { refreshToken, accessToken };
-    axios
-        .post(`${apiUrl}/token/session/check`, data, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        .then((response: AxiosResponse) => {
-            const { message, accessToken } = response.data;
-
-            if (message === "newAccessToken generated") {
-                Cookies.set("azionAccessToken", accessToken, {
-                    secure: true,
-                    sameSite: "Strict",
-                });
-            }
-        })
-        .catch((error) => {
-            console.error(error.response ? error.response : error);
-            Cookies.remove("azionAccessToken");
-            Cookies.remove("azionRefreshToken");
-            window.location.href = "/login";
-        });
-};
 
 const Register_Organisation = () => {
     const [name, setName] = useState("");
@@ -61,7 +31,8 @@ const Register_Organisation = () => {
         const refreshToken = Cookies.get("azionRefreshToken");
         const accessToken = Cookies.get("azionAccessToken");
         if (refreshToken && accessToken) {
-            SessionCheck();
+            //!User is already logged so it isn't authSessionCheck
+            sessionCheck();
         } else if (!accessToken && !refreshToken) {
             window.location.href = "/login";
         }
@@ -190,7 +161,7 @@ const Register_Organisation = () => {
                     muted
                     preload="auto"
                 >
-                    <source src="/azion.mp4" type="video/mp4" />
+                    <source src="/azion.mp4" type="video/mp4"/>
                     Your browser does not support the video tag.
                 </video>
             </div>
@@ -230,7 +201,7 @@ const Register_Organisation = () => {
                         {/* Form Fields or Thank You Message */}
                         {isSubmitted ? (
                             <div className="fixed inset-32 flex justify-center items-center z-50">
-                                <ConString value={conString} name={name} />
+                                <ConString value={conString} name={name}/>
                             </div>
                         ) : (
                             <div className="w-[30vw] flex flex-col justify-center items-center gap-3">
@@ -240,7 +211,7 @@ const Register_Organisation = () => {
                                         type={field.type || "text"}
                                         value={field.value}
                                         onChange={(e) => field.onChange(e.target.value)}
-                                        style={{ outline: "none" }}
+                                        style={{outline: "none"}}
                                         placeholder={field.label}
                                         className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
                                     />

@@ -1,12 +1,11 @@
 "use client";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import {useSearchParams} from "next/navigation";
+import React, {useState} from "react";
 import axios from "axios";
-import { apiUrl } from "@/app/api/config";
-import { Poppins } from "next/font/google";
+import {apiUrl} from "@/app/api/config";
+import {Poppins} from "next/font/google";
 
-
-const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
+const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
 
 const ResetPassword = () => {
     const searchParams = useSearchParams();
@@ -35,7 +34,7 @@ const ResetPassword = () => {
     return (
         <div className=" w-screen h-screen flex flex-col justify-center items-center">
             <div className=" w-1/3 h-3/4 rounded-badge bg-slate-900 flex flex-col justify-center items-center gap-16">
-            <title >Reset Password</title>
+                <title>Reset Password</title>
                 <h1 className={`text-white text-5xl ${HeaderText.className}`}>Reset Password</h1>
                 <form onSubmit={handleSubmit} className=" flex flex-col justify-center items-center gap-8">
                     <input

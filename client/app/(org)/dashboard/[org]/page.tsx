@@ -1,12 +1,10 @@
 "use client";
 import React, {FC, useEffect, useState} from "react";
-import axios, {AxiosResponse} from "axios";
-import {apiUrl} from "@/app/api/config";
 import {Poppins} from "next/font/google";
 import Cookies from "js-cookie";
 import SideMenu from "../../../components/Side-menu";
 import CircularProgress from "../../../components/diagram";
-import {CheckMFA, PartOfOrg, UserData} from "@/app/func/funcs";
+import {CheckMFA, sessionCheck, UserData} from "@/app/func/funcs";
 import Loading from "../../../components/Loading";
 import {getOrgName} from "@/app/func/org";
 
@@ -23,36 +21,6 @@ interface PageProps {
     };
 }
 
-const SessionCheck = () => {
-    const refreshToken = Cookies.get("azionRefreshToken");
-    const accessToken = Cookies.get("azionAccessToken");
-
-    const data = {refreshToken, accessToken};
-
-    const url = `${apiUrl}/token/session/check`;
-    axios
-        .post(url, data, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        .then((response: AxiosResponse) => {
-            const {message, accessToken} = response.data;
-            if (message === "newAccessToken generated") {
-                Cookies.set("azionAccessToken", accessToken, {
-                    secure: true,
-                    sameSite: "Strict",
-                });
-            }
-        })
-        .catch((error) => {
-            console.error(error.response ? error.response : error);
-            Cookies.remove("azionAccessToken");
-            Cookies.remove("azionRefreshToken");
-            window.location.href = "/login";
-        });
-};
-
 const Dashboard: FC<PageProps> = ({params}) => {
     const [displayName, setDisplayName] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
@@ -66,7 +34,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
                 const refreshToken = Cookies.get("azionRefreshToken");
                 const accessToken = Cookies.get("azionAccessToken");
                 if (refreshToken && accessToken) {
-                    SessionCheck();
+                    sessionCheck();
                     UserData().then((data) => {
                         setDisplayName(data.name);
                     });
