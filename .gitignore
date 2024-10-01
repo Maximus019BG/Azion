@@ -83,3 +83,9 @@ build/
 /server/Azion/src/main/java/com/azion/Azion/cpp/out/*
 /server/Azion/src/main/java/com/azion/Azion/cpp/CMakeFiles/
 /server/Azion/src/main/java/com/azion/Azion/cpp/CMakeFiles/*
+/desktop/Output/
+/desktop/Azion Desktop/packages/Microsoft.Web.WebView2.1.0.2739.15/build/
+/desktop/Azion Desktop/Azion Desktop/bin/
+/desktop/Output/
+/desktop/Azion Desktop/.vs/
+/client/azion-f/app/func/key.config.js

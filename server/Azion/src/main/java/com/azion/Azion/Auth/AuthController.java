@@ -96,6 +96,7 @@ public class AuthController {
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
         log.debug("User registered");
+        emailService.welcomeEmail(user.getEmail(),user.getName());
         return ResponseEntity.ok(tokens);
     }
     
@@ -130,7 +131,7 @@ public class AuthController {
                 Map<String, String> tokens = new HashMap<>();
                 tokens.put("accessToken", accessToken);
                 tokens.put("refreshToken", refreshToken);
-                
+                emailService.sendLoginEmail(user.getEmail(),"normal login method",user.getName());
                 return ResponseEntity.ok(tokens);
             }
             
@@ -141,7 +142,9 @@ public class AuthController {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
-
+        
+        emailService.sendLoginEmail(user.getEmail(),"fast login method",user.getName());
+        
         return ResponseEntity.ok(tokens);
     }
     
@@ -173,6 +176,8 @@ public class AuthController {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
+        
+        emailService.sendEmail(user.getEmail(),"faceID login method",user.getName());
         return ResponseEntity.ok(tokens);
     }
     
