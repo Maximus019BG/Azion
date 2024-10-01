@@ -2,15 +2,15 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Azion Desktop"
-#define MyAppVersion "1.0"
-#define MyAppPublisher "Azion"
+#define MyAppVersion "0.1.1"
+#define MyAppPublisher "Azion Inc."
 #define MyAppExeName "Azion Desktop.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{B2426705-A6E8-442E-8B9D-A1C9E15A53DE}
+AppId={{6A41E169-F235-462B-B29D-D26BCED42837}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -18,15 +18,15 @@ AppPublisher={#MyAppPublisher}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-OutputBaseFilename=Azion_setup
+OutputBaseFilename=azion_setup
+SetupIconFile=D:\Azion\desktop\Azion Desktop\Azion Desktop\logo.ico
 Compression=lzma
 SolidCompression=yes
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "bulgarian"; MessagesFile: "compiler:Languages\Bulgarian.isl"
-Name: "dutch"; MessagesFile: "compiler:Languages\Dutch.isl"
-Name: "german"; MessagesFile: "compiler:Languages\German.isl"
+Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 
 [Tasks]
@@ -35,6 +35,8 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\Azion Desktop.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\Azion Desktop.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Azion\desktop\Azion Desktop\Azion Desktop\bin\Debug\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

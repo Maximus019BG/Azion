@@ -33,6 +33,8 @@ namespace Azion_Desktop
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+            Application.Current.Shutdown();
+       
         }
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
