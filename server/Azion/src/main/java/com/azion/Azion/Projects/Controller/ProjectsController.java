@@ -117,8 +117,7 @@ public class ProjectsController extends FileSize {
             users.add(u);
         }
         project.setUsers(users);
-        
-        projectsService.saveProject(project);
+        projectsRepository.save(project);
         
         return ResponseEntity.status(HttpStatus.CREATED).body("Project created successfully");
     }

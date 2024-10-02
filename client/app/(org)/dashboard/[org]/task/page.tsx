@@ -11,28 +11,9 @@ import OrgDetailsCard from "@/app/layouts/OrgDetailsCard";
 import {getOrgName} from "@/app/func/org";
 import Loading from "@/app/components/Loading";
 import SortMenu from "@/app/components/_task/sort-menu";
+import {Task} from "@/app/types/types";
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
-
-interface User {
-    name: string;
-    email: string;
-    age: string;
-    role: string;
-    orgid: string;
-    projects: any;
-}
-
-interface Task {
-    id: string;
-    name: string;
-    description: string;
-    email: string;
-    status: string;
-    date: string;
-    priority: string;
-    createdBy: User;
-}
 
 interface PageProps {
     params: {
@@ -47,6 +28,7 @@ const Tasks: FC<PageProps> = ({params}) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [sortCriteria, setSortCriteria] = useState<string>("date");
     const [sortOrder, setSortOrder] = useState<string>("asc");
+    const [currentUserEmail, setCurrentUserEmail] = useState<string>("");
     const orgName = params.org;
 
     const GetTasks = () => {
@@ -81,6 +63,7 @@ const Tasks: FC<PageProps> = ({params}) => {
         if (data.roleLevel >= 1 && data.roleLevel <= 3) {
             setAdmin(true);
         }
+        setCurrentUserEmail(data.email);
     });
 
     useEffect(() => {
@@ -146,9 +129,10 @@ const Tasks: FC<PageProps> = ({params}) => {
                                 description={task.description}
                                 status={task.status}
                                 data={task.date}
-                                createdBy={task.createdBy.name}
+                                createdBy={task.createdBy?.name}
                                 priority={task.priority}
                                 onClick={() => goToTask(task.id)}
+                                isCreator={task.createdBy?.email === currentUserEmail}
                             />
                         ))}
                     </div>
