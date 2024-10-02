@@ -88,7 +88,10 @@ const ChatPage = () => {
                     if (message.body) {
                         const newMessage = JSON.parse(message.body);
                         const decryptedContent = Decrypt(newMessage.content);
-                        setMessages((prevMessages) => [...prevMessages, {content: decryptedContent, from: newMessage.from}]);
+                        setMessages((prevMessages) => [...prevMessages, {
+                            content: decryptedContent,
+                            from: newMessage.from
+                        }]);
                     }
                 });
             },
@@ -170,7 +173,8 @@ const ChatPage = () => {
                             <h3 className="text-xl font-semibold text-white">{selectedUser.name}</h3>
                         </div>
 
-                        <div className="overflow-y-auto h-[80vh] mb-4 border border-gray-600 p-4 rounded-lg bg-gray-800">
+                        <div
+                            className="overflow-y-auto h-[80vh] mb-4 border border-gray-600 p-4 rounded-lg bg-gray-800">
                             <div className="flex flex-col space-y-3">
                                 {messages
                                     .filter((msg) => msg.from === selectedUser.email || msg.from === userEmail)
@@ -180,11 +184,12 @@ const ChatPage = () => {
                                             className={`flex ${msg.from === userEmail ? "justify-end" : "justify-start"}`}
                                         >
                                             <div
-                                                className={`p-3 rounded-lg max-w-xs text-sm ${
+                                                className={`p-3 rounded-badge max-w-xs text-sm rounded-br-none ${
                                                     msg.from === userEmail
                                                         ? "bg-blue-500 text-white shadow-lg"
                                                         : "bg-gray-300 text-gray-800 shadow-lg"
                                                 }`}
+                                                style={{wordBreak: "break-word", overflowWrap: "break-word"}}
                                             >
                                                 {msg.content}
                                             </div>
@@ -211,7 +216,7 @@ const ChatPage = () => {
                         </div>
                     </>
                 ) : (
-                    <div className="text-center text-gray-400 text-lg">Select a user to start chatting.</div>
+                    <div className="text-center text-g  ray-400 text-lg">Select a user to start chatting.</div>
                 )}
             </div>
         </div>

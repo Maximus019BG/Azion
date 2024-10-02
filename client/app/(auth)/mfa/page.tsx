@@ -6,6 +6,7 @@ import Image from "next/image";
 import OTP from "../../components/OTP";
 import {apiUrl} from "../../api/config";
 import {mfaSessionCheck} from "../../func/funcs";
+import Loading from "../../components/Loading";
 
 const VerifyMFAAxios = (data: any) => {
     axios
@@ -108,7 +109,7 @@ const MfaSetupPage = () => {
         fetchQrCodeUri(accessToken);
     }, []);
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <Loading/>;
     if (error) return <p>Error: {error}</p>;
 
     return (
