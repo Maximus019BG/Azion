@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name="projects_azion")
+@Table(name = "projects_azion")
 public class Project {
     
     @Id
@@ -23,7 +23,7 @@ public class Project {
     @Column(nullable = false)
     private String description;
     
-    @Column(nullable = false)
+    @Column(nullable = false, name = "date")
     private LocalDate date;
     
     @Column(nullable = false)
@@ -58,6 +58,17 @@ public class Project {
     @OneToMany
     private List<ProjectFiles> projectFiles;
     
+    
+    public Project() {
+    }
+    
+    public Project(String name, String description, LocalDate date, Set<User> users, Org org) {
+        setName(name);
+        setDescription(description);
+        setDate(date);
+        setUsers(users);
+        setOrg(org);
+    }
     
     @PrePersist
     public void generateId() {
@@ -129,7 +140,6 @@ public class Project {
         this.doneBy = doneBy;
     }
     
- 
     public int getProgress() {
         return progress;
     }
@@ -150,6 +160,10 @@ public class Project {
         return source;
     }
     
+    public void setSource(String source) {
+        this.source = source;
+    }
+    
     public User getCreatedBy() {
         return createdBy;
     }
@@ -158,27 +172,12 @@ public class Project {
         this.createdBy = createdBy;
     }
     
-    public void setSource(String source) {
-        this.source = source;
-    }
-    
     public List<ProjectFiles> getFiles() {
         return projectFiles;
     }
     
     public void setFiles(List<ProjectFiles> projectFiles) {
         this.projectFiles = projectFiles;
-    }
-    
-    
-    public Project() {
-    }
-    public Project(String name, String description, LocalDate date, Set<User> users,Org org) {
-        setName(name);
-        setDescription(description);
-        setDate(date);
-        setUsers(users);
-        setOrg(org);
     }
     
 }

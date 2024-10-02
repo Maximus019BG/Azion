@@ -32,6 +32,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     const [editorContent, setEditorContent] = useState<string>("");
     const [showFiles, setShowFiles] = useState<boolean>(false);
     const [doneByUser, setDoneByUser] = useState<boolean>(false);
+    const [admin, setAdmin] = useState<boolean>(false)
     const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
 
     const SubmitTask = (taskId: string, file: File | null, link: string, editorContent: string) => {
@@ -109,6 +110,13 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
         const getUser = async () => {
             const result = await UserData();
             const uEmail = result.email;
+
+            //!Set who can see the submitted files
+            if (task?.createdBy?.email === uEmail)
+                setAdmin(true)
+            else if (result.roleLevel === 1 || result.roleLevel === 2)
+                setAdmin(true)
+
             if (
                 task &&
                 task.doneBy &&
@@ -178,7 +186,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                     </div>
 
                     {/* Task submission section */}
-                    {!task.status.toLowerCase().includes("done") && (
+                    {!task.status.toLowerCase().includes("done") && !admin && (
                         <div className="mt-6">
                             <div className="mb-4">
                                 <label className="inline-flex items-center mr-4">
@@ -269,8 +277,8 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                 </div>
 
                 {/* File view for creators */}
-                {task.isCreator && (
-                    <div className="fixed top-10 right-10">
+                {admin && (
+                    <div className="fixed top-10 right-10 z-10">
                         <button
                             onClick={() => setShowFiles(!showFiles)}
                             className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-md mb-4"
@@ -292,6 +300,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                                         >
                                             {file.fileName}
                                         </a>
+                                        <h3>{file.date}</h3>
                                     </div>
                                 ))}
                             </div>

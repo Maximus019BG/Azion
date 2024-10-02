@@ -13,6 +13,7 @@ export interface ProjFile {
     fileData?: string;
     fileName?: string;
     link?: string;
+    date?: string;
     user: User;
     submittedDate: string;
     projectID: string;

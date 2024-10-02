@@ -1,36 +1,34 @@
 package com.azion.Azion.Projects.Controller;
 
 import com.azion.Azion.Exception.FileSize;
+import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.Org.Repository.OrgRepository;
 import com.azion.Azion.Projects.Model.DTO.FileDTO;
 import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
-import com.azion.Azion.Projects.Model.ProjectFiles;
 import com.azion.Azion.Projects.Model.Project;
+import com.azion.Azion.Projects.Model.ProjectFiles;
 import com.azion.Azion.Projects.Repository.FileRepo;
 import com.azion.Azion.Projects.Repository.ProjectsRepository;
 import com.azion.Azion.Projects.Service.ProjectsService;
 import com.azion.Azion.Projects.Type.SubmitType;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.DTO.UserDTO;
+import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.MediaType;
-
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-
-import com.azion.Azion.Org.Model.Org;
-import com.azion.Azion.User.Model.User;
-import org.springframework.web.multipart.MultipartFile;
 
 
 @Slf4j
@@ -170,7 +168,9 @@ public class ProjectsController extends FileSize {
             if (project.get().getCreatedBy().getEmail().equals(user.getEmail()) || (user.getRoleLevel() >= 1 && user.getRoleLevel() <= 3) && user.getOrgid().equals(project.get().getOrg().getOrgID())) {
                 projectDTO.setIsCreator(true);
                 projectDTO.setUsers(projectsService.convertToUserDTOSet(project.get().getUsers()));
-                projectDTO.setFiles(convertToFileDTO(project.get().getFiles()));
+                if (project.get().getFiles() != null) {
+                    projectDTO.setFiles(convertToFileDTO(project.get().getFiles()));
+                }
             } else {
                 projectDTO.setIsCreator(false);
                 projectDTO.setUsers(null);
@@ -207,6 +207,7 @@ public class ProjectsController extends FileSize {
             dto.setProjectID(file.getProjectID());
             dto.setFileName(file.getFileName());
             dto.setContentType(file.getContentType());
+            dto.setDate(file.getDate().toString());
             dtos.add(dto);
         }
         
@@ -261,6 +262,7 @@ public class ProjectsController extends FileSize {
                 }
                 
                 fileObj.setUser(user);
+                fileObj.setDate(LocalDate.now());
                 fileRepo.save(fileObj);
                 
                 Project proj = project.get();
