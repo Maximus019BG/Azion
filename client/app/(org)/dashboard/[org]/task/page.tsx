@@ -110,10 +110,10 @@ const Tasks: FC<PageProps> = ({params}) => {
 
     return (
         <div className="w-screen h-screen flex overflow-hidden">
-            <div className="w-1/4 min-w-[250px] h-full">
+            <div className="w-fit min-w-[250px] h-full">
                 <SideMenu/>
             </div>
-            <div className="w-full p-6 overflow-auto flex flex-col items-center">
+            <div className="w-full h-full py-6 overflow-auto flex flex-col items-center">
                 <div className="flex flex-col justify-around items-center gap-10 ">
                     <h1 className="text-5xl font-black mt-16">Your tasks:</h1>
                     <SortMenu

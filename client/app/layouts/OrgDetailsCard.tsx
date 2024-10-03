@@ -72,7 +72,7 @@ const OrgDetailsCard: React.FC<Task> = ({
                             <span className="text-xs">&nbsp;(you)</span>
                             <FaInfoCircle className="ml-1 cursor-pointer"/>
                             <div
-                                className="absolute hidden group-hover:block left-full top-1/2 transform -translate-y-1/2 ml-2 bg-gray-700 text-white text-xs rounded py-1 px-2 z-10 max-w-xs">
+                                className="absolute hidden group-hover:block left-full top-1/2 transform -translate-y-1/2 ml-2 bg-gray-800 text-white text-xs rounded-lg py-2 px-4 shadow-lg z-10 max-w-xs">
                                 You are the creator of this task
                             </div>
                         </div>

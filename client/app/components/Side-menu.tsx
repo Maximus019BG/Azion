@@ -120,8 +120,8 @@ const SideMenu = () => {
                                         )}
                                     </div>
                                     {isDashboardOpen && admin && (
-                                        <ul className="mt-2 space-y-2 w-full">
-                                            <li className="p-2 text-md w-full">
+                                        <ul className=" w-full">
+                                            <li className=" py-1 text-md w-full">
                                                 <Link
                                                     href={`/dashboard/${org}/settings`}
                                                     className="flex items-center w-full"
@@ -130,7 +130,7 @@ const SideMenu = () => {
                                                     Settings
                                                 </Link>
                                             </li>
-                                            <li className="p-2 text-md w-full">
+                                            <li className="text-md w-full">
                                                 <Link
                                                     href={`/dashboard/${org}/settings/roles`}
                                                     className="flex items-center w-full"
@@ -144,7 +144,7 @@ const SideMenu = () => {
                                 </li>
 
                                 {/* Tasks Dropdown */}
-                                <li className=" text-md w-full relative">
+                                <li className="text-md w-full relative">
                                     <div className="flex items-center justify-between w-full">
                                         {admin && (
                                             <button
@@ -171,8 +171,8 @@ const SideMenu = () => {
                                         )}
                                     </div>
                                     {isTasksOpen && admin && (
-                                        <ul className="mt-2 space-y-2 w-full">
-                                            <li className="p-2 text-md w-full">
+                                        <ul className=" w-full">
+                                            <li className="py-1 text-md w-full">
                                                 <Link
                                                     href={`/dashboard/${org}/task`}
                                                     className="flex items-center w-full"
@@ -182,7 +182,7 @@ const SideMenu = () => {
                                                 </Link>
                                             </li>
                                             {admin && (
-                                                <li className="p-2 text-md w-full">
+                                                <li className="text-md w-full">
                                                     <Link
                                                         href={`/dashboard/${org}/task/create`}
                                                         className="flex items-center w-full"
