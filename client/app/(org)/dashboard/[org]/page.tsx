@@ -3,10 +3,10 @@ import React, {FC, useEffect, useState} from "react";
 import {Poppins} from "next/font/google";
 import Cookies from "js-cookie";
 import SideMenu from "../../../components/Side-menu";
-import CircularProgress from "../../../components/diagram";
 import {CheckMFA, sessionCheck, UserData} from "@/app/func/funcs";
 import Loading from "../../../components/Loading";
 import {getOrgName} from "@/app/func/org";
+import DashBoard_Task_Card from "@/app/components/Dashboard_Task_Card";
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
@@ -72,20 +72,25 @@ const Dashboard: FC<PageProps> = ({params}) => {
                     <Loading/>
                 </div>
             ) : (
-                <div className="w-screen h-screen flex flex-col justify-center items-center">
+                <div className="w-screen h-screen  flex flex-col justify-center items-center">
                     <div className="absolute left-0">
                         <SideMenu/>
                     </div>
-                    <h2>Organization {orgNameCheck}</h2>
+                    <h2 className={`${headerText.className} absolute top-12 left-96 text-4xl gap-3 text-white p-8 w-fit flex justify-center items-center`}>
+                        Dashboard
+                        {/*<span>{orgNameCheck}</span>*/}
+                    </h2>
                     <h1
                         className={`${headerText.className} w-[35vw] h-32 flex justify-center items-center text-foreground m-16 text-5xl`}
                     >
-                        Hi, {displayName}!
+
                     </h1>
 
                     {/* Diagrams */}
                     <div className="flex justify-center items-center">
-                        <CircularProgress percentage={35} size={200} strokeWidth={4}/>
+                        {/*<CircularProgress percentage={35} size={200} strokeWidth={4}/>*/}
+                        <DashBoard_Task_Card/>
+                        {/*<Dashboard_Program_Card/>*/}
                     </div>
                 </div>
             )}
