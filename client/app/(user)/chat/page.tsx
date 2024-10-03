@@ -10,6 +10,9 @@ import DefaultPic from "@/public/user.png";
 import Cookies from "js-cookie";
 import Image from "next/image";
 import {Decrypt, Encrypt} from "@/app/func/msg";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
 const ChatPage = () => {
     const [messages, setMessages] = useState<{ content: string; from: string }[]>([]);
@@ -134,6 +137,12 @@ const ChatPage = () => {
         <div className="flex bg-gray-900 text-white min-h-screen">
             {/* User List */}
             <div className="w-1/3 max-w-xs border-r border-gray-600 p-6">
+                <Link className="absolute right-6 top-6" href="/dashboard/org">
+                    <FontAwesomeIcon
+                        className="text-4xl bg-white rounded-full text-lightAccent"
+                        icon={faCircleLeft}
+                    />
+                </Link>
                 <h2 className="text-4xl font-bold mb-6 text-center">Direct Messages</h2>
                 <h3 className="text-lg font-medium mb-4 text-center">Users to Chat:</h3>
                 <div className="space-y-4">
@@ -149,10 +158,13 @@ const ChatPage = () => {
                                 width={40}
                                 height={40}
                                 className="w-10 h-10 rounded-full"
+                                onError={(e) => {
+                                    e.currentTarget.src = defaultImageSrc;
+                                }}
                             />
                             <span className="text-base hover:text-blue-400">
-            {user.name} <span className="text-sm text-gray-400">({user.email})</span>
-          </span>
+                                {user.name} <span className="text-sm text-gray-400">({user.email})</span>
+                            </span>
                         </div>
                     ))}
                 </div>
@@ -169,6 +181,9 @@ const ChatPage = () => {
                                 width={56}
                                 height={56}
                                 className="rounded-full mr-3"
+                                onError={(e) => {
+                                    e.currentTarget.src = defaultImageSrc;
+                                }}
                             />
                             <h3 className="text-xl font-semibold text-white">{selectedUser.name}</h3>
                         </div>
@@ -184,10 +199,10 @@ const ChatPage = () => {
                                             className={`flex ${msg.from === userEmail ? "justify-end" : "justify-start"}`}
                                         >
                                             <div
-                                                className={`p-3 rounded-badge max-w-xs text-sm rounded-br-none ${
+                                                className={`p-3 rounded-badge text-sm  ${
                                                     msg.from === userEmail
-                                                        ? "bg-blue-500 text-white shadow-lg"
-                                                        : "bg-gray-300 text-gray-800 shadow-lg"
+                                                        ? "bg-blue-500 text-white shadow-lg w-36 flex justify-center items-center rounded-br-none"
+                                                        : "bg-gray-300 text-gray-800 w-36 flex justify-center items-center shadow-lg rounded-bl-none"
                                                 }`}
                                                 style={{wordBreak: "break-word", overflowWrap: "break-word"}}
                                             >
@@ -216,7 +231,7 @@ const ChatPage = () => {
                         </div>
                     </>
                 ) : (
-                    <div className="text-center text-g  ray-400 text-lg">Select a user to start chatting.</div>
+                    <div className="text-center text-gray-400 text-lg">Select a user to start chatting.</div>
                 )}
             </div>
         </div>
