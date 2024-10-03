@@ -29,20 +29,31 @@ const getPriorityIcon = (priority: string) => {
     }
 };
 
-const OrgDetailsCard: React.FC<Task> = ({title, description, status, data, priority, createdBy, onClick, isCreator}) => {
+const OrgDetailsCard: React.FC<Task> = ({
+                                            title,
+                                            description,
+                                            status,
+                                            data,
+                                            priority,
+                                            createdBy,
+                                            onClick,
+                                            isCreator
+                                        }) => {
     return (
         <div
-            className="w-1/4 rounded-lg overflow-hidden shadow-lg p-6 bg-lightAccent hover:bg-lightAccentHover cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 relative"
+            className="w-1/4 rounded-lg overflow-hidden shadow-lg p-6 bg-base-100 cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 relative"
             onClick={onClick}
         >
             <div className="absolute top-4 right-4 flex items-center group">
                 {getPriorityIcon(priority)}
-                <div className="absolute top-0 right-0 mt-6 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">
+                <div
+                    className="absolute top-0 right-0 mt-6 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">
                     Priority: {priority.toUpperCase()}
                 </div>
             </div>
             <div className="w-full p-2">
-                <div className="font-bold text-xl mb-4 flex items-center text-white">
+                <div
+                    className="font-bold text-xl mb-4 flex items-center text-white">
                     <FaBuilding className="mr-2"/> {title}
                 </div>
                 <p className="text-gray-200 text-base flex items-center mb-2">
@@ -60,7 +71,8 @@ const OrgDetailsCard: React.FC<Task> = ({title, description, status, data, prior
                         <div className="relative inline-flex items-center group">
                             <span className="text-xs">&nbsp;(you)</span>
                             <FaInfoCircle className="ml-1 cursor-pointer"/>
-                            <div className="absolute hidden group-hover:block left-full top-1/2 transform -translate-y-1/2 ml-2 bg-gray-700 text-white text-xs rounded py-1 px-2 z-10 max-w-xs">
+                            <div
+                                className="absolute hidden group-hover:block left-full top-1/2 transform -translate-y-1/2 ml-2 bg-gray-700 text-white text-xs rounded py-1 px-2 z-10 max-w-xs">
                                 You are the creator of this task
                             </div>
                         </div>

@@ -1,4 +1,5 @@
 "use client";
+
 import React, {FC, useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {apiUrl} from "@/app/api/config";
@@ -113,7 +114,7 @@ const Tasks: FC<PageProps> = ({params}) => {
                 <SideMenu/>
             </div>
             <div className="w-full p-6 overflow-auto flex flex-col items-center">
-                <div className="flex flex-col justify-around items-center gap-10 w-full h-full">
+                <div className="flex flex-col justify-around items-center gap-10 ">
                     <h1 className="text-5xl font-black mt-16">Your tasks:</h1>
                     <SortMenu
                         sortCriteria={sortCriteria}
@@ -121,7 +122,7 @@ const Tasks: FC<PageProps> = ({params}) => {
                         setSortCriteria={setSortCriteria}
                         setSortOrder={setSortOrder}
                     />
-                    <div className="w-full flex flex-wrap justify-center items-center gap-16">
+                    <div className="w-full flex flex-wrap justify-center items-center gap-5">
                         {sortTasks(task).map((task) => (
                             <OrgDetailsCard
                                 key={task.id}
@@ -138,7 +139,7 @@ const Tasks: FC<PageProps> = ({params}) => {
                     </div>
                     {admin && (
                         <Link
-                            className={` w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] flex justify-center items-center ${headerText.className}`}
+                            className={`px-16 py-3 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] flex justify-center items-center ${headerText.className}`}
                             href={`/dashboard/${orgNameCheck}/task/create`}
                         >
                             Create task
