@@ -18,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,45 +46,6 @@ public class ProjectsService {
         return file;
     }
     
-    //!File scan with VirusTotal API
-    public static String scanFile(File file) throws IOException {
-        OkHttpClient client = new OkHttpClient();
-        
-        MediaType mediaType = MediaType.parse("multipart/form-data; boundary=---011000010111000001101001");
-        RequestBody fileBody = RequestBody.create(file, MediaType.parse("application/octet-stream"));
-        RequestBody body = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("file", file.getName(), fileBody)
-                .build();
-        
-        Request request = new Request.Builder()
-                .url(VIRUSTOTAL_URL)
-                .post(body)
-                .addHeader("accept", "application/json")
-                .addHeader("x-apikey", API_KEY)
-                .build();
-        
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Failed to scan file: " + response.code());
-            }
-            return response.body().string();
-        }
-    }
-    
-    @Transactional
-    public List<ProjectsDTO> getProjectByUser(User user) {
-        List<Project> projectsAssigned = projectsRepository.findByUsers(user); //!Projects the user is assigned to do
-        List<Project> projectsCreatedBy = projectsRepository.findProjectByCreatedBy(user); //!Project the user has created
-        
-        //*Join and return
-        List<Project> projects = new ArrayList<>(projectsCreatedBy);
-        projects.addAll(projectsAssigned);
-        
-        return projects.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
     
     //!Proj to Data Transfer Object
     private ProjectsDTO convertToDTO(Project project) {
@@ -128,12 +90,6 @@ public class ProjectsService {
         return dto;
     }
     
-    public Set<UserDTO> convertToUserDTOSet(Set<User> users) {
-        return users.stream()
-                .map(this::convertToUserDTO)
-                .collect(Collectors.toSet());
-    }
-    
     //!Date validation
     public boolean dateIsValid(LocalDate date, boolean isPastDate) {
         if (date == null) {
@@ -149,6 +105,74 @@ public class ProjectsService {
             return date.isAfter(LocalDate.now()) || date.isEqual(LocalDate.now());
         }
         return true;
+    }
+    
+    
+    //*List top 3 projects by
+    public List<ProjectsDTO> sortProjectsByDate(List<Project> projects) {
+        projects.sort(Comparator
+                .comparing(Project::getDate) //!Compare by date
+                .thenComparing(Comparator.comparing(Project::getPriority).reversed()) //!Compare by priority
+        );
+        List<ProjectsDTO> topProjects = new ArrayList<>();
+        
+        if (projects.size() >= 3) {
+            topProjects.add(convertToDTO(projects.get(0)));
+            topProjects.add(convertToDTO(projects.get(1)));
+            topProjects.add(convertToDTO(projects.get(2)));
+        } else {
+            for (Project project : projects) {
+                topProjects.add(convertToDTO(project));
+            }
+        }
+        return topProjects;
+    }
+    
+    public Set<UserDTO> convertToUserDTOSet(Set<User> users) {
+        return users.stream()
+                .map(this::convertToUserDTO)
+                .collect(Collectors.toSet());
+    }
+    
+    @Transactional
+    public List<ProjectsDTO> getProjectByUser(User user) {
+        List<Project> projectsAssigned = projectsRepository.findByUsers(user); //!Projects the user is assigned to do
+        List<Project> projectsCreatedBy = projectsRepository.findProjectByCreatedBy(user); //!Project the user has created
+        
+        //*Join and return
+        List<Project> projects = new ArrayList<>(projectsCreatedBy);
+        projects.addAll(projectsAssigned);
+        
+        return projects.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+    
+    
+    //!File scan with VirusTotal API
+    public static String scanFile(File file) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        
+        MediaType mediaType = MediaType.parse("multipart/form-data; boundary=---011000010111000001101001");
+        RequestBody fileBody = RequestBody.create(file, MediaType.parse("application/octet-stream"));
+        RequestBody body = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", file.getName(), fileBody)
+                .build();
+        
+        Request request = new Request.Builder()
+                .url(VIRUSTOTAL_URL)
+                .post(body)
+                .addHeader("accept", "application/json")
+                .addHeader("x-apikey", API_KEY)
+                .build();
+        
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Failed to scan file: " + response.code());
+            }
+            return response.body().string();
+        }
     }
     
     //*ProjectFiles safety checks with VT API

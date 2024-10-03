@@ -303,4 +303,23 @@ public class ProjectsController extends FileSize {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Project not found");
     }
+    
+    //*List top projects
+    @Transactional
+    @GetMapping("top/{accessToken}")
+    public ResponseEntity<?> topProjects(@PathVariable String accessToken) {
+        if (accessToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+        }
+        User user = tokenService.getUserFromToken(accessToken);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+        List<Project> projects = projectsRepository.findByUsers(user);
+        if (projects.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("projects not found");
+        }
+        
+        return ResponseEntity.ok(projectsService.sortProjectsByDate(projects));
+    }
 }
