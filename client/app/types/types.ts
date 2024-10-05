@@ -46,3 +46,15 @@ export interface Token {
     refreshToken: string;
     accessToken: string;
 }
+
+export interface Employee{
+    id: string;
+    name: string;
+    email: string;
+    age: string;
+    role: string;
+    orgid: string;
+    roleLevel: number|undefined;
+    profilePicture?: string;
+    projects?: any;
+}
