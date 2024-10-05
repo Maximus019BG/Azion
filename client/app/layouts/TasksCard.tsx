@@ -29,16 +29,16 @@ const getPriorityIcon = (priority: string) => {
     }
 };
 
-const OrgDetailsCard: React.FC<Task> = ({
-                                            title,
-                                            description,
-                                            status,
-                                            data,
-                                            priority,
-                                            createdBy,
-                                            onClick,
-                                            isCreator
-                                        }) => {
+const TasksCard: React.FC<Task> = ({
+                                       title,
+                                       description,
+                                       status,
+                                       data,
+                                       priority,
+                                       createdBy,
+                                       onClick,
+                                       isCreator
+                                   }) => {
     return (
         <div
             className="w-1/4 rounded-lg overflow-hidden shadow-lg p-6 bg-base-100 cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 relative"
@@ -51,7 +51,7 @@ const OrgDetailsCard: React.FC<Task> = ({
                     Priority: {priority.toUpperCase()}
                 </div>
             </div>
-            <div className="w-full p-2">
+            <div className="min-w-96 p-2">
                 <div
                     className="font-bold text-xl mb-4 flex items-center text-white">
                     <FaBuilding className="mr-2"/> {title}
@@ -84,4 +84,4 @@ const OrgDetailsCard: React.FC<Task> = ({
     );
 };
 
-export default OrgDetailsCard;
+export default TasksCard;

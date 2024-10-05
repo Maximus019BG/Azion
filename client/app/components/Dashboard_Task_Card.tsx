@@ -27,19 +27,42 @@ const Dashboard_Task_Card = () => {
         GetTopProject();
     }, []);
 
+    const getPriorityColor = (priority: string) => {
+        switch (priority.toLowerCase()) {
+            case 'high':
+                return 'text-orange-500';
+            case 'very_high':
+                return 'text-red-500';
+            case 'low':
+                return 'text-green-500';
+            case 'medium':
+                return 'text-yellow-500';
+            default:
+                return 'text-gray-500';
+        }
+    };
+
     return (
         <div className="card bg-base-100 w-96 shadow-xl">
             <div className="card-body">
                 {loading ? (
-                    <p>Loading tasks...</p>
+                    <div className="flex w-52 flex-col gap-4">
+                        <div className="skeleton h-32 w-full"></div>
+                        <div className="skeleton h-4 w-28"></div>
+                        <div className="skeleton h-4 w-full"></div>
+                        <div className="skeleton h-4 w-full"></div>
+                    </div>
                 ) : tasks.length > 0 ? (
                     tasks.map((task) => (
                         <div key={task.id} className="mb-4">
                             <h2 className="text-xl font-bold">{task.name}</h2>
-                            <p>{task.description}</p>
-                            <p><strong>Status:</strong> {task.status}</p>
                             <p><strong>Date:</strong> {task.date}</p>
-                            <p><strong>Priority:</strong> {task.priority}</p>
+                            <p>
+                                <strong>Priority:</strong>
+                                <span className={getPriorityColor(task.priority)}>
+                                {task.priority}
+                            </span>
+                            </p>
                         </div>
                     ))
                 ) : (

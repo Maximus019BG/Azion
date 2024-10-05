@@ -59,7 +59,7 @@ const DisplayEmployee: React.FC<Employee> = ({
     };
 
     return (
-        <div className="mb-3">
+        <div className="w-full">
             <div className="bg-slate-900 collapse">
                 <input
                     type="checkbox"

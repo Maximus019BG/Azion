@@ -4,9 +4,9 @@ import {Poppins} from "next/font/google";
 import Cookies from "js-cookie";
 import SideMenu from "../../../components/Side-menu";
 import {CheckMFA, sessionCheck, UserData} from "@/app/func/funcs";
-import Loading from "../../../components/Loading";
 import {getOrgName} from "@/app/func/org";
 import DashBoard_Task_Card from "@/app/components/Dashboard_Task_Card";
+import Loading from "@/app/components/Loading";
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 

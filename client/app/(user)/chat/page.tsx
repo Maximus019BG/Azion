@@ -179,7 +179,7 @@ const ChatPage = () => {
                         </div>
 
                         <div
-                            className="overflow-y-auto h-[80vh] mb-4 border border-gray-600 p-4 rounded-lg bg-gray-800">
+                            className="h-[77vh] mb-4 border border-gray-600 p-4 rounded-lg bg-gray-800">
                             <div className="flex flex-col space-y-3">
                                 {messages
                                     .filter((msg) => msg.from === selectedUser.email || msg.from === userEmail)
