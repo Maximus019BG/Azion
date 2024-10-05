@@ -19,4 +19,14 @@ module.exports = {
     },
   },
   plugins: [require('daisyui'),],
+  daisyui: {
+    themes: [
+      {
+        dark: {
+          ...require("daisyui/src/theming/themes")["dark"],
+          accent: "#0ea5e9",
+        }
+      }
+    ]
+  },
 };
