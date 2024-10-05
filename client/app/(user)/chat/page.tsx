@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from "react";
 import {Client} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import {sessionCheck, UserData} from "@/app/func/funcs";
+import {byteArrayToBase64, sessionCheck, UserData} from "@/app/func/funcs";
 import {apiUrl, chatUrl} from "@/app/api/config";
 import {User} from "@/app/types/types";
 import axios, {AxiosResponse} from "axios";
@@ -24,16 +24,6 @@ const ChatPage = () => {
     const [profilePictureSrcs, setProfilePictureSrcs] = useState<{ [key: string]: string }>({});
     const defaultImageSrc = typeof DefaultPic === 'string' ? DefaultPic : DefaultPic.src;
 
-    const byteArrayToBase64 = async (byteArray: number[]): Promise<string> => {
-        const uint8Array = new Uint8Array(byteArray);
-        const blob = new Blob([uint8Array], {type: 'image/jpeg'});
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
-    };
 
     const getProfilePictureSrc = async (profilePicture: string | null): Promise<string | null> => {
         if (profilePicture) {
