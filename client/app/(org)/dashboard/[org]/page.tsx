@@ -5,8 +5,8 @@ import Cookies from "js-cookie";
 import SideMenu from "../../../components/Side-menu";
 import {CheckMFA, sessionCheck, UserData} from "@/app/func/funcs";
 import {getOrgName} from "@/app/func/org";
-import DashBoard_Task_Card from "@/app/components/Dashboard_Task_Card";
 import Loading from "@/app/components/Loading";
+import DashBoard_Task_Card from "@/app/components/Dashboard_Task_Card";
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
@@ -83,7 +83,6 @@ const Dashboard: FC<PageProps> = ({params}) => {
                     <h1
                         className={`${headerText.className} w-[35vw] h-32 flex justify-center items-center text-foreground m-16 text-5xl`}
                     >
-
                     </h1>
 
                     {/* Diagrams */}
