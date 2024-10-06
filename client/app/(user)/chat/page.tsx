@@ -179,7 +179,7 @@ const ChatPage = () => {
                         </div>
 
                         <div
-                            className="overflow-y-auto h-[80vh] mb-4 border border-gray-600 p-4 rounded-lg bg-gray-800">
+                            className="h-[77vh] mb-4 border border-gray-600 p-4 rounded-lg bg-gray-800">
                             <div className="flex flex-col space-y-3">
                                 {messages
                                     .filter((msg) => msg.from === selectedUser.email || msg.from === userEmail)
@@ -188,17 +188,28 @@ const ChatPage = () => {
                                             key={index}
                                             className={`flex ${msg.from === userEmail ? "justify-end" : "justify-start"}`}
                                         >
-                                            <div
-                                                className={`p-3 rounded-badge text-sm  ${
-                                                    msg.from === userEmail
-                                                        ? "bg-blue-500 text-white shadow-lg w-36 flex justify-center items-center rounded-br-none"
-                                                        : "bg-gray-300 text-gray-800 w-36 flex justify-center items-center shadow-lg rounded-bl-none"
-                                                }`}
-                                                style={{wordBreak: "break-word", overflowWrap: "break-word"}}
-                                            >
-                                                {msg.content}
-                                            </div>
+                                            {msg.from === userEmail && (
+                                                <div
+                                                    className={`chat chat-end`}
+                                                    style={{wordBreak: "break-word", overflowWrap: "break-word"}}
+                                                >
+                                                    <div
+                                                        className="chat-bubble chat-bubble-accent text-white shadow-lg w-36 flex justify-center items-center rounded-br-none">
+                                                        {msg.content}
+                                                    </div>
+                                                </div>)}
+                                            {msg.from !== userEmail && (
+                                                <div
+                                                    className={`chat chat-start`}
+                                                    style={{wordBreak: "break-word", overflowWrap: "break-word"}}
+                                                >
+                                                    <div
+                                                        className="chat-bubble text-white shadow-lg w-36 flex justify-center items-center rounded-br-none">
+                                                        {msg.content}
+                                                    </div>
+                                                </div>)}
                                         </div>
+
                                     ))}
                             </div>
                         </div>

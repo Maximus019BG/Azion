@@ -11,7 +11,8 @@ import {
     FaPlusCircle,
     FaTasks,
     FaUserCircle,
-    FaUserSecret,
+    FaUsers,
+    FaUserSecret
 } from "react-icons/fa";
 import LogOut from "@/app/components/LogOut";
 import {UserData} from "@/app/func/funcs";
@@ -128,6 +129,16 @@ const SideMenu = () => {
                                                 >
                                                     <FaCog className="text-lg mr-2"/>
                                                     Settings
+                                                </Link>
+                                            </li>
+
+                                            <li className="text-md w-full">
+                                                <Link
+                                                    href={`/dashboard/${org}/settings/employees`}
+                                                    className="flex items-center w-full"
+                                                >
+                                                    <FaUsers className="text-lg mr-2"/>
+                                                    Employees
                                                 </Link>
                                             </li>
                                             <li className="text-md w-full">

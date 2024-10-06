@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 import {sessionCheck, UserData} from "@/app/func/funcs";
 import Link from "next/link";
 import SideMenu from "@/app/components/Side-menu";
-import OrgDetailsCard from "@/app/layouts/OrgDetailsCard";
+import TasksCard from "@/app/layouts/TasksCard";
 import {getOrgName} from "@/app/func/org";
 import Loading from "@/app/components/Loading";
 import SortMenu from "@/app/components/_task/sort-menu";
@@ -124,7 +124,7 @@ const Tasks: FC<PageProps> = ({params}) => {
                     />
                     <div className="w-full flex flex-wrap justify-center items-center gap-5">
                         {sortTasks(task).map((task) => (
-                            <OrgDetailsCard
+                            <TasksCard
                                 key={task.id}
                                 title={task.name}
                                 description={task.description}

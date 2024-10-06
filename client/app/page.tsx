@@ -151,7 +151,7 @@ const Home = () => {
                             whileTap={{scale: 0.95}}
                             className={`text-white w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
                         >
-                            {org !== null && (<Link href={`/organizations/${org}`}>{ButtonText2}</Link>)}
+                            {org !== null && (<Link href={`/organizations`}>{ButtonText2}</Link>)}
                             {org === null && (<Link href={`/login`}>Login</Link>)}
                         </motion.button>
                     </motion.div>

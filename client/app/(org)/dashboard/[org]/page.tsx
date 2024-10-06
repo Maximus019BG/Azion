@@ -4,8 +4,8 @@ import {Poppins} from "next/font/google";
 import Cookies from "js-cookie";
 import SideMenu from "../../../components/Side-menu";
 import {CheckMFA, sessionCheck, UserData} from "@/app/func/funcs";
-import Loading from "../../../components/Loading";
 import {getOrgName} from "@/app/func/org";
+import Loading from "@/app/components/Loading";
 import DashBoard_Task_Card from "@/app/components/Dashboard_Task_Card";
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
@@ -83,11 +83,10 @@ const Dashboard: FC<PageProps> = ({params}) => {
                     <h1
                         className={`${headerText.className} w-[35vw] h-32 flex justify-center items-center text-foreground m-16 text-5xl`}
                     >
-
                     </h1>
 
                     {/* Diagrams */}
-                    <div className="flex justify-center items-center">
+                    <div className="absolute top-20 left-90">
                         {/*<CircularProgress percentage={35} size={200} strokeWidth={4}/>*/}
                         <DashBoard_Task_Card/>
                         {/*<Dashboard_Program_Card/>*/}
