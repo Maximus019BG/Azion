@@ -11,24 +11,23 @@ const Dashboard_Task_Card = () => {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        const fetchTasks = async () => {
+        const GetTopProject = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/tasks`, {
+                const response = await axios.get(`${apiUrl}/projects/top/${Cookies.get("azionAccessToken")}`, {
                     headers: {
                         "Content-Type": "application/json",
-                        authorization: Cookies.get("azionAccessToken"),
-                    },
+                    }
                 });
-                console.log("Fetched tasks:", response.data);
                 setTasks(response.data);
-                setLoading(false);
             } catch (error) {
-                console.error("Error fetching tasks:", error);
+                console.error("Error fetching top projects:", error);
+            } finally {
                 setLoading(false);
             }
         };
-        fetchTasks();
+        GetTopProject();
     }, []);
+
 
     return (
         <div className="">
