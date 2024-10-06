@@ -19,7 +19,7 @@ const Dashboard_Task_Card = () => {
                         authorization: Cookies.get("azionAccessToken"),
                     },
                 });
-                console.log("Fetched tasks:", response.data); // Add this line
+                console.log("Fetched tasks:", response.data);
                 setTasks(response.data);
                 setLoading(false);
             } catch (error) {

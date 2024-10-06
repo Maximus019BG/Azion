@@ -86,7 +86,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
                     </h1>
 
                     {/* Diagrams */}
-                    <div className="flex justify-center items-center">
+                    <div className="absolute top-20 left-90">
                         {/*<CircularProgress percentage={35} size={200} strokeWidth={4}/>*/}
                         <DashBoard_Task_Card/>
                         {/*<Dashboard_Program_Card/>*/}
