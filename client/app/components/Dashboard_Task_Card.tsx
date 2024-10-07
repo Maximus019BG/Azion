@@ -28,26 +28,25 @@ const Dashboard_Task_Card = () => {
         GetTopProject();
     }, []);
 
-
     return (
-        <div className="">
+        <div
+            className="w-full max-w-md p-6 bg-base-300 rounded-lg shadow-md transition-transform transform hover:scale-105">
             {loading ? (
-                <div>Loading...</div>
+                <div className="text-center text-gray-400">Loading...</div>
             ) : (
-                <table className="w-full text-sm text-left text-gray-400 ">
-                    <thead className="text-xs uppercase bg-base-300 text-gray-400">
-                    <tr className="">
-                        <th scope="col" className="py-3 px-6">Name</th>
-                        <th scope="col" className="py-3 px-6">Date</th>
-                        <th scope="col" className="py-3 px-6">Priority</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {tasks.map((task) => (
-                        <Dashboard_Task_Row key={task.id} task={task}/>
-                    ))}
-                    </tbody>
-                </table>
+                <div className="flex flex-col space-y-4">
+                    <div
+                        className="flex justify-between text-md font-bold text-gray-300 border-b border-gray-600 pb-2">
+                        <div className="w-1/3">Name</div>
+                        <div className="w-1/3">Date</div>
+                        <div className="w-1/3">Priority</div>
+                    </div>
+                    <div className="space-y-2">
+                        {tasks.map((task) => (
+                            <Dashboard_Task_Row key={task.id} task={task}/>
+                        ))}
+                    </div>
+                </div>
             )}
         </div>
     );

@@ -91,7 +91,7 @@ const SideMenu = () => {
                     aria-label="close sidebar"
                     className="drawer-overlay"
                 ></label>
-                <ul className="menu bg-gray-800 text-base-content min-h-full w-80 p-6 flex flex-col justify-center items-start">
+                <ul className="menu bg-base-300 text-base-content min-h-full w-80 p-6 flex flex-col justify-center items-start">
                     {/* Sidebar content */}
                     <div className="w-full flex flex-col justify-center items-start gap-4">
                         {/* Conditionally render Dashboard and Tasks sections */}

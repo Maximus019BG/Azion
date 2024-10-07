@@ -1,38 +1,39 @@
+'use client'
 import React from 'react';
 import {Task} from "@/app/types/types";
+import Link from "next/link";
 
-interface DashboardTaskRowProps {
+interface Dashboard_Task_RowProps {
     task: Task;
 }
 
-const Dashboard_Task_Row: React.FC<DashboardTaskRowProps> = ({task}) => {
+const Dashboard_Task_Row: React.FC<Dashboard_Task_RowProps> = ({task}) => {
     const getPriorityColor = (priority: string) => {
         switch (priority.toLowerCase()) {
             case 'high':
-                return 'text-orange-500';
+                return 'text-orange-400';
             case 'very_high':
-                return 'text-red-500';
+                return 'text-red-400';
             case 'low':
-                return 'text-green-500';
+                return 'text-green-400';
             case 'medium':
-                return 'text-yellow-500';
+                return 'text-yellow-400';
             default:
-                return 'text-gray-500';
+                return 'text-gray-400';
         }
     };
 
-    console.log("Rendering task row:", task); // Add this line
-
     return (
-        <tr className="border-b bg-base-200 border-gray-700">
-            <td className="py-4 px-6">{task.name}</td>
-            <td className="py-4 px-6">{task.date}</td>
-            <td className="py-4 px-6">
-                <span className={`${getPriorityColor(task.priority)} font-semibold`}>
+        <Link href={`/tasks/${task.id}`} className="block">
+            <div
+                className="flex justify-between items-center p-3 bg-base-100 rounded-lg shadow-sm hover:bg-gray-600 transition-colors">
+                <div className="w-1/3 text-gray-300">{task.name}</div>
+                <div className="w-1/3 text-gray-400">{task.date}</div>
+                <div className={`w-1/3 ${getPriorityColor(task.priority)} font-semibold`}>
                     {task.priority}
-                </span>
-            </td>
-        </tr>
+                </div>
+            </div>
+        </Link>
     );
 };
 
