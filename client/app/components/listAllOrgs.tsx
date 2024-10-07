@@ -95,16 +95,16 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({searchTerm}) => {
                         <FaBuilding className="text-blue-500"/> {org.orgDescription}
                     </p>
                     <p className="text-gray-300 flex justify-start items-center gap-3">
-                        <FaTag className="text-green-500"/> {org.orgAddress}
+                        <FaMapMarkerAlt className="text-red-500"/> {org.orgAddress}
                     </p>
                     <p className="text-gray-300 flex justify-start items-center gap-3">
-                        <FaMapMarkerAlt className="text-red-500"/> {org.orgEmail}
+                        <FaEnvelope className="text-yellow-500"/> {org.orgEmail}
                     </p>
                     <p className="text-gray-300 flex justify-start items-center gap-3">
-                        <FaEnvelope className="text-yellow-500"/> {org.orgPhone}
+                        <FaPhone className="text-purple-500"/> {org.orgPhone}
                     </p>
                     <p className="text-gray-300 flex justify-start items-center gap-3">
-                        <FaPhone className="text-purple-500"/> {org.orgType}
+                        <FaTag className="text-green-500"/>{org.orgType}
                     </p>
                 </div>
             ))}
