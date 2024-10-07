@@ -13,6 +13,8 @@ import {getOrgName} from "@/app/func/org";
 import Loading from "@/app/components/Loading";
 import SortMenu from "@/app/components/_task/sort-menu";
 import {Task} from "@/app/types/types";
+import {CiSquarePlus} from "react-icons/ci";
+
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
@@ -110,7 +112,7 @@ const Tasks: FC<PageProps> = ({params}) => {
 
     return (
         <div className="w-screen h-screen flex overflow-hidden">
-            <div className="w-fit min-w-[250px] h-full">
+            <div className="w-1/4 min-w-[250px] h-full">
                 <SideMenu/>
             </div>
             <div className="w-full h-full py-6 overflow-auto flex flex-col items-center">
@@ -136,15 +138,16 @@ const Tasks: FC<PageProps> = ({params}) => {
                                 isCreator={task.createdBy?.email === currentUserEmail}
                             />
                         ))}
+                        {admin && (
+                            <Link
+                                className="w-96 h-[25.6vh] flex flex-col justify-center items-center rounded-lg overflow-hidden shadow-lg p-6 bg-base-100 text-white cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl relative"
+                                href={`/dashboard/${orgNameCheck}/task/create`}
+                            >
+                                <CiSquarePlus className="text-8xl mb-2"/>
+                                <span className="text-lg font-semibold">Create Task</span>
+                            </Link>
+                        )}
                     </div>
-                    {admin && (
-                        <Link
-                            className={`px-16 py-3 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] flex justify-center items-center ${headerText.className}`}
-                            href={`/dashboard/${orgNameCheck}/task/create`}
-                        >
-                            Create task
-                        </Link>
-                    )}
                 </div>
             </div>
         </div>

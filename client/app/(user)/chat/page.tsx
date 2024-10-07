@@ -124,7 +124,7 @@ const ChatPage = () => {
     }
 
     return (
-        <div className="flex bg-gray-900 text-white min-h-screen">
+        <div className="flex text-white min-h-screen">
             {/* User List */}
             <div className="w-1/3 max-w-xs border-r border-gray-600 p-6">
                 <Link className="absolute right-6 top-6" href="/dashboard/org">

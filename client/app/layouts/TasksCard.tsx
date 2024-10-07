@@ -1,7 +1,5 @@
 import React from "react";
-import {FaArrowAltCircleDown, FaBuilding, FaEnvelope, FaInfoCircle, FaMapMarkerAlt, FaTag,} from "react-icons/fa";
-import {FcHighPriority, FcMediumPriority,} from "react-icons/fc";
-import {BsExclamationOctagonFill} from "react-icons/bs";
+import {FaBuilding, FaEnvelope, FaInfoCircle, FaMapMarkerAlt, FaTag,} from "react-icons/fa";
 
 interface Task {
     title: string;
@@ -17,13 +15,13 @@ interface Task {
 const getPriorityIcon = (priority: string) => {
     switch (priority.toLowerCase()) {
         case "very_high":
-            return <FcHighPriority className="text-xl"/>;
+            return <p className="text-red-500">VERY_HIGH</p>;
         case "high":
-            return <BsExclamationOctagonFill className="text-orange-500 text-xl"/>;
+            return <p className="text-orange-500">HIGH</p>;
         case "medium":
-            return <FcMediumPriority className="text-xl"/>;
+            return <p className="text-yellow-500">MEDIUM</p>;
         case "low":
-            return <FaArrowAltCircleDown className="text-green-700 text-xl"/>;
+            return <p className="text-green-500">LOW</p>;
         default:
             return null;
     }

@@ -40,7 +40,7 @@ const Organizations = () => {
                     <Loading/>
                 </div>
             ) : (
-                <div className="h-screen w-screen overflow-hidden flex bg-[#070914]">
+                <div className="h-screen w-screen overflow-hidden flex">
                     <div className="w-1/4 bg-background">
                         <SideMenu/>
                     </div>
