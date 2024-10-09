@@ -4,7 +4,7 @@ import axios, {AxiosResponse} from 'axios';
 import {apiUrl} from '@/app/api/config';
 import {Commissioner} from "next/font/google";
 import Cookies from 'js-cookie';
-import {CheckMFA, mfaSessionCheck} from '@/app/func/funcs';
+import {CheckMFA} from '@/app/func/funcs';
 import Side_menu from "@/app/components/Side-menu";
 
 interface Token {
@@ -26,7 +26,7 @@ export default function MfaFace() {
         const refreshToken = Cookies.get('azionRefreshToken');
         const accessToken = Cookies.get('azionAccessToken');
         if (refreshToken && accessToken) {
-            mfaSessionCheck();
+            // mfaSessionCheck();
         } else if (!accessToken && !refreshToken) {
             window.location.href = '/login';
         }
@@ -60,7 +60,9 @@ export default function MfaFace() {
                 const payload = {image: base64Image};
 
                 try {
-                    const response: AxiosResponse<{ image: string }> = await axios.post(`${apiUrl}/mfa/face-scan`, {request, payload}, {
+                    const response: AxiosResponse<{
+                        image: string
+                    }> = await axios.post(`${apiUrl}/mfa/face-scan`, {request, payload}, {
                         headers: {
                             'Content-Type': 'application/json'
                         }

@@ -40,13 +40,13 @@ const Organizations = () => {
                     <Loading/>
                 </div>
             ) : (
-                <div className="h-screen w-screen overflow-hidden flex bg-[#070914]">
+                <div className="h-screen w-screen overflow-hidden flex">
                     <div className="w-1/4 bg-background">
                         <SideMenu/>
                     </div>
-                    <div className="relative w-full flex flex-col items-center p-4 overflow-y-auto">
+                    <div className="w-full flex flex-col justify-start items-center py-8 overflow-y-auto">
                         <div className="w-full flex flex-col items-center gap-6">
-                            <label className="input w-2/6 input-bordered flex items-center gap-2">
+                            <label className="input w-3/6 input-bordered flex items-center gap-2">
                                 <input
                                     type="text"
                                     className="grow"

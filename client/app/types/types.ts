@@ -13,6 +13,7 @@ export interface ProjFile {
     fileData?: string;
     fileName?: string;
     link?: string;
+    date?: string;
     user: User;
     submittedDate: string;
     projectID: string;
@@ -44,4 +45,16 @@ export interface Task {
 export interface Token {
     refreshToken: string;
     accessToken: string;
+}
+
+export interface Employee{
+    id: string;
+    name: string;
+    email: string;
+    age: string;
+    role: string;
+    orgid: string;
+    roleLevel: number|undefined;
+    profilePicture?: string;
+    projects?: any;
 }

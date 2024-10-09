@@ -4,7 +4,6 @@ import com.azion.Azion.Projects.Type.SubmitType;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 
 
-
 public class FileDTO {
     private String projectID;
     private UserDTO user;
@@ -13,7 +12,7 @@ public class FileDTO {
     private SubmitType submitType;
     private String fileName;
     private String contentType;
-    
+    private String date;
     
     public String getProjectID() {
         return projectID;
@@ -70,4 +69,13 @@ public class FileDTO {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+    
+    public String getDate() {
+        return date;
+    }
+    
+    public void setDate(String date) {
+        this.date = date;
+    }
+    
 }

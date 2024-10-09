@@ -13,29 +13,30 @@ import dev.samstevens.totp.time.TimeProvider;
 import dev.samstevens.totp.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.opencv.core.*;
-import org.opencv.dnn.*;
+import org.opencv.dnn.Dnn;
+import org.opencv.dnn.Net;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import static org.opencv.imgproc.Imgproc.rectangle;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
-import static java.lang.System.loadLibrary;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
+
 import static org.opencv.imgproc.Imgproc.rectangle;
 
 @Service
 @Slf4j
 public class MFAService {
-    private final UserRepository userRepository;
     private static final double THRESHOLD = 8;
+    private final UserRepository userRepository;
     private final TokenRepo tokenRepo;
     
     @Autowired
@@ -43,23 +44,24 @@ public class MFAService {
         this.userRepository = userRepository;
         this.tokenRepo = tokenRepo;
     }
-
+    
+    //!QR generator
     public String generateQRCodeImage(String secret, String email) {
         User user = userRepository.findByEmail(email);
         String name = user.getName();
-
+        
         String issuer = System.getProperty("issuerName");
         QrData data = new QrData.Builder()
-                .label("Azion:"+ name + "/" + email)
+                .label("Azion:" + name + "/" + email)
                 .secret(secret)
                 .algorithm(HashingAlgorithm.SHA1)
                 .digits(6)
                 .period(30)
                 .build();
-
+        
         QrGenerator generator = new ZxingPngQrGenerator();
         byte[] imageData = new byte[0];
-
+        
         try {
             imageData = generator.generate(data);
         } catch (Exception e) {
@@ -77,21 +79,24 @@ public class MFAService {
         }
         String secret = getUserMFASecret(email);
         String issuer = System.getProperty("issuerName");
-        return  secret;
+        return secret;
     }
     
+    //!One Time Pass validation
     public boolean validateOtp(String secret, String otp) {
         TimeProvider timeProvider = new SystemTimeProvider();
         CodeGenerator codeGenerator = new DefaultCodeGenerator();
         CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
         return verifier.isValidCode(secret, otp);
     }
-
+    
+    //*Method calling the Qr generator with user secret
     public String generateQRCodeUriForCurrentUser(String email) {
         String secret = getUserMFASecret(email);
         return generateQRCodeImage(secret, email);
     }
-
+    
+    //!Getting user secret
     private String getUserMFASecret(String email) {
         try {
             User user = userRepository.findByEmail(email);
@@ -106,7 +111,8 @@ public class MFAService {
             return "";
         }
     }
-
+    
+    //!OTP checker
     public boolean checkMfaCredentials(String email, String submittedOtp) {
         String secret = getUserMFASecret(email);
         if (secret.isEmpty()) {
@@ -116,8 +122,8 @@ public class MFAService {
         log.debug("User: " + email + " logging in with MFA");
         return validateOtp(secret, submittedOtp);
     }
-
-    //For tests!!!
+    
+    //!For tests!!! only!
     public String faceLocation(String base64Image) throws IOException {
         CascadeClassifier faceDetector = new CascadeClassifier();
         faceDetector.load(getClass().getClassLoader().getResource("haarcascade_frontalface_alt.xml").getPath());
@@ -125,7 +131,7 @@ public class MFAService {
         Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
         MatOfRect faceDetections = new MatOfRect();
         faceDetector.detectMultiScale(mat, faceDetections);
-
+        
         if (faceDetections.toArray().length > 0) {
             log.debug("Faces detected: " + faceDetections.toArray().length);
         } else if (faceDetections.toArray().length == 0) {
@@ -135,18 +141,19 @@ public class MFAService {
         for (Rect rect : faceDetections.toArray()) {
             rectangle(mat, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
         }
-
+        
         MatOfByte matOfByte = new MatOfByte();
         Imgcodecs.imencode(".jpg", mat, matOfByte);
         byte[] processedImageBytes = matOfByte.toArray();
         return Base64.getEncoder().encodeToString(processedImageBytes);
     }
     
-    //Face identification
+    //!Face identification (for login only)
     public String faceRecognition(String base64Image) throws IOException {
         byte[] imageBytes = Base64.getDecoder().decode(base64Image);
         Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
         
+        //!Loading models and weights
         InputStream modelConfigStream = getClass().getClassLoader().getResourceAsStream("deploy.prototxt");
         InputStream modelWeightsStream = getClass().getClassLoader().getResourceAsStream("res10_300x300_ssd_iter_140000.caffemodel");
         
@@ -155,6 +162,7 @@ public class MFAService {
             throw new IOException("Model configuration or weights file not found in resources.");
         }
         
+        //*Temp files
         Path tempModelConfigFile = Files.createTempFile("deploy", ".prototxt");
         Path tempModelWeightsFile = Files.createTempFile("res10_300x300_ssd_iter_140000", ".caffemodel");
         
@@ -165,6 +173,7 @@ public class MFAService {
         String modelWeights = tempModelWeightsFile.toString();
         Net net = Dnn.readNetFromCaffe(modelConfiguration, modelWeights);
         
+        //!Image editing
         Mat blob = Dnn.blobFromImage(mat, 1.0, new Size(300, 300), new Scalar(104.0, 177.0, 124.0), false, false);
         net.setInput(blob);
         Mat detections = net.forward();
@@ -174,6 +183,8 @@ public class MFAService {
         detections = detections.reshape(1, (int) detections.total() / 7);
         
         StringBuilder result = new StringBuilder();
+        
+        //!Matrix with img pixels
         for (int i = 0; i < detections.rows(); i++) {
             double confidence = detections.get(i, 2)[0];
             if (confidence > 0.3) {
@@ -186,7 +197,7 @@ public class MFAService {
                 
                 Mat face = new Mat(mat, rect);
                 double[] faceEncoding = encodeFace(face);
-                
+                //!Finding person
                 String recognizedPerson = compareFaceEncoding(faceEncoding);
                 if (recognizedPerson != null) {
                     result.append("User scanned before: ").append(recognizedPerson).append("\n");
@@ -208,6 +219,7 @@ public class MFAService {
     }
     
     
+    //!MFA face scan (mfa only)
     public String faceIdMFAScan(String base64Image, String token) throws IOException {
         if (token == null) {
             log.error("Token is required");
@@ -218,36 +230,39 @@ public class MFAService {
             log.error("User not found for token: " + token);
             return "User not found for token: " + token;
         }
-
+        //*Img to byte array
         byte[] imageBytes = Base64.getDecoder().decode(base64Image);
         Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
-
+        
+        //!Loading models and weights
         InputStream modelConfigStream = getClass().getClassLoader().getResourceAsStream("deploy.prototxt");
         InputStream modelWeightsStream = getClass().getClassLoader().getResourceAsStream("res10_300x300_ssd_iter_140000.caffemodel");
-
+        
         if (modelConfigStream == null || modelWeightsStream == null) {
             log.error("Model configuration or weights file not found in resources.");
             throw new IOException("Model configuration or weights file not found in resources.");
         }
-
+        //*Temp files
         Path tempModelConfigFile = Files.createTempFile("deploy", ".prototxt");
         Path tempModelWeightsFile = Files.createTempFile("res10_300x300_ssd_iter_140000", ".caffemodel");
-
+        
         Files.copy(modelConfigStream, tempModelConfigFile, StandardCopyOption.REPLACE_EXISTING);
         Files.copy(modelWeightsStream, tempModelWeightsFile, StandardCopyOption.REPLACE_EXISTING);
-
+        
         String modelConfiguration = tempModelConfigFile.toString();
         String modelWeights = tempModelWeightsFile.toString();
         Net net = Dnn.readNetFromCaffe(modelConfiguration, modelWeights);
-
+        
+        //!Image editing
         Mat blob = Dnn.blobFromImage(mat, 1.0, new Size(300, 300), new Scalar(104.0, 177.0, 124.0), false, false);
         net.setInput(blob);
         Mat detections = net.forward();
-
+        
         int cols = mat.cols();
         int rows = mat.rows();
         detections = detections.reshape(1, (int) detections.total() / 7);
-
+        
+        //!Matrix with pixels
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < detections.rows(); i++) {
             double confidence = detections.get(i, 2)[0];
@@ -258,10 +273,10 @@ public class MFAService {
                 int y2 = (int) (detections.get(i, 6)[0] * rows);
                 Rect rect = new Rect(new Point(x1, y1), new Point(x2, y2));
                 rectangle(mat, rect, new Scalar(0, 255, 0));
-
+                
                 Mat face = new Mat(mat, rect);
                 double[] faceEncoding = encodeFace(face);
-
+                
                 if (user.getFaceID() == null) {
                     log.debug("User face ID not found");
                     try {
@@ -284,13 +299,14 @@ public class MFAService {
                 }
             }
         }
+        
+        MatOfByte matOfByte = new MatOfByte();
+        Imgcodecs.imencode(".jpg", mat, matOfByte);
+        byte[] processedImageBytes = matOfByte.toArray();
+        return Base64.getEncoder().encodeToString(processedImageBytes);
+    }
     
-    MatOfByte matOfByte = new MatOfByte();
-    Imgcodecs.imencode(".jpg", mat, matOfByte);
-    byte[] processedImageBytes = matOfByte.toArray();
-    return Base64.getEncoder().encodeToString(processedImageBytes);
-}
-    
+    //*encoding face id
     private double[] encodeFace(Mat face) {
         Mat grayFace = new Mat();
         Imgproc.cvtColor(face, grayFace, Imgproc.COLOR_BGR2GRAY);
@@ -304,15 +320,17 @@ public class MFAService {
         for (int i = 0; i < faceEncoding.length; i++) {
             normalizedFaceEncoding[i] = (faceEncoding[i] & 0xFF) / 255.0;
         }
-
+        
         log.debug("Face encoding: " + Arrays.toString(normalizedFaceEncoding));
-
+        
         return normalizedFaceEncoding;
     }
+    
+    //* comparing faces
     public String compareFaceEncoding(double[] newFaceEncoding) {
         List<User> users = userRepository.findAll();
         for (User user : users) {
-            if(user.getFaceID()!=null) {
+            if (user.getFaceID() != null) {
                 try {
                     double[] storedFaceEncoding = user.getDecryptedFaceID();
                     double distance = calculateEuclideanDistance(newFaceEncoding, storedFaceEncoding);
@@ -328,6 +346,8 @@ public class MFAService {
         }
         return null;
     }
+    
+    //!Calculating if person is different or the same
     private double calculateEuclideanDistance(double[] vector1, double[] vector2) {
         if (vector1.length != vector2.length) {
             throw new IllegalArgumentException("Vector dimensions must match");
@@ -338,5 +358,5 @@ public class MFAService {
         }
         return Math.sqrt(sum);
     }
-
+    
 }

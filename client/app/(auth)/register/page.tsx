@@ -267,7 +267,7 @@ const Register = () => {
                             {stepLabels.map((label, index) => (
                                 <li
                                     key={index}
-                                    className={`step ${index <= step ? "step-primary" : ""}`}
+                                    className={`step ${index <= step ? "step-accent" : ""}`}
                                 >
                                     {label}
                                 </li>

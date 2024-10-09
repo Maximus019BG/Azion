@@ -8,6 +8,7 @@ import {Poppins} from "next/font/google";
 import SideMenu from "@/app/components/Side-menu";
 import CustomAlert from "@/app/components/CustomAlert";
 import {getOrgName} from "@/app/func/org";
+import Loading from "@/app/components/Loading";
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
 
@@ -28,8 +29,10 @@ interface PageProps {
 const CreateTask: FC<PageProps> = ({params}) => {
     const [admin, setAdmin] = useState(false);
     const [title, setTitle] = useState("");
+    const [uEmail, setUEmail] = useState("")
     const [description, setDescription] = useState("");
     const [priority, setPriority] = useState("LOW");
+    const [loading, setLoading] = useState<boolean>(true)
     const [source, setSource] = useState("");
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
@@ -81,6 +84,8 @@ const CreateTask: FC<PageProps> = ({params}) => {
 
         UserData().then((data) => {
             if (data.roleLevel >= 1 && data.roleLevel <= 3) {
+                setUEmail(data.email)
+                setLoading(false)
                 setAdmin(true);
             } else {
                 window.location.href = `/dashboard/${orgName}/task`;
@@ -214,145 +219,159 @@ const CreateTask: FC<PageProps> = ({params}) => {
         }
     }, [orgNameCheck, orgName]);
 
+
     return (
         <div className="w-screen h-screen flex overflow-hidden">
-            <div className="w-1/4 min-w-[250px] h-full">
-                <SideMenu/>
-            </div>
-            <div className="w-full p-6 overflow-auto flex justify-center items-center">
-                {alert && (
-                    <CustomAlert message={alertMessage} onClose={() => setAlert(false)}/>
-                )}
-                <div className="flex flex-col justify-center items-center gap-16">
-                    <h1 className="text-5xl font-extrabold">
-                        Create tasks here
-                    </h1>
-                    <div className="flex justify-start items-start gap-48">
-                        <div className="flex flex-col justify-start items-center gap-5">
-                            <h1 className="text-3xl font-extrabold">Users:</h1>
-                            <ul>
-                                {userList.map((user, index) => (
-                                    <li
-                                        key={index}
-                                        onClick={() => handleCheckboxChange(user.email)}
-                                        className={`p-2 cursor-pointer ${
-                                            selectedUsers.has(user.email)
-                                                ? "w-56 flex justify-center items-center cursor-pointer bg-accent rounded-lg"
-                                                : "w-56 flex justify-center items-center cursor-pointer rounded-lg border-2 border-gray-800 hover:bg-gray-800"
-                                        }`}
-                                    >
-                                        <label className="flex items-center cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                value={user.id}
-                                                onChange={() => handleCheckboxChange(user.email)}
-                                                className="hidden cursor-pointer"
-                                            />
-                                            {user.name}
-                                        </label>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        <form
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                TaskData();
-                            }}
-                            className="flex flex-col justify-center items-center gap-10"
-                        >
-                            <label className="text-xl flex gap-5">
-                                Title:
-                                <input
-                                    type="text"
-                                    name="title"
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                    className="bg-gray-800 rounded-md text-base text-white pl-2 ml-16"
-                                />
-                            </label>
-                            <label className="text-xl flex gap-5">
-                                Description:
-                                <input
-                                    type="text"
-                                    name="description"
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                    className="bg-gray-800 rounded-md text-base text-white pl-2"
-                                />
-                            </label>
-                            <div className="w-full text-xl flex gap-5 items-center">
-                                Due Date:
-                                <div className="flex gap-2">
-                                    <select
-                                        value={selectedDay}
-                                        onChange={(e) => setSelectedDay(e.target.value)}
-                                        className=" ml-5 bg-gray-800 rounded-md text-white text-base"
-                                    >
-                                        {days.map((day) => (
-                                            <option key={day} value={day}>
-                                                {day}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <select
-                                        value={selectedMonth}
-                                        onChange={(e) => setSelectedMonth(e.target.value)}
-                                        className="bg-gray-800 rounded-md text-white text-base"
-                                    >
-                                        {months.map((month) => (
-                                            <option key={month} value={month}>
-                                                {month}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <select
-                                        value={selectedYear}
-                                        onChange={(e) => setSelectedYear(e.target.value)}
-                                        className="bg-gray-800 rounded-md text-white text-base"
-                                    >
-                                        {years.map((year) => (
-                                            <option key={year} value={year}>
-                                                {year}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-                            <label className=" w-full text-xl flex gap-5">
-                                Priority:
-                                <select
-                                    value={priority}
-                                    onChange={(e) => setPriority(e.target.value)}
-                                    className="bg-gray-800 rounded-md text-base text-white pl-2 ml-10"
-                                >
-                                    {priorities.map((prio) => (
-                                        <option key={prio} value={prio}>
-                                            {prio}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                            <label className="text-xl flex gap-5">
-                                Source:
-                                <input
-                                    type="text"
-                                    name="source"
-                                    value={source}
-                                    onChange={(e) => setSource(e.target.value)}
-                                    className="bg-gray-800 rounded-md text-base text-white pl-2 ml-10"
-                                />
-                            </label>
-                            <button
-                                className={`neon-text w-full h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] ${HeaderText.className}`}
-                                type="submit"
-                            >
-                                Submit
-                            </button>
-                        </form>
-                    </div>
+            {loading ? (
+                <div className="w-screen h-screen flex justify-center items-center">
+                    <Loading/>
                 </div>
-            </div>
+            ) : (
+                <>
+                    <div className="w-1/4 min-w-[250px] h-full">
+                        <SideMenu/>
+                    </div>
+
+                    <div className="w-full p-6 overflow-auto flex justify-center items-center">
+                        {alert && (
+                            <CustomAlert message={alertMessage} onClose={() => setAlert(false)}/>
+                        )}
+                        <div className="flex flex-col justify-center items-center gap-16">
+                            <h1 className="text-5xl font-extrabold">
+                                Create tasks here
+                            </h1>
+                            <div className="flex justify-start items-start gap-48">
+                                <div className="flex flex-col justify-start items-center gap-5">
+                                    <h1 className="text-3xl font-extrabold">Users:</h1>
+                                    <ul>
+                                        {userList.map((user, index) => (
+                                            <li
+                                                key={index}
+                                                onClick={() => handleCheckboxChange(user.email)}
+                                                className={`p-2 cursor-pointer mt-0.5 mb-0.5 ${
+                                                    selectedUsers.has(user.email)
+                                                        ? "w-56 flex justify-center items-center cursor-pointer bg-accent rounded-lg"
+                                                        : "w-56 flex justify-center items-center cursor-pointer rounded-lg border-2 border-gray-800 hover:bg-gray-800"
+                                                }`}
+                                            >
+                                                <label className="flex items-center cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        value={user.id}
+                                                        onChange={() => handleCheckboxChange(user.email)}
+                                                        className="hidden cursor-pointer"
+                                                    />
+                                                    {user.email === uEmail && (
+                                                        <h1>{user.name} <span className="text-[0.8em]">(you)</span></h1>
+                                                    ) || (
+                                                        <h1>{user.name}</h1>
+                                                    )}
+                                                </label>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <form
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        TaskData();
+                                    }}
+                                    className="flex flex-col justify-center items-center gap-10"
+                                >
+                                    <label className="text-xl flex gap-5">
+                                        Title:
+                                        <input
+                                            type="text"
+                                            name="title"
+                                            value={title}
+                                            onChange={(e) => setTitle(e.target.value)}
+                                            className="bg-gray-800 rounded-md text-base text-white pl-2 ml-16"
+                                        />
+                                    </label>
+                                    <label className="text-xl flex gap-5">
+                                        Description:
+                                        <input
+                                            type="text"
+                                            name="description"
+                                            value={description}
+                                            onChange={(e) => setDescription(e.target.value)}
+                                            className="bg-gray-800 rounded-md text-base text-white pl-2"
+                                        />
+                                    </label>
+                                    <div className="w-full text-xl flex gap-5 items-center">
+                                        Due Date:
+                                        <div className="flex gap-2">
+                                            <select
+                                                value={selectedDay}
+                                                onChange={(e) => setSelectedDay(e.target.value)}
+                                                className=" ml-5 bg-gray-800 rounded-md text-white text-base"
+                                            >
+                                                {days.map((day) => (
+                                                    <option key={day} value={day}>
+                                                        {day}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <select
+                                                value={selectedMonth}
+                                                onChange={(e) => setSelectedMonth(e.target.value)}
+                                                className="bg-gray-800 rounded-md text-white text-base"
+                                            >
+                                                {months.map((month) => (
+                                                    <option key={month} value={month}>
+                                                        {month}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <select
+                                                value={selectedYear}
+                                                onChange={(e) => setSelectedYear(e.target.value)}
+                                                className="bg-gray-800 rounded-md text-white text-base"
+                                            >
+                                                {years.map((year) => (
+                                                    <option key={year} value={year}>
+                                                        {year}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <label className=" w-full text-xl flex gap-5">
+                                        Priority:
+                                        <select
+                                            value={priority}
+                                            onChange={(e) => setPriority(e.target.value)}
+                                            className="bg-gray-800 rounded-md text-base text-white pl-2 ml-10"
+                                        >
+                                            {priorities.map((prio) => (
+                                                <option key={prio} value={prio}>
+                                                    {prio}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                    <label className="text-xl flex gap-5">
+                                        Source:
+                                        <input
+                                            type="text"
+                                            name="source"
+                                            value={source}
+                                            onChange={(e) => setSource(e.target.value)}
+                                            className="bg-gray-800 rounded-md text-base text-white pl-2 ml-10"
+                                        />
+                                    </label>
+                                    <button
+                                        className={`neon-text w-full h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] ${HeaderText.className}`}
+                                        type="submit"
+                                    >
+                                        Submit
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 };

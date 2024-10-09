@@ -257,4 +257,15 @@ const mfaSessionCheck = () => {
         });
 };
 
-export {CheckMFA, PartOfOrg, UserData, DeleteSession, authSessionCheck, orgSessionCheck, sessionCheck, mfaSessionCheck};
+const byteArrayToBase64 = async (byteArray: number[]): Promise<string|null> => {
+    const uint8Array = new Uint8Array(byteArray);
+    const blob = new Blob([uint8Array], { type: "image/jpeg" });
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+export {CheckMFA, PartOfOrg, UserData, DeleteSession, authSessionCheck, orgSessionCheck, sessionCheck, mfaSessionCheck, byteArrayToBase64};

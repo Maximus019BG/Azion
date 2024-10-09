@@ -26,7 +26,7 @@
 > - *MAC OS* and *Chrome OS* are **NOT** supported by the *desktop app*
 > - **Other** Linux distributions are not supported by the *desktop app*
 > - The *Azion mobile app* is not made for *IOS*
-> - The *desktop app* is tested on ***Windows 11*** and ***Ubuntu***
+> - The *desktop app* is tested on ***Windows 11*** not ***Ubuntu***
 
 ## Authors
 - [@Maximus019](https://github.com/Maximus019BG)

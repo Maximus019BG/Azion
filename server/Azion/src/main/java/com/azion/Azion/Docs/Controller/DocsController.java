@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/docs")
+@RequestMapping("/api/docs")
 @Slf4j
 public class DocsController {
     

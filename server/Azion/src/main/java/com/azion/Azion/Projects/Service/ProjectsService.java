@@ -5,25 +5,20 @@ import com.azion.Azion.Projects.Model.Project;
 import com.azion.Azion.Projects.Repository.ProjectsRepository;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 import java.io.*;
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,18 +37,17 @@ public class ProjectsService {
         this.projectsRepository = projectsRepository;
     }
     
-    public Project saveProject(Project project) {
-        return projectsRepository.save(project);
+    //*Converter (file to MLTFile)
+    public static File convertMultipartFileToFile(MultipartFile multipartFile) throws IOException {
+        File file = new File(multipartFile.getOriginalFilename());
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(multipartFile.getBytes());
+        }
+        return file;
     }
     
-    @Transactional
-    public List<ProjectsDTO> getProjectByUser(User user) {
-        List<Project> projects = projectsRepository.findByUsers(user);
-        return projects.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
     
+    //!Proj to Data Transfer Object
     private ProjectsDTO convertToDTO(Project project) {
         ProjectsDTO dto = new ProjectsDTO();
         dto.setId(project.getProjectID());
@@ -84,6 +78,7 @@ public class ProjectsService {
         return dto;
     }
     
+    //!User to Data Transfer Object
     private UserDTO convertToUserDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setName(user.getName());
@@ -95,16 +90,12 @@ public class ProjectsService {
         return dto;
     }
     
-    public Set<UserDTO> convertToUserDTOSet(Set<User> users) {
-        return users.stream()
-                .map(this::convertToUserDTO)
-                .collect(Collectors.toSet());
-    }
-    
+    //!Date validation
     public boolean dateIsValid(LocalDate date, boolean isPastDate) {
         if (date == null) {
             return true;
         }
+        //*Selecting mode
         if (isPastDate) {
             log.debug("Date is in the past " + date + " " + LocalDate.now() + " " + date.isBefore(LocalDate.now()));
             return date.isBefore(LocalDate.now());
@@ -116,27 +107,49 @@ public class ProjectsService {
         return true;
     }
     
-    //*ProjectFiles safety checks
-    public boolean isFileSafe(MultipartFile file) {
-        if (file.isEmpty()) {
-            throw new RuntimeException("ProjectFiles is empty");
-        }
-        try {
-            File convertedFile = convertMultipartFileToFile(file);
-            String response = scanFile(convertedFile);
-            int positives = parsePositivesFromResponse(response);
-            if (positives > 0) {
-                log.debug("File is malicious: " + positives + " positives");
-                return false;
+    
+    //*List top 3 projects by
+    public List<ProjectsDTO> sortProjectsByDate(List<Project> projects) {
+        projects.sort(Comparator
+                .comparing(Project::getDate) //!Compare by date
+                .thenComparing(Comparator.comparing(Project::getPriority).reversed()) //!Compare by priority
+        );
+        List<ProjectsDTO> topProjects = new ArrayList<>();
+        
+        if (projects.size() >= 3) {
+            topProjects.add(convertToDTO(projects.get(0)));
+            topProjects.add(convertToDTO(projects.get(1)));
+            topProjects.add(convertToDTO(projects.get(2)));
+        } else {
+            for (Project project : projects) {
+                topProjects.add(convertToDTO(project));
             }
-            log.debug("File is clean: " + positives + " positives");
-            return true;
-        } catch (IOException e) {
-            log.debug("Error reading file content: " + e);
-            return false;
         }
+        return topProjects;
     }
     
+    public Set<UserDTO> convertToUserDTOSet(Set<User> users) {
+        return users.stream()
+                .map(this::convertToUserDTO)
+                .collect(Collectors.toSet());
+    }
+    
+    @Transactional
+    public List<ProjectsDTO> getProjectByUser(User user) {
+        List<Project> projectsAssigned = projectsRepository.findByUsers(user); //!Projects the user is assigned to do
+        List<Project> projectsCreatedBy = projectsRepository.findProjectByCreatedBy(user); //!Project the user has created
+        
+        //*Join and return
+        List<Project> projects = new ArrayList<>(projectsCreatedBy);
+        projects.addAll(projectsAssigned);
+        
+        return projects.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+    
+    
+    //!File scan with VirusTotal API
     public static String scanFile(File file) throws IOException {
         OkHttpClient client = new OkHttpClient();
         
@@ -162,6 +175,28 @@ public class ProjectsService {
         }
     }
     
+    //*ProjectFiles safety checks with VT API
+    public boolean isFileSafe(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new RuntimeException("ProjectFiles is empty");
+        }
+        try {
+            File convertedFile = convertMultipartFileToFile(file);
+            String response = scanFile(convertedFile);
+            int positives = parsePositivesFromResponse(response);
+            if (positives > 0) {
+                log.debug("File is malicious: " + positives + " positives");
+                return false;
+            }
+            log.debug("File is clean: " + positives + " positives");
+            return true;
+        } catch (IOException e) {
+            log.debug("Error reading file content: " + e);
+            return false;
+        }
+    }
+    
+    //!Getting analysis for the file from VT API
     private int parsePositivesFromResponse(String response) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(response);
@@ -187,13 +222,5 @@ public class ProjectsService {
         } else {
             throw new IOException("Failed to get analysis results: " + responseCode);
         }
-    }
-    
-    public static File convertMultipartFileToFile(MultipartFile multipartFile) throws IOException {
-        File file = new File(multipartFile.getOriginalFilename());
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(multipartFile.getBytes());
-        }
-        return file;
     }
 }

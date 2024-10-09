@@ -1,4 +1,5 @@
 "use client";
+
 import React, {FC, useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {apiUrl} from "@/app/api/config";
@@ -7,32 +8,15 @@ import Cookies from "js-cookie";
 import {sessionCheck, UserData} from "@/app/func/funcs";
 import Link from "next/link";
 import SideMenu from "@/app/components/Side-menu";
-import OrgDetailsCard from "@/app/layouts/OrgDetailsCard";
+import TasksCard from "@/app/layouts/TasksCard";
 import {getOrgName} from "@/app/func/org";
 import Loading from "@/app/components/Loading";
 import SortMenu from "@/app/components/_task/sort-menu";
+import {Task} from "@/app/types/types";
+import {CiSquarePlus} from "react-icons/ci";
+
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
-
-interface User {
-    name: string;
-    email: string;
-    age: string;
-    role: string;
-    orgid: string;
-    projects: any;
-}
-
-interface Task {
-    id: string;
-    name: string;
-    description: string;
-    email: string;
-    status: string;
-    date: string;
-    priority: string;
-    createdBy: User;
-}
 
 interface PageProps {
     params: {
@@ -47,6 +31,7 @@ const Tasks: FC<PageProps> = ({params}) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [sortCriteria, setSortCriteria] = useState<string>("date");
     const [sortOrder, setSortOrder] = useState<string>("asc");
+    const [currentUserEmail, setCurrentUserEmail] = useState<string>("");
     const orgName = params.org;
 
     const GetTasks = () => {
@@ -81,6 +66,7 @@ const Tasks: FC<PageProps> = ({params}) => {
         if (data.roleLevel >= 1 && data.roleLevel <= 3) {
             setAdmin(true);
         }
+        setCurrentUserEmail(data.email);
     });
 
     useEffect(() => {
@@ -129,8 +115,8 @@ const Tasks: FC<PageProps> = ({params}) => {
             <div className="w-1/4 min-w-[250px] h-full">
                 <SideMenu/>
             </div>
-            <div className="w-full p-6 overflow-auto flex flex-col items-center">
-                <div className="flex flex-col justify-around items-center gap-10 w-full h-full">
+            <div className="w-full h-full py-6 overflow-auto flex flex-col items-center">
+                <div className="flex flex-col justify-around items-center gap-10 ">
                     <h1 className="text-5xl font-black mt-16">Your tasks:</h1>
                     <SortMenu
                         sortCriteria={sortCriteria}
@@ -138,28 +124,30 @@ const Tasks: FC<PageProps> = ({params}) => {
                         setSortCriteria={setSortCriteria}
                         setSortOrder={setSortOrder}
                     />
-                    <div className="w-full flex flex-wrap justify-center items-center gap-16">
+                    <div className="w-full flex flex-wrap justify-center items-center gap-5">
                         {sortTasks(task).map((task) => (
-                            <OrgDetailsCard
+                            <TasksCard
                                 key={task.id}
                                 title={task.name}
                                 description={task.description}
                                 status={task.status}
                                 data={task.date}
-                                createdBy={task.createdBy.name}
+                                createdBy={task.createdBy?.name}
                                 priority={task.priority}
                                 onClick={() => goToTask(task.id)}
+                                isCreator={task.createdBy?.email === currentUserEmail}
                             />
                         ))}
+                        {admin && (
+                            <Link
+                                className="w-96 h-[25.6vh] flex flex-col justify-center items-center rounded-lg overflow-hidden shadow-lg p-6 bg-base-100 text-white cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl relative"
+                                href={`/dashboard/${orgNameCheck}/task/create`}
+                            >
+                                <CiSquarePlus className="text-8xl mb-2"/>
+                                <span className="text-lg font-semibold">Create Task</span>
+                            </Link>
+                        )}
                     </div>
-                    {admin && (
-                        <Link
-                            className={` w-40 md:w-64 lg:w-72 h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] flex justify-center items-center ${headerText.className}`}
-                            href={`/dashboard/${orgNameCheck}/task/create`}
-                        >
-                            Create task
-                        </Link>
-                    )}
                 </div>
             </div>
         </div>

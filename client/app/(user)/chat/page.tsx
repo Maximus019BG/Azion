@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from "react";
 import {Client} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import {sessionCheck, UserData} from "@/app/func/funcs";
+import {byteArrayToBase64, sessionCheck, UserData} from "@/app/func/funcs";
 import {apiUrl, chatUrl} from "@/app/api/config";
 import {User} from "@/app/types/types";
 import axios, {AxiosResponse} from "axios";
@@ -10,6 +10,9 @@ import DefaultPic from "@/public/user.png";
 import Cookies from "js-cookie";
 import Image from "next/image";
 import {Decrypt, Encrypt} from "@/app/func/msg";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
 const ChatPage = () => {
     const [messages, setMessages] = useState<{ content: string; from: string }[]>([]);
@@ -21,16 +24,6 @@ const ChatPage = () => {
     const [profilePictureSrcs, setProfilePictureSrcs] = useState<{ [key: string]: string }>({});
     const defaultImageSrc = typeof DefaultPic === 'string' ? DefaultPic : DefaultPic.src;
 
-    const byteArrayToBase64 = async (byteArray: number[]): Promise<string> => {
-        const uint8Array = new Uint8Array(byteArray);
-        const blob = new Blob([uint8Array], {type: 'image/jpeg'});
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
-    };
 
     const getProfilePictureSrc = async (profilePicture: string | null): Promise<string | null> => {
         if (profilePicture) {
@@ -88,7 +81,10 @@ const ChatPage = () => {
                     if (message.body) {
                         const newMessage = JSON.parse(message.body);
                         const decryptedContent = Decrypt(newMessage.content);
-                        setMessages((prevMessages) => [...prevMessages, {content: decryptedContent, from: newMessage.from}]);
+                        setMessages((prevMessages) => [...prevMessages, {
+                            content: decryptedContent,
+                            from: newMessage.from
+                        }]);
                     }
                 });
             },
@@ -128,9 +124,15 @@ const ChatPage = () => {
     }
 
     return (
-        <div className="flex bg-gray-900 text-white min-h-screen">
+        <div className="flex text-white min-h-screen">
             {/* User List */}
             <div className="w-1/3 max-w-xs border-r border-gray-600 p-6">
+                <Link className="absolute right-6 top-6" href="/dashboard/org">
+                    <FontAwesomeIcon
+                        className="text-4xl bg-white rounded-full text-lightAccent"
+                        icon={faCircleLeft}
+                    />
+                </Link>
                 <h2 className="text-4xl font-bold mb-6 text-center">Direct Messages</h2>
                 <h3 className="text-lg font-medium mb-4 text-center">Users to Chat:</h3>
                 <div className="space-y-4">
@@ -146,10 +148,13 @@ const ChatPage = () => {
                                 width={40}
                                 height={40}
                                 className="w-10 h-10 rounded-full"
+                                onError={(e) => {
+                                    e.currentTarget.src = defaultImageSrc;
+                                }}
                             />
                             <span className="text-base hover:text-blue-400">
-            {user.name} <span className="text-sm text-gray-400">({user.email})</span>
-          </span>
+                                {user.name} <span className="text-sm text-gray-400">({user.email})</span>
+                            </span>
                         </div>
                     ))}
                 </div>
@@ -166,11 +171,15 @@ const ChatPage = () => {
                                 width={56}
                                 height={56}
                                 className="rounded-full mr-3"
+                                onError={(e) => {
+                                    e.currentTarget.src = defaultImageSrc;
+                                }}
                             />
                             <h3 className="text-xl font-semibold text-white">{selectedUser.name}</h3>
                         </div>
 
-                        <div className="overflow-y-auto h-[80vh] mb-4 border border-gray-600 p-4 rounded-lg bg-gray-800">
+                        <div
+                            className="h-[77vh] mb-4 border border-gray-600 p-4 rounded-lg bg-gray-800">
                             <div className="flex flex-col space-y-3">
                                 {messages
                                     .filter((msg) => msg.from === selectedUser.email || msg.from === userEmail)
@@ -179,16 +188,28 @@ const ChatPage = () => {
                                             key={index}
                                             className={`flex ${msg.from === userEmail ? "justify-end" : "justify-start"}`}
                                         >
-                                            <div
-                                                className={`p-3 rounded-lg max-w-xs text-sm ${
-                                                    msg.from === userEmail
-                                                        ? "bg-blue-500 text-white shadow-lg"
-                                                        : "bg-gray-300 text-gray-800 shadow-lg"
-                                                }`}
-                                            >
-                                                {msg.content}
-                                            </div>
+                                            {msg.from === userEmail && (
+                                                <div
+                                                    className={`chat chat-end`}
+                                                    style={{wordBreak: "break-word", overflowWrap: "break-word"}}
+                                                >
+                                                    <div
+                                                        className="chat-bubble chat-bubble-accent text-white shadow-lg w-36 flex justify-center items-center rounded-br-none">
+                                                        {msg.content}
+                                                    </div>
+                                                </div>)}
+                                            {msg.from !== userEmail && (
+                                                <div
+                                                    className={`chat chat-start`}
+                                                    style={{wordBreak: "break-word", overflowWrap: "break-word"}}
+                                                >
+                                                    <div
+                                                        className="chat-bubble text-white shadow-lg w-36 flex justify-center items-center rounded-br-none">
+                                                        {msg.content}
+                                                    </div>
+                                                </div>)}
                                         </div>
+
                                     ))}
                             </div>
                         </div>

@@ -4,10 +4,11 @@ import com.azion.Azion.Projects.Type.SubmitType;
 import com.azion.Azion.User.Model.User;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name="project_files_azion")
+@Table(name = "project_files_azion")
 public class ProjectFiles {
     
     @Id
@@ -20,6 +21,9 @@ public class ProjectFiles {
     @Lob
     @Column(name = "fileData", columnDefinition = "LONGBLOB")
     private byte[] fileData;
+    
+    @Column(nullable = false)
+    private LocalDate date;
     
     //!If they send link
     @Column
@@ -37,12 +41,14 @@ public class ProjectFiles {
     private String contentType;
     
     
+    public ProjectFiles() {
+    }
+    
     @PrePersist
     public void generateId() {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         this.projectID = uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis();
     }
-    
     
     public String getProjectID() {
         return projectID;
@@ -62,6 +68,14 @@ public class ProjectFiles {
     
     public void setFileData(byte[] fileData) {
         this.fileData = fileData;
+    }
+    
+    public LocalDate getDate() {
+        return date;
+    }
+    
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
     
     public String getLink() {
@@ -96,7 +110,4 @@ public class ProjectFiles {
         this.contentType = contentType;
     }
     
-    
-    public ProjectFiles(){
-    }
 }
