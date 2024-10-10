@@ -1,5 +1,10 @@
 import React from "react";
-import {FaBuilding, FaEnvelope, FaInfoCircle, FaMapMarkerAlt, FaTag,} from "react-icons/fa";
+import {FaBuilding,} from "react-icons/fa";
+import {TbFileDescription} from "react-icons/tb";
+import {GrStatusWarning} from "react-icons/gr";
+import {IoTimer} from "react-icons/io5";
+import {MdOutlineDriveFileRenameOutline} from "react-icons/md";
+
 
 interface Task {
     title: string;
@@ -55,20 +60,19 @@ const TasksCard: React.FC<Task> = ({
                     <FaBuilding className="mr-2 text-blue-500"/> {title}
                 </div>
                 <p className="text-gray-200 text-base flex items-center mb-2">
-                    <FaMapMarkerAlt className="mr-2 text-red-500"/> {description}
+                    <TbFileDescription className="mr-2 text-2xl text-red-500"/> {description}
                 </p>
                 <p className="text-gray-200 text-base flex items-center mb-2">
-                    <FaTag className="mr-2 text-green-500"/> {status}
+                    <GrStatusWarning className="mr-2 text-2xl text-green-500"/> {status}
                 </p>
                 <p className="text-gray-200 text-base flex items-center mb-2">
-                    <FaInfoCircle className="mr-2 text-yellow-500"/> {data}
+                    <IoTimer className="mr-2 text-2xl text-yellow-500"/> {data}
                 </p>
                 <p className="text-gray-200 text-base flex items-center">
-                    <FaEnvelope className="mr-2 text-purple-500"/> {createdBy}
+                    <MdOutlineDriveFileRenameOutline className="mr-2 text-2xl text-purple-500"/> {createdBy}
                     {isCreator && (
                         <div className="relative inline-flex items-center group">
                             <span className="text-xs">&nbsp;(you)</span>
-                            <FaInfoCircle className="ml-1 text-yellow-500 cursor-pointer"/>
                             <div
                                 className="absolute hidden group-hover:block left-full top-1/2 transform -translate-y-1/2 ml-2 bg-gray-800 text-white text-xs rounded-lg py-2 px-4 shadow-lg z-10 max-w-xs">
                                 You are the creator of this task
