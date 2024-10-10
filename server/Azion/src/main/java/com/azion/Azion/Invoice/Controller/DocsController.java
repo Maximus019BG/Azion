@@ -1,6 +1,5 @@
-package com.azion.Azion.Docs.Controller;
+package com.azion.Azion.Invoice.Controller;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,7 +10,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/docs")
-@Slf4j
 public class DocsController {
     
     //TODO: creation of invoice

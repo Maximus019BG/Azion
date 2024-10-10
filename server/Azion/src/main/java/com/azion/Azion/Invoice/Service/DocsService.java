@@ -1,4 +1,4 @@
-package com.azion.Azion.Docs.Service;
+package com.azion.Azion.Invoice.Service;
 
 import org.springframework.stereotype.Service;
 

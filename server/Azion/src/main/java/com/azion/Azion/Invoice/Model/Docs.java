@@ -1,4 +1,4 @@
-package com.azion.Azion.Docs.Model;
+package com.azion.Azion.Invoice.Model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,3 +20,4 @@ public class Docs {
         this.id = id;
     }
 }
+

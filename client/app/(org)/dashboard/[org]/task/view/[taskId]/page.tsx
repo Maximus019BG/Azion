@@ -59,12 +59,29 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
             })
             .then((response) => {
                 alert("Task submitted successfully");
-                window.location.href = window.location.pathname;
+                window.location.reload();
             })
             .catch((error) => {
                 console.error(error);
             });
     };
+
+    const ReturnTask = (taskId: string | null, userEmail: string) => {
+        const data = {
+            email: userEmail,
+        }
+        axios.put(`${apiUrl}/projects/return/task/${taskId}`, data, {
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": Cookies.get("azionAccessToken")
+            }
+        }).then((response: any) => {
+            alert(response.data + "\nTo see changes reload");
+        }).catch((error: any) => {
+            alert(error);
+        })
+
+    }
 
     useEffect(() => {
         if (Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
@@ -301,6 +318,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                                             {file.fileName}
                                         </a>
                                         <h3>{file.date}</h3>
+                                        <button className="border-accent bordered border-2 rounded-lg px-1" onClick={() => ReturnTask(taskId, file.user.email)}>Return</button>
                                     </div>
                                 ))}
                             </div>

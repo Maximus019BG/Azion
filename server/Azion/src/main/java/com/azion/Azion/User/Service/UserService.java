@@ -1,48 +1,42 @@
 package com.azion.Azion.User.Service;
 
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-
 import com.azion.Azion.MFA.Service.MFAService;
 import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
 import com.azion.Azion.Projects.Model.Project;
-import com.azion.Azion.Token.Token;
+import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Returns.UserReturns;
-import jakarta.persistence.NonUniqueResultException;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.azion.Azion.Token.TokenType.ACCESS_TOKEN;
-
 
 @Service
 public class UserService {
-
+    
     private final UserRepository userRepository;
     private final UserReturns userReturns;
     private final MFAService mfaService;
     private final TokenService tokenService;
+    private final TokenRepo tokenRepo;
     
     
     @Autowired
-    public UserService(UserRepository userRepository,UserReturns userReturns, MFAService mfaService, TokenService tokenService) {
+    public UserService(UserRepository userRepository, UserReturns userReturns, MFAService mfaService, TokenService tokenService, TokenRepo tokenRepo) {
         this.userRepository = userRepository;
         this.userReturns = userReturns;
         this.mfaService = mfaService;
         this.tokenService = tokenService;
+        this.tokenRepo = tokenRepo;
     }
     
     public User updateProfilePicture(String id, byte[] profilePicture) {
@@ -88,6 +82,17 @@ public class UserService {
         return projects.stream()
                 .map(this::convertToProjectsDTO)
                 .collect(Collectors.toSet());
+    }
+    
+    //*Validating user
+    public void userValid(String token) {
+        if (token == null || token.isEmpty()) {
+            throw new RuntimeException("Invalid token");
+        }
+        User user = tokenService.getUserFromToken(token);
+        if (user == null) {
+            throw new RuntimeException("Invalid token");
+        }
     }
     
 }

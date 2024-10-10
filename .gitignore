@@ -89,3 +89,5 @@ build/
 /desktop/Output/
 /desktop/Azion Desktop/.vs/
 /client/azion-f/app/func/key.config.js
+/server/Azion/src/main/java/com/azion/Azion/Cred/client_secret_270909640152-qecloukuv3l54l652arm38m8nh90atac.apps.googleusercontent.com.json
+/server/Azion/src/main/java/com/azion/Azion/Cred/
