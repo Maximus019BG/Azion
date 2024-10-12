@@ -10,7 +10,7 @@ interface CalendarProps {
 const DashboardProgramCard: React.FC<CalendarProps> = ({tabIndex}) => {
     return (
         <div className="w-full h-full bg-[#090909] rounded-md flex flex-col relative">
-            <div className="w-full h-full flex justify-center items-start">
+            <div className="w-full h-full flex justify-end items-start">
                 <Dashboard_Meeting_Card_Row/>
             </div>
             {/*<div className="w-fit h-full flex justify-start items-start">*/}
