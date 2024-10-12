@@ -39,7 +39,7 @@ const AxiosFunction = (data: any) => {
 
         })
         .catch(function (error: any) {
-            console.log(error.response ? error.response : error);
+            alert(error.response);
         });
 };
 
