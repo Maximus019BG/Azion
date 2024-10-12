@@ -1,6 +1,6 @@
 package com.azion.Azion.Invoice.Model;
 
-public class DocsDTO {
+public class InvoiceDTO {
     private String recipientName;
     private String supplierName;
     private String invoiceNumber;

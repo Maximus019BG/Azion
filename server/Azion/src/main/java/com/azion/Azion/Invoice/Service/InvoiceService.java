@@ -3,5 +3,5 @@ package com.azion.Azion.Invoice.Service;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DocsService {
+public class InvoiceService {
 }

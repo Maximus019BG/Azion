@@ -10,7 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/docs")
-public class DocsController {
+public class InvoiceController {
     
     //TODO: creation of invoice
     @PostMapping("/create/invoice")
