@@ -6,8 +6,8 @@ import SideMenu from '../../../components/Side-menu';
 import {CheckMFA, sessionCheck, UserData} from '@/app/func/funcs';
 import {getOrgName} from '@/app/func/org';
 import Loading from '@/app/components/Loading';
-import DashBoard_Task_Card from '@/app/components/Dashboard_Task_Card';
-import CircularProgress from "@/app/components/diagram";
+import DashboardRow1 from "@/app/components/_Dashboard-Elements/Dashboard_Row_1";
+import DashboardProgramCard from "@/app/components/_Dashboard-Elements/Dashboard_Program_Card";
 
 
 const headerText = Poppins({subsets: ['latin'], weight: '900'});
@@ -74,17 +74,17 @@ const Dashboard: FC<PageProps> = ({params}) => {
                     <Loading/>
                 </div>
             ) : (
-                <div className="w-screen h-screen flex">
+                <div className="w-screen h-screen flex overflow-y-hidden">
                     <div className="w-1/4">
                         <SideMenu/>
                     </div>
-                    <div className="flex flex-col justify-center items-center w-full">
-                        <h2 className={`${headerText.className} text-4xl text-white p-10 w-full flex justify-start items-center`}>
+                    <div className="w-full h-full flex flex-col justify-center items-center overflow-y-auto">
+                        <h2 className={`${headerText.className} text-4xl text-white pl-10 pt-10 w-full flex justify-start items-center`}>
                             Dashboard
                         </h2>
-                        <div className="w-full h-full flex justify-center items-center gap-6">
-                            <DashBoard_Task_Card/>
-                            <CircularProgress percentage={35}/>
+                        <div className="w-full h-full flex flex-col gap-16 justify-centert items-center">
+                            <DashboardRow1/>
+                            <DashboardProgramCard/>
                         </div>
                     </div>
                 </div>

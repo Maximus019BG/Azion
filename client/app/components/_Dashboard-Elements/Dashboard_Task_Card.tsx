@@ -1,6 +1,6 @@
 'use client'
 import React, {useEffect, useState} from 'react';
-import Dashboard_Task_Row from "@/app/components/Dashboard_Task_Row";
+import Dashboard_Task_Row from "@/app/components/_Dashboard-Elements/Dashboard_Task_Row";
 import {Task} from "@/app/types/types";
 import axios from "axios";
 import {apiUrl} from "@/app/api/config";
