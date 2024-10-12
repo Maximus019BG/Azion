@@ -1,6 +1,6 @@
 package com.azion.Azion.Projects.Model;
 
-import com.azion.Azion.Projects.Type.SubmitType;
+import com.azion.Azion.Projects.Enum.SubmitType;
 import com.azion.Azion.User.Model.User;
 import jakarta.persistence.*;
 

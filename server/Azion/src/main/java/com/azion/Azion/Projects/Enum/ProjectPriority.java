@@ -1,4 +1,4 @@
-package com.azion.Azion.Projects.Type;
+package com.azion.Azion.Projects.Enum;
 
 public enum ProjectPriority {
     LOW,

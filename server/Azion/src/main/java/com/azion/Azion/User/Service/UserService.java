@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -93,6 +94,13 @@ public class UserService {
         if (user == null) {
             throw new RuntimeException("Invalid token");
         }
+    }
+    
+    //!User admin validation
+    public boolean userAdmin(User user) {
+        String role = user.getRole();
+        int roleLevel = user.getRoleLevel();
+        return (roleLevel > 0 && roleLevel < 4) || (Objects.equals(role.toLowerCase(), "admin") || Objects.equals(role.toLowerCase(), "boss"));
     }
     
 }
