@@ -10,9 +10,6 @@ module.exports = {
         extend: {
             colors: {
                 background: 'rgb(var(--background))',
-                background1: 'rgb(var(--background1))',
-                background2: 'rgb(var(--background2))',
-                background3: 'rgb(var(--background3))',
                 foreground: 'rgb(var(--foreground))',
                 muted: 'rgb(var(--muted))',
                 accent: 'rgb(var(--accent))',

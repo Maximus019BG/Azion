@@ -221,7 +221,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
 
 
     return (
-        <div className="w-screen h-screen flex overflow-hidden">
+        <div className="w-screen h-screen flex justify-center items-center overflow-hidden">
             {loading ? (
                 <div className="w-screen h-screen flex justify-center items-center">
                     <Loading/>
@@ -243,7 +243,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
                             <div className="flex justify-start items-start gap-48">
                                 <div className="flex flex-col justify-start items-center gap-5">
                                     <h1 className="text-3xl font-extrabold">Users:</h1>
-                                    <ul>
+                                    <ul className=" flex flex-col justify-center items-center gap-3">
                                         {userList.map((user, index) => (
                                             <li
                                                 key={index}
@@ -295,7 +295,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
                                             name="description"
                                             value={description}
                                             onChange={(e) => setDescription(e.target.value)}
-                                            className="bg-gray-800 rounded-md text-base text-white pl-2"
+                                            className="textarea"
                                         />
                                     </label>
                                     <div className="w-full text-xl flex gap-5 items-center">

@@ -43,7 +43,7 @@ const TasksCard: React.FC<Task> = ({
                                    }) => {
     return (
         <div
-            className="w-96 rounded-lg overflow-hidden shadow-lg p-6 bg-background2 cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 relative"
+            className="w-96 rounded-lg overflow-hidden shadow-lg p-6 bg-base-300 cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 relative"
             onClick={onClick}
         >
             <div className="absolute top-4 right-4 flex items-center group">

@@ -88,13 +88,13 @@ const CreateMeeting: FC<PageProps> = ({params}) => {
     };
 
     return (
-        <div className="w-screen h-screen flex overflow-hidden">
+        <div className="w-screen h-screen flex justify-center items-center overflow-hidden">
             <div className="flex flex-col justify-center items-center gap-16">
                 <h1 className="text-5xl font-extrabold">Create Meeting</h1>
                 <div className="flex justify-start items-start gap-48">
                     <div className="flex flex-col justify-start items-center gap-5">
                         <h1 className="text-3xl font-extrabold">Users:</h1>
-                        <ul>
+                        <ul className="flex flex-col justify-center items-center gap-3">
                             {users.map((user, index) => (
                                 <li
                                     key={index}
@@ -123,56 +123,56 @@ const CreateMeeting: FC<PageProps> = ({params}) => {
                             e.preventDefault();
                             AxiosMeeting();
                         }}
-                        className="flex flex-col justify-center items-center gap-10"
+                        className="flex flex-col justify-center items-start gap-10"
                     >
-                        <label className="text-xl flex gap-5">
+                        <label className="text-xl w-full gap-5 flex justify-between items-center">
                             Topic:
                             <input
                                 type="text"
                                 name="topic"
                                 value={topic}
                                 onChange={(e) => setTopic(e.target.value)}
-                                className="bg-gray-800 rounded-md text-base text-white pl-2"
+                                className="bg-base-100 rounded-md text-base text-white p-2"
                             />
                         </label>
-                        <label className="text-xl flex gap-5">
+                        <label className="text-xl w-full gap-5 flex justify-between items-center">
                             Description:
                             <input
                                 type="text"
                                 name="description"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                className="bg-gray-800 rounded-md text-base text-white pl-2"
+                                className="textarea bg-base-100"
                             />
                         </label>
-                        <label className="text-xl flex gap-5">
+                        <label className="text-xl w-full gap-5 flex justify-between items-center">
                             Day:
                             <input
                                 type="text"
                                 name="day"
                                 value={day}
                                 onChange={(e) => setDay(e.target.value)}
-                                className="bg-gray-800 rounded-md text-base text-white pl-2"
+                                className="bg-base-100 rounded-md text-base text-white p-2"
                             />
                         </label>
-                        <label className="text-xl flex gap-5">
+                        <label className="text-xl w-full gap-5 flex justify-between items-center">
                             Start Hour:
                             <input
                                 type="text"
                                 name="startHour"
                                 value={startHour}
                                 onChange={(e) => setStartHour(e.target.value)}
-                                className="bg-gray-800 rounded-md text-base text-white pl-2"
+                                className="bg-base-100 rounded-md text-base text-white p-2"
                             />
                         </label>
-                        <label className="text-xl flex gap-5">
+                        <label className="text-xl w-full gap-5 flex justify-between items-center">
                             End Hour:
                             <input
                                 type="text"
                                 name="endHour"
                                 value={endHour}
                                 onChange={(e) => setEndHour(e.target.value)}
-                                className="bg-gray-800 rounded-md text-base text-white pl-2"
+                                className="bg-base-100 rounded-md text-base text-white p-2"
                             />
                         </label>
                         <button

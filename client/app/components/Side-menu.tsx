@@ -131,7 +131,15 @@ const SideMenu = () => {
                                                     Settings
                                                 </Link>
                                             </li>
-
+                                            <li className=" py-1 text-md w-full">
+                                                <Link
+                                                    href={`/dashboard/${org}/meetings`}
+                                                    className="flex items-center w-full"
+                                                >
+                                                    <FaCog className="text-lg mr-2"/>
+                                                    Meetings
+                                                </Link>
+                                            </li>
                                             <li className="text-md w-full">
                                                 <Link
                                                     href={`/dashboard/${org}/settings/employees`}

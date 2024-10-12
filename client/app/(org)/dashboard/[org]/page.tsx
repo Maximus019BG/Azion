@@ -82,7 +82,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
                         <h2 className={`${headerText.className} text-4xl text-white pl-10 pt-10 w-full flex justify-start items-center`}>
                             Dashboard
                         </h2>
-                        <div className="w-full h-full flex flex-col gap-16 justify-centert items-center">
+                        <div className="w-full h-full flex flex-col gap-10 justify-centert items-center">
                             <DashboardRow1/>
                             <DashboardProgramCard/>
                         </div>
