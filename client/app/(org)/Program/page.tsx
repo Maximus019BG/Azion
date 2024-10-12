@@ -1,5 +1,5 @@
 import React from 'react';
-import DashboardProgramCard from "@/app/components/Dashboard_Program_Card";
+import DashboardProgramCard from "@/app/components/_Dashboard-Elements/Dashboard_Program_Card";
 
 
 const Page = () => {
