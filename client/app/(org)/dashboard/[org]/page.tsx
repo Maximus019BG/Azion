@@ -8,6 +8,8 @@ import {getOrgName} from '@/app/func/org';
 import Loading from '@/app/components/Loading';
 import DashboardRow1 from "@/app/components/_Dashboard-Elements/Dashboard_Row_1";
 import DashboardProgramCard from "@/app/components/_Dashboard-Elements/Dashboard_Program_Card";
+import axios from "axios";
+import {apiUrl} from "@/app/api/config";
 
 
 const headerText = Poppins({subsets: ['latin'], weight: '900'});
@@ -66,6 +68,22 @@ const Dashboard: FC<PageProps> = ({params}) => {
         }
         setLoading(false);
     }, [orgNameCheck, orgName]);
+
+    useEffect(() => {
+        const GetMeetings = () => {
+            axios.get(`${apiUrl}/schedule/show/meetings`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": Cookies.get("azionAccessToken")
+                }
+            }).then((response) => {
+                console.log(response.data);
+            }).catch((error) => {
+                console.log(error);
+            })
+        }
+        GetMeetings();
+    }, []);
 
     return (
         <>

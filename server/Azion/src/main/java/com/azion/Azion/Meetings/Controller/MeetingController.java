@@ -1,6 +1,7 @@
 package com.azion.Azion.Meetings.Controller;
 
 
+import com.azion.Azion.Meetings.Model.MeetingDTO;
 import com.azion.Azion.Meetings.Service.MeetingService;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.User;
@@ -46,10 +47,25 @@ public class MeetingController {
         String dayOfWeek = (String) request.get("dayOfWeek");
         String startHour = (String) request.get("startHour");
         String endHour = (String) request.get("endHour");
+        String link = (String) request.get("link");
         List<String> userEmails = (List<String>) request.get("userEmails");
         
-        meetingService.createMeeting(topic, description, dayOfWeek, startHour, endHour, userEmails);
+        meetingService.createMeeting(topic, description, dayOfWeek, startHour, endHour, userEmails, link);
         
         return ResponseEntity.ok().body(String.format("New meeting about %s created!", topic));
+    }
+    
+    @Transactional
+    @GetMapping("/show/meetings")
+    public ResponseEntity<?> showMeetings(@RequestHeader("authorization") String token) {
+        userService.userValid(token);
+        
+        User user = tokenService.getUserFromToken(token);
+        if (!userService.userAdmin(user)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not admin or owner");
+        }
+        
+        List<MeetingDTO> meetings = meetingService.getMeetingsThisWeek(user);
+        return ResponseEntity.ok().body(meetings);
     }
 }

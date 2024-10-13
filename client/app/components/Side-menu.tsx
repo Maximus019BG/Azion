@@ -2,18 +2,7 @@
 import React, {useEffect, useState} from "react";
 import {Commissioner} from "next/font/google";
 import Link from "next/link";
-import {
-    FaBuilding,
-    FaChevronDown,
-    FaClipboard,
-    FaCog,
-    FaComments,
-    FaPlusCircle,
-    FaTasks,
-    FaUserCircle,
-    FaUsers,
-    FaUserSecret
-} from "react-icons/fa";
+import {FaBuilding, FaChevronDown, FaClipboard, FaCog, FaComments, FaPlusCircle, FaTasks, FaUserCircle, FaUsers, FaUserSecret} from "react-icons/fa";
 import LogOut from "@/app/components/LogOut";
 import {UserData} from "@/app/func/funcs";
 import {TbFaceId} from "react-icons/tb";
@@ -134,7 +123,7 @@ const SideMenu = () => {
                                             </li>
                                             <li className=" py-1 text-md w-full">
                                                 <Link
-                                                    href={`/dashboard/${org}/meetings`}
+                                                    href={`/dashboard/${org}/meetings/create`}
                                                     className="flex items-center w-full"
                                                 >
                                                     <MdMeetingRoom className="text-lg mr-2"/>

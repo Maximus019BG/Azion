@@ -17,10 +17,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,21 +39,6 @@ public class OrgService {
         this.mailSender = mailSender;
     }
     
-    // Send email
-    public void sendEmail(String to, String subject, String content) {
-        MimeMessage message = mailSender.createMimeMessage();
-        try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setFrom(fromEmail);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(content, true);
-            mailSender.send(message);
-            
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-    }
     
     public void addUserToOrg(Org org, User user) {
         user.setOrgid(org.getOrgID());
@@ -83,6 +65,18 @@ public class OrgService {
         return null;
     }
     
+    public void removeEmployee(User user) {
+        if (user.getRoleLevel() == 1 || user.getRoleLevel() == 2) {
+            throw new RuntimeException("can't remove super admins");
+        }
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+        List<User> employees = new ArrayList<>(org.getUsers());
+        employees.remove(user);
+        user.setOrgid(null);
+        orgRepository.save(org);
+        userRepository.save(user);
+    }
+    
     public Map<String, Integer> getOrgRoles(Org org) {
         List<User> users = org.getUsers().stream().collect(Collectors.toList());
         Map<String, Integer> roleLevels = new HashMap<>();
@@ -106,6 +100,7 @@ public class OrgService {
         return results.get(0);
     }
     
+    //!Owner remover blocker
     public void ensureOwnerHasLevelOne(String orgId) {
         List<User> usersWithLevelOne = userRepository.findByRoleLevelAndOrgid(1, orgId);
         if (usersWithLevelOne.isEmpty()) {
@@ -136,6 +131,7 @@ public class OrgService {
                 noRoleUser.setRoleLevel(1);
                 userRepository.save(noRoleUser);
             } else {
+                //*Final hope
                 User randomUser = userRepository.findByOrgid(orgId).get(0);
                 randomUser.setRoleLevel(1);
                 userRepository.save(randomUser);

@@ -29,6 +29,7 @@ const CreateMeeting: FC<PageProps> = ({params}) => {
     const [day, setDay] = useState("Monday");
     const [startHour, setStartHour] = useState("");
     const [endHour, setEndHour] = useState("");
+    const [link, setLink] = useState("");
 
     // Fetch users when component mounts
     useEffect(() => {
@@ -70,7 +71,8 @@ const CreateMeeting: FC<PageProps> = ({params}) => {
             description,
             dayOfWeek: day,
             startHour,
-            endHour
+            endHour,
+            link
         };
         axios
             .post(`${apiUrl}/schedule/create/meeting`, data, {
@@ -172,6 +174,16 @@ const CreateMeeting: FC<PageProps> = ({params}) => {
                                 name="endHour"
                                 value={endHour}
                                 onChange={(e) => setEndHour(e.target.value)}
+                                className="bg-base-100 rounded-md text-base text-white p-2"
+                            />
+                        </label>
+                        <label className="text-xl w-full gap-5 flex justify-between items-center">
+                            Meeting Link:
+                            <input
+                                type="text"
+                                name="endHour"
+                                value={link}
+                                onChange={(e) => setLink(e.target.value)}
                                 className="bg-base-100 rounded-md text-base text-white p-2"
                             />
                         </label>

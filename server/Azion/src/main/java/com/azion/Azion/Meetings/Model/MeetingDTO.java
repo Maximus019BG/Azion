@@ -1,51 +1,21 @@
 package com.azion.Azion.Meetings.Model;
 
+
 import com.azion.Azion.Meetings.Enum.EnumDays;
-import com.azion.Azion.User.Model.User;
-import jakarta.persistence.*;
+import com.azion.Azion.User.Model.DTO.UserDTO;
 
 import java.util.List;
-import java.util.UUID;
 
-
-@Entity
-@Table(name = "meetings_azion")
-public class Meeting {
-    
-    @Id
-    @Column(nullable = false)
+public class MeetingDTO {
     private String id;
-    
-    @Column(nullable = false)
     private String topic;
-    
-    @Column
     private String description;
-    
-    @Column(nullable = false)
     private Enum<EnumDays> day;
-    
-    @Column(nullable = false)
     private String start;
-    
-    @Column(nullable = false)
     private String end;
-    
-    @Column
     private String link;
+    private List<UserDTO> users;
     
-    @ManyToMany
-    private List<User> users;
-    
-    private void generateId() {
-        String uuid = UUID.randomUUID().toString().replace("-", "");
-        this.id = uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis();
-    }
-    
-    @PrePersist
-    private void prePersist() {
-        generateId();
-    }
     
     public String getId() {
         return id;
@@ -103,11 +73,11 @@ public class Meeting {
         this.link = link;
     }
     
-    public List<User> getUsers() {
+    public List<UserDTO> getUsers() {
         return users;
     }
     
-    public void setUsers(List<User> users) {
+    public void setUsers(List<UserDTO> users) {
         this.users = users;
     }
 }

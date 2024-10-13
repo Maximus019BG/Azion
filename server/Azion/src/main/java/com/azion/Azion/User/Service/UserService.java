@@ -4,8 +4,10 @@ package com.azion.Azion.User.Service;
 import com.azion.Azion.MFA.Service.MFAService;
 import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
 import com.azion.Azion.Projects.Model.Project;
+import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
+import com.azion.Azion.Token.TokenType;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
@@ -90,6 +92,10 @@ public class UserService {
         if (token == null || token.isEmpty()) {
             throw new RuntimeException("Invalid token");
         }
+        Token tokeobj = tokenRepo.findByToken(token);
+        if (tokeobj.getTokenType() != TokenType.ACCESS_TOKEN) {
+            throw new RuntimeException("Not access token");
+        }
         User user = tokenService.getUserFromToken(token);
         if (user == null) {
             throw new RuntimeException("Invalid token");
@@ -101,6 +107,13 @@ public class UserService {
         String role = user.getRole();
         int roleLevel = user.getRoleLevel();
         return (roleLevel > 0 && roleLevel < 4) || (Objects.equals(role.toLowerCase(), "admin") || Objects.equals(role.toLowerCase(), "boss"));
+    }
+    
+    //!User superAdmin validation
+    public boolean userSuperAdmin(User user) {
+        String role = user.getRole();
+        int roleLevel = user.getRoleLevel();
+        return (roleLevel > 0 && roleLevel <= 2);
     }
     
 }
