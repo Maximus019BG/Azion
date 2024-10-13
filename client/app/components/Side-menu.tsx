@@ -17,6 +17,7 @@ import {
 import LogOut from "@/app/components/LogOut";
 import {UserData} from "@/app/func/funcs";
 import {TbFaceId} from "react-icons/tb";
+import {MdMeetingRoom} from "react-icons/md";
 import {getOrgName} from "@/app/func/org";
 
 // Font setup
@@ -136,7 +137,7 @@ const SideMenu = () => {
                                                     href={`/dashboard/${org}/meetings`}
                                                     className="flex items-center w-full"
                                                 >
-                                                    <FaCog className="text-lg mr-2"/>
+                                                    <MdMeetingRoom className="text-lg mr-2"/>
                                                     Meetings
                                                 </Link>
                                             </li>

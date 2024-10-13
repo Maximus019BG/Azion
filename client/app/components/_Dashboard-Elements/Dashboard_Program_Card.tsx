@@ -13,10 +13,8 @@ const DashboardProgramCard: React.FC<CalendarProps> = ({tabIndex}) => {
             <div className="w-full h-full flex justify-end items-start">
                 <Dashboard_Meeting_Card_Row/>
             </div>
-            {/*<div className="w-fit h-full flex justify-start items-start">*/}
-            {/*    <Dashboard_Meeting_Card_Col/>*/}
-            {/*</div>*/}
-            <div className="absolute w-fit h-full flex flex-col justify-around items-center rounded-xl p-4">
+            <div
+                className="absolute w-fit h-full flex flex-col justify-around items-center rounded-xl p-3">
                 <p>9:00</p>
                 <p>10:00</p>
                 <p>11:00</p>

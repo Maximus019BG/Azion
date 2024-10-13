@@ -101,7 +101,7 @@ const SessionCards = () => {
     return (
         <div className="p-6 w-full max-w-4xl mx-auto flex flex-col justify-center items-center gap-6">
             <h1 className="text-3xl font-bold text-white mb-4">Active Sessions</h1>
-            <p className="text-md text-gray-600 mb-4">
+            <p className="text-md text-gray-300 mb-4">
                 If you think your account is compromised, you can{" "}
                 <a
                     onClick={DeleteSession}
@@ -124,7 +124,7 @@ const SessionCards = () => {
                                     {session.tokenDTO.userAgent}
                                 </p>
                                 <p className="text-sm text-gray-500 mt-1">
-                                  {session.platform}
+                                    {session.platform}
                                 </p>
                                 {session.tokenDTO.token === Cookies.get("azionRefreshToken") && (
                                     <div className={"flex"}>

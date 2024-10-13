@@ -8,7 +8,7 @@ interface CircularProgressProps {
 
 const CircularProgress: React.FC<CircularProgressProps> = ({
                                                                percentage,
-                                                               size = 180,
+                                                               size = 150,
                                                                strokeWidth = 5,
                                                            }) => {
     const radius = 15;
@@ -61,8 +61,8 @@ const CircularProgress: React.FC<CircularProgressProps> = ({
 
             {/* Percentage Text */}
             <div className="absolute flex justify-center items-center w-full h-full">
-                <span className="text-3xl font-extrabold text-lightAccent drop-shadow-lg">
-                    {percentage}%
+                <span className="text-lg font-extrabold text-white text-center drop-shadow-lg">
+                    Top <br/> Workers
                 </span>
             </div>
         </div>

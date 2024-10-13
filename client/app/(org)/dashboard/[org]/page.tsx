@@ -70,19 +70,19 @@ const Dashboard: FC<PageProps> = ({params}) => {
     return (
         <>
             {loading ? (
-                <div className="w-screen h-screen flex justify-center items-center">
+                <div className="w-screen h-screen flex justify-start items-center">
                     <Loading/>
                 </div>
             ) : (
                 <div className="w-screen h-screen flex overflow-y-hidden">
-                    <div className="w-1/4">
+                    <div className="w-1/4 h-full">
                         <SideMenu/>
                     </div>
-                    <div className="w-full h-full flex flex-col justify-center items-center overflow-y-auto">
+                    <div className="w-full h-full flex flex-col justify-start items-start overflow-y-auto">
                         <h2 className={`${headerText.className} text-4xl text-white pl-10 pt-10 w-full flex justify-start items-center`}>
                             Dashboard
                         </h2>
-                        <div className="w-full h-full flex flex-col gap-10 justify-centert items-center">
+                        <div className="w-full h-full flex flex-col gap-10 justify-start items-start">
                             <DashboardRow1/>
                             <DashboardProgramCard/>
                         </div>

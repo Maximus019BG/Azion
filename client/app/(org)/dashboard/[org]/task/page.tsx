@@ -125,6 +125,16 @@ const Tasks: FC<PageProps> = ({params}) => {
                         setSortOrder={setSortOrder}
                     />
                     <div className="w-full flex flex-wrap justify-center items-center gap-5">
+
+                        {admin && (
+                            <Link
+                                className="w-96 h-[25.6vh] flex flex-col justify-center items-center rounded-lg overflow-hidden shadow-lg p-6 bg-base-100 text-white cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl relative"
+                                href={`/dashboard/${orgNameCheck}/task/create`}
+                            >
+                                <CiSquarePlus className="text-8xl mb-2"/>
+                                <span className="text-lg font-semibold">Create Task</span>
+                            </Link>
+                        )}
                         {sortTasks(task).map((task) => (
                             <TasksCard
                                 key={task.id}
@@ -138,15 +148,6 @@ const Tasks: FC<PageProps> = ({params}) => {
                                 isCreator={task.createdBy?.email === currentUserEmail}
                             />
                         ))}
-                        {admin && (
-                            <Link
-                                className="w-96 h-[25.6vh] flex flex-col justify-center items-center rounded-lg overflow-hidden shadow-lg p-6 bg-base-100 text-white cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl relative"
-                                href={`/dashboard/${orgNameCheck}/task/create`}
-                            >
-                                <CiSquarePlus className="text-8xl mb-2"/>
-                                <span className="text-lg font-semibold">Create Task</span>
-                            </Link>
-                        )}
                     </div>
                 </div>
             </div>
