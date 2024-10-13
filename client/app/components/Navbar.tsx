@@ -57,7 +57,7 @@ const Navbar = () => {
         }
     };
     fetchOrgName();
-    }, []);
+    }, [org]);
 
   return (
     <div className="navbar bg-transparent px-16">

@@ -145,7 +145,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
             }
         };
         getUser();
-    }, [org, taskId]);
+    }, [org, taskId,task]);
 
     if (!task) {
         return (
@@ -326,7 +326,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                             <div className="space-y-4">
                                 {task.files.map((file, index) => (
                                     <div key={index} className="bg-gray-700 p-4 rounded-lg">
-                                        <h3 className="font-semibold">{file.user.name}'s work:</h3>
+                                        <h3 className="font-semibold">{file.user.name}&apos;s work:</h3>
                                         <a
                                             href={URL.createObjectURL(
                                                 new Blob([atob(file.fileData || "")], {type: file.contentType})
