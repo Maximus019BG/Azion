@@ -6,6 +6,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 import {IoCopy} from "react-icons/io5";
 import {byteArrayToBase64} from "@/app/func/funcs";
+import axios from "axios";
+import {apiUrl} from "@/app/api/config";
+import Cookies from "js-cookie";
 
 const DisplayEmployee: React.FC<Employee> = ({
                                                  id,
@@ -57,6 +60,15 @@ const DisplayEmployee: React.FC<Employee> = ({
     const handleCopy = (text: string) => {
         navigator.clipboard.writeText(text);
     };
+
+    const removeEmployee = () => {
+        axios.delete(`${apiUrl}/org/remove/employee/${id}`, {
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": Cookies.get("azionAccessToken")
+            }
+        })
+    }
 
     return (
         <div className="w-full">
@@ -154,6 +166,9 @@ const DisplayEmployee: React.FC<Employee> = ({
                                     </button>
                                 </div>
                             </div>
+                        </div>
+                        <div className="absolute top-1/2 right-5">
+                            <button onClick={() => removeEmployee()}>Remove user</button>
                         </div>
                     </div>
                 </div>

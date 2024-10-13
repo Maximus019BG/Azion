@@ -33,15 +33,15 @@ const Account = () => {
                     <Loading/>
                 </div>
             ) : (
-                <div className="w-screen h-screen flex">
+                <div className="w-screen h-screen flex overflow-hidden">
                     <div className="w-1/4 h-full">
                         <SideMenu/>
                     </div>
-                    <div className="w-full h-full flex gap-x-56 ">
+                    <div className="w-full h-full flex gap-x-56 overflow-y-auto">
                         <div className="w-1/2 p-4 ml-8 flex justify-center items-center">
                             <Badge/>
                         </div>
-                        <div className="w-full p-4 flex justify-center items-center">
+                        <div className="w-full h-full p-4 flex justify-center items-start">
                             <SessionCards/>
                         </div>
                     </div>

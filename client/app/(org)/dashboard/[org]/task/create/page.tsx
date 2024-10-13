@@ -1,5 +1,5 @@
 "use client";
-import React, {FC, useEffect, useState} from "react";
+import React, {FC, useCallback, useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
@@ -91,7 +91,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
                 window.location.href = `/dashboard/${orgName}/task`;
             }
         });
-    }, []);
+    }, [orgName]);
 
     const handleCheckboxChange = (email: string) => {
         setSelectedUsers((prevSelectedUsers) => {
@@ -149,7 +149,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
         return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
     };
 
-    const isValidDate = (day: string, month: string, year: string): boolean => {
+    const isValidDate = useCallback((day: string, month: string, year: string): boolean => {
         const dayInt = parseInt(day);
         const monthInt = parseInt(month);
         const yearInt = parseInt(year);
@@ -164,20 +164,20 @@ const CreateTask: FC<PageProps> = ({params}) => {
 
         const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
         return dayInt <= daysInMonth[monthInt - 1];
-    };
+    }, []);
 
-    const handleDueDateChange = () => {
+    const handleDueDateChange = useCallback(() => {
         if (isValidDate(selectedDay, selectedMonth, selectedYear)) {
             setDueDate(`${selectedMonth}/${selectedDay}/${selectedYear}`);
         } else {
             setAlert(true);
             setAlertMessage("Invalid date");
         }
-    };
+    }, [selectedDay, selectedMonth, selectedYear,isValidDate]);
 
     useEffect(() => {
         handleDueDateChange();
-    }, [selectedDay, selectedMonth, selectedYear]);
+    }, [selectedDay, selectedMonth, selectedYear, handleDueDateChange]);
 
     const months = Array.from({length: 12}, (_, i) =>
         (i + 1).toString().padStart(2, "0")
@@ -221,7 +221,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
 
 
     return (
-        <div className="w-screen h-screen flex overflow-hidden">
+        <div className="w-screen h-screen flex justify-center items-center overflow-hidden">
             {loading ? (
                 <div className="w-screen h-screen flex justify-center items-center">
                     <Loading/>
@@ -243,7 +243,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
                             <div className="flex justify-start items-start gap-48">
                                 <div className="flex flex-col justify-start items-center gap-5">
                                     <h1 className="text-3xl font-extrabold">Users:</h1>
-                                    <ul>
+                                    <ul className=" flex flex-col justify-center items-center gap-3">
                                         {userList.map((user, index) => (
                                             <li
                                                 key={index}
@@ -295,7 +295,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
                                             name="description"
                                             value={description}
                                             onChange={(e) => setDescription(e.target.value)}
-                                            className="bg-gray-800 rounded-md text-base text-white pl-2"
+                                            className="textarea"
                                         />
                                     </label>
                                     <div className="w-full text-xl flex gap-5 items-center">

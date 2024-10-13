@@ -1,6 +1,6 @@
 package com.azion.Azion.Projects.Model.DTO;
 
-import com.azion.Azion.Projects.Type.SubmitType;
+import com.azion.Azion.Projects.Enum.SubmitType;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 
 

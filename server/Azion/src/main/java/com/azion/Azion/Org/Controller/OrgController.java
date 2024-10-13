@@ -374,4 +374,20 @@ public class OrgController {
         }
         return ResponseEntity.ok("Roles and users updated.");
     }
+    
+    @Transactional
+    @DeleteMapping("/remove/employee/{eId}")
+    public ResponseEntity<?> removeEmployee(@PathVariable String eId, @RequestHeader("authorization") String accessToken) {
+        userService.userValid(accessToken);
+        User user = tokenService.getUserFromToken(accessToken);
+        if (!userService.userSuperAdmin(user)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not super admin");
+        }
+        User employee = userRepository.findById(eId).orElse(null);
+        if (employee == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee not found.");
+        }
+        orgService.removeEmployee(employee);
+        return ResponseEntity.ok("Employee removed.");
+    }
 }

@@ -2,6 +2,8 @@ package com.azion.Azion.Projects.Service;
 
 import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
 import com.azion.Azion.Projects.Model.Project;
+import com.azion.Azion.Projects.Model.ProjectFiles;
+import com.azion.Azion.Projects.Repository.FileRepo;
 import com.azion.Azion.Projects.Repository.ProjectsRepository;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
@@ -17,10 +19,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,9 +31,11 @@ public class ProjectsService {
     private static final String VIRUSTOTAL_URL = "https://www.virustotal.com/api/v3/files";
     
     private final ProjectsRepository projectsRepository;
+    private final FileRepo fileRepo;
     
-    public ProjectsService(ProjectsRepository projectsRepository) {
+    public ProjectsService(ProjectsRepository projectsRepository, FileRepo fileRepo) {
         this.projectsRepository = projectsRepository;
+        this.fileRepo = fileRepo;
     }
     
     //*Converter (file to MLTFile)
@@ -107,6 +108,44 @@ public class ProjectsService {
         return true;
     }
     
+    //!Returns tasks to user
+    public void taskReturner(User user, Project project) {
+        Set<User> users = project.getDoneBy();
+        users.remove(user);
+        project.setDoneBy(users);       //NOT users it won't work use doneBy!
+        List<ProjectFiles> files = project.getFiles();
+        //*Find user's work and delete it
+        for (ProjectFiles file : files) {
+            if (file.getUser() == user) {
+                fileRepo.delete(file);
+            }
+        }
+        if (Objects.equals(project.getStatus(), "Done") || Objects.equals(project.getStatus(), "Submitted")) {
+            project.setStatus("Due");
+        }
+        progressCalc(project);      //!DO NOT FORGET TO CALCULATE THE PROGRESS AGAIN
+        projectsRepository.save(project);
+    }
+    
+    //*Calculates project progress
+    public void progressCalc(Project project) {
+        Set<User> doneUsers = project.getDoneBy();
+        Set<User> allUsers = project.getUsers();
+        List<User> notDoneUsers = new ArrayList<>();
+        //Finding not done users
+        for (User aUser : allUsers) {
+            if (!doneUsers.contains(aUser)) {
+                notDoneUsers.add(aUser);
+            }
+        }
+        //!Formula
+        int progress = 100 - (int) (((double) notDoneUsers.size() / allUsers.size()) * 100);
+        log.debug("not done " + notDoneUsers.size() + " all users " + allUsers.size());
+        log.debug("progress: " + progress);
+        project.setProgress(progress);
+        project.setStatus("In Progress");
+        projectsRepository.save(project);
+    }
     
     //*List top 3 projects by
     public List<ProjectsDTO> sortProjectsByDate(List<Project> projects) {

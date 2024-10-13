@@ -42,7 +42,7 @@ const Home = () => {
             }
         };
         fetchOrgName();
-    }, []);
+    }, [org]);
 
 
     const getLoopAnimation = (delay: number) => ({

@@ -3,6 +3,7 @@ package com.azion.Azion.Projects.Controller;
 import com.azion.Azion.Exception.FileSize;
 import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.Org.Repository.OrgRepository;
+import com.azion.Azion.Projects.Enum.SubmitType;
 import com.azion.Azion.Projects.Model.DTO.FileDTO;
 import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
 import com.azion.Azion.Projects.Model.Project;
@@ -10,11 +11,11 @@ import com.azion.Azion.Projects.Model.ProjectFiles;
 import com.azion.Azion.Projects.Repository.FileRepo;
 import com.azion.Azion.Projects.Repository.ProjectsRepository;
 import com.azion.Azion.Projects.Service.ProjectsService;
-import com.azion.Azion.Projects.Type.SubmitType;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
+import com.azion.Azion.User.Service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,15 +43,17 @@ public class ProjectsController extends FileSize {
     private final TokenService tokenService;
     private final OrgRepository orgRepository;
     private final FileRepo fileRepo;
+    private final UserService userService;
     
     @Autowired
-    public ProjectsController(ProjectsRepository projectsRepository, ProjectsService projectsService, UserRepository userRepository, TokenService tokenService, OrgRepository orgRepository, FileRepo fileRepo) {
+    public ProjectsController(ProjectsRepository projectsRepository, ProjectsService projectsService, UserRepository userRepository, TokenService tokenService, OrgRepository orgRepository, FileRepo fileRepo, UserService userService) {
         this.projectsService = projectsService;
         this.projectsRepository = projectsRepository;
         this.userRepository = userRepository;
         this.tokenService = tokenService;
         this.orgRepository = orgRepository;
         this.fileRepo = fileRepo;
+        this.userService = userService;
     }
     
     @GetMapping
@@ -72,10 +75,9 @@ public class ProjectsController extends FileSize {
         String source = (String) request.get("source");
         List<String> usersArr = (List<String>) request.get("users");
         
+        userService.userValid(accessToken);
         User user = tokenService.getUserFromToken(accessToken);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
-        }
+        
         if (title == null || description == null || dueDate == null || priority == null || status == null || source == null || usersArr == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing required fields");
         }
@@ -142,10 +144,8 @@ public class ProjectsController extends FileSize {
     @Transactional
     @GetMapping("/{id}")
     public ResponseEntity<?> getProjectById(@PathVariable String id, @RequestHeader("authorization") String token) {
+        userService.userValid(token);
         User user = tokenService.getUserFromToken(token);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
-        }
         
         Optional<Project> project = projectsRepository.findById(id);
         ProjectsDTO projectDTO = new ProjectsDTO();
@@ -220,13 +220,15 @@ public class ProjectsController extends FileSize {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     
+    //!Task submitting
     @Transactional
     @PutMapping(value = "/submit/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> submitProject(@PathVariable String id, @RequestHeader("authorization") String token, @RequestParam("file") MultipartFile file) {
+        //*Basic check
+        userService.userValid(token);
+        
         User user = tokenService.getUserFromToken(token);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
-        }
+        
         boolean fileSafe = projectsService.isFileSafe(file);
         if (!fileSafe) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ProjectFiles could be harmful");
@@ -272,6 +274,7 @@ public class ProjectsController extends FileSize {
                 Set<User> doneUsers = proj.getDoneBy();
                 doneUsers.add(user);
                 Set<User> allUsers = proj.getUsers();
+                projectsRepository.save(proj);
                 
                 if (doneUsers.containsAll(allUsers)) {
                     log.debug("done");
@@ -283,16 +286,7 @@ public class ProjectsController extends FileSize {
                     }
                 } else {
                     log.debug("not done");
-                    List<User> notDoneUsers = new ArrayList<>();
-                    for (User aUser : allUsers) {
-                        if (!doneUsers.contains(aUser)) {
-                            notDoneUsers.add(aUser);
-                        }
-                    }
-                    int progress = 100 - (int) (((double) notDoneUsers.size() / allUsers.size()) * 100);
-                    log.debug("not done " + notDoneUsers.size() + " all users " + allUsers.size());
-                    log.debug("progress: " + progress);
-                    proj.setProgress(progress);
+                    projectsService.progressCalc(proj);
                 }
                 projectsRepository.save(proj);
             } catch (IOException e) {
@@ -306,7 +300,7 @@ public class ProjectsController extends FileSize {
     
     //*List top projects
     @Transactional
-    @GetMapping("top/{accessToken}")
+    @GetMapping("/top/{accessToken}")
     public ResponseEntity<?> topProjects(@PathVariable String accessToken) {
         if (accessToken == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
@@ -321,5 +315,23 @@ public class ProjectsController extends FileSize {
         }
         
         return ResponseEntity.ok(projectsService.sortProjectsByDate(projects));
+    }
+    
+    //!Task return
+    @Transactional
+    @PutMapping("/return/task/{id}")
+    public ResponseEntity<?> returnTask(@PathVariable String id, @RequestBody Map<Object, String> request, @RequestHeader("authorization") String token) {
+        userService.userValid(token);
+        String userREmail = request.get("email");
+        
+        User user = userRepository.findByEmail(userREmail);
+        Project project = projectsRepository.findById(id).get();
+        
+        if (project == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Project not found");
+        }
+        projectsService.taskReturner(user, project);
+        
+        return ResponseEntity.ok("User task returned");
     }
 }
