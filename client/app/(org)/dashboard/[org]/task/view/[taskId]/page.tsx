@@ -158,48 +158,67 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     }
 
     return (
-        <div className={`flex h-screen bg-gray-900 text-white ${isFullScreen ? "fixed inset-0 z-50" : ""}`}>
+        <div className={`flex h-screen text-white ${isFullScreen ? "fixed inset-0 z-50" : ""}`}>
             <div className="w-1/4">
                 <SideMenu/>
             </div>
             <div className="w-full flex justify-center items-center p-8">
-                <div className="bg-gray-800 rounded-lg p-8 shadow-lg w-full h-full">
-                    <h1 className={`text-4xl ${HeaderText.className} text-center mb-8`}>
+                <div className="bg-[#090909] rounded-lg p-8 shadow-lg w-[50vw] h-[60vh]">
+                    <h1 className={`text-2xl ${HeaderText.className} text-gray-300 text-start`}>
                         Task Details
                     </h1>
-                    <div className="grid grid-cols-1 gap-6 mb-6">
-                        <p className="bg-gray-700 p-4 rounded-lg text-xl">
-                            <strong className="font-semibold">Name: </strong>
-                            {task.name}
-                        </p>
-                        <p className="bg-gray-700 p-4 rounded-lg text-xl">
-                            <strong className="font-semibold">Description: </strong>
-                            {task.description}
-                        </p>
-                        <p className="bg-gray-700 p-4 rounded-lg text-xl">
-                            <strong className="font-semibold">Status: </strong>
-                            {task.status}
-                        </p>
-                        <p className="bg-gray-700 p-4 rounded-lg text-xl">
-                            <strong className="font-semibold">Date: </strong>
-                            {task.date}
-                        </p>
-                        <p className="bg-gray-700 p-4 rounded-lg text-xl">
-                            <strong className="font-semibold">Source: </strong>
-                            <Link href={task.source} className="text-blue-400 hover:underline">
-                                {task.source}
-                            </Link>
-                        </p>
-                        <p className="bg-gray-700 p-4 rounded-lg text-xl">
-                            <strong className="font-semibold">Progress: </strong>
+                    <div className="w-full h-full flex flex-col justify-evenly items-center">
+
+                        {/*!!!ROW_1!!!*/}
+
+                        <div className="w-full flex justify-evenly items-center">
+                            <div className="bg-gray-800 w-full p-2 rounded-lg">
+                                <p className="font-semibold">Name: </p>
+                                {task.name}
+                            </div>
+                            <div className="bg-gray-800 w-full p-2 rounded-lg">
+                                <p className="font-semibold">Status: </p>
+                                {task.status}
+                            </div>
+                        </div>
+
+                        {/*!!!ROW_2!!!*/}
+
+                        <div className="w-full flex justify-around items-center">
+                            <div className="bg-gray-800 textarea w-full">
+                                <p className="font-semibold">Description: </p>
+                                {task.description}
+                            </div>
+                        </div>
+
+                        {/*!!!ROW_3!!!*/}
+
+                        <div className="w-full flex justify-around items-center">
+                            <div className="bg-gray-800 p-2 rounded-lg w-full">
+                                <p className="font-semibold">Date: </p>
+                                {task.date}
+                            </div>
+                            <div className="bg-gray-800 w-full p-2 rounded-lg">
+                                <p className="font-semibold">Source: </p>
+                                <Link href={task.source} className="text-blue-400 hover:underline">
+                                    {task.source}
+                                </Link>
+                            </div>
+
+                            {task.createdBy && (
+                                <p className="bg-gray-800 w-full p-2 rounded-lg">
+                                    <p className="font-semibold">Created By: </p>
+                                    {task.createdBy.name} ({task.createdBy.email})
+                                </p>
+                            )}
+                        </div>
+
+
+                        <div className="bg-gray-800 w-full p-4 rounded-lg">
+                            <p className="font-semibold">Progress: </p>
                             {task.progress}%
-                        </p>
-                        {task.createdBy && (
-                            <p className="bg-gray-700 p-4 rounded-lg text-xl">
-                                <strong className="font-semibold">Created By: </strong>
-                                {task.createdBy.name} ({task.createdBy.email})
-                            </p>
-                        )}
+                        </div>
+
                     </div>
 
                     {/* Task submission section */}
@@ -318,7 +337,9 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                                             {file.fileName}
                                         </a>
                                         <h3>{file.date}</h3>
-                                        <button className="border-accent bordered border-2 rounded-lg px-1" onClick={() => ReturnTask(taskId, file.user.email)}>Return</button>
+                                        <button className="border-accent bordered border-2 rounded-lg px-1"
+                                                onClick={() => ReturnTask(taskId, file.user.email)}>Return
+                                        </button>
                                     </div>
                                 ))}
                             </div>
