@@ -187,6 +187,24 @@ public class ProjectsService {
                 .collect(Collectors.toList());
     }
     
+    //!Task deleting func
+    @Transactional
+    public void deleteTask(String id) {
+        Project projectObj = projectsRepository.findById(id).get();
+        if (projectObj == null) {
+            throw new RuntimeException("Project not found");
+        }
+        try {
+            projectObj.setUsers(null);
+            projectObj.setCreatedBy(null);
+            projectsRepository.save(projectObj);
+            projectsRepository.delete(projectObj);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+            
+        }
+    }
+    
     
     //!File scan with VirusTotal API
     public static String scanFile(File file) throws IOException {

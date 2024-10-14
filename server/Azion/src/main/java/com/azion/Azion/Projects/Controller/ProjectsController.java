@@ -136,7 +136,9 @@ public class ProjectsController extends FileSize {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
         }
         List<ProjectsDTO> projects = projectsService.getProjectByUser(user);
-        
+        if (projects.isEmpty()) {
+            return ResponseEntity.ok("no projects");
+        }
         return ResponseEntity.ok(projects);
     }
     
@@ -333,5 +335,13 @@ public class ProjectsController extends FileSize {
         projectsService.taskReturner(user, project);
         
         return ResponseEntity.ok("User task returned");
+    }
+    
+    @Transactional
+    @DeleteMapping("/delete/task/{id}")
+    public ResponseEntity<?> deleteTask(@PathVariable String id, @RequestHeader("authorization") String token) {
+        userService.userValid(token);
+        projectsService.deleteTask(id);
+        return ResponseEntity.ok("task deleted successfully");
     }
 }

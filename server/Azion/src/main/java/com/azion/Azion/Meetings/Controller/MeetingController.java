@@ -59,12 +59,7 @@ public class MeetingController {
     @GetMapping("/show/meetings")
     public ResponseEntity<?> showMeetings(@RequestHeader("authorization") String token) {
         userService.userValid(token);
-        
         User user = tokenService.getUserFromToken(token);
-        if (!userService.userAdmin(user)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not admin or owner");
-        }
-        
         List<MeetingDTO> meetings = meetingService.getMeetingsThisWeek(user);
         return ResponseEntity.ok().body(meetings);
     }

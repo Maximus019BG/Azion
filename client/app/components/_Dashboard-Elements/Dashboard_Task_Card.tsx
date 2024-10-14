@@ -42,9 +42,12 @@ const Dashboard_Task_Card = () => {
                         <div className="w-1/3">Priority</div>
                     </div>
                     <div className="space-y-2">
-                        {tasks.map((task) => (
+                        {tasks && tasks.map((task) => (
                             <Dashboard_Task_Row key={task.id} task={task}/>
                         ))}
+                        {!tasks && (
+                            <p>No tasks </p>
+                        )}
                     </div>
                 </div>
             )}
