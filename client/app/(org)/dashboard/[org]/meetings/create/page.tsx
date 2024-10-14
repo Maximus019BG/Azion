@@ -4,6 +4,7 @@ import axios, {AxiosResponse} from "axios";
 import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
 import {Poppins} from "next/font/google";
+import CustomAlert from "@/app/components/CustomAlert";
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
 
@@ -30,6 +31,8 @@ const CreateMeeting: FC<PageProps> = ({params}) => {
     const [startHour, setStartHour] = useState("");
     const [endHour, setEndHour] = useState("");
     const [link, setLink] = useState("");
+    const [alert, setAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
 
     // Fetch users when component mounts
     useEffect(() => {
@@ -82,7 +85,8 @@ const CreateMeeting: FC<PageProps> = ({params}) => {
                 },
             })
             .then((response: any) => {
-                console.log(response);
+                setAlert(true);
+                setAlertMessage("Meeting created");
             })
             .catch((error: any) => {
                 console.log(error);
@@ -92,6 +96,9 @@ const CreateMeeting: FC<PageProps> = ({params}) => {
     return (
         <div className="w-screen h-screen flex justify-center items-center overflow-hidden">
             <div className="flex flex-col justify-center items-center gap-16">
+                {alert && (
+                    <CustomAlert message={alertMessage} onClose={() => setAlert(false)}/>
+                )}
                 <h1 className="text-5xl font-extrabold">Create Meeting</h1>
                 <div className="flex justify-start items-start gap-48">
                     <div className="flex flex-col justify-start items-center gap-5">

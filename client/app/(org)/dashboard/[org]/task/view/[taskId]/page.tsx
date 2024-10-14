@@ -210,7 +210,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                             <div className="w-full flex justify-around items-center">
                                 <div className="w-full h-full flex flex-col justify-center items-start gap-2">
                                     <p className="font-semibold">Source: </p>
-                                    <Link href={task.source}
+                                    <Link href={task.source} target="_blank"
                                           className="bg-base-200 p-2 rounded-lg w-full text-blue-400 hover:underline">
                                         {task.source}
                                     </Link>
