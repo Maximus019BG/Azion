@@ -1,6 +1,5 @@
 "use client";
 import {motion} from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import Navbar from "./components/Navbar";
 import {Poppins} from "next/font/google";
@@ -10,19 +9,21 @@ import Footer from "./components/Footer";
 import Cookies from "js-cookie";
 import {sessionCheck} from "./func/funcs";
 import {getOrgName} from "./func/org";
+import Artboard2 from "../public/Artboard2.svg";
+import Artboard3 from "../public/Artboard3.svg";
+import Artboard4 from "../public/Artboard4.svg";
+import Artboard5 from "../public/Artboard5.svg";
+import Artboard6 from "../public/Artboard6.svg";
+import Artboard7 from "../public/Artboard7.svg";
+import Artboard8 from "../public/Artboard8.svg";
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
-
-interface Token {
-    refreshToken: string;
-    accessToken: string;
-}
 
 const Home = () => {
     const [ButtonText1, setButtonText1] = useState("");
     const [ButtonText2, setButtonText2] = useState("");
     const [org, setOrg] = useState<string | null>(null);
-    const [login, setLogin] = useState(false)
+    const [login, setLogin] = useState(false);
 
     useEffect(() => {
         const refreshToken = Cookies.get("azionRefreshToken");
@@ -44,18 +45,26 @@ const Home = () => {
         fetchOrgName();
     }, [org]);
 
-
     const getLoopAnimation = (delay: number) => ({
-        animate: {y: [0, -15, 0]}, // Bounce effect
+        animate: {y: [0, -15, 0]},
         transition: {
-            duration: 6.5, // Speed
+            duration: 6.5,
             ease: "easeInOut",
-            repeat: Infinity, // Animation loop
-            repeatDelay: 0.5, // Time between loops
-            delay: delay, // Delay start based on index
+            repeat: Infinity,
+            repeatDelay: 0.5,
+            delay: delay,
         },
     });
 
+    const svgs = [
+        {Component: Artboard2, position: "right-[3vw] top-[0vh]", delay: 0},
+        {Component: Artboard3, position: "right-[23vw] -top-[6vh]", delay: 0.3},
+        {Component: Artboard4, position: "right-[27vw] top-[32vh]", delay: 0.6},
+        {Component: Artboard5, position: "right-[9vw] top-[60vh]", delay: 0.9},
+        {Component: Artboard6, position: "left-[0vw] top-[50vh]", delay: 1.2},
+        {Component: Artboard7, position: "right-[3vw] top-[32vh]", delay: 1.5},
+        {Component: Artboard8, position: "right-[34vw] top-[63vh]", delay: 1.8},
+    ];
 
     return (
         <div className="">
@@ -63,53 +72,15 @@ const Home = () => {
                 <Navbar/>
             </div>
 
-            {/* IMAGES */}
             <div className="w-full relative ml-6">
-                {[
-                    {src: "/ArtBoard 2.svg", position: "right-[3vw] top-[0vh]", delay: 0},
-                    {
-                        src: "/ArtBoard 3.svg",
-                        position: "right-[23vw] -top-[6vh]",
-                        delay: 0.3,
-                    },
-                    {
-                        src: "/ArtBoard 4.svg",
-                        position: "right-[27vw] top-[32vh]",
-                        delay: 0.6,
-                    },
-                    {
-                        src: "/ArtBoard 5.svg",
-                        position: "right-[9vw] top-[60vh]",
-                        delay: 0.9,
-                    },
-                    {
-                        src: "/ArtBoard 6.svg",
-                        position: "left-[0vw] top-[50vh]",
-                        delay: 1.2,
-                    },
-                    {
-                        src: "/ArtBoard 7.svg",
-                        position: "right-[3vw] top-[32vh]",
-                        delay: 1.5,
-                    },
-                    {
-                        src: "/ArtBoard 8.svg",
-                        position: "right-[34vw] top-[63vh]",
-                        delay: 1.8,
-                    },
-                ].map((svg, index) => (
+                {svgs.map((svg, index) => (
                     <motion.div
                         key={index}
                         className={`absolute ${svg.position}`}
                         animate={getLoopAnimation(svg.delay).animate}
                         transition={getLoopAnimation(svg.delay).transition}
                     >
-                        <Image
-                            src={svg.src}
-                            alt={`Azion svg ${index + 1}`}
-                            width={300}
-                            height={300}
-                        />
+                        <svg.Component width={300} height={300}/>
                     </motion.div>
                 ))}
             </div>
@@ -126,9 +97,7 @@ const Home = () => {
                     transition={{duration: 0.6, delay: 0.3}}
                     className="h-full max-w-3xl p-10 flex flex-col justify-start items-center text-center z-10"
                 >
-                    <h1
-                        className={`text-2xl text-white md:text-3xl lg:text-5xl text-left ${HeaderText.className}`}
-                    >
+                    <h1 className={`text-2xl text-white md:text-3xl lg:text-5xl text-left ${HeaderText.className}`}>
                         Improve your workflow and Secure your company with Azion.
                     </h1>
 
