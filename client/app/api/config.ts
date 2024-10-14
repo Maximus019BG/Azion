@@ -1,2 +1,2 @@
-export const apiUrl: string = "https://api.azion.online"
-export const chatUrl: string = "https://api.azion.online" //!http for the handshake => upgrade to ws
+export const apiUrl: string = "https://api.azion.online/api"
+export const chatUrl: string = "https://api.azion.online/chat" //!http for the handshake => upgrade to ws
