@@ -1,4 +1,4 @@
-'use client';
+"use client"
 import React, {FC, useEffect, useState} from 'react';
 import {Poppins} from 'next/font/google';
 import Cookies from 'js-cookie';
@@ -10,7 +10,6 @@ import DashboardRow1 from "@/app/components/_Dashboard-Elements/Dashboard_Row_1"
 import DashboardProgramCard from "@/app/components/_Dashboard-Elements/Dashboard_Program_Card";
 import axios from "axios";
 import {apiUrl} from "@/app/api/config";
-
 
 const headerText = Poppins({subsets: ['latin'], weight: '900'});
 

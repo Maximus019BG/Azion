@@ -32,7 +32,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     const [editorContent, setEditorContent] = useState<string>("");
     const [showFiles, setShowFiles] = useState<boolean>(false);
     const [doneByUser, setDoneByUser] = useState<boolean>(false);
-    const [admin, setAdmin] = useState<boolean>(false)
+    const [admin, setAdmin] = useState<boolean>(false);
     const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
 
     const SubmitTask = (taskId: string, file: File | null, link: string, editorContent: string) => {
@@ -69,19 +69,18 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     const ReturnTask = (taskId: string | null, userEmail: string) => {
         const data = {
             email: userEmail,
-        }
+        };
         axios.put(`${apiUrl}/projects/return/task/${taskId}`, data, {
             headers: {
                 "Content-Type": "application/json",
-                "authorization": Cookies.get("azionAccessToken")
-            }
+                "authorization": Cookies.get("azionAccessToken"),
+            },
         }).then((response: any) => {
             alert(response.data + "\nTo see changes reload");
         }).catch((error: any) => {
             alert(error);
-        })
-
-    }
+        });
+    };
 
     useEffect(() => {
         if (Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
@@ -130,9 +129,9 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
 
             //!Set who can see the submitted files
             if (task?.createdBy?.email === uEmail)
-                setAdmin(true)
+                setAdmin(true);
             else if (result.roleLevel === 1 || result.roleLevel === 2)
-                setAdmin(true)
+                setAdmin(true);
 
             if (
                 task &&
@@ -145,7 +144,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
             }
         };
         getUser();
-    }, [org, taskId,task]);
+    }, [org, taskId, task]);
 
     if (!task) {
         return (
@@ -212,7 +211,6 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                                 </p>
                             )}
                         </div>
-
 
                         <div className="bg-gray-800 w-full p-4 rounded-lg">
                             <p className="font-semibold">Progress: </p>
