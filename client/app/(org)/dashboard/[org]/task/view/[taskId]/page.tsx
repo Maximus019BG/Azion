@@ -12,6 +12,7 @@ import {Poppins} from "next/font/google";
 import {FaArrowAltCircleLeft, FaCompress, FaExpand} from "react-icons/fa";
 import {sessionCheck, UserData} from "@/app/func/funcs";
 import Link from "next/link";
+import ProgressComponent from "../../../../../../components/ProgressComponent";
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
 
@@ -158,72 +159,84 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
 
     return (
         <div className={`flex h-screen text-white ${isFullScreen ? "fixed inset-0 z-50" : ""}`}>
-            <div className="w-1/4">
+            <div className="w-1/4 min-w-[200px]">
                 <SideMenu/>
             </div>
-            <div className="w-full flex justify-center items-center p-8">
-                <div className="bg-[#090909] rounded-lg p-8 shadow-lg w-[50vw] h-[60vh]">
+            <div className="w-full flex justify-center items-center p-4">
+                <div
+                    className="bg-[#090909] rounded-lg p-8 shadow-lg w-full max-w-[55vw] h-fit flex flex-col justify-center items-center gap-6">
                     <h1 className={`text-2xl ${HeaderText.className} text-gray-300 text-start`}>
                         Task Details
                     </h1>
-                    <div className="w-full h-full flex flex-col justify-evenly items-center">
+                    <div className="w-full h-full flex flex-col justify-evenly items-center gap-5">
 
                         {/*!!!ROW_1!!!*/}
 
-                        <div className="w-full flex justify-evenly items-center">
-                            <div className="bg-gray-800 w-full p-2 rounded-lg">
+                        <div className="w-full flex flex-col md:flex-row justify-evenly items-center gap-4 md:gap-56">
+                            <div className="w-full h-full flex flex-col justify-center items-start gap-2">
                                 <p className="font-semibold">Name: </p>
-                                {task.name}
+                                <div className="bg-base-200 w-full p-2 rounded-lg">
+                                    {task.name}
+                                </div>
                             </div>
-                            <div className="bg-gray-800 w-full p-2 rounded-lg">
+                            <div className="w-full h-full flex flex-col justify-center items-start gap-2">
                                 <p className="font-semibold">Status: </p>
-                                {task.status}
+                                <div className="bg-base-200 w-full p-2 rounded-lg">
+                                    {task.status}
+                                </div>
                             </div>
                         </div>
 
                         {/*!!!ROW_2!!!*/}
 
-                        <div className="w-full flex justify-around items-center">
-                            <div className="bg-gray-800 textarea w-full">
+                        <div className="w-full flex flex-col md:flex-row justify-around items-center gap-4">
+                            <div className="w-full h-full flex flex-col justify-center items-start gap-2">
                                 <p className="font-semibold">Description: </p>
-                                {task.description}
+                                <div className="bg-base-200 textarea w-full h-full">
+                                    {task.description}
+                                </div>
                             </div>
                         </div>
 
                         {/*!!!ROW_3!!!*/}
 
-                        <div className="w-full flex justify-around items-center">
-                            <div className="bg-gray-800 p-2 rounded-lg w-full">
+                        <div className="w-full flex flex-col md:flex-row justify-evenly items-center gap-4 md:gap-8">
+                            <div className="w-full h-full flex flex-col justify-center items-start gap-2">
                                 <p className="font-semibold">Date: </p>
-                                {task.date}
+                                <div className="bg-base-200 p-2 rounded-lg w-full">
+                                    {task.date}
+                                </div>
                             </div>
-                            <div className="bg-gray-800 w-full p-2 rounded-lg">
-                                <p className="font-semibold">Source: </p>
-                                <Link href={task.source} className="text-blue-400 hover:underline">
-                                    {task.source}
-                                </Link>
+                            <div className="w-full flex justify-around items-center">
+                                <div className="w-full h-full flex flex-col justify-center items-start gap-2">
+                                    <p className="font-semibold">Source: </p>
+                                    <Link href={task.source}
+                                          className="bg-base-200 p-2 rounded-lg w-full text-blue-400 hover:underline">
+                                        {task.source}
+                                    </Link>
+                                </div>
                             </div>
 
                             {task.createdBy && (
-                                <p className="bg-gray-800 w-full p-2 rounded-lg">
+                                <div className="w-full h-full flex flex-col justify-center items-start gap-2">
                                     <p className="font-semibold">Created By: </p>
-                                    {task.createdBy.name} ({task.createdBy.email})
-                                </p>
+                                    <div className="bg-base-200 w-full p-2 rounded-lg">
+                                        {task.createdBy.name} ({task.createdBy.email})
+                                    </div>
+                                </div>
                             )}
                         </div>
 
-                        <div className="bg-gray-800 w-full p-4 rounded-lg">
-                            <p className="font-semibold">Progress: </p>
-                            {task.progress}%
-                        </div>
+                        {/*!!!ROW_4!!!*/}
+                        <ProgressComponent progress={task.progress}/>
 
                     </div>
 
                     {/* Task submission section */}
                     {!task.status.toLowerCase().includes("done") && !admin && (
-                        <div className="mt-6">
-                            <div className="mb-4">
-                                <label className="inline-flex items-center mr-4">
+                        <div className="mt-3 w-full h-fit flex flex-col justify-center gap-2">
+                            <div className="flex justify-start items-center gap-3">
+                                <label className="">
                                     <input
                                         type="radio"
                                         name="inputMethod"
@@ -234,7 +247,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                                     />
                                     File
                                 </label>
-                                <label className="inline-flex items-center mr-4">
+                                <label className="">
                                     <input
                                         type="radio"
                                         name="inputMethod"
@@ -245,7 +258,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                                     />
                                     Editor
                                 </label>
-                                <label className="inline-flex items-center">
+                                <label className="">
                                     <input
                                         type="radio"
                                         name="inputMethod"
@@ -262,12 +275,12 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                                 <input
                                     type="file"
                                     onChange={handleFileChange}
-                                    className="w-full p-2 bg-gray-700 rounded"
+                                    className="w-full p-2 bg-base-200 file:mr-3 file:bg-accent file:border-none file:rounded-md file:p-2 rounded"
                                 />
                             )}
 
                             {inputMethod === "editor" && (
-                                <div className="relative z-50">
+                                <div className="relative z-50 ">
                                     <button
                                         onClick={() => setInputMethod("")}
                                         className="text-blue-500 mb-2"

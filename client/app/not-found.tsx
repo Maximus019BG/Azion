@@ -47,7 +47,7 @@ const Custom404 = () => {
                 </motion.div>
             ))}
             <h1 className={`${HeaderText.className} gradient-text text-5xl`}>
-                404 - Page Not Found!!!!!
+                404 - Page Not Found
             </h1>
         </div>
     );
