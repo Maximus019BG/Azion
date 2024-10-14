@@ -31,6 +31,10 @@ public class MeetingService {
     //!Meeting Creation
     public void createMeeting(String topic, String description, String day, String start, String end, List<String> userEmails, String link) {
         //*Set all employees
+        if (!isValidTimeFormat(start) || !isValidTimeFormat(end)) {
+            throw new IllegalArgumentException("Invalid time format");
+        }
+        
         List<User> employees = new ArrayList<>();
         User employee;
         for (String email : userEmails) {
@@ -110,5 +114,10 @@ public class MeetingService {
         }
         dto.setUsers(userDTOs);
         return dto;
+    }
+    
+    private boolean isValidTimeFormat(String time) {
+        String timePattern = "^([01]\\d|2[0-3]):([0-5]\\d)$";
+        return time != null && time.matches(timePattern);
     }
 }
