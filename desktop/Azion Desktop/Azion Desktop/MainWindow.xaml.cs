@@ -11,7 +11,7 @@ namespace Azion_Desktop
 {
     public partial class MainWindow : Window
     {
-        private string url = "http://localhost:3000/login";
+        private string url = "https://azion.online/login";
 
         public MainWindow()
         {

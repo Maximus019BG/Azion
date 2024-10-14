@@ -47,14 +47,21 @@ export interface Token {
     accessToken: string;
 }
 
-export interface Employee{
+export interface Employee {
     id: string;
     name: string;
     email: string;
     age: string;
     role: string;
     orgid: string;
-    roleLevel: number|undefined;
+    roleLevel: number | undefined;
     profilePicture?: string;
     projects?: any;
+}
+
+export interface Meeting {
+    id: string;
+    title: string;
+    date: string;
+    time: string;
 }

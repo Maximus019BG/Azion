@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import React, {FC, useEffect, useState} from 'react';
 import {Poppins} from 'next/font/google';
 import Cookies from 'js-cookie';
@@ -10,14 +10,9 @@ import DashboardRow1 from "@/app/components/_Dashboard-Elements/Dashboard_Row_1"
 import DashboardProgramCard from "@/app/components/_Dashboard-Elements/Dashboard_Program_Card";
 import axios from "axios";
 import {apiUrl} from "@/app/api/config";
-
+import {Meeting} from '@/app/types/types';
 
 const headerText = Poppins({subsets: ['latin'], weight: '900'});
-
-interface Token {
-    refreshToken: string;
-    accessToken: string;
-}
 
 interface PageProps {
     params: {
@@ -29,6 +24,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
     const [displayName, setDisplayName] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
     const [orgNameCheck, setOrgNameCheck] = useState<string>('');
+    const [meetings, setMeetings] = useState<Meeting[]>([]);
     const orgName: string = params.org;
     CheckMFA(false);
 
@@ -39,10 +35,9 @@ const Dashboard: FC<PageProps> = ({params}) => {
                 const accessToken = Cookies.get('azionAccessToken');
                 if (refreshToken && accessToken) {
                     sessionCheck();
-                    UserData().then((data) => {
-                        setDisplayName(data.name);
-                    });
-                } else if (!accessToken && !refreshToken) {
+                    const data = await UserData();
+                    setDisplayName(data.name);
+                } else {
                     window.location.href = '/login';
                 }
             } catch (error) {
@@ -70,19 +65,20 @@ const Dashboard: FC<PageProps> = ({params}) => {
     }, [orgNameCheck, orgName]);
 
     useEffect(() => {
-        const GetMeetings = () => {
-            axios.get(`${apiUrl}/schedule/show/meetings`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    "authorization": Cookies.get("azionAccessToken")
-                }
-            }).then((response) => {
-                console.log(response.data);
-            }).catch((error) => {
-                console.log(error);
-            })
-        }
-        GetMeetings();
+        const getMeetings = async () => {
+            try {
+                const response = await axios.get(`${apiUrl}/schedule/show/meetings`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "authorization": Cookies.get("azionAccessToken"),
+                    },
+                });
+                setMeetings(response.data);
+            } catch (error) {
+                console.error('Error fetching meetings:', error);
+            }
+        };
+        getMeetings();
     }, []);
 
     return (
@@ -97,12 +93,12 @@ const Dashboard: FC<PageProps> = ({params}) => {
                         <SideMenu/>
                     </div>
                     <div className="w-full h-full flex flex-col justify-start items-start overflow-y-auto">
-                        <h2 className={`${headerText.className} text-4xl text-white pl-10 pt-10 w-full flex justify-start items-center`}>
+                        <h2 className={`${headerText.className} text-4xl text-white pl-10 pt-10`}>
                             Dashboard
                         </h2>
                         <div className="w-full h-full flex flex-col gap-10 justify-start items-start">
                             <DashboardRow1/>
-                            <DashboardProgramCard/>
+                            <DashboardProgramCard meetings={meetings}/>
                         </div>
                     </div>
                 </div>

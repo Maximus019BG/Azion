@@ -30,7 +30,7 @@ const Dashboard_Task_Card = () => {
 
     return (
         <div
-            className="w-full max-w-md p-6 bg-base-300 rounded-lg shadow-md transition-transform transform hover:scale-105">
+            className="w-full p-6 bg-base-300 rounded-lg shadow-md transition-transform transform hover:scale-105">
             {loading ? (
                 <div className="text-center text-gray-400">Loading...</div>
             ) : (
@@ -42,9 +42,12 @@ const Dashboard_Task_Card = () => {
                         <div className="w-1/3">Priority</div>
                     </div>
                     <div className="space-y-2">
-                        {tasks.map((task) => (
+                        {tasks && tasks.map((task) => (
                             <Dashboard_Task_Row key={task.id} task={task}/>
                         ))}
+                        {!tasks && (
+                            <p>No tasks </p>
+                        )}
                     </div>
                 </div>
             )}

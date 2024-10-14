@@ -146,6 +146,7 @@ const Tasks: FC<PageProps> = ({params}) => {
                                 priority={task.priority}
                                 onClick={() => goToTask(task.id)}
                                 isCreator={task.createdBy?.email === currentUserEmail}
+                                id={task.id}
                             />
                         ))}
                     </div>
