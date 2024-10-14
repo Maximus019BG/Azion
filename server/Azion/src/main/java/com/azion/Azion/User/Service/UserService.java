@@ -4,6 +4,7 @@ package com.azion.Azion.User.Service;
 import com.azion.Azion.MFA.Service.MFAService;
 import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
 import com.azion.Azion.Projects.Model.Project;
+import com.azion.Azion.Projects.Repository.ProjectsRepository;
 import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
@@ -31,15 +32,17 @@ public class UserService {
     private final MFAService mfaService;
     private final TokenService tokenService;
     private final TokenRepo tokenRepo;
+    private final ProjectsRepository projectsRepository;
     
     
     @Autowired
-    public UserService(UserRepository userRepository, UserReturns userReturns, MFAService mfaService, TokenService tokenService, TokenRepo tokenRepo) {
+    public UserService(UserRepository userRepository, UserReturns userReturns, MFAService mfaService, TokenService tokenService, TokenRepo tokenRepo, ProjectsRepository projectsRepository) {
         this.userRepository = userRepository;
         this.userReturns = userReturns;
         this.mfaService = mfaService;
         this.tokenService = tokenService;
         this.tokenRepo = tokenRepo;
+        this.projectsRepository = projectsRepository;
     }
     
     public User updateProfilePicture(String id, byte[] profilePicture) {
@@ -115,5 +118,6 @@ public class UserService {
         int roleLevel = user.getRoleLevel();
         return (roleLevel > 0 && roleLevel <= 2);
     }
+    
     
 }
