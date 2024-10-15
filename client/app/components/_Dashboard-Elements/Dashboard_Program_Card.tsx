@@ -1,13 +1,17 @@
-import React from 'react';
-import {Meeting} from '@/app/types/types';
+"use client"
+import React, {useContext} from 'react';
+import {MeetingContext} from '@/app/context/MeetingContext';
 import DashboardMeetingCardRow from "@/app/components/_Dashboard-Elements/Dashboard_Meeting_Card_Row";
 
-interface CalendarProps {
-    tabIndex?: number;
-    meetings: Meeting[];
-}
+const DashboardProgramCard: React.FC = () => {
+    const meetingContext = useContext(MeetingContext);
 
-const DashboardProgramCard: React.FC<CalendarProps> = ({tabIndex, meetings}) => {
+    if (!meetingContext) {
+        return <div>Error: Meeting context is not available.</div>;
+    }
+
+    const {meetings} = meetingContext;
+
     return (
         <div className="w-full h-full bg-[#090909] rounded-md flex flex-col relative">
             <div className="w-full h-full flex justify-end items-start">
