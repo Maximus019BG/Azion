@@ -7,7 +7,7 @@ interface DashboardMeetingCardRowProps {
 
 const DashboardMeetingCardRow: React.FC<DashboardMeetingCardRowProps> = ({meetings}) => {
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex justify-center items-center gap-4">
             {meetings.map((meeting, index) => (
                 <div key={index} className="p-4 bg-gray-800 rounded-lg shadow-md">
                     <h3 className="text-xl font-bold text-white">{meeting.topic}</h3>
