@@ -5,18 +5,16 @@ import com.azion.Azion.Org.Repository.OrgRepository;
 import com.azion.Azion.Org.Util.OrgUtility;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import com.azion.Azion.User.Service.EmailService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,17 +24,17 @@ public class OrgService {
     private static final Logger log = LoggerFactory.getLogger(OrgService.class);
     private final OrgRepository orgRepository;
     private final UserRepository userRepository;
-    private final JavaMailSender mailSender;
+    private final EmailService emailService;
     @PersistenceContext
     private EntityManager entityManager;
     @Value("${spring.mail.username}")
     private String fromEmail;
     
     @Autowired
-    private OrgService(OrgRepository orgRepository, UserRepository userRepository, JavaMailSender mailSender) {
+    private OrgService(OrgRepository orgRepository, UserRepository userRepository, EmailService emailService) {
         this.orgRepository = orgRepository;
         this.userRepository = userRepository;
-        this.mailSender = mailSender;
+        this.emailService = emailService;
     }
     
     
@@ -171,18 +169,11 @@ public class OrgService {
         
         String subject = orgName + " is in Azion";
         
-        MimeMessage message = mailSender.createMimeMessage();
         try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setFrom(fromEmail);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(htmlContent, true);
-            mailSender.send(message);
-            
-        } catch (
-                MessagingException e) {
+            emailService.sendEmail(to, subject, htmlContent);
+        } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("Failed to send welcome email");
         }
     }
 }
