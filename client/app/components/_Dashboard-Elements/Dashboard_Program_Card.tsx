@@ -1,17 +1,12 @@
-"use client"
-import React, {useContext} from 'react';
-import {MeetingContext} from '@/app/context/MeetingContext';
+import React from 'react';
 import DashboardMeetingCardRow from "@/app/components/_Dashboard-Elements/Dashboard_Meeting_Card_Row";
+import {Meeting} from '@/app/types/types';
 
-const DashboardProgramCard: React.FC = () => {
-    const meetingContext = useContext(MeetingContext);
+interface DashboardProgramCardProps {
+    meetings: Meeting[];
+}
 
-    if (!meetingContext) {
-        return <div>Error: Meeting context is not available.</div>;
-    }
-
-    const {meetings} = meetingContext;
-
+const DashboardProgramCard: React.FC<DashboardProgramCardProps> = ({meetings}) => {
     return (
         <div className="w-full h-full bg-[#090909] rounded-md flex flex-col relative">
             <div className="w-full h-full flex justify-end items-start">
