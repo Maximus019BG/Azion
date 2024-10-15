@@ -1,41 +1,46 @@
 package com.azion.Azion.User.Service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Email;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import java.io.IOException;
 
 @Service
 public class EmailService {
     
-    @Autowired
-    private JavaMailSender mailSender;
+    @Value("${sendgrid.api.key}")
+    private String sendGridApiKey;
     
-    @Value("${spring.mail.username}")
-    private String fromEmail;
-    
-    // Send email
-    public void sendEmail(String to, String subject, String content) {
-        MimeMessage message = mailSender.createMimeMessage();
+    public void sendEmail(String to, String subject, String body) throws IOException {
+        Email from = new Email("aziononlineteam@gmail.com");
+        Email toEmail = new Email(to);
+        Content content = new Content("text/plain", body);
+        Mail mail = new Mail(from, subject, toEmail, content);
+        
+        SendGrid sg = new SendGrid(sendGridApiKey);
+        Request request = new Request();
         try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setFrom(fromEmail);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(content, true);
-            mailSender.send(message);
-            
-        } catch (MessagingException e) {
-            e.printStackTrace();
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+            Response response = sg.api(request);
+            System.out.println(response.getStatusCode());
+            System.out.println(response.getBody());
+            System.out.println(response.getHeaders());
+        } catch (IOException ex) {
+            throw ex;
         }
     }
     
     // Email to reset the password
-    public void sendResetPasswordEmail(String to, String resetToken) {
+    public void sendResetPasswordEmail(String to, String resetToken) throws IOException {
         String resetLink = "http://localhost:3000/reset-password?token=" + resetToken;
         String htmlContent = "<!DOCTYPE html>" +
                 "<html lang=\"en\">" +
@@ -56,19 +61,7 @@ public class EmailService {
                 "</body>" +
                 "</html>";
         String subject = "Reset Your Password";
-        
-        MimeMessage message = mailSender.createMimeMessage();
-        try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setFrom(fromEmail);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(htmlContent, true);
-            mailSender.send(message);
-            
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
+        sendEmail(to, subject, htmlContent);
     }
     
     public void sendLoginEmail(String to, String login, String name) {
@@ -94,17 +87,11 @@ public class EmailService {
                 "</html>";
         String subject = "New device has logged in your account";
         
-        MimeMessage message = mailSender.createMimeMessage();
         try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setFrom(fromEmail);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(htmlContent, true);
-            mailSender.send(message);
-            
-        } catch (MessagingException e) {
+            sendEmail(to, subject, htmlContent);
+        } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("Failed to send login email");
         }
     }
     
@@ -138,18 +125,11 @@ public class EmailService {
         
         String subject = "Welcome to Azion";
         
-        MimeMessage message = mailSender.createMimeMessage();
         try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setFrom(fromEmail);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(htmlContent, true);
-            mailSender.send(message);
-            
-        } catch (
-                MessagingException e) {
+            sendEmail(to, subject, htmlContent);
+        } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("Failed to send welcome email");
         }
     }
 }
