@@ -10,7 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins(System.getProperty("requestOrigin"), System.getProperty("requestOriginMobile"))
+                .allowedOrigins(System.getProperty("requestOrigin"), System.getProperty("requestOriginMobile"), "https://www.azion.online")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
