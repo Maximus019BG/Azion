@@ -3,6 +3,7 @@ import {Inter} from "next/font/google";
 import "./globals.css";
 import logo from "../public/white-logo.png";
 import openGraphImage from "../public/opengraphThin.png";
+import {MeetingProvider} from "./context/MeetingContext";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -68,7 +69,9 @@ export default function RootLayout({
             <link rel="icon" href={logo.src}/>
         </head>
         <body className={`${inter.className} bg-background text-white overflow-x-hidden`}>
-        {children}
+        <MeetingProvider>
+            {children}
+        </MeetingProvider>
         </body>
         </html>
     );

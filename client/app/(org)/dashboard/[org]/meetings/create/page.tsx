@@ -1,10 +1,11 @@
-"use client";
-import React, {FC, useEffect, useState} from "react";
+"use client"
+import React, {FC, useContext, useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
 import {Poppins} from "next/font/google";
 import CustomAlert from "@/app/components/CustomAlert";
+import {MeetingContext} from "@/app/context/MeetingContext";
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
 
@@ -34,7 +35,8 @@ const CreateMeeting: FC<PageProps> = ({params}) => {
     const [alert, setAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
 
-    // Fetch users when component mounts
+    const meetingContext = useContext(MeetingContext);
+
     useEffect(() => {
         GetUsers();
     }, []);
@@ -87,6 +89,9 @@ const CreateMeeting: FC<PageProps> = ({params}) => {
             .then((response: any) => {
                 setAlert(true);
                 setAlertMessage("Meeting created");
+                if (meetingContext) {
+                    meetingContext.addMeeting(response.data); // Add the new meeting to the context
+                }
             })
             .catch((error: any) => {
                 console.log(error);

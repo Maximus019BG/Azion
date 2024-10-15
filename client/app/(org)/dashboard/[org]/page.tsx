@@ -73,6 +73,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
                         "authorization": Cookies.get("azionAccessToken"),
                     },
                 });
+                console.log('Fetched meetings:', response.data); // Log the response
                 setMeetings(response.data);
             } catch (error) {
                 console.error('Error fetching meetings:', error);
