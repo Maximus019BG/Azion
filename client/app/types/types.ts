@@ -61,7 +61,11 @@ export interface Employee {
 
 export interface Meeting {
     id: string;
-    title: string;
-    date: string;
-    time: string;
+    topic: string;
+    description: string;
+    dayOfWeek: string;
+    startHour: string;
+    endHour: string;
+    link: string;
+    // Add any other properties that are part of the Meeting object
 }

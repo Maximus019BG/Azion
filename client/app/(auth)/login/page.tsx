@@ -36,10 +36,13 @@ const AxiosFunction = (data: any) => {
                 secure: true,
                 sameSite: "Strict",
             });
-
         })
         .catch(function (error: any) {
-            alert(error.response);
+            if (error.response) {
+                alert(error.response.data.message);
+            } else {
+                alert("An error occurred, but no server response was received.");
+            }
         });
 };
 

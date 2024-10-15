@@ -7,6 +7,7 @@ import {MdOutlineDriveFileRenameOutline} from "react-icons/md";
 import axios, {AxiosResponse} from "axios";
 import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
+import {RiDeleteBin5Fill} from "react-icons/ri";
 
 interface Task {
     title: string;
@@ -47,19 +48,21 @@ const TasksCard: React.FC<Task> = ({
                                        id
                                    }) => {
 
-
-    const deleteTask = () => {
+    const deleteTask = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation(); // Stop event propagation
         axios.delete(`${apiUrl}/projects/delete/task/${id}`, {
             headers: {
                 "Content-Type": "application/json",
                 authorization: Cookies.get("azionAccessToken"),
             },
         }).then((response: AxiosResponse) => {
-            alert("task deleted successfully \n To see the changes reload");
+            alert("Task deleted successfully. Reloading...");
+            window.location.reload(); // Reload the page
         }).catch((error: any) => {
-            alert("Error:" + error);
-        })
-    }
+            alert("Error: " + error);
+        });
+    };
+
     return (
         <div
             className="w-96 rounded-lg overflow-hidden shadow-lg p-6 bg-base-300 cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 relative"
@@ -117,7 +120,10 @@ const TasksCard: React.FC<Task> = ({
                                     Creator
                                 </div>
                             </div>
-                            <button onClick={deleteTask} className="bg-red-600">remove task</button>
+                            <button onClick={deleteTask}
+                                    className="absolute text-xl bottom-4 right-5 bg-red-600 text-white p-2 rounded-full shadow-lg hover:bg-red-700 transition duration-300 ease-in-out transform hover:scale-105">
+                                <RiDeleteBin5Fill/>
+                            </button>
                         </div>
                     )}
                 </p>

@@ -34,7 +34,7 @@ const CheckMFA = async (onMFAPage: boolean) => {
 }
 
 //Check if user is in org...
-const PartOfOrg = async (afterDashboard: boolean,) => {
+const PartOfOrg = async (afterDashboard: boolean) => {
     const data = {accessToken: Cookies.get("azionAccessToken")};
     try {
         const response = await axios.post(`${apiUrl}/org/partOfOrg`, data, {
@@ -47,15 +47,27 @@ const PartOfOrg = async (afterDashboard: boolean,) => {
         if (afterDashboard && window.location.pathname !== "/organizations" && window.location.pathname !== "/" && window.location.pathname !== "/account") {
             window.location.href = "/organizations";
         }
-        if (error.response.status === 404) {
-            return null;
+        if (error.response) {
+            if (error.response.status === 404) {
+                return null;
+            }
+        } else {
+            console.error("Error response is undefined", error);
         }
         return null;
     }
 };
 
 //Get user data
-const UserData = async (): Promise<{ name: string, email: string, age: string, role: string, roleLevel: number, projects: string[], profilePicture: string }> => {
+const UserData = async (): Promise<{
+    name: string,
+    email: string,
+    age: string,
+    role: string,
+    roleLevel: number,
+    projects: string[],
+    profilePicture: string
+}> => {
     const data = {accessToken: Cookies.get("azionAccessToken")};
     return axios
         .post(`${apiUrl}/user/data`, data, {
@@ -257,15 +269,25 @@ const mfaSessionCheck = () => {
         });
 };
 
-const byteArrayToBase64 = async (byteArray: number[]): Promise<string|null> => {
+const byteArrayToBase64 = async (byteArray: number[]): Promise<string | null> => {
     const uint8Array = new Uint8Array(byteArray);
-    const blob = new Blob([uint8Array], { type: "image/jpeg" });
+    const blob = new Blob([uint8Array], {type: "image/jpeg"});
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
     });
-  };
+};
 
-export {CheckMFA, PartOfOrg, UserData, DeleteSession, authSessionCheck, orgSessionCheck, sessionCheck, mfaSessionCheck, byteArrayToBase64};
+export {
+    CheckMFA,
+    PartOfOrg,
+    UserData,
+    DeleteSession,
+    authSessionCheck,
+    orgSessionCheck,
+    sessionCheck,
+    mfaSessionCheck,
+    byteArrayToBase64
+};

@@ -97,8 +97,7 @@ export default function FastLogIn() {
                 Azion<span className="text-lightAccent">Cam</span>.
             </h1>
             <button
-                className="text-white bg-a
-                ccent w-fit font-black text-2xl px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
+                className="text-white bg-accent w-fit font-black text-2xl px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
                 onClick={captureAndSendFrame}
             >
                 Login

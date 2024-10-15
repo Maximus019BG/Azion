@@ -51,3 +51,66 @@ volumes:
 networks:
   app-network:
     driver: bridge
+
+#!Prod
+# version: '3.8'
+
+# services:
+#   aziondb:
+#     image: mysql:8.0.28
+#     environment:
+#       MYSQL_DATABASE: '${DB_NAME}'
+#       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+#     ports:
+#       - "3307:3306"
+#     networks:
+#       - app-network
+#     volumes:
+#       - db-data:/var/lib/mysql
+#       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+#     restart: always
+
+#   azionapp:
+#     build:
+#       context: .
+#       dockerfile: ./Dockerfile
+#     depends_on:
+#       - aziondb
+#     ports:
+#       - "8080:8080"   # You can keep this if you need HTTP access
+#       - "8443:8443"   # Expose HTTPS port
+#     networks:
+#       - app-network
+#     volumes:
+#       - /etc/letsencrypt/live:/etc/letsencrypt/live:ro  # Mount Let's Encrypt certificates
+#     environment:
+#       DB_URL: '${DB_URL}'
+#       DB_USERNAME: '${DB_USERNAME}'
+#       DB_PASSWORD: '${DB_PASSWORD}'
+#       SECRET_JWT: '${SECRET_JWT}'
+#       ISSUER_NAME: '${ISSUER_NAME}'
+#       SECRET_MFA: '${SECRET_MFA}'
+#       OS: '${OS}'
+#     restart: always
+
+#   nginx:
+#     image: nginx:latest
+#     container_name: nginx
+#     ports:
+#       - "80:80"       # For HTTP
+#       - "443:443"     # For HTTPS
+#     depends_on:
+#       - azionapp
+#     volumes:
+#       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+#       - /etc/letsencrypt/live:/etc/letsencrypt/live:ro
+#       - /etc/letsencrypt/archive:/etc/letsencrypt/archive:ro 
+#     networks:
+#       - app-network
+
+# volumes:
+#   db-data:
+
+# networks:
+#   app-network:
+#     driver: bridge
