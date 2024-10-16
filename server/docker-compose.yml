@@ -45,6 +45,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - /etc/letsencrypt/live:/etc/letsencrypt/live:ro
       - /etc/letsencrypt/archive:/etc/letsencrypt/archive:ro
+      - /etc/nginx/dhparam.pem:/etc/nginx/dhparam.pem:ro
     networks:
       - app-network
 

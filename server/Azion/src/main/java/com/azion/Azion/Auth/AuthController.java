@@ -78,7 +78,6 @@ public class AuthController {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         ParsePosition pos = new ParsePosition(0);
         
-        
         User user = new User();
         user.setName(name);
         user.setAge(dateFormat.parse(bornAt, pos));
@@ -95,8 +94,10 @@ public class AuthController {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
+        
         log.debug("User registered");
         emailService.welcomeEmail(user.getEmail(), user.getName());
+        
         return ResponseEntity.ok(tokens);
     }
     
