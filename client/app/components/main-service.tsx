@@ -2,55 +2,50 @@
 import { motion, useTransform, useScroll, Variants } from "framer-motion";
 import { useRef } from "react";
 import { Poppins } from "next/font/google";
+import Image from "next/image"; // Import Next.js Image component
 
 const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
 
-interface Props {
-  emoji: string;
-  hueA: number;
-  hueB: number;
-}
-
-const cardVariants: Variants = {
+const cardVariants = (rotateValue: number): Variants => ({
   offscreen: {
-    y: 300,
+    y: 200,
   },
   onscreen: {
     y: 50,
-    rotate: -10,
+    rotate: rotateValue,
     transition: {
       type: "spring",
       bounce: 0.6,
       duration: 1.2,
     },
   },
-};
+});
 
-const hue = (h: number) => `hsl(${h}, 100%, 50%)`;
+interface MockupWindowProps {
+  rotateValue: number;
+  src: string;
+  width: number;
+  height: number;
+}
 
-function Card({ emoji, hueA, hueB }: Props) {
-  const background = `linear-gradient(306deg, ${hue(hueA)}, ${hue(hueB)})`;
-
+function MockupWindow({ rotateValue, src, width, height }: MockupWindowProps) {
   return (
     <motion.div
-      className="overflow-hidden flex items-center justify-center relative pt-5 mb-[-30px]"
+      className="w-[40vw] h-[65vh] mockup-window bg-base-300 border"
       initial="offscreen"
       whileInView="onscreen"
       viewport={{ once: true, amount: 0.8 }}
+      variants={cardVariants(rotateValue)}
     >
-      <div
-        className="absolute bottom-0 left-0 right-0 top-0"
-        style={{
-          clipPath:
-            "path('M 0 303.5 C 0 292.454 8.995 285.101 20 283.5 L 460 219.5 C 470.085 218.033 480 228.454 480 239.5 L 500 430 C 500 441.046 491.046 450 480 450 L 20 450 C 8.954 450 0 441.046 0 430 Z')",
-        }}
-      />
-      <motion.div
-        className="text-[164px] w-[300px] h-[430px] flex items-center justify-center bg-white rounded-[20px] shadow-[0_0_1px_hsl(0deg_0%_0%_/_0.075),_0_0_2px_hsl(0deg_0%_0%_/_0.075),_0_0_4px_hsl(0deg_0%_0%_/_0.075),_0_0_8px_hsl(0deg_0%_0%_/_0.075),_0_0_16px_hsl(0deg_0%_0%_/_0.075)] origin-[10%_60%]"
-        variants={cardVariants}
-      >
-        {emoji}
-      </motion.div>
+      <div className="bg-base-200 flex justify-center items-center px-4 py-16 border-2">
+        <Image
+          src={src}
+          alt="Mockup"
+          width={width}
+          height={height}
+          className="object-contain"
+        />
+      </div>
     </motion.div>
   );
 }
@@ -63,6 +58,14 @@ const HorizontalScrollCarousel = () => {
 
   const x = useTransform(scrollYProgress, [0, 1], ["5%", "-95%"]);
 
+  const rotateValues = [5, -5, 10, -10]; // Different rotate values
+  const imageSources = [
+    { src: "/images/image1.png", width: 300, height: 500 },
+    { src: "/images/image2.png", width: 300, height: 500 },
+    { src: "/images/image3.png", width: 300, height: 500 },
+    { src: "/images/image4.png", width: 300, height: 500 },
+  ]; // Different image sources with width/height
+
   return (
     <section ref={targetRef} className="relative h-[300vh] bg-[#060610]">
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
@@ -70,16 +73,23 @@ const HorizontalScrollCarousel = () => {
           style={{ x }}
           className="flex justify-center items-center gap-48"
         >
-          <div className=" w-full flex justify-center items-center gap-[30vw]">
+          <div className="w-full h-full flex justify-center items-center gap-[30vw]">
             <h1
               className={`${HeaderText.className} text-5xl min-w-max uppercase leading-snug`}
             >
               <span className="gradient-text">Azion secures every part</span>{" "}
               <br /> of your account and <br /> organisation&apos;s account
             </h1>
-            <div className=" flex justify-center items-center gap-44">
-              {food.map(([emoji, hueA, hueB]) => (
-                <Card key={emoji} emoji={emoji} hueA={hueA} hueB={hueB} />
+
+            <div className="w-full h-full flex justify-center items-center gap-44 ">
+              {imageSources.map((image, index) => (
+                <MockupWindow
+                  key={index}
+                  rotateValue={rotateValues[index]}
+                  src={image.src}
+                  width={image.width}
+                  height={image.height}
+                />
               ))}
             </div>
           </div>
@@ -95,13 +105,6 @@ const HorizontalScrollCarousel = () => {
     </section>
   );
 };
-
-const food: [string, number, number][] = [
-  ["🍅", 340, 10],
-  ["🍊", 20, 40],
-  ["🍋", 60, 90],
-  ["🍐", 80, 120],
-];
 
 const Main_Services = () => {
   return (
