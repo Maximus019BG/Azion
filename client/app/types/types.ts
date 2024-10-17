@@ -63,7 +63,7 @@ export interface Meeting {
     id: string;
     topic: string;
     description: string;
-    dayOfWeek: string;
+    day: string;
     start: string;
     end: string;
     link: string;
