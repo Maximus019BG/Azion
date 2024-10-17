@@ -64,8 +64,7 @@ export interface Meeting {
     topic: string;
     description: string;
     dayOfWeek: string;
-    startHour: string;
-    endHour: string;
+    start: string;
+    end: string;
     link: string;
-    // Add any other properties that are part of the Meeting object
 }
