@@ -36,13 +36,14 @@ function MockupWindow({ rotateValue, src }: MockupWindowProps) {
       variants={cardVariants(rotateValue)}
     >
       <div className="relative w-full h-full bg-base-200 flex justify-center items-center border-2">
-        <Image
-          src={src}
-          alt="Mockup"
-          layout="fill" // This makes the image fill the container
-          objectFit="cover" // Ensures the image covers the entire area
-          className="object-cover"
-        />
+        <div className="relative w-full h-full"> {/* Added wrapper div */}
+          <Image
+            src={src}
+            alt="Mockup"
+            fill // This makes the image fill the container
+            className="object-cover"
+          />
+        </div>
       </div>
     </motion.div>
   );
