@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Azion Desktop"
-#define MyAppVersion "0.1.1"
+#define MyAppVersion "1.1.1"
 #define MyAppPublisher "Azion Inc."
 #define MyAppExeName "Azion Desktop.exe"
 

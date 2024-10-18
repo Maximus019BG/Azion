@@ -21,7 +21,7 @@ public class EmailService {
     public void sendEmail(String to, String subject, String body) throws IOException {
         Email from = new Email("aziononlineteam@gmail.com");
         Email toEmail = new Email(to);
-        Content content = new Content("text/plain", body);
+        Content content = new Content("text/html", body);
         Mail mail = new Mail(from, subject, toEmail, content);
         
         SendGrid sg = new SendGrid(sendGridApiKey);
@@ -31,9 +31,6 @@ public class EmailService {
             request.setEndpoint("mail/send");
             request.setBody(mail.build());
             Response response = sg.api(request);
-            System.out.println(response.getStatusCode());
-            System.out.println(response.getBody());
-            System.out.println(response.getHeaders());
         } catch (IOException ex) {
             throw ex;
         }
