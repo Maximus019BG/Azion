@@ -24,11 +24,9 @@ const cardVariants = (rotateValue: number): Variants => ({
 interface MockupWindowProps {
   rotateValue: number;
   src: string;
-  width: number;
-  height: number;
 }
 
-function MockupWindow({ rotateValue, src, width, height }: MockupWindowProps) {
+function MockupWindow({ rotateValue, src }: MockupWindowProps) {
   return (
     <motion.div
       className="w-[40vw] h-[65vh] mockup-window bg-base-300 border"
@@ -37,13 +35,13 @@ function MockupWindow({ rotateValue, src, width, height }: MockupWindowProps) {
       viewport={{ once: true, amount: 0.8 }}
       variants={cardVariants(rotateValue)}
     >
-      <div className="bg-base-200 flex justify-center items-center px-4 py-16 border-2">
+      <div className="relative w-full h-full bg-base-200 flex justify-center items-center border-2">
         <Image
           src={src}
           alt="Mockup"
-          width={width}
-          height={height}
-          className="object-contain"
+          layout="fill" // This makes the image fill the container
+          objectFit="cover" // Ensures the image covers the entire area
+          className="object-cover"
         />
       </div>
     </motion.div>
@@ -60,11 +58,11 @@ const HorizontalScrollCarousel = () => {
 
   const rotateValues = [5, -5, 10, -10]; // Different rotate values
   const imageSources = [
-    { src: "/images/image1.png", width: 300, height: 500 },
-    { src: "/images/image2.png", width: 300, height: 500 },
-    { src: "/images/image3.png", width: 300, height: 500 },
-    { src: "/images/image4.png", width: 300, height: 500 },
-  ]; // Different image sources with width/height
+    { src: "/Dashboard.png" },
+    { src: "/Org.png" },
+    { src: "/Task.png" },
+    { src: "/Account.png" },
+  ]; // Different image sources
 
   return (
     <section ref={targetRef} className="relative h-[300vh] bg-[#060610]">
@@ -81,14 +79,12 @@ const HorizontalScrollCarousel = () => {
               <br /> of your account and <br /> organisation&apos;s account
             </h1>
 
-            <div className="w-full h-full flex justify-center items-center gap-44 ">
+            <div className="w-full h-full flex justify-center items-center gap-44">
               {imageSources.map((image, index) => (
                 <MockupWindow
                   key={index}
                   rotateValue={rotateValues[index]}
                   src={image.src}
-                  width={image.width}
-                  height={image.height}
                 />
               ))}
             </div>
