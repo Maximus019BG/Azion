@@ -14,16 +14,16 @@ import java.io.IOException;
 
 @Service
 public class EmailService {
-    
+
     @Value("${sendgrid.api.key}")
     private String sendGridApiKey;
-    
+
     public void sendEmail(String to, String subject, String body) throws IOException {
         Email from = new Email("aziononlineteam@gmail.com");
         Email toEmail = new Email(to);
         Content content = new Content("text/html", body);
         Mail mail = new Mail(from, subject, toEmail, content);
-        
+
         SendGrid sg = new SendGrid(sendGridApiKey);
         Request request = new Request();
         try {
@@ -35,7 +35,7 @@ public class EmailService {
             throw ex;
         }
     }
-    
+
     // Email to reset the password
     public void sendResetPasswordEmail(String to, String resetToken) throws IOException {
         String resetLink = "http://localhost:3000/reset-password?token=" + resetToken;
@@ -60,7 +60,7 @@ public class EmailService {
         String subject = "Reset Your Password";
         sendEmail(to, subject, htmlContent);
     }
-    
+
     public void sendLoginEmail(String to, String login, String name) {
         String link = "http://localhost:3000/account";
         String htmlContent = "<!DOCTYPE html>" +
@@ -83,7 +83,7 @@ public class EmailService {
                 "</body>" +
                 "</html>";
         String subject = "New device has logged in your account";
-        
+
         try {
             sendEmail(to, subject, htmlContent);
         } catch (IOException e) {
@@ -91,7 +91,7 @@ public class EmailService {
             throw new RuntimeException("Failed to send login email");
         }
     }
-    
+
     public void welcomeEmail(String to, String name) {
         String htmlContent = "<!DOCTYPE html>" +
                 "<html lang=\"en\">" +
@@ -118,10 +118,10 @@ public class EmailService {
                 "    <p>The Azion Team</p>" +
                 "</body>" +
                 "</html>";
-        
-        
+
+
         String subject = "Welcome to Azion";
-        
+
         try {
             sendEmail(to, subject, htmlContent);
         } catch (IOException e) {
