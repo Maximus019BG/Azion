@@ -225,11 +225,11 @@ const sessionCheck = () => {
                 if (message === "sessionCheck failed") {
                     Cookies.remove("azionAccessToken");
                     Cookies.remove("azionRefreshToken");
-                    window.location.href = "/log-in";
+                    window.location.href = "/login";
                 } else {
                     Cookies.remove("azionAccessToken");
                     Cookies.remove("azionRefreshToken");
-                    window.location.href = "/log-in";
+                    window.location.href = "/login";
                 }
             } else {
                 console.log("An error occurred, but no server response was received.");
