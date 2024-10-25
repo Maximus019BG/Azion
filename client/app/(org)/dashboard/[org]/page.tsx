@@ -7,10 +7,10 @@ import {CheckMFA, sessionCheck, UserData} from '@/app/func/funcs';
 import {getOrgName} from '@/app/func/org';
 import Loading from '@/app/components/Loading';
 import DashboardRow1 from "@/app/components/_Dashboard-Elements/Dashboard_Row_1";
-import DashboardProgramCard from "@/app/components/_Dashboard-Elements/Dashboard_Program_Card";
 import axios from "axios";
 import {apiUrl} from "@/app/api/config";
 import {Meeting} from '@/app/types/types';
+import Calendar from "@/app/components/_Dashboard-Elements/Calendar";
 
 const headerText = Poppins({subsets: ['latin'], weight: '900'});
 
@@ -99,7 +99,8 @@ const Dashboard: FC<PageProps> = ({params}) => {
                         </h2>
                         <div className="w-full h-full flex flex-col gap-10 justify-start items-start">
                             <DashboardRow1/>
-                            <DashboardProgramCard meetings={meetings}/>
+                            {/*<DashboardProgramCard meetings={meetings}/>*/}
+                            <Calendar/>
                         </div>
                     </div>
                 </div>
