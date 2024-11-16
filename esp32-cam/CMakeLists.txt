@@ -7,8 +7,7 @@ project(esp32_cam_project)
 
 # Specify source files
 set(SRCS
-        main.cpp
-        CameraHandler.cpp
+        esp32.ino
 )
 
 # Specify include directories

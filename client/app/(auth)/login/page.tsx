@@ -39,10 +39,11 @@ const AxiosFunction = (data: any) => {
         })
         .catch(function (error: any) {
             if (error.response) {
-                alert(error.response.data.message);
+                alert(error.response.data);
             } else {
                 alert("An error occurred, but no server response was received.");
             }
+            window.location.reload();
         });
 };
 

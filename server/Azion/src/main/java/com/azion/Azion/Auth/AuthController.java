@@ -41,9 +41,10 @@ public class AuthController {
     private final MFAService mfaService;
     private final EmailService emailService;
     private final ProjectsService projectsService;
-
+    private final AuthService authService;
+    
     @Autowired
-    public AuthController(TokenService tokenService, UserService userService, TokenRepo tokenRepo, UserRepository userRepository, MFAService mfaService, EmailService emailService, ProjectsService projectsService) {
+    public AuthController(TokenService tokenService, UserService userService, TokenRepo tokenRepo, UserRepository userRepository, MFAService mfaService, EmailService emailService, ProjectsService projectsService, AuthService authService) {
         this.tokenService = tokenService;
         this.userService = userService;
         this.tokenRepo = tokenRepo;
@@ -51,6 +52,7 @@ public class AuthController {
         this.mfaService = mfaService;
         this.emailService = emailService;
         this.projectsService = projectsService;
+        this.authService = authService;
     }
 
     @Transactional
@@ -88,8 +90,8 @@ public class AuthController {
 
         userRepository.save(user);
 
-        String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-        String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
+        String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"),  UserAgent);
+        String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"),  UserAgent);
 
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
@@ -110,41 +112,24 @@ public class AuthController {
         String password = (String) request.get("password");
         String OTP = (String) request.get("OTP");
 
+        //User validation
         User user = userRepository.findByEmail(email);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not exist");
         }
+        
+        //Password validation
         boolean passwordMatches = BCrypt.checkpw(password, user.getPassword());
         if (!passwordMatches) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
         }
-        if (user.isMfaEnabled()) {
-            if (OTP == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("MFA is enabled. Please provide OTP");
-            } else if (!mfaService.checkMfaCredentials(user.getEmail(), OTP)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid OTP");
-            } else if (mfaService.checkMfaCredentials(user.getEmail(), OTP)) {
-                String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-                String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-
-                Map<String, String> tokens = new HashMap<>();
-                tokens.put("accessToken", accessToken);
-                tokens.put("refreshToken", refreshToken);
-                emailService.sendLoginEmail(user.getEmail(), "normal login method", user.getName());
-                return ResponseEntity.ok(tokens);
-            }
-
+        //Token creation and validation
+        Map<String, String> tokens = authService.loginTokenCreation(user, OTP, UserAgent);
+        if (tokens.containsKey("message")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(tokens.get("message"));
         }
-        String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-        String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
 
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
-
-        emailService.sendLoginEmail(user.getEmail(), "fast login method", user.getName());
-
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.ok(tokens); //Return the tokens
     }
 
     //Login with face recognition
@@ -169,8 +154,8 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
 
-        String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-        String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
+        String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"),  UserAgent);
+        String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"),  UserAgent);
 
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
@@ -180,14 +165,15 @@ public class AuthController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.ok(tokens); //Return the tokens
     }
 
     //Send the link to email
     @PutMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<Object, String> request) {
         String email = request.get("email");
-
+        
+        //User validation
         User user = userRepository.findByEmail(email);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not exist");
@@ -195,18 +181,18 @@ public class AuthController {
         if (!user.isMfaEnabled()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("MFA is not enabled for this user");
         }
-
-        String resetToken = UUID.randomUUID().toString();
-        user.setResetToken(resetToken);
-        userRepository.save(user);
+        
+        //Reset token generation
+        String resetToken = authService.resetTokenGeneration(user);
+        //Send the email
         try {
-            emailService.sendResetPasswordEmail(user.getEmail(), resetToken);
+            emailService.sendResetPasswordEmail(user.getEmail(), resetToken );
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
 
-        return ResponseEntity.ok("Password reset link sent to email");
+        return ResponseEntity.ok("Password reset link sent to email"); //Return msg
     }
 
     //Reset the password
@@ -236,11 +222,11 @@ public class AuthController {
                 return ResponseEntity.ok("Logged out");
             } else {
                 tokenService.deleteTokens(token, tokenR);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is out of date");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is out of date"); //Return msg
             }
 
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token"); //Return msg
         }
 
     }
