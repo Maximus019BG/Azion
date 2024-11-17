@@ -197,7 +197,7 @@ const Calendar: React.FC = () => {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="flex flex-col justify-center items-center">
                     <DialogHeader>
-                        <DialogTitle>Add New Event Details</DialogTitle>
+                        <DialogTitle className="text-2xl">Add New Event Details</DialogTitle>
                     </DialogHeader>
                     <form className="flex flex-col justify-center items-start gap-3" onSubmit={handleAddEvent}>
                         <input
@@ -221,16 +221,16 @@ const Calendar: React.FC = () => {
                             value={selectedRoles}
                             onChange={(e) => setSelectedRoles(Array.from(e.target.selectedOptions, option => option.value))} // Update selected roles
                             required
-                            className="border border-gray-200 p-3 rounded-md text-lg"
+                            className="w-full border border-gray-200 p-3 rounded-md text-lg"
                         >
                             {availableRoles.map(role => (
-                                <option key={role} value={role}>
+                                <option key={role} value={role} className="text-white">
                                     {role}
                                 </option>
                             ))}
                         </select>
                         <button
-                            className="bg-green-500 text-white p-3 mt-5 rounded-md"
+                            className="w-full bg-green-500 text-white p-3 mt-5 rounded-md"
                             type="submit"
                         >
                             Add
