@@ -2,14 +2,15 @@
 
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {DateSelectArg, EventApi, EventClickArg, formatDate,} from "@fullcalendar/core";
+import {DateSelectArg, EventApi, EventClickArg} from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import {Dialog, DialogContent, DialogHeader, DialogTitle,} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
+import {UserData} from "@/app/func/funcs";
 
 interface EventData {
     id: string;
@@ -74,23 +75,52 @@ const Calendar: React.FC = () => {
 
         // Fetch user role level from the server
         const fetchUserRoleLevel = async () => {
-            try {
-                const response = await axios.get(`${apiUrl}/user/role-level`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "authorization": Cookies.get("azionAccessToken"),
-                    },
-                });
-                setUserRoleLevel(response.data.roleLevel);
-            } catch (error) {
-                console.error("Error fetching user role level:", error);
-            }
+            UserData().then((data) => {
+                setUserRoleLevel(data.roleLevel);
+            });
         };
 
         fetchEvents();
         fetchRoles();
         fetchUserRoleLevel();
     }, []);
+
+    useEffect(() => {
+        const tooltip = document.getElementById("tooltip");
+
+        const showTooltip = (e: MouseEvent) => {
+            if (tooltip && userRoleLevel >= 1 && userRoleLevel <= 3) {
+                tooltip.style.left = `${e.pageX + 10}px`;
+                tooltip.style.top = `${e.pageY + 10}px`;
+                tooltip.style.opacity = "1";
+            }
+        };
+
+        const hideTooltip = () => {
+            if (tooltip) {
+                tooltip.style.opacity = "0";
+            }
+        };
+
+        document.querySelectorAll<HTMLElement>(".fc-daygrid-day").forEach(cell => {
+            if (userRoleLevel >= 1 && userRoleLevel <= 3) {
+                cell.classList.add("cursor-pointer");
+                cell.addEventListener("mouseenter", showTooltip);
+                cell.addEventListener("mouseleave", hideTooltip);
+            } else {
+                cell.classList.remove("cursor-pointer");
+                cell.removeEventListener("mouseenter", showTooltip);
+                cell.removeEventListener("mouseleave", hideTooltip);
+            }
+        });
+
+        return () => {
+            document.querySelectorAll<HTMLElement>(".fc-daygrid-day").forEach(cell => {
+                cell.removeEventListener("mouseenter", showTooltip);
+                cell.removeEventListener("mouseleave", hideTooltip);
+            });
+        };
+    }, [userRoleLevel]);
 
     const handleDateClick = (selected: DateSelectArg) => {
         if (userRoleLevel >= 1 && userRoleLevel <= 3) {
@@ -162,26 +192,8 @@ const Calendar: React.FC = () => {
 
                         {currentEvents.length > 0 &&
                             currentEvents.map((event: EventData) => (
-                                <li
-                                    className="border border-gray-200 shadow px-4 py-2 rounded-md text-blue-800"
-                                    key={event.id}
-                                >
+                                <li key={event.id}>
                                     {event.title}
-                                    <br/>
-                                    <label className="text-slate-950">
-                                        {event.start && formatDate(new Date(event.start), {
-                                            year: "numeric",
-                                            month: "short",
-                                            day: "numeric",
-                                        })}{" "}
-                                        {/* Format event start date */}
-                                    </label>
-                                    <br/>
-                                    <a href={event.meetingRoomLink} target="_blank" rel="noopener noreferrer">
-                                        Join Meeting
-                                    </a>
-                                    <br/>
-                                    Roles: {event.roles.join(", ")}
                                 </li>
                             ))}
                     </ul>
@@ -203,16 +215,9 @@ const Calendar: React.FC = () => {
                         dayMaxEvents={true} // Limit the number of events displayed per day.
                         select={handleDateClick} // Handle date selection to create new events.
                         eventClick={handleEventClick} // Handle clicking on events (e.g., to delete them).
-                        eventsSet={(events) => setCurrentEvents(events.map(event => ({
-                            id: event.id,
-                            title: event.title,
-                            start: event.start ? event.start.toISOString() : "",
-                            end: event.end ? event.end.toISOString() : event.start ? event.start.toISOString() : "",
-                            allDay: event.allDay,
-                            meetingRoomLink: `https://meeting.com/${event.id}`,
-                            roles: ["Admin", "User"] // Example roles
-                        })))} // Update state with current events whenever they change.
+
                         initialEvents={currentEvents} // Initial events loaded from the server.
+                        dayCellClassNames="hover:bg-[#1a1a1a] transition duration-300" // Add custom class to day cells
                     />
                 </div>
             </div>
@@ -230,7 +235,7 @@ const Calendar: React.FC = () => {
                             value={newEventTitle}
                             onChange={(e) => setNewEventTitle(e.target.value)} // Update new event title as the user types.
                             required
-                            className="border border-gray-200 p-3 rounded-md text-lg"
+                            className="border border-gray-200 p-3 rounded-md text-lg cursor-pointer"
                         />
                         <input
                             type="text"
@@ -238,14 +243,14 @@ const Calendar: React.FC = () => {
                             value={newMeetingRoomLink}
                             onChange={(e) => setNewMeetingRoomLink(e.target.value)} // Update meeting room link as the user types.
                             required
-                            className="border border-gray-200 p-3 rounded-md text-lg"
+                            className="border border-gray-200 p-3 rounded-md text-lg cursor-pointer"
                         />
                         <select
                             multiple
                             value={selectedRoles}
                             onChange={(e) => setSelectedRoles(Array.from(e.target.selectedOptions, option => option.value))} // Update selected roles
                             required
-                            className="w-full border border-gray-200 p-3 rounded-md text-lg"
+                            className="w-full border border-gray-200 p-3 rounded-md text-lg cursor-pointer"
                         >
                             {availableRoles.map(role => (
                                 <option key={role} value={role} className="text-white">
@@ -259,11 +264,14 @@ const Calendar: React.FC = () => {
                         >
                             Add
                         </button>
-                        {" "}
-                        {/* Button to submit new event */}
                     </form>
                 </DialogContent>
             </Dialog>
+
+            {/* Tooltip */}
+            <div id="tooltip">
+                Create meeting
+            </div>
         </div>
     );
 };
