@@ -87,7 +87,7 @@ public class MeetingController {
         userService.userValid(token);
         User user = tokenService.getUserFromToken(token);
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
-        if(org != null) {
+        if (org == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No organization found");
         }
         List<String> roles = orgService.listRoles(org);

@@ -53,11 +53,17 @@ const Calendar: React.FC = () => {
 
         // Fetch available roles from the server
         const fetchRoles = async () => {
+            const token = Cookies.get("azionAccessToken");
+            if (!token) {
+                console.error("Authorization token is missing");
+                return;
+            }
+
             try {
                 const response = await axios.get(`${apiUrl}/schedule/list/roles`, {
                     headers: {
                         "Content-Type": "application/json",
-                        "authorization": Cookies.get("azionAccessToken"),
+                        "authorization": token,
                     },
                 });
                 setAvailableRoles(response.data);
