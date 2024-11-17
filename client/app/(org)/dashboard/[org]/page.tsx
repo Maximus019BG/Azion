@@ -2,7 +2,7 @@
 import React, {FC, useEffect, useState} from 'react';
 import {Poppins} from 'next/font/google';
 import Cookies from 'js-cookie';
-import SideMenu from '../../../components/Side-menu';
+import SideMenu from '@/app/components/Side-menu';
 import {CheckMFA, sessionCheck, UserData} from '@/app/func/funcs';
 import {getOrgName} from '@/app/func/org';
 import Loading from '@/app/components/Loading';

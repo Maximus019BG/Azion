@@ -1,35 +1,74 @@
 "use client";
 
 import React, {useEffect, useState} from "react";
+import axios from "axios";
 import {DateSelectArg, EventApi, EventClickArg, formatDate,} from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import {Dialog, DialogContent, DialogHeader, DialogTitle,} from "@/components/ui/dialog";
+import {apiUrl} from "@/app/api/config";
+import Cookies from "js-cookie";
+
+interface EventData {
+    id: string;
+    title: string;
+    start: string;
+    end: string;
+    allDay: boolean;
+    meetingRoomLink: string;
+    roles: string[];
+}
 
 const Calendar: React.FC = () => {
-    const [currentEvents, setCurrentEvents] = useState<EventApi[]>([]);
+    const [currentEvents, setCurrentEvents] = useState<EventData[]>([]);
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
     const [newEventTitle, setNewEventTitle] = useState<string>("");
+    const [newMeetingRoomLink, setNewMeetingRoomLink] = useState<string>("");
+    const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+    const [availableRoles, setAvailableRoles] = useState<string[]>([]);
     const [selectedDate, setSelectedDate] = useState<DateSelectArg | null>(null);
 
     useEffect(() => {
-        // Load events from local storage when the component mounts
-        if (typeof window !== "undefined") {
-            const savedEvents = localStorage.getItem("events");
-            if (savedEvents) {
-                setCurrentEvents(JSON.parse(savedEvents));
+        // Fetch events from the server when the component mounts
+        const fetchEvents = async () => {
+            try {
+                const response = await axios.get(`${apiUrl}/schedule/show/meetings`);
+                const events: EventData[] = response.data.map((event: EventApi) => ({
+                    id: event.id,
+                    title: event.title,
+                    start: event.start ? event.start.toISOString() : "",
+                    end: event.end ? event.end.toISOString() : event.start ? event.start.toISOString() : "",
+                    allDay: event.allDay,
+                    meetingRoomLink: `https://meeting.com/${event.id}`,
+                    roles: ["Admin", "User"] // Example roles
+                }));
+                setCurrentEvents(events);
+            } catch (error) {
+                console.error("Error fetching events:", error);
             }
-        }
-    }, []);
+        };
 
-    useEffect(() => {
-        // Save events to local storage whenever they change
-        if (typeof window !== "undefined") {
-            localStorage.setItem("events", JSON.stringify(currentEvents));
-        }
-    }, [currentEvents]);
+        // Fetch available roles from the server
+        const fetchRoles = async () => {
+            try {
+                const response = await axios.get(`${apiUrl}/schedule/list/roles`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "authorization": Cookies.get("azionAccessToken"),
+                    },
+                });
+                console.log(response.data);
+                setAvailableRoles(response.data);
+            } catch (error) {
+                console.error("Error fetching roles:", error);
+            }
+        };
+
+        fetchEvents();
+        fetchRoles();
+    }, []);
 
     const handleDateClick = (selected: DateSelectArg) => {
         setSelectedDate(selected);
@@ -44,30 +83,42 @@ const Calendar: React.FC = () => {
             )
         ) {
             selected.event.remove();
+            // Send delete request to the server
+            axios.delete(`${apiUrl}/schedule/delete/${selected.event.id}`)
+                .catch(error => console.error("Error deleting event:", error));
         }
     };
 
     const handleCloseDialog = () => {
         setIsDialogOpen(false);
         setNewEventTitle("");
+        setNewMeetingRoomLink("");
+        setSelectedRoles([]);
     };
 
-    const handleAddEvent = (e: React.FormEvent) => {
+    const handleAddEvent = async (e: React.FormEvent) => {
         e.preventDefault();
         if (newEventTitle && selectedDate) {
             const calendarApi = selectedDate.view.calendar; // Get the calendar API instance.
             calendarApi.unselect(); // Unselect the date range.
 
-            const newEvent = {
+            const newEvent: EventData = {
                 id: `${selectedDate.start.toISOString()}-${newEventTitle}`,
                 title: newEventTitle,
-                start: selectedDate.start,
-                end: selectedDate.end,
+                start: selectedDate.start.toISOString(),
+                end: selectedDate.end?.toISOString() || selectedDate.start.toISOString(),
                 allDay: selectedDate.allDay,
+                meetingRoomLink: newMeetingRoomLink,
+                roles: selectedRoles
             };
 
-            calendarApi.addEvent(newEvent);
-            handleCloseDialog();
+            try {
+                await axios.post(`${apiUrl}/schedule/create/meeting`, newEvent);
+                calendarApi.addEvent(newEvent);
+                handleCloseDialog();
+            } catch (error) {
+                console.error("Error adding event:", error);
+            }
         }
     };
 
@@ -86,7 +137,7 @@ const Calendar: React.FC = () => {
                         )}
 
                         {currentEvents.length > 0 &&
-                            currentEvents.map((event: EventApi) => (
+                            currentEvents.map((event: EventData) => (
                                 <li
                                     className="border border-gray-200 shadow px-4 py-2 rounded-md text-blue-800"
                                     key={event.id}
@@ -94,13 +145,19 @@ const Calendar: React.FC = () => {
                                     {event.title}
                                     <br/>
                                     <label className="text-slate-950">
-                                        {formatDate(event.start!, {
+                                        {event.start && formatDate(new Date(event.start), {
                                             year: "numeric",
                                             month: "short",
                                             day: "numeric",
                                         })}{" "}
                                         {/* Format event start date */}
                                     </label>
+                                    <br/>
+                                    <a href={event.meetingRoomLink} target="_blank" rel="noopener noreferrer">
+                                        Join Meeting
+                                    </a>
+                                    <br/>
+                                    Roles: {event.roles.join(", ")}
                                 </li>
                             ))}
                     </ul>
@@ -122,23 +179,27 @@ const Calendar: React.FC = () => {
                         dayMaxEvents={true} // Limit the number of events displayed per day.
                         select={handleDateClick} // Handle date selection to create new events.
                         eventClick={handleEventClick} // Handle clicking on events (e.g., to delete them).
-                        eventsSet={(events) => setCurrentEvents(events)} // Update state with current events whenever they change.
-                        initialEvents={
-                            typeof window !== "undefined"
-                                ? JSON.parse(localStorage.getItem("events") || "[]")
-                                : []
-                        } // Initial events loaded from local storage.
+                        eventsSet={(events) => setCurrentEvents(events.map(event => ({
+                            id: event.id,
+                            title: event.title,
+                            start: event.start ? event.start.toISOString() : "",
+                            end: event.end ? event.end.toISOString() : event.start ? event.start.toISOString() : "",
+                            allDay: event.allDay,
+                            meetingRoomLink: `https://meeting.com/${event.id}`,
+                            roles: ["Admin", "User"] // Example roles
+                        })))} // Update state with current events whenever they change.
+                        initialEvents={currentEvents} // Initial events loaded from the server.
                     />
                 </div>
             </div>
 
             {/* Dialog for adding new events */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent>
+                <DialogContent className="flex flex-col justify-center items-center">
                     <DialogHeader>
                         <DialogTitle>Add New Event Details</DialogTitle>
                     </DialogHeader>
-                    <form className="space-x-5 mb-4" onSubmit={handleAddEvent}>
+                    <form className="flex flex-col justify-center items-start gap-3" onSubmit={handleAddEvent}>
                         <input
                             type="text"
                             placeholder="Event Title"
@@ -147,6 +208,27 @@ const Calendar: React.FC = () => {
                             required
                             className="border border-gray-200 p-3 rounded-md text-lg"
                         />
+                        <input
+                            type="text"
+                            placeholder="Meeting Room Link"
+                            value={newMeetingRoomLink}
+                            onChange={(e) => setNewMeetingRoomLink(e.target.value)} // Update meeting room link as the user types.
+                            required
+                            className="border border-gray-200 p-3 rounded-md text-lg"
+                        />
+                        <select
+                            multiple
+                            value={selectedRoles}
+                            onChange={(e) => setSelectedRoles(Array.from(e.target.selectedOptions, option => option.value))} // Update selected roles
+                            required
+                            className="border border-gray-200 p-3 rounded-md text-lg"
+                        >
+                            {availableRoles.map(role => (
+                                <option key={role} value={role}>
+                                    {role}
+                                </option>
+                            ))}
+                        </select>
                         <button
                             className="bg-green-500 text-white p-3 mt-5 rounded-md"
                             type="submit"
