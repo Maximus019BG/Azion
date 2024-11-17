@@ -176,4 +176,15 @@ public class OrgService {
             throw new RuntimeException("Failed to send welcome email");
         }
     }
+    
+    public List<String> listRoles(Org org) {
+        List<String> roles = new ArrayList<>();
+        Set<User> users = org.getUsers();
+        for (User user : users) {
+            if (!roles.contains(user.getRole())) {
+                roles.add(user.getRole());
+            }
+        }
+        return roles;
+    }
 }
