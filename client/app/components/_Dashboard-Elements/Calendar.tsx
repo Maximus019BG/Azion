@@ -29,6 +29,7 @@ const Calendar: React.FC = () => {
     const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
     const [availableRoles, setAvailableRoles] = useState<string[]>([]);
     const [selectedDate, setSelectedDate] = useState<DateSelectArg | null>(null);
+    const [userRoleLevel, setUserRoleLevel] = useState<number>(0);
 
     useEffect(() => {
         // Fetch events from the server when the component mounts
@@ -59,20 +60,37 @@ const Calendar: React.FC = () => {
                         "authorization": Cookies.get("azionAccessToken"),
                     },
                 });
-                console.log(response.data);
                 setAvailableRoles(response.data);
             } catch (error) {
                 console.error("Error fetching roles:", error);
             }
         };
 
+        // Fetch user role level from the server
+        const fetchUserRoleLevel = async () => {
+            try {
+                const response = await axios.get(`${apiUrl}/user/role-level`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "authorization": Cookies.get("azionAccessToken"),
+                    },
+                });
+                setUserRoleLevel(response.data.roleLevel);
+            } catch (error) {
+                console.error("Error fetching user role level:", error);
+            }
+        };
+
         fetchEvents();
         fetchRoles();
+        fetchUserRoleLevel();
     }, []);
 
     const handleDateClick = (selected: DateSelectArg) => {
-        setSelectedDate(selected);
-        setIsDialogOpen(true);
+        if (userRoleLevel >= 1 && userRoleLevel <= 3) {
+            setSelectedDate(selected);
+            setIsDialogOpen(true);
+        }
     };
 
     const handleEventClick = (selected: EventClickArg) => {
@@ -173,8 +191,8 @@ const Calendar: React.FC = () => {
                             right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
                         }} // Set header toolbar options.
                         initialView="dayGridMonth" // Initial view mode of the calendar.
-                        editable={true} // Allow events to be edited.
-                        selectable={true} // Allow dates to be selectable.
+                        editable={userRoleLevel >= 1 && userRoleLevel <= 3} // Allow events to be edited only for admins.
+                        selectable={userRoleLevel >= 1 && userRoleLevel <= 3} // Allow dates to be selectable only for admins.
                         selectMirror={true} // Mirror selections visually.
                         dayMaxEvents={true} // Limit the number of events displayed per day.
                         select={handleDateClick} // Handle date selection to create new events.
