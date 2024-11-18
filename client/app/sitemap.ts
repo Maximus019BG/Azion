@@ -7,13 +7,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
         {
             url: 'https://azion.online',
             lastModified: new Date(),
-            changeFrequency: 'yearly',
+            changeFrequency: 'weekly',
             priority: 1,
+        },
+        {
+            url: 'https://azion.online/download',
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.9,
+        },
+        {
+          url: 'https://azion.online/login',
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
         },
         {
             url: 'https://azion.online/register',
             lastModified: new Date(),
-            changeFrequency: 'monthly',
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+          url: 'https://azion.online/login/fast',
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
             priority: 0.8,
         },
         {
@@ -22,5 +40,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'weekly',
             priority: 0.5,
         },
+        {
+            url: `https://azion.online/dashboard/${org}/projects`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.5,
+        },
+        {
+            url: `https://azion.online/dashboard/${org}/tasks`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.5,
+        },
+        {
+            url: `https://azion.online/dashboard/${org}/employees`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority : 0.5,
+        }
     ];
 }
