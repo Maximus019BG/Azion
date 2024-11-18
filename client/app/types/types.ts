@@ -68,3 +68,13 @@ export interface Meeting {
     end: string;
     link: string;
 }
+
+export interface EventData {
+    id: string;
+    title: string;
+    start: string;
+    end: string;
+    allDay: boolean;
+    link: string;
+    roles: string[];
+}
