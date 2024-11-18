@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -43,32 +45,36 @@ public class MeetingController {
     @Transactional
     @PostMapping("/create/meeting")
     public ResponseEntity<?> createMeeting(@RequestHeader("authorization") String token, @RequestBody Map<Object, Object> request) {
-        userService.userValid(token);
-        
+        userService.userValid(token);   //Token validation
         User user = tokenService.getUserFromToken(token);
         if (!userService.userAdmin(user)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not admin or owner");
         }
-        
-        String topic = (String) request.get("topic");
-        String description = (String) request.get("description");
-        String dayOfWeek = (String) request.get("dayOfWeek");
-        String startHour = (String) request.get("startHour");
-        String endHour = (String) request.get("endHour");
+        //Get the meeting details
+        String title = (String) request.get("title");
+        boolean allDay = (Boolean) request.get("allDay");
+        String startStr = (String) request.get("start");
+        String endStr = (String) request.get("end");
         String link = (String) request.get("link");
-        List<String> userEmails = (List<String>) request.get("userEmails");
+        List<String> roles = (List<String>) request.get("roles");
         
-        meetingService.createMeeting(topic, description, dayOfWeek, startHour, endHour, userEmails, link);
+        Date start = Date.from(Instant.parse(startStr));
+        Date end = Date.from(Instant.parse(endStr));
         
-        return ResponseEntity.ok().body(String.format("New meeting about %s created!", topic));
+        meetingService.createMeeting(title, allDay, start, end, roles, link);
+        
+        return ResponseEntity.ok().body(String.format("New meeting about %s created!", title));
     }
     
     @Transactional
     @GetMapping("/show/meetings")
     public ResponseEntity<?> showMeetings(@RequestHeader("authorization") String token) {
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing authorization header");
+        }
         userService.userValid(token);
         User user = tokenService.getUserFromToken(token);
-        List<MeetingDTO> meetings = meetingService.getMeetingsThisWeek(user);
+        List<MeetingDTO> meetings = meetingService.getMeetings(user);
         return ResponseEntity.ok().body(meetings);
     }
     
@@ -77,7 +83,7 @@ public class MeetingController {
     public ResponseEntity<?> deleteMeeting(@RequestHeader("authorization") String token, @PathVariable String id) {
         userService.userValid(token);
         User user = tokenService.getUserFromToken(token);
-        List<MeetingDTO> meetings = meetingService.getMeetingsThisWeek(user);
+        List<MeetingDTO> meetings = meetingService.getMeetings(user);
         return ResponseEntity.ok().body(meetings);
     }
     

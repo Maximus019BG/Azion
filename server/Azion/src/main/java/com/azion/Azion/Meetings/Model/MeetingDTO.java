@@ -1,83 +1,73 @@
 package com.azion.Azion.Meetings.Model;
 
 
-import com.azion.Azion.Meetings.Enum.EnumDays;
-import com.azion.Azion.User.Model.DTO.UserDTO;
-
+import java.util.Date;
 import java.util.List;
 
 public class MeetingDTO {
     private String id;
-    private String topic;
-    private String description;
-    private Enum<EnumDays> day;
-    private String start;
-    private String end;
+    private String title;
+    private boolean allDay;
+    private Date start;
+    private Date end;
     private String link;
-    private List<UserDTO> users;
+    private List<String> roles;
     
-    
+    // Getters and setters
     public String getId() {
         return id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
-    public String getTopic() {
-        return topic;
+
+    public String getTitle() {
+        return title;
     }
-    
-    public void setTopic(String topic) {
-        this.topic = topic;
+
+    public void setTitle(String title) {
+        this.title = title;
     }
-    
-    public String getDescription() {
-        return description;
+
+    public boolean isAllDay() {
+        return allDay;
     }
-    
-    public void setDescription(String description) {
-        this.description = description;
+
+    public void setAllDay(boolean allDay) {
+        this.allDay = allDay;
     }
-    
-    public Enum<EnumDays> getDay() {
-        return day;
-    }
-    
-    public void setDay(Enum<EnumDays> day) {
-        this.day = day;
-    }
-    
-    public String getStart() {
+
+    public Date getStart() {
         return start;
     }
-    
-    public void setStart(String start) {
+
+    public void setStart(Date start) {
         this.start = start;
     }
-    
-    public String getEnd() {
+
+    public Date getEnd() {
         return end;
     }
-    
-    public void setEnd(String end) {
+
+    public void setEnd(Date end) {
         this.end = end;
     }
-    
+
     public String getLink() {
         return link;
     }
-    
+
     public void setLink(String link) {
         this.link = link;
     }
-    
-    public List<UserDTO> getUsers() {
-        return users;
+
+    public List<String> getRoles() {
+        return roles;
     }
-    
-    public void setUsers(List<UserDTO> users) {
-        this.users = users;
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
+
 }

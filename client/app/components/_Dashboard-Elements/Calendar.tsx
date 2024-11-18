@@ -11,16 +11,8 @@ import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/app/components
 import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
 import {UserData} from "@/app/func/funcs";
+import {EventData} from "@/app/types/types";
 
-interface EventData {
-    id: string;
-    title: string;
-    start: string;
-    end: string;
-    allDay: boolean;
-    meetingRoomLink: string;
-    roles: string[];
-}
 
 const Calendar: React.FC = () => {
     const [currentEvents, setCurrentEvents] = useState<EventData[]>([]);
@@ -33,20 +25,16 @@ const Calendar: React.FC = () => {
     const [userRoleLevel, setUserRoleLevel] = useState<number>(0);
 
     useEffect(() => {
-        // Fetch events from the server when the component mounts
         const fetchEvents = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/schedule/show/meetings`);
-                const events: EventData[] = response.data.map((event: EventApi) => ({
-                    id: event.id,
-                    title: event.title,
-                    start: event.start ? event.start.toISOString() : "",
-                    end: event.end ? event.end.toISOString() : event.start ? event.start.toISOString() : "",
-                    allDay: event.allDay,
-                    meetingRoomLink: `https://meeting.com/${event.id}`,
-                    roles: ["Admin", "User"] // Example roles
-                }));
-                setCurrentEvents(events);
+                const response = await axios.get(`${apiUrl}/schedule/show/meetings`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "authorization": Cookies.get("azionAccessToken"),
+                    },
+                });
+                console.log("Fetched events:", response.data); // Log fetched events
+                setCurrentEvents(response.data);
             } catch (error) {
                 console.error("Error fetching events:", error);
             }
@@ -162,12 +150,17 @@ const Calendar: React.FC = () => {
                 start: selectedDate.start.toISOString(),
                 end: selectedDate.end?.toISOString() || selectedDate.start.toISOString(),
                 allDay: selectedDate.allDay,
-                meetingRoomLink: newMeetingRoomLink,
+                link: newMeetingRoomLink,
                 roles: selectedRoles
             };
 
             try {
-                await axios.post(`${apiUrl}/schedule/create/meeting`, newEvent);
+                await axios.post(`${apiUrl}/schedule/create/meeting`, newEvent, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "authorization": Cookies.get("azionAccessToken"),
+                    },
+                });
                 calendarApi.addEvent(newEvent);
                 handleCloseDialog();
             } catch (error) {
@@ -202,7 +195,7 @@ const Calendar: React.FC = () => {
                 <div className="w-9/12 mt-8">
                     <FullCalendar
                         height={"85vh"}
-                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]} // Initialize calendar with required plugins.
+                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                         headerToolbar={{
                             left: "prev,next today",
                             center: "title",
