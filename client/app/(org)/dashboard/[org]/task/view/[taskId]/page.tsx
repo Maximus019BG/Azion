@@ -87,7 +87,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
         if (Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
             sessionCheck();
         } else {
-            window.location.href = "/log-in";
+            window.location.href = "/login";
         }
     }, []);
 

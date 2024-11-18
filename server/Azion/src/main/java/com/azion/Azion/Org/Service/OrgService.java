@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrgService {
-    
+
     private static final Logger log = LoggerFactory.getLogger(OrgService.class);
     private final OrgRepository orgRepository;
     private final UserRepository userRepository;
@@ -29,15 +29,15 @@ public class OrgService {
     private EntityManager entityManager;
     @Value("${spring.mail.username}")
     private String fromEmail;
-    
+
     @Autowired
     private OrgService(OrgRepository orgRepository, UserRepository userRepository, EmailService emailService) {
         this.orgRepository = orgRepository;
         this.userRepository = userRepository;
         this.emailService = emailService;
     }
-    
-    
+
+
     public void addUserToOrg(Org org, User user) {
         user.setOrgid(org.getOrgID());
         Set<User> users = org.getUsers();
@@ -45,7 +45,7 @@ public class OrgService {
         org.setUsers(users);
         orgRepository.save(org);
     }
-    
+
     public Org findOrgByConnectString(String connectString) {
         List<Org> orgs = orgRepository.findAll();
         for (Org org : orgs) {
@@ -62,7 +62,7 @@ public class OrgService {
         }
         return null;
     }
-    
+
     public void removeEmployee(User user) {
         if (user.getRoleLevel() == 1 || user.getRoleLevel() == 2) {
             throw new RuntimeException("can't remove super admins");
@@ -74,7 +74,7 @@ public class OrgService {
         orgRepository.save(org);
         userRepository.save(user);
     }
-    
+
     public Map<String, Integer> getOrgRoles(Org org) {
         List<User> users = org.getUsers().stream().collect(Collectors.toList());
         Map<String, Integer> roleLevels = new HashMap<>();
@@ -86,7 +86,7 @@ public class OrgService {
         }
         return roleLevels;
     }
-    
+
     public Org findOrgByUser(User user) {
         String jpql = "SELECT o FROM Org o JOIN o.users u WHERE u.id = :userId";
         List<Org> results = entityManager.createQuery(jpql, Org.class)
@@ -97,7 +97,7 @@ public class OrgService {
         }
         return results.get(0);
     }
-    
+
     //!Owner remover blocker
     public void ensureOwnerHasLevelOne(String orgId) {
         List<User> usersWithLevelOne = userRepository.findByRoleLevelAndOrgid(1, orgId);
@@ -120,7 +120,7 @@ public class OrgService {
                 admin.setRoleLevel(1);
                 userRepository.save(admin);
             } else if (!employees.isEmpty()) {
-                
+
                 User employee = employees.get(0);
                 employee.setRoleLevel(1);
                 userRepository.save(employee);
@@ -136,11 +136,11 @@ public class OrgService {
             }
         }
     }
-    
+
     public Set<User> getUsersOfOrg(Org org) {
         return org.getUsers();
     }
-    
+
     public void welcomeEmail(String to, String name, String orgName) {
         String htmlContent = "<!DOCTYPE html>" +
                 "<html lang=\"en\">" +
@@ -166,9 +166,9 @@ public class OrgService {
                 "    <p>The Azion Team</p>" +
                 "</body>" +
                 "</html>";
-        
+
         String subject = orgName + " is in Azion";
-        
+
         try {
             emailService.sendEmail(to, subject, htmlContent);
         } catch (IOException e) {
@@ -176,5 +176,15 @@ public class OrgService {
             throw new RuntimeException("Failed to send welcome email");
         }
     }
+    
+    public List<String> listRoles(Org org) {
+        List<String> roles = new ArrayList<>();
+        Set<User> users = org.getUsers();
+        for (User user : users) {
+            if (!roles.contains(user.getRole())) {
+                roles.add(user.getRole());
+            }
+        }
+        return roles;
+    }
 }
-

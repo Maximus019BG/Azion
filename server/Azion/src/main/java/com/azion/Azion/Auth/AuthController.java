@@ -33,7 +33,7 @@ import static com.azion.Azion.Token.TokenType.REFRESH_TOKEN;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    
+
     private final TokenService tokenService;
     private final UserService userService;
     private final TokenRepo tokenRepo;
@@ -41,9 +41,10 @@ public class AuthController {
     private final MFAService mfaService;
     private final EmailService emailService;
     private final ProjectsService projectsService;
+    private final AuthService authService;
     
     @Autowired
-    public AuthController(TokenService tokenService, UserService userService, TokenRepo tokenRepo, UserRepository userRepository, MFAService mfaService, EmailService emailService, ProjectsService projectsService) {
+    public AuthController(TokenService tokenService, UserService userService, TokenRepo tokenRepo, UserRepository userRepository, MFAService mfaService, EmailService emailService, ProjectsService projectsService, AuthService authService) {
         this.tokenService = tokenService;
         this.userService = userService;
         this.tokenRepo = tokenRepo;
@@ -51,8 +52,9 @@ public class AuthController {
         this.mfaService = mfaService;
         this.emailService = emailService;
         this.projectsService = projectsService;
+        this.authService = authService;
     }
-    
+
     @Transactional
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, Object> request, @RequestHeader(value = "User-Agent") String UserAgent) {
@@ -62,7 +64,7 @@ public class AuthController {
         String role = (String) request.get("role");
         boolean mfaEnabled = (boolean) request.get("mfaEnabled");
         String bornAt = (String) request.get("age");
-        
+
         //Date validation
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
@@ -73,11 +75,11 @@ public class AuthController {
         } catch (DateTimeParseException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date");
         }
-        
-        
+
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         ParsePosition pos = new ParsePosition(0);
-        
+
         User user = new User();
         user.setName(name);
         user.setAge(dateFormat.parse(bornAt, pos));
@@ -85,23 +87,23 @@ public class AuthController {
         user.setPassword(password);
         user.setRole(role);
         user.setMfaEnabled(mfaEnabled);
-        
+
         userRepository.save(user);
-        
-        String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-        String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-        
+
+        String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"),  UserAgent);
+        String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"),  UserAgent);
+
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
-        
+
         log.debug("User registered");
         emailService.welcomeEmail(user.getEmail(), user.getName());
-        
+
         return ResponseEntity.ok(tokens);
     }
-    
-    
+
+
     @Transactional
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, Object> request, @RequestHeader(value = "User-Agent") String UserAgent) {
@@ -109,44 +111,27 @@ public class AuthController {
         String email = (String) request.get("email");
         String password = (String) request.get("password");
         String OTP = (String) request.get("OTP");
-        
+
+        //User validation
         User user = userRepository.findByEmail(email);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not exist");
         }
+        
+        //Password validation
         boolean passwordMatches = BCrypt.checkpw(password, user.getPassword());
         if (!passwordMatches) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
         }
-        if (user.isMfaEnabled()) {
-            if (OTP == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("MFA is enabled. Please provide OTP");
-            } else if (!mfaService.checkMfaCredentials(user.getEmail(), OTP)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid OTP");
-            } else if (mfaService.checkMfaCredentials(user.getEmail(), OTP)) {
-                String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-                String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-                
-                Map<String, String> tokens = new HashMap<>();
-                tokens.put("accessToken", accessToken);
-                tokens.put("refreshToken", refreshToken);
-                emailService.sendLoginEmail(user.getEmail(), "normal login method", user.getName());
-                return ResponseEntity.ok(tokens);
-            }
-            
+        //Token creation and validation
+        Map<String, String> tokens = authService.loginTokenCreation(user, OTP, UserAgent);
+        if (tokens.containsKey("message")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(tokens.get("message"));
         }
-        String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-        String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-        
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
-        
-        emailService.sendLoginEmail(user.getEmail(), "fast login method", user.getName());
-        
-        return ResponseEntity.ok(tokens);
+
+        return ResponseEntity.ok(tokens); //Return the tokens
     }
-    
+
     //Login with face recognition
     @Transactional
     @PostMapping("/fast-login")
@@ -168,10 +153,10 @@ public class AuthController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
-        
-        String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-        String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
-        
+
+        String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"),  UserAgent);
+        String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"),  UserAgent);
+
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
@@ -180,14 +165,15 @@ public class AuthController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.ok(tokens); //Return the tokens
     }
-    
+
     //Send the link to email
     @PutMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<Object, String> request) {
         String email = request.get("email");
         
+        //User validation
         User user = userRepository.findByEmail(email);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not exist");
@@ -196,37 +182,37 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("MFA is not enabled for this user");
         }
         
-        String resetToken = UUID.randomUUID().toString();
-        user.setResetToken(resetToken);
-        userRepository.save(user);
+        //Reset token generation
+        String resetToken = authService.resetTokenGeneration(user);
+        //Send the email
         try {
-            emailService.sendResetPasswordEmail(user.getEmail(), resetToken);
+            emailService.sendResetPasswordEmail(user.getEmail(), resetToken );
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
-        
-        return ResponseEntity.ok("Password reset link sent to email");
+
+        return ResponseEntity.ok("Password reset link sent to email"); //Return msg
     }
-    
+
     //Reset the password
     @PutMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody Map<Object, String> request) {
         String resetToken = request.get("token");
         String newPassword = request.get("password");
-        
+
         User user = userRepository.findByResetToken(resetToken);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid reset token");
         }
-        
+
         user.setPassword(newPassword);
         user.setResetToken(null);
         userRepository.save(user);
-        
+
         return ResponseEntity.ok("Password reset successfully");
     }
-    
+
     @Transactional
     @PostMapping("/logout/{token}/{tokenR}")
     public ResponseEntity<?> logout(@PathVariable String token, @PathVariable String tokenR) {
@@ -236,12 +222,12 @@ public class AuthController {
                 return ResponseEntity.ok("Logged out");
             } else {
                 tokenService.deleteTokens(token, tokenR);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is out of date");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is out of date"); //Return msg
             }
-            
+
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token"); //Return msg
         }
-        
+
     }
 }

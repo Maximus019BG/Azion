@@ -3,6 +3,10 @@ package com.azion.Azion.Meetings.Controller;
 
 import com.azion.Azion.Meetings.Model.MeetingDTO;
 import com.azion.Azion.Meetings.Service.MeetingService;
+import com.azion.Azion.Org.Model.DTO.OrgDTO;
+import com.azion.Azion.Org.Model.Org;
+import com.azion.Azion.Org.Repository.OrgRepository;
+import com.azion.Azion.Org.Service.OrgService;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Service.UserService;
@@ -24,12 +28,16 @@ public class MeetingController {
     private final MeetingService meetingService;
     private final UserService userService;
     private final TokenService tokenService;
+    private final OrgRepository orgRepository;
+    private final OrgService orgService;
     
     @Autowired
-    public MeetingController(MeetingService meetingService, UserService userService, TokenService tokenService) {
+    public MeetingController(MeetingService meetingService, UserService userService, TokenService tokenService, OrgRepository orgRepository, OrgService orgService) {
         this.meetingService = meetingService;
         this.userService = userService;
         this.tokenService = tokenService;
+        this.orgRepository = orgRepository;
+        this.orgService = orgService;
     }
     
     @Transactional
@@ -62,5 +70,27 @@ public class MeetingController {
         User user = tokenService.getUserFromToken(token);
         List<MeetingDTO> meetings = meetingService.getMeetingsThisWeek(user);
         return ResponseEntity.ok().body(meetings);
+    }
+    
+    @Transactional
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteMeeting(@RequestHeader("authorization") String token, @PathVariable String id) {
+        userService.userValid(token);
+        User user = tokenService.getUserFromToken(token);
+        List<MeetingDTO> meetings = meetingService.getMeetingsThisWeek(user);
+        return ResponseEntity.ok().body(meetings);
+    }
+    
+    @Transactional
+    @GetMapping("/list/roles")
+    public ResponseEntity<?> listRoles(@RequestHeader("authorization") String token) {
+        userService.userValid(token);
+        User user = tokenService.getUserFromToken(token);
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No organization found");
+        }
+        List<String> roles = orgService.listRoles(org);
+        return ResponseEntity.ok(roles);
     }
 }

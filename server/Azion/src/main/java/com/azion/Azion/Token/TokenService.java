@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.azion.Azion.Token.TokenType.ACCESS_TOKEN;
@@ -29,11 +27,12 @@ public class TokenService {
         this.tokenRepo = tokenRepo;
     }
     
-    public String generateToken(TokenType tokenType, User user, String issuer, String audience, String UserAgent) {
+    public String generateToken(TokenType tokenType, User user, String issuer, String UserAgent) {
         String token = "";
         String token_type = tokenType.toString();
         String secret = System.getProperty("secretJWT");
         Long time = 0L;
+        String audience = "https://api.azion.online/";
         
         if (tokenType == REFRESH_TOKEN) {
             time = 60 * 60 * 24 * 1000 * 5L;//5 days
@@ -118,6 +117,7 @@ public class TokenService {
         return isValid;
     }
     
+    //Delete tokens
     public void deleteTokens(String tokenA, String tokenR) {
         Token tokenObjA = tokenRepo.findByToken(tokenA);
         Token tokenObjR = tokenRepo.findByToken(tokenR);
@@ -140,6 +140,7 @@ public class TokenService {
         
     }
     
+    //Methods to check if tokens are out of date
     public boolean isAccessTokenOutOfDate(String token) {
         Token tokenObj = tokenRepo.findByToken(token);
         DecodedJWT jwt = JWT.decode(token);
@@ -156,6 +157,7 @@ public class TokenService {
         } else return tokenObj.getTokenType() != REFRESH_TOKEN || jwt.getExpiresAt().getTime() <= System.currentTimeMillis();
     }
     
+    //Getting User obj from token
     public User getUserFromToken(String token) {
         Token tokenObj = tokenRepo.findByToken(token);
         return tokenObj.getSubject();
@@ -165,15 +167,20 @@ public class TokenService {
         Token refreshTok = tokenRepo.findByToken(refreshToken);
         if (refreshTok != null && !isRefreshTokenOutOfDate(refreshToken)) {
             User user = refreshTok.getSubject();
-            return generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), "https://azion.net/", UserAgent);
+            return generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), UserAgent);
         }
         return null;
     }
     
-    //Show Sessions
+    // Show Sessions
     public List<TokenPlatformResponse> showAllTokens(String accessToken) {
+        // Retrieve the user
         User user = getUserFromToken(accessToken);
+        
+        // Find all tokens for user
         List<Token> tokens = tokenRepo.findAllBySubject(user);
+        
+        //Convert tokens to DTOs
         List<TokenDTO> tokensDTO = tokens.stream().map(token -> {
             TokenDTO tokenDTO = new TokenDTO();
             tokenDTO.setToken(token.getToken());
@@ -183,6 +190,7 @@ public class TokenService {
             return tokenDTO;
         }).collect(Collectors.toList());
         
+        //Identify platform
         Map<String, String> platformMap = new HashMap<>();
         platformMap.put("Android", "Android");
         platformMap.put("iOS", "iPhone|iPad");
@@ -191,6 +199,7 @@ public class TokenService {
         platformMap.put("Mac", "Mac");
         platformMap.put("AzionMobile", "AzionMobile");
         
+        //Sorted tokens
         List<TokenPlatformResponse> sortedTokens = new ArrayList<>();
         for (TokenDTO tokenDTO : tokensDTO) {
             if (tokenDTO.getTokenType().equals("REFRESH_TOKEN")) {
@@ -198,6 +207,7 @@ public class TokenService {
                 String model = "Unknown Model";
                 for (Map.Entry<String, String> entry : platformMap.entrySet()) {
                     if (platform.contains(entry.getValue())) {
+                        //Determine the model based on the platform type
                         if (entry.getKey().equals("Android")) {
                             int startIndex = platform.indexOf("Android") + "Android".length();
                             int endIndex = platform.indexOf(";", startIndex);
@@ -214,7 +224,7 @@ public class TokenService {
                             int startIndex = platform.indexOf("Windows") + "Windows".length();
                             int endIndex = platform.indexOf(";", startIndex);
                             if (endIndex != -1) {
-                                model = "Win "+platform.substring(startIndex, endIndex).trim();
+                                model = "Win " + platform.substring(startIndex, endIndex).trim();
                             }
                         } else if (entry.getKey().equals("Linux")) {
                             int startIndex = platform.indexOf("Linux") + "Linux".length();
@@ -228,15 +238,14 @@ public class TokenService {
                             if (endIndex != -1) {
                                 model = "Mac " + platform.substring(startIndex, endIndex).trim();
                             }
-                        }
-                        else if (entry.getKey().equals("AzionMobile")) {
+                        } else if (entry.getKey().equals("AzionMobile")) {
                             model = "AzionMobile";
                         }
                         sortedTokens.add(new TokenPlatformResponse(tokenDTO, model));
                         break;
                     }
                 }
-                
+                //If platform not in map add as other
                 if (!sortedTokens.stream().anyMatch(t -> t.getTokenDTO().equals(tokenDTO))) {
                     sortedTokens.add(new TokenPlatformResponse(tokenDTO, "Other"));
                 }

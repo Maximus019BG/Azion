@@ -24,6 +24,7 @@ public class AzionApplication {
 		System.setProperty("requestOrigin", dotenv.get("REQUEST_ORIGIN"));
 		System.setProperty("requestOriginMobile", dotenv.get("REQUEST_ORIGIN_MOBILE"));
 		System.setProperty("virusTotalApiKey", dotenv.get("VIRUS_TOTAL_API_KEY"));
+		System.setProperty("sendgrid.api.key", dotenv.get("SENDGRID_API_KEY"));
 		
 		SpringApplication.run(AzionApplication.class, args);
 	}
