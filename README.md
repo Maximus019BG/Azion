@@ -59,7 +59,7 @@
     DB_URL="jdbc:mysql://aziondb:3306/aziondb"
     DB_USERNAME="root"
     DB_PASSWORD="root"
-    SECRET_JWT="ASDGHAFGaF@#ejsafu7@43kjahsf&@$YAJSFK@Y$&UHfusa*@FSAFjasf"
+    SECRET_JWT="ASDGHAFGaF@#ejsafu7@43kjahsf&@YAJSFK@Y&UHfusa*@FSAFjasf"
     ISSUER_NAME="Azion"
     SECRET_MFA="GHAFGaF@#ejsafu7@43kjafusa*@FSAFjasf"
     DB_NAME="database name"
