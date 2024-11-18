@@ -19,7 +19,7 @@ public class EmailService {
     private String sendGridApiKey;
 
     public void sendEmail(String to, String subject, String body) throws IOException {
-        Email from = new Email("aziononlineteam@gmail.com");
+        Email from = new Email(System.getProperty("spring.mail.username"));
         Email toEmail = new Email(to);
         Content content = new Content("text/html", body);
         Mail mail = new Mail(from, subject, toEmail, content);
