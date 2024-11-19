@@ -1,16 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
-import { DateSelectArg, EventClickArg } from "@fullcalendar/core";
+import {DateSelectArg, EventClickArg} from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/app/components/dialog";
-import { apiUrl } from "@/app/api/config";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/app/components/dialog";
+import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
-import { UserData } from "@/app/func/funcs";
-import { EventData } from "@/app/types/types";
+import {UserData} from "@/app/func/funcs";
+import {EventData} from "@/app/types/types";
+import {Trash2Icon} from "lucide-react";
 
 const Calendar: React.FC = () => {
     const [currentEvents, setCurrentEvents] = useState<EventData[]>([]);
@@ -36,7 +37,7 @@ const Calendar: React.FC = () => {
                     start: new Date(event.start).toISOString(),
                     end: new Date(event.end).toISOString(),
                 }));
-                console.log("Fetched events:", events); // Log fetched events
+                console.log("Fetched events:", events);
                 setCurrentEvents(events);
             } catch (error) {
                 console.error("Error fetching events:", error);
@@ -111,6 +112,11 @@ const Calendar: React.FC = () => {
         };
     }, [userRoleLevel]);
 
+    // Move handleDelete function here, outside handleAddEvent
+    const handleDelete = (id: string) => {
+        setCurrentEvents((prevEvents) => prevEvents.filter(event => event.id !== id));
+    };
+
     const handleDateClick = (selected: DateSelectArg) => {
         if (userRoleLevel >= 1 && userRoleLevel <= 3) {
             setSelectedDate(selected);
@@ -167,11 +173,11 @@ const Calendar: React.FC = () => {
     return (
         <div>
             <div className="flex w-full px-10 justify-start items-start gap-8">
-                <div className="w-3/12">
-                    <div className="py-10 text-2xl font-extrabold px-7">
+                <div className="w-3/12 flex flex-col justify-start items-start gap-10">
+                    <div className="text-2xl font-extrabold">
                         Calendar Events
                     </div>
-                    <ul className="space-y-4">
+                    <ul className="space-y-4 w-full h-full flex flex-col justify-center items-start">
                         {currentEvents.length <= 0 && (
                             <div className="italic text-center text-gray-400">
                                 No Events Present
@@ -179,14 +185,22 @@ const Calendar: React.FC = () => {
                         )}
                         {currentEvents.length > 0 &&
                             currentEvents.map((event: EventData) => (
-                                <li key={event.id}>
+                                <li key={event.id} className="bg-accent w-full rounded-btn p-2 break-words relative">
                                     {event.title}
+
+                                    {/* Waste Bin Icon in the bottom-right corner */}
+                                    <button
+                                        onClick={() => handleDelete(event.id)}
+                                        className="absolute bottom-1 right-1 bg-transparent rounded-lg p-1 shadow-md hover:bg-red-500 hover:text-white"
+                                    >
+                                        <Trash2Icon className="h-4 w-4"/>
+                                    </button>
                                 </li>
                             ))}
                     </ul>
                 </div>
 
-                <div className="w-9/12 mt-8">
+                <div className="w-full mt-8">
                     <FullCalendar
                         height={"85vh"}
                         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -211,51 +225,47 @@ const Calendar: React.FC = () => {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="flex flex-col justify-center items-center">
                     <DialogHeader>
-                        <DialogTitle className="text-2xl">Add New Event Details</DialogTitle>
+                        <DialogTitle className="text-2xl">Add New Event</DialogTitle>
                     </DialogHeader>
-                    <form className="flex flex-col justify-center items-start gap-3" onSubmit={handleAddEvent}>
+                    <form className="space-y-5" onSubmit={handleAddEvent}>
                         <input
                             type="text"
                             placeholder="Event Title"
                             value={newEventTitle}
                             onChange={(e) => setNewEventTitle(e.target.value)}
+                            className="input-field"
                             required
-                            className="border border-gray-200 p-3 rounded-md text-lg cursor-pointer"
                         />
                         <input
                             type="text"
-                            placeholder="Meeting Room Link"
+                            placeholder="Meeting Link"
                             value={newMeetingRoomLink}
                             onChange={(e) => setNewMeetingRoomLink(e.target.value)}
+                            className="input-field"
                             required
-                            className="border border-gray-200 p-3 rounded-md text-lg cursor-pointer"
                         />
-                        <select
-                            multiple
-                            value={selectedRoles}
-                            onChange={(e) => setSelectedRoles(Array.from(e.target.selectedOptions, option => option.value))}
-                            required
-                            className="w-full border border-gray-200 p-3 rounded-md text-lg cursor-pointer"
-                        >
-                            {availableRoles.map(role => (
-                                <option key={role} value={role} className="text-white">
+                        <div className="flex gap-3">
+                            {availableRoles.map((role) => (
+                                <label key={role} className="text-sm text-gray-700">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedRoles.includes(role)}
+                                        onChange={() => {
+                                            setSelectedRoles(prev =>
+                                                prev.includes(role)
+                                                    ? prev.filter(r => r !== role)
+                                                    : [...prev, role]
+                                            );
+                                        }}
+                                    />
                                     {role}
-                                </option>
+                                </label>
                             ))}
-                        </select>
-                        <button
-                            className="w-full bg-green-500 text-white p-3 mt-5 rounded-md"
-                            type="submit"
-                        >
-                            Add
-                        </button>
+                        </div>
+                        <button type="submit" className="button bg-primary text-white">Add Event</button>
                     </form>
                 </DialogContent>
             </Dialog>
-
-            <div id="tooltip">
-                Create meeting
-            </div>
         </div>
     );
 };
