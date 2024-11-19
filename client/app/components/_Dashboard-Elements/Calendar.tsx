@@ -114,7 +114,18 @@ const Calendar: React.FC = () => {
 
     // Move handleDelete function here, outside handleAddEvent
     const handleDelete = (id: string) => {
-        setCurrentEvents((prevEvents) => prevEvents.filter(event => event.id !== id));
+        if (window.confirm("Are you sure you want to delete this event?")) {
+            axios.delete(`${apiUrl}/schedule/delete/${id}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": Cookies.get("azionAccessToken"),
+                }
+            })
+                .then(() => {
+                    setCurrentEvents(prev => prev.filter(event => event.id !== id));
+                })
+                .catch(error => console.error("Error deleting event:", error));
+        }
     };
 
     const handleDateClick = (selected: DateSelectArg) => {

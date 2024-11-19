@@ -70,4 +70,8 @@ public class MeetingService {
         dto.setLink(meeting.getLink());
         return dto;
     }
+    
+    public void deleteMeeting(String id) {
+        meetingRepo.deleteById(id);
+    }
 }

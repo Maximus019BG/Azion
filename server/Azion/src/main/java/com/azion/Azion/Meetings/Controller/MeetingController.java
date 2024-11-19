@@ -84,6 +84,7 @@ public class MeetingController {
         userService.userValid(token);
         User user = tokenService.getUserFromToken(token);
         List<MeetingDTO> meetings = meetingService.getMeetings(user);
+        meetingService.deleteMeeting(id);
         return ResponseEntity.ok().body(meetings);
     }
     
