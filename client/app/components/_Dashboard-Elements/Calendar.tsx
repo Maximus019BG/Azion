@@ -1,18 +1,16 @@
 "use client";
-
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {DateSelectArg, EventApi, EventClickArg} from "@fullcalendar/core";
+import { DateSelectArg, EventClickArg } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/app/components/dialog";
-import {apiUrl} from "@/app/api/config";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/app/components/dialog";
+import { apiUrl } from "@/app/api/config";
 import Cookies from "js-cookie";
-import {UserData} from "@/app/func/funcs";
-import {EventData} from "@/app/types/types";
-
+import { UserData } from "@/app/func/funcs";
+import { EventData } from "@/app/types/types";
 
 const Calendar: React.FC = () => {
     const [currentEvents, setCurrentEvents] = useState<EventData[]>([]);
@@ -33,14 +31,18 @@ const Calendar: React.FC = () => {
                         "authorization": Cookies.get("azionAccessToken"),
                     },
                 });
-                console.log("Fetched events:", response.data); // Log fetched events
-                setCurrentEvents(response.data);
+                const events = response.data.map((event: EventData) => ({
+                    ...event,
+                    start: new Date(event.start).toISOString(),
+                    end: new Date(event.end).toISOString(),
+                }));
+                console.log("Fetched events:", events); // Log fetched events
+                setCurrentEvents(events);
             } catch (error) {
                 console.error("Error fetching events:", error);
             }
         };
 
-        // Fetch available roles from the server
         const fetchRoles = async () => {
             const token = Cookies.get("azionAccessToken");
             if (!token) {
@@ -61,7 +63,6 @@ const Calendar: React.FC = () => {
             }
         };
 
-        // Fetch user role level from the server
         const fetchUserRoleLevel = async () => {
             UserData().then((data) => {
                 setUserRoleLevel(data.roleLevel);
@@ -118,14 +119,8 @@ const Calendar: React.FC = () => {
     };
 
     const handleEventClick = (selected: EventClickArg) => {
-        // Prompt user for confirmation before deleting an event
-        if (
-            window.confirm(
-                `Are you sure you want to delete the event "${selected.event.title}"?`
-            )
-        ) {
+        if (window.confirm(`Are you sure you want to delete the event "${selected.event.title}"?`)) {
             selected.event.remove();
-            // Send delete request to the server
             axios.delete(`${apiUrl}/schedule/delete/${selected.event.id}`)
                 .catch(error => console.error("Error deleting event:", error));
         }
@@ -141,8 +136,8 @@ const Calendar: React.FC = () => {
     const handleAddEvent = async (e: React.FormEvent) => {
         e.preventDefault();
         if (newEventTitle && selectedDate) {
-            const calendarApi = selectedDate.view.calendar; // Get the calendar API instance.
-            calendarApi.unselect(); // Unselect the date range.
+            const calendarApi = selectedDate.view.calendar;
+            calendarApi.unselect();
 
             const newEvent: EventData = {
                 id: `${selectedDate.start.toISOString()}-${newEventTitle}`,
@@ -182,7 +177,6 @@ const Calendar: React.FC = () => {
                                 No Events Present
                             </div>
                         )}
-
                         {currentEvents.length > 0 &&
                             currentEvents.map((event: EventData) => (
                                 <li key={event.id}>
@@ -200,22 +194,20 @@ const Calendar: React.FC = () => {
                             left: "prev,next today",
                             center: "title",
                             right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
-                        }} // Set header toolbar options.
-                        initialView="dayGridMonth" // Initial view mode of the calendar.
-                        editable={userRoleLevel >= 1 && userRoleLevel <= 3} // Allow events to be edited only for admins.
-                        selectable={userRoleLevel >= 1 && userRoleLevel <= 3} // Allow dates to be selectable only for admins.
-                        selectMirror={true} // Mirror selections visually.
-                        dayMaxEvents={true} // Limit the number of events displayed per day.
-                        select={handleDateClick} // Handle date selection to create new events.
-                        eventClick={handleEventClick} // Handle clicking on events (e.g., to delete them).
-
-                        initialEvents={currentEvents} // Initial events loaded from the server.
-                        dayCellClassNames="hover:bg-[#1a1a1a] transition duration-300" // Add custom class to day cells
+                        }}
+                        initialView="dayGridMonth"
+                        editable={userRoleLevel >= 1 && userRoleLevel <= 3}
+                        selectable={userRoleLevel >= 1 && userRoleLevel <= 3}
+                        selectMirror={true}
+                        dayMaxEvents={true}
+                        select={handleDateClick}
+                        eventClick={handleEventClick}
+                        events={currentEvents}
+                        dayCellClassNames="hover:bg-[#1a1a1a] transition duration-300"
                     />
                 </div>
             </div>
 
-            {/* Dialog for adding new events */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="flex flex-col justify-center items-center">
                     <DialogHeader>
@@ -226,7 +218,7 @@ const Calendar: React.FC = () => {
                             type="text"
                             placeholder="Event Title"
                             value={newEventTitle}
-                            onChange={(e) => setNewEventTitle(e.target.value)} // Update new event title as the user types.
+                            onChange={(e) => setNewEventTitle(e.target.value)}
                             required
                             className="border border-gray-200 p-3 rounded-md text-lg cursor-pointer"
                         />
@@ -234,14 +226,14 @@ const Calendar: React.FC = () => {
                             type="text"
                             placeholder="Meeting Room Link"
                             value={newMeetingRoomLink}
-                            onChange={(e) => setNewMeetingRoomLink(e.target.value)} // Update meeting room link as the user types.
+                            onChange={(e) => setNewMeetingRoomLink(e.target.value)}
                             required
                             className="border border-gray-200 p-3 rounded-md text-lg cursor-pointer"
                         />
                         <select
                             multiple
                             value={selectedRoles}
-                            onChange={(e) => setSelectedRoles(Array.from(e.target.selectedOptions, option => option.value))} // Update selected roles
+                            onChange={(e) => setSelectedRoles(Array.from(e.target.selectedOptions, option => option.value))}
                             required
                             className="w-full border border-gray-200 p-3 rounded-md text-lg cursor-pointer"
                         >
@@ -261,7 +253,6 @@ const Calendar: React.FC = () => {
                 </DialogContent>
             </Dialog>
 
-            {/* Tooltip */}
             <div id="tooltip">
                 Create meeting
             </div>
