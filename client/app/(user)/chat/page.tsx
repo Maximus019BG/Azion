@@ -205,8 +205,7 @@ const ChatPage = () => {
                             <h3 className="text-xl font-semibold text-white">{selectedUser.name}</h3>
                         </div>
 
-                        <div
-                            className="h-[77vh] mb-4 border border-gray-600 p-4 rounded-lg bg-gray-800">
+                        <div className="h-[77vh] mb-4 border border-gray-600 p-4 rounded-lg bg-gray-800 overflow-y-auto">
                             <div className="flex flex-col space-y-3">
                                 {messages
                                     .filter((msg) => (msg.from === selectedUser.email || msg.from === userEmail) && (msg.to === selectedUser.email || msg.to === userEmail))
@@ -236,7 +235,6 @@ const ChatPage = () => {
                                                     </div>
                                                 </div>)}
                                         </div>
-
                                     ))}
                             </div>
                         </div>
