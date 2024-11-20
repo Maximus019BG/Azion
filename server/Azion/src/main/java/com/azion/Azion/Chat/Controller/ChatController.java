@@ -25,4 +25,5 @@ public class ChatController {
     public void sendPrivateMessage(Message message) {
         messagingTemplate.convertAndSendToUser(message.getTo(), "/private", message);
     }
+    
 }
