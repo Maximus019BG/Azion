@@ -180,7 +180,7 @@ const OrgSettingsForm = () => {
             </button>
 
             <h2 className="text-foreground text-2xl text-white mt-6 text-center ">
-                Connection String: {conString}
+                Connection Code: {conString}
             </h2>
 
             {alertMessage && (

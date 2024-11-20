@@ -28,10 +28,10 @@ const ConString: React.FC<ConStringProps> = ({ value, name}) => {
         <h2
           className={`mt-6 text-white text-md md:text-xl lg:text-2xl text-center `}
         >
-          Your connection string is: <span className=" mt-4 font-extrabold"> {value} </span>
+          Your connection code is: <span className=" mt-4 font-extrabold"> {value} </span>
         </h2>
         <p className="text-white text-center">
-          With this connection string your employees can join
+          With this connection code your employees can join
         </p>
       </div>
 

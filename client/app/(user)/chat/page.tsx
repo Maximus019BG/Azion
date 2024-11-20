@@ -13,17 +13,18 @@ import {Decrypt, Encrypt} from "@/app/func/msg";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import {getOrgName} from "@/app/func/org";
 
 const ChatPage = () => {
-    const [messages, setMessages] = useState<{ content: string; from: string }[]>([]);
+    const [messages, setMessages] = useState<{ content: string; from: string, to: string }[]>([]);
     const [input, setInput] = useState<string>("");
     const [client, setClient] = useState<Client | null>(null);
     const [userEmail, setUserEmail] = useState("");
     const [users, setUsers] = useState<User[]>([]);
+    const [orgName, setOrgName] = useState<string>("org");
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [profilePictureSrcs, setProfilePictureSrcs] = useState<{ [key: string]: string }>({});
     const defaultImageSrc = typeof DefaultPic === 'string' ? DefaultPic : DefaultPic.src;
-
 
     const getProfilePictureSrc = async (profilePicture: string | null): Promise<string | null> => {
         if (profilePicture) {
@@ -32,6 +33,15 @@ const ChatPage = () => {
         }
         return null;
     };
+
+    useEffect(() => {
+        const fetchOrgName = async () => {
+            const result: string = await getOrgName();
+            setOrgName(result);
+        };
+
+        fetchOrgName();
+    }, [orgName]);
 
     useEffect(() => {
         sessionCheck();
@@ -81,10 +91,14 @@ const ChatPage = () => {
                     if (message.body) {
                         const newMessage = JSON.parse(message.body);
                         const decryptedContent = Decrypt(newMessage.content);
-                        setMessages((prevMessages) => [...prevMessages, {
-                            content: decryptedContent,
-                            from: newMessage.from
-                        }]);
+                        setMessages((prevMessages) => {
+                            const updatedMessages = [...prevMessages, {content: decryptedContent, from: newMessage.from, to: newMessage.to}];
+                            if (updatedMessages.length > 100) {
+                                updatedMessages.shift();
+                            }
+                            localStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
+                            return updatedMessages;
+                        });
                     }
                 });
             },
@@ -98,6 +112,12 @@ const ChatPage = () => {
         setClient(stompClient);
         GetUsers();
 
+        // Load messages from local storage
+        const savedMessages = localStorage.getItem("chatMessages");
+        if (savedMessages) {
+            setMessages(JSON.parse(savedMessages));
+        }
+
         return () => {
             if (stompClient) stompClient.deactivate();
         };
@@ -107,8 +127,15 @@ const ChatPage = () => {
         if (client && client.connected && selectedUser) {
             const message = {content: Encrypt(input), from: userEmail, to: selectedUser.email};
             client.publish({destination: "/app/privateMessage", body: JSON.stringify(message)});
+            setMessages((prevMessages) => {
+                const updatedMessages = [...prevMessages, {content: input, from: userEmail, to: selectedUser.email}];
+                if (updatedMessages.length > 100) {
+                    updatedMessages.shift();
+                }
+                localStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
+                return updatedMessages;
+            });
             setInput("");
-            setMessages((prevMessages) => [...prevMessages, {content: input, from: userEmail}]);
         }
     };
 
@@ -116,7 +143,7 @@ const ChatPage = () => {
         setSelectedUser(user);
     };
 
-    //!Enter as submit
+    //Enter as submit
     const onEnter = (e: any) => {
         if (e.key == 'Enter') {
             sendPrivateMessage();
@@ -127,7 +154,7 @@ const ChatPage = () => {
         <div className="flex text-white min-h-screen">
             {/* User List */}
             <div className="w-1/3 max-w-xs border-r border-gray-600 p-6">
-                <Link className="absolute right-6 top-6" href="/dashboard/org">
+                <Link className="absolute right-6 top-6" href={`/dashboard/${orgName}`}>
                     <FontAwesomeIcon
                         className="text-4xl bg-white rounded-full text-lightAccent"
                         icon={faCircleLeft}
@@ -182,7 +209,7 @@ const ChatPage = () => {
                             className="h-[77vh] mb-4 border border-gray-600 p-4 rounded-lg bg-gray-800">
                             <div className="flex flex-col space-y-3">
                                 {messages
-                                    .filter((msg) => msg.from === selectedUser.email || msg.from === userEmail)
+                                    .filter((msg) => (msg.from === selectedUser.email || msg.from === userEmail) && (msg.to === selectedUser.email || msg.to === userEmail))
                                     .map((msg, index) => (
                                         <div
                                             key={index}

@@ -26,7 +26,7 @@ interface PageProps {
 
 const Tasks: FC<PageProps> = ({params}) => {
     const [admin, setAdmin] = useState(false);
-    const [task, setTask] = useState<Task[]>([]);
+    const [task, setTask] = useState<Task[] | null>(null);
     const [orgNameCheck, setOrgNameCheck] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
     const [sortCriteria, setSortCriteria] = useState<string>("date");
@@ -44,10 +44,14 @@ const Tasks: FC<PageProps> = ({params}) => {
             })
             .then((response: AxiosResponse) => {
                 setTask(response.data);
+                if (response.data.message.toString() === "no projects") {
+                    setTask(null);
+                }
                 setLoading(false);
             })
             .catch((error) => {
                 console.error(error.response ? error.response : error);
+                setLoading(false);
             });
     };
 
@@ -88,18 +92,22 @@ const Tasks: FC<PageProps> = ({params}) => {
         window.location.href = `/dashboard/${orgNameCheck}/task/view/${id}`;
     };
 
-    const sortTasks = (tasks: Task[]) => {
-        return tasks.sort((a, b) => {
-            if (sortCriteria === "date") {
-                return sortOrder === "asc" ? new Date(a.date).getTime() - new Date(b.date).getTime() : new Date(b.date).getTime() - new Date(a.date).getTime();
-            } else if (sortCriteria === "priority") {
-                const priorityOrder = ["low", "medium", "high", "very_high"];
-                return sortOrder === "asc" ? priorityOrder.indexOf(a.priority.toLowerCase()) - priorityOrder.indexOf(b.priority.toLowerCase()) : priorityOrder.indexOf(b.priority.toLowerCase()) - priorityOrder.indexOf(a.priority.toLowerCase());
-            } else if (sortCriteria === "status") {
-                return sortOrder === "asc" ? a.status.localeCompare(b.status) : b.status.localeCompare(a.status);
-            }
-            return 0;
-        });
+    const sortTasks = (tasks: Task[] | null) => {
+        if (Array.isArray(tasks)) {
+            return tasks.sort((a, b) => {
+                if (sortCriteria === "date") {
+                    return sortOrder === "asc" ? new Date(a.date).getTime() - new Date(b.date).getTime() : new Date(b.date).getTime() - new Date(a.date).getTime();
+                } else if (sortCriteria === "priority") {
+                    const priorityOrder = ["low", "medium", "high", "very_high"];
+                    return sortOrder === "asc" ? priorityOrder.indexOf(a.priority.toLowerCase()) - priorityOrder.indexOf(b.priority.toLowerCase()) : priorityOrder.indexOf(b.priority.toLowerCase()) - priorityOrder.indexOf(a.priority.toLowerCase());
+                } else if (sortCriteria === "status") {
+                    return sortOrder === "asc" ? a.status.localeCompare(b.status) : b.status.localeCompare(a.status);
+                }
+                return 0;
+            });
+        } else {
+            return [];
+        }
     };
 
     if (loading) {
@@ -135,7 +143,7 @@ const Tasks: FC<PageProps> = ({params}) => {
                                 <span className="text-lg font-semibold">Create Task</span>
                             </Link>
                         )}
-                        {sortTasks(task).map((task) => (
+                        {task !==null && sortTasks(task).map((task:Task) => (
                             <TasksCard
                                 key={task.id}
                                 title={task.name}
@@ -149,6 +157,7 @@ const Tasks: FC<PageProps> = ({params}) => {
                                 id={task.id}
                             />
                         ))}
+
                     </div>
                 </div>
             </div>

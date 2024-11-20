@@ -110,6 +110,12 @@ const RoleList = () => {
     setUsers((prevUsers) => {
       return prevUsers.map((user) => {
         if (user.id === userId) {
+          if (user.role === "owner" && newRole !== "owner") {
+            const confirmChange = window.confirm("Are you sure you want to change the owner role to someone else?");
+            if (!confirmChange) {
+              return user;
+            }
+          }
           return {
             ...user,
             role: newRole,
@@ -157,16 +163,17 @@ const RoleList = () => {
           </thead>
           <tbody>
             {Object.entries(roles).map(([role, level], index) => (
-              <tr key={index} className="border-t bg-gray-900 even:bg-slate-950 border-gray-700">
+              <tr key={index} className={`border-t bg-gray-900 even:bg-slate-950 border-gray-700`}>
                 <td className="py-4 px-6">
                   <input
                     type="text"
                     value={role}
                     onChange={(e) => handleRoleNameChange(role, e.target.value)}
-                    className="bg-gray-700 text-white border-none focus:outline-none rounded w-full py-2 px-3"
+                    className={`bg-gray-700  border-non focus:outline-none rounded w-full py-2 px-3 ${role === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
                     ref={(el) => {
                       refs.current[role] = el;
                     }}
+                    disabled={role === "owner"}
                   />
                 </td>
                 <td className="py-4 px-6">
@@ -174,13 +181,15 @@ const RoleList = () => {
                     type="number"
                     value={level}
                     onChange={(e) => handleInputChange(role, parseInt(e.target.value))}
-                    className="bg-gray-700 text-white border-none focus:outline-none rounded w-full py-2 px-3"
+                    className={`bg-gray-700 border-none focus:outline-none rounded w-full py-2 px-3 ${role === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
+                    disabled={role === "owner"}
                   />
                 </td>
                 <td className="py-4 px-6">
                   <button
                     onClick={() => handleRemoveRole(role)}
-                    className="text-red-500 hover:text-red-600 font-medium"
+                    className={`font-medium ${role === "owner" ? "text-gray-500 cursor-not-allowed" : "text-red-500 hover:text-red-600"}`}
+                    disabled={role === "owner"}
                   >
                     Remove
                   </button>
@@ -233,7 +242,7 @@ const RoleList = () => {
           <tbody>
             {users.map((user) => (
               <tr key={user.id} className="border-b bg-gray-800 border-gray-700">
-                <td className="py-4 ">{user.name}</td>
+                <td className="py-4 ">{user.name} ({user.email})</td>
                 <td className="py-4">
                   <select
                     value={user.role}
