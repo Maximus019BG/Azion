@@ -99,8 +99,9 @@ const Dashboard: FC<PageProps> = ({params}) => {
                         </h2>
                         <div className="w-full h-full flex flex-col gap-10 justify-start items-start">
                             <DashboardRow1/>
-                            {/*<DashboardProgramCard meetings={meetings}/>*/}
-                            <Calendar/>
+                            <div className="w-full">
+                                <Calendar/>
+                            </div>
                         </div>
                     </div>
                 </div>

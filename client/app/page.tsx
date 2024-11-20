@@ -57,13 +57,48 @@ const Home = () => {
     });
 
     const svgs = [
-        {Component: Artboard2, position: "right-[3vw] top-[0vh]", delay: 0},
-        {Component: Artboard3, position: "right-[23vw] -top-[6vh]", delay: 0.3},
-        {Component: Artboard4, position: "right-[27vw] top-[32vh]", delay: 0.6},
-        {Component: Artboard5, position: "right-[9vw] top-[60vh]", delay: 0.9},
-        {Component: Artboard6, position: "left-[0vw] top-[50vh]", delay: 1.2},
-        {Component: Artboard7, position: "right-[3vw] top-[32vh]", delay: 1.5},
-        {Component: Artboard8, position: "right-[34vw] top-[63vh]", delay: 1.8},
+        {
+            Component: Artboard2,
+            position: "right-[3vw] top-[0vh]",
+            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px] w-[150px] h-[150px]",
+            delay: 0,
+        },
+        {
+            Component: Artboard3,
+            position: "right-[24vw] -top-[4vh]",
+            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px] w-[150px] h-[150px]",
+            delay: 0.2,
+        },
+        {
+            Component: Artboard4,
+            position: "right-[27vw] top-[32vh]",
+            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px] w-[150px] h-[150px]",
+            delay: 0.4,
+        },
+        {
+            Component: Artboard5,
+            position: "right-[16vw] top-[58vh]",
+            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px] w-[150px] h-[150px]",
+            delay: 0.6,
+        },
+        {
+            Component: Artboard6,
+            position: "left-[0vw] top-[50vh]",
+            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px]",
+            delay: 0.8,
+        },
+        {
+            Component: Artboard7,
+            position: "right-[3vw] top-[32vh]",
+            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px]",
+            delay: 1,
+        },
+        {
+            Component: Artboard8,
+            position: "right-[46vw] top-[56vh]",
+            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px]",
+            delay: 1.2,
+        },
     ];
 
     return (
@@ -72,18 +107,19 @@ const Home = () => {
                 <Navbar/>
             </div>
 
-            <div className="w-full relative ml-6">
+            <div className="w-screen relative ">
                 {svgs.map((svg, index) => (
                     <motion.div
                         key={index}
-                        className={`absolute ${svg.position}`}
+                        className={`absolute ${svg.position} ${svg.scale}`}
                         animate={getLoopAnimation(svg.delay).animate}
                         transition={getLoopAnimation(svg.delay).transition}
                     >
-                        <svg.Component width={300} height={300}/>
+                        <svg.Component className="w-full h-full"/>
                     </motion.div>
                 ))}
             </div>
+
 
             <motion.div
                 initial={{opacity: 0, y: -400}}

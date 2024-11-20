@@ -1,7 +1,5 @@
 package com.azion.Azion.Meetings.Model;
 
-import com.azion.Azion.Meetings.Enum.EnumDays;
-import com.azion.Azion.User.Model.User;
 import jakarta.persistence.*;
 
 import java.util.Date;
