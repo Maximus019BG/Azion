@@ -13,7 +13,7 @@ const Join_Organization = ({ onClose }: { onClose: () => void }) => {
 
   const handleSubmit = async () => {
     if (connString === "") {
-      alert("Please fill in the connection string field.");
+      alert("Please fill in the connection code field.");
       return;
     }
 
@@ -69,7 +69,7 @@ const Join_Organization = ({ onClose }: { onClose: () => void }) => {
         </h1>
         <input
           type="text"
-          placeholder="Connection String"
+          placeholder="Connection Code"
           className="w-full bg-gray-700 text-white rounded-lg py-2 px-4 mb-4 border-none focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={connString}
           onChange={(e) => setConnString(e.target.value)}
