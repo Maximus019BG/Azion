@@ -77,6 +77,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
                 setMeetings(response.data);
             } catch (error) {
                 console.error('Error fetching meetings:', error);
+                alert('Error fetching meetings');
             }
         };
         getMeetings();

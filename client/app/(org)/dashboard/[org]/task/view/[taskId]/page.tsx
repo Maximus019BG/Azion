@@ -79,7 +79,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
         }).then((response: any) => {
             alert(response.data + "\nTo see changes reload");
         }).catch((error: any) => {
-            alert(error);
+            alert(error.response.data);
         });
     };
 

@@ -78,8 +78,9 @@ export default function FastLogIn() {
                     ) {
                         authSessionCheck();
                     }
-                } catch (error) {
+                } catch (error:any) {
                     console.error("Error sending image to API: ", error);
+                    alert(error.response.data);
                 } finally {
                     setTimeout(() => setShowOverlay(false), 200); // Hide overlay after 200ms
                 }
