@@ -1,10 +1,10 @@
 "use client";
-import React, {useEffect, useRef, useState} from 'react';
-import axios, {AxiosResponse} from 'axios';
-import {apiUrl} from '@/app/api/config';
-import {Commissioner} from "next/font/google";
+import React, { useEffect, useRef, useState } from 'react';
+import axios, { AxiosResponse } from 'axios';
+import { apiUrl } from '@/app/api/config';
+import { Commissioner } from "next/font/google";
 import Cookies from 'js-cookie';
-import {CheckMFA} from '@/app/func/funcs';
+import {CheckMFA, mfaSessionCheck} from '@/app/func/funcs';
 import Side_menu from "@/app/components/Side-menu";
 
 interface Token {
@@ -12,13 +12,11 @@ interface Token {
     accessToken: string;
 }
 
-const azionText = Commissioner({subsets: ["latin"], weight: "800"});
-
+const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 
 export default function MfaFace() {
     const videoRef = useRef<HTMLVideoElement | null>(null);
-    const [imageSrc, setImageSrc] = useState('');
-    const [altText, setAltText] = useState('');
+    const [showOverlay, setShowOverlay] = useState(false);
 
     CheckMFA(false);
 
@@ -34,7 +32,7 @@ export default function MfaFace() {
 
     useEffect(() => {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({video: true}).then((stream) => {
+            navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
                 }
@@ -46,6 +44,7 @@ export default function MfaFace() {
 
     const captureAndSendFrame = async () => {
         if (videoRef.current) {
+            setShowOverlay(true);
             const canvas = document.createElement('canvas');
             canvas.width = videoRef.current.videoWidth;
             canvas.height = videoRef.current.videoHeight;
@@ -56,34 +55,34 @@ export default function MfaFace() {
                 const base64Image = imageData.split(',')[1];
                 const accessToken = Cookies.get('azionAccessToken');
 
-                const request = {accessToken};
-                const payload = {image: base64Image};
+                const request = { accessToken };
+                const payload = { image: base64Image };
 
                 try {
-                    const response: AxiosResponse<{
-                        image: string
-                    }> = await axios.post(`${apiUrl}/mfa/face-scan`, {request, payload}, {
+                    const response: AxiosResponse<{ image: string }> = await axios.post(`${apiUrl}/mfa/face-scan`, { request, payload }, {
                         headers: {
                             'Content-Type': 'application/json'
                         }
                     });
                     const processedImage = `data:image/jpeg;base64,${response.data.image}`;
                     if (response.data.image === 'no faces detected') {
-                        setAltText('No faces detected');
                     } else {
                         window.location.href = "/organizations";
                     }
-                    setImageSrc(processedImage);
                 } catch (error) {
                     console.error("Error sending image to API: ", error);
+                } finally {
+                    setTimeout(() => setShowOverlay(false), 200); // Hide overlay after 200ms
                 }
             }
         }
     };
+
     return (
-        <div className=" w-screen h-screen flex flex-col justify-center items-center gap-16 bg-background">
+        <div className="w-screen h-screen flex flex-col justify-center items-center gap-16 bg-background relative">
+            {showOverlay && <div className="absolute inset-0 bg-white z-50"></div>}
             <div className="absolute left-0 top-0">
-                <Side_menu/>
+                <Side_menu />
             </div>
             <video
                 className="rounded-full custom-oval"
@@ -91,7 +90,7 @@ export default function MfaFace() {
                 autoPlay
             ></video>
             <h1
-                className={` text-white mb-5 text-5xl md:text-6xl lg:text-8xl ${azionText.className}`}
+                className={`text-white mb-5 text-5xl md:text-6xl lg:text-8xl ${azionText.className}`}
             >
                 Azion<span className="text-lightAccent">Cam</span>.
             </h1>
