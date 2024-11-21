@@ -23,7 +23,6 @@ const Home = () => {
     const [ButtonText1, setButtonText1] = useState("");
     const [ButtonText2, setButtonText2] = useState("");
     const [org, setOrg] = useState<string | null>(null);
-    const [login, setLogin] = useState(false);
 
     useEffect(() => {
         const refreshToken = Cookies.get("azionRefreshToken");
@@ -57,61 +56,26 @@ const Home = () => {
     });
 
     const svgs = [
-        {
-            Component: Artboard2,
-            position: "right-[3vw] top-[0vh]",
-            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px] w-[150px] h-[150px]",
-            delay: 0,
-        },
-        {
-            Component: Artboard3,
-            position: "right-[24vw] -top-[4vh]",
-            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px] w-[150px] h-[150px]",
-            delay: 0.2,
-        },
-        {
-            Component: Artboard4,
-            position: "right-[27vw] top-[32vh]",
-            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px] w-[150px] h-[150px]",
-            delay: 0.4,
-        },
-        {
-            Component: Artboard5,
-            position: "right-[16vw] top-[58vh]",
-            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px] w-[150px] h-[150px]",
-            delay: 0.6,
-        },
-        {
-            Component: Artboard6,
-            position: "left-[0vw] top-[50vh]",
-            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px]",
-            delay: 0.8,
-        },
-        {
-            Component: Artboard7,
-            position: "right-[3vw] top-[32vh]",
-            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px]",
-            delay: 1,
-        },
-        {
-            Component: Artboard8,
-            position: "right-[46vw] top-[56vh]",
-            scale: "lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[200px] sm:h-[200px]",
-            delay: 1.2,
-        },
+        {Component: Artboard2, position: "right-[3vw] top-[0vh]", delay: 0},
+        {Component: Artboard3, position: "right-[24vw] -top-[4vh]", delay: 0.2},
+        {Component: Artboard4, position: "right-[27vw] top-[32vh]", delay: 0.4},
+        {Component: Artboard5, position: "right-[16vw] top-[58vh]", delay: 0.6},
+        {Component: Artboard6, position: "left-[0vw] top-[50vh]", delay: 0.8},
+        {Component: Artboard7, position: "right-[3vw] top-[32vh]", delay: 1},
+        {Component: Artboard8, position: "right-[46vw] top-[56vh]", delay: 1.2},
     ];
 
     return (
-        <div className="">
+        <div className="w-screen overflow-x-hidden">
             <div className="z-10 p-6">
                 <Navbar/>
             </div>
 
-            <div className="w-screen relative ">
+            <div className="w-screen relative">
                 {svgs.map((svg, index) => (
                     <motion.div
                         key={index}
-                        className={`absolute ${svg.position} ${svg.scale}`}
+                        className={`absolute ${svg.position} max-w-[300px] max-h-[300px]`}
                         animate={getLoopAnimation(svg.delay).animate}
                         transition={getLoopAnimation(svg.delay).transition}
                     >
@@ -119,7 +83,6 @@ const Home = () => {
                     </motion.div>
                 ))}
             </div>
-
 
             <motion.div
                 initial={{opacity: 0, y: -400}}
@@ -133,7 +96,9 @@ const Home = () => {
                     transition={{duration: 0.6, delay: 0.3}}
                     className="h-full max-w-3xl p-10 flex flex-col justify-start items-center text-center z-10"
                 >
-                    <h1 className={`text-2xl text-white md:text-3xl lg:text-5xl text-left ${HeaderText.className}`}>
+                    <h1
+                        className={`text-2xl text-white md:text-3xl lg:text-5xl text-left ${HeaderText.className}`}
+                    >
                         Improve your workflow and Secure your company with Azion.
                     </h1>
 
@@ -165,8 +130,8 @@ const Home = () => {
                 </motion.div>
             </motion.div>
 
-            <div className="w-full h-full flex flex-col justify-center items-center mt-48">
-                <div className="w-full h-48 bg-gradient-to-b from-[#06061000] via-[#06061078] to-[#060610]"></div>
+            <div className="w-full flex flex-col justify-center items-center mt-48">
+                <div className="w-full h-48 bg-gradient-to-b from-[#06061000] via-[#06061078] to-[#060610]"/>
                 <Main_Services/>
             </div>
             <Footer/>
