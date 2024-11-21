@@ -90,9 +90,6 @@ public class Org {
     }
 
     public void setOrgAddress(String orgAddress) {
-        if (!OrgUtility.isValidOrgAddress(orgAddress)) {
-            throw new IllegalArgumentException("Invalid address format");
-        }
         this.orgAddress = orgAddress;
     }
 
@@ -134,6 +131,9 @@ public void generateConString() {
     }
     
     public void setOrgPhone(String orgPhone) {
+        if(!UserUtility.isValidPhone(orgPhone)){
+            throw new IllegalArgumentException("Invalid phone number");
+        }
         this.orgPhone = orgPhone;
     }
     

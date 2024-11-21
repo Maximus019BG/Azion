@@ -61,7 +61,7 @@ public class MeetingController {
         Date start = Date.from(Instant.parse(startStr));
         Date end = Date.from(Instant.parse(endStr));
         
-        meetingService.createMeeting(title, allDay, start, end, roles, link);
+        meetingService.createMeeting(title, allDay, start, end, roles, link, user);
         
         return ResponseEntity.ok().body(String.format("New meeting about %s created!", title));
     }

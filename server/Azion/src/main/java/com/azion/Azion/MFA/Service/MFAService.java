@@ -35,7 +35,7 @@ import static org.opencv.imgproc.Imgproc.rectangle;
 @Service
 @Slf4j
 public class MFAService {
-    private static final double THRESHOLD = 20;
+    private static final double THRESHOLD = 13;
     private final UserRepository userRepository;
     private final TokenRepo tokenRepo;
     

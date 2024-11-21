@@ -1,5 +1,6 @@
 package com.azion.Azion.Meetings.Model;
 
+import com.azion.Azion.Org.Model.Org;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -29,6 +30,10 @@ public class Meeting {
     
     @Column(nullable = false)
     private String link;
+    
+    @ManyToOne
+    @JoinColumn(name = "org_id", nullable = false)
+    private Org org;
     
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "meeting_roles", joinColumns = @JoinColumn(name = "meeting_id"))
@@ -91,6 +96,14 @@ public class Meeting {
     
     public void setLink(String link) {
         this.link = link;
+    }
+    
+    public Org getOrg() {
+        return org;
+    }
+    
+    public void setOrg(Org org) {
+        this.org = org;
     }
     
     public List<String> getRoles() {
