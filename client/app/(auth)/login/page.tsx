@@ -21,18 +21,18 @@ const AxiosFunction = (data: any) => {
     axios
         .post(`${apiUrl}/auth/login`, data, {
             headers: {
-                'Content-Type': 'application/json'
-            }
+                "Content-Type": "application/json",
+            },
         })
         .then(function (response: AxiosResponse) {
             const accessToken = response.data.accessToken;
             const refreshToken = response.data.refreshToken;
-            window.location.href = '/organizations';
-            Cookies.set('azionAccessToken', accessToken, {
+            window.location.href = "/organizations";
+            Cookies.set("azionAccessToken", accessToken, {
                 secure: true,
                 sameSite: "None",
             });
-            Cookies.set('azionRefreshToken', refreshToken, {
+            Cookies.set("azionRefreshToken", refreshToken, {
                 secure: true,
                 sameSite: "Strict",
             });
@@ -61,7 +61,7 @@ const Login = () => {
         const userData = {
             email,
             password,
-            OTP: otp
+            OTP: otp,
         };
         AxiosFunction(userData);
     };
@@ -78,119 +78,76 @@ const Login = () => {
     };
 
     return (
-        <div className="w-screen h-screen flex justify-center items-center">
-            <div className="w-1/2 h-full">
-                <video
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    loop
-                    muted
-                    preload="auto"
-                >
-                    <source src="/azion.mp4" type="video/mp4"/>
-                    Your browser does not support the video tag.
-                </video>
+        <div className="flex flex-col w-screen h-screen bg-white justify-center items-center gap-10 p-4">
+            <Link className="absolute top-4 left-4" href="/">
+                <FontAwesomeIcon className="text-3xl text-lightAccent" icon={faCircleLeft}/>
+            </Link>
+            <h1
+                className={`text-lightAccent text-6xl font-extrabold text-center mb-6 ${headerText.className}`}
+            >
+                Login
+            </h1>
+
+            {/* Input Fields */}
+            <div className="w-full flex flex-col gap-6 max-w-sm">
+                <input
+                    onChange={(e) => setEmail(e.target.value)}
+                    type="text"
+                    placeholder="Enter your email"
+                    className="bg-[#ceccc8] text-black pl-4 h-12 placeholder:text-black rounded-3xl w-full hover:bg-[#c0beba] transition"
+                />
+                <input
+                    onChange={(e) => setPassword(e.target.value)}
+                    type="password"
+                    placeholder="Password"
+                    className="bg-[#ceccc8] text-black pl-4 h-12 rounded-3xl w-full placeholder:text-black hover:bg-[#c0beba] transition"
+                />
             </div>
-            <div className="w-1/2 h-full flex flex-col justify-center items-center">
-                <div className="h-full min-w-full bg-white flex flex-col justify-evenly items-center p-3 md:p-10">
-                    <Link className="absolute right-6 top-6" href="/">
-                        <FontAwesomeIcon className=" text-4xl text-lightAccent" icon={faCircleLeft}/>
+
+            <button
+                onClick={showModal}
+                className="bg-lightAccent text-xl text-white font-black w-full max-w-sm py-3 rounded-3xl hover:scale-105 transition transform"
+            >
+                Continue
+            </button>
+
+            {/* Buttons and Links */}
+            <div className="w-full flex flex-col justify-center items-center gap-2">
+                <p className="text-black font-bold text-center">
+                    Don't have an account?{" "}
+                    <Link href="/register" className="text-lightAccent hover:text-sky-400 font-bold underline">
+                        Register
                     </Link>
-                    <h1
-                        className={`mt-6 text-lightAccent text-5xl md:text-6xl lg:text-8xl ${headerText.className}`}
-                    >
-                        Login
-                    </h1>
-                    <div className="w-full flex flex-col justify-center items-center gap-12">
-                        <div className="w-full flex flex-col justify-center items-center gap-3">
-                            <input
-                                onChange={(e) => setEmail(e.target.value)}
-                                type="text"
-                                style={{outline: "none"}}
-                                placeholder="Enter your email:"
-                                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
-                            />
-                        </div>
-                        <div className="w-full flex flex-col justify-center items-center gap-3">
-                            <input
-                                onChange={(e) => setPassword(e.target.value)}
-                                type="password"
-                                style={{outline: "none"}}
-                                placeholder="Password:"
-                                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl hover:bg-[#c0beba]"
-                            />
-                        </div>
-                    </div>
-                    <div className=" flex flex-col justify-center items-center gap-5">
-                        <button
-                            onClick={showModal}
-                            className="bg-accent w-fit text-white font-black px-56 py-3 rounded-3xl text-xl hover:scale-105 transition-all ease-in"
-                        >
-                            Continue
-                        </button>
-
-                        <h1 className="text-black">
-                            If you don&apos;t have an existing account go to{"  "}
-                            <Link
-                                href="/register"
-                                className=" text-lightAccent hover:text-sky-400 font-black text-xl underline"
-                            >
-                                Register
-                            </Link>
-                        </h1>
-                        <h1 className="text-black">
-                            You can login using only {"  "}
-                            <Link
-                                href="/login/fast"
-                                className=" text-lightAccent hover:text-sky-400 font-black text-xl underline"
-                            >
-                                Your Face
-                            </Link>
-                        </h1>
-                        <h1 className="text-black">
-                            Forgot your {"  "}
-                            <Link
-                                href="/forgot-password"
-                                className=" text-lightAccent hover:text-sky-400 font-black text-xl underline"
-                            >
-                                Password?
-                            </Link>
-                        </h1>
-                    </div>
-
-                    <dialog
-                        id="modal_5"
-                        className="modal modal-bottom sm:modal-middle"
-                    >
-                        <div className="modal-box flex flex-col justify-center items-center h-full ">
-                            <div className=" flex flex-col justify-center items-center gap-6 mb-5">
-                                <p className=" absolute left-0 top-0 p-5 font-black">
-                                    Esc to go back
-                                </p>
-                                <h1 className=" text-2xl text-center font-black">
-                                    Enter your One-Time-Passowrd (OTP)
-                                </h1>
-                                <p className=" text-center font-medium">
-                                    You can find your OTP on your authenticator app on your phone
-                                </p>
-                            </div>
-
-                            <div className="w-full flex  flex-col justify-center items-center gap-3"></div>
-                            <div className="modal-action flex flex-col justify-center items-center gap-12">
-                                <div>
-                                    <OTP length={6} onComplete={handleSubmit}/>
-                                </div>
-                                <form method="dialog">
-                                    <button
-                                        className="btn px-24 text-white bg-accent hover:bg-[#105380] rounded-2xl hover:scale-110 text-lg">
-                                        Submit
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </dialog>
-                </div>
+                </p>
+                <p className="text-black font-bold text-center">
+                    Login using{" "}
+                    <Link href="/login/fast" className="text-lightAccent hover:text-sky-400 font-bold underline">
+                        Your Face
+                    </Link>
+                </p>
+                <p className="text-black font-bold text-center">
+                    Forgot your{" "}
+                    <Link href="/forgot-password" className="text-lightAccent hover:text-sky-400 font-bold underline">
+                        Password?
+                    </Link>
+                </p>
             </div>
+
+            {/* OTP Modal */}
+            <dialog id="modal_5" className="modal modal-bottom sm:modal-middle">
+                <div className="modal-box flex flex-col items-center gap-6">
+                    <h1 className="text-2xl font-bold">Enter your One-Time-Password (OTP)</h1>
+                    <p className="text-center text-sm">
+                        Check your authenticator app on your phone for the OTP.
+                    </p>
+                    <OTP length={6} onComplete={handleSubmit}/>
+                    <form method="dialog">
+                        <button className="btn bg-accent text-white px-12 py-2 rounded-lg hover:scale-105 transition">
+                            Submit
+                        </button>
+                    </form>
+                </div>
+            </dialog>
         </div>
     );
 };
