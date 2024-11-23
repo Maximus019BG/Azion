@@ -1,6 +1,6 @@
 "use client";
 import {motion, useScroll, useTransform, Variants} from "framer-motion";
-import {useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Poppins} from "next/font/google";
 import {ThreeDCardDemo} from "@/app/components/3dCard";
 
@@ -50,7 +50,19 @@ const HorizontalScrollCarousel = () => {
         target: targetRef,
     });
 
+    const [isMobile, setIsMobile] = useState<boolean>(false);
+
     const x = useTransform(scrollYProgress, [0, 1], ["1%", "-95%"]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768); // Detect if the screen width is less than 768px (smaller than 'md' breakpoint)
+        };
+        window.addEventListener("resize", handleResize);
+        handleResize(); // Check on initial load
+
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     // Unique titles, descriptions, and texts for each card
     const cardDetails = [
@@ -79,23 +91,26 @@ const HorizontalScrollCarousel = () => {
     const rotateValues = [5, -5, 10, -10]; // Different rotate values
 
     return (
-        <section ref={targetRef} className="relative h-[300vh] bg-[#060610]">
-            <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+        <section ref={targetRef} className={`relative h-[300vh] bg-[#060610] ${isMobile ? "overflow-auto" : ""}`}>
+            <div
+                className={`sticky top-0 flex h-screen items-center ${isMobile ? "flex-col" : "overflow-hidden"}`}>
                 <motion.div
-                    style={{x}}
-                    className="flex justify-center items-center gap-48"
+                    style={!isMobile ? {x} : undefined}  // Only apply the `x` transform on medium or larger screens
+                    className={`flex ${isMobile ? "flex-col gap-10" : "justify-center items-center gap-48"}`}
                 >
-                    <div className="w-full h-full flex justify-center items-center gap-[30vw]">
+                    <div
+                        className={` w-full h-full ${isMobile ? "flex flex-col items-center gap-10" : "flex justify-center items-center gap-[30vw]"}`}
+                    >
                         <h1
-                            className={`${HeaderText.className} text-5xl min-w-max uppercase leading-snug`}
+                            className={`${HeaderText.className} w-full text-xl sm:text-3xl lg:text-5xl xl:text-7xl uppercase font-extrabold leading-tight tracking-wide text-center md:text-left`}
                         >
-                            <span className="gradient-text">
-                                Azion secures every part
-                            </span>{" "}
-                            of your account and <br/> organisation&apos;s account
+                            <span
+                                className="text-3xl sm:text-5xl lg:text-7xl xl:text-9xl gradient-text font-black">Azion</span> secures
+                            every part of your account and organisation&apos;s account
                         </h1>
 
-                        <div className="w-full h-full flex justify-center items-center gap-24">
+                        <div
+                            className="w-full h-full flex flex-col md:flex-row justify-center items-center gap-3 md:gap-24">
                             {cardDetails.map((card, index) => (
                                 <MockupWindow
                                     key={index}
