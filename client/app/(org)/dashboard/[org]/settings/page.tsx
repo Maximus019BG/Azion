@@ -69,11 +69,11 @@ const OrgSettings: FC<PageProps> = ({params}) => {
                     <Loading/>
                 </div>
             ) : (<>
-                    <div className="absolute left-0 top-0 w-1/4">
-                        <SideMenu/>
-                    </div>
-                    <div className="w-full h-screen flex flex-col justify-center items-center">
-                        <div className="w-full max-w-3xl flex flex-col">
+                    <div className="w-screen h-screen flex overflow-y-hidden">
+                        <div className="w-1/4 h-full">
+                            <SideMenu/>
+                        </div>
+                        <div className="w-full h-screen flex justify-center items-center">
                             <OrgSettingsForm/>
                         </div>
                     </div>
