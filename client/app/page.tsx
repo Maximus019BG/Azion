@@ -86,7 +86,7 @@ const Home = () => {
     // ];
 
     return (
-        <div className="w-screen overflow-x-hidden">
+        <div className="w-screen h-full">
             <div className="z-10 p-6">
                 <Navbar/>
             </div>
