@@ -66,7 +66,7 @@ const Navbar = () => {
     return (
         <div className="navbar bg-transparent px-6 sm:px-16 relative">
             <div className="flex items-center justify-between w-full">
-                <a className="btn btn-ghost neon-text text-4xl sm:text-6xl">Azion</a>
+                <a className="w-fit h-full btn btn-ghost neon-text text-4xl sm:text-6xl">Azion</a>
                 <button
                     className="sm:hidden text-white focus:outline-none"
                     onClick={toggleMenu}
