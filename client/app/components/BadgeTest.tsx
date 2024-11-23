@@ -82,7 +82,7 @@ const Badge = () => {
             onDrag={(e, data) => setPosition({x: data.x, y: data.y})}
         >
             <div
-                className="relative bg-blue-600 w-[25vw] h-[70vh] rounded-xl flex flex-col justify-between p-8 text-white shadow-lg cursor-grab transform transition-transform hover:scale-105 hover:shadow-2xl">
+                className="relative bg-blue-600 w-full h-fit rounded-xl flex flex-col justify-between p-8 text-white shadow-lg cursor-grab transform transition-transform hover:scale-105 hover:shadow-2xl">
                 {/* Header */}
                 <div className="relative z-10 ">
                     <div className="flex justify-between items-center ">

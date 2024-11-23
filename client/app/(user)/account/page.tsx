@@ -37,11 +37,11 @@ const Account = () => {
                     <div className="w-1/4 h-full">
                         <SideMenu/>
                     </div>
-                    <div className="w-full h-full flex gap-x-56 overflow-y-auto">
-                        <div className="w-1/2 p-4 ml-8 flex justify-center items-center">
+                    <div className="w-full h-full flex flex-col items-center overflow-y-auto">
+                        <div className="w-full flex justify-center items-center p-10">
                             <Badge/>
                         </div>
-                        <div className="w-full h-full p-4 flex justify-center items-start">
+                        <div className="w-full h-full flex justify-center items-start">
                             <SessionCards/>
                         </div>
                     </div>
