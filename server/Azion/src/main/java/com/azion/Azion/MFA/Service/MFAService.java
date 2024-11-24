@@ -253,6 +253,7 @@ public class MFAService {
             log.error("User not found for token: " + token);
             return "User not found for token: " + token;
         }
+        
         //Detect the face location
         String croppedFaceBase64 = faceLocation(base64Image);
         if ("no faces detected".equals(croppedFaceBase64)) {
