@@ -165,7 +165,10 @@ const Register = () => {
     };
 
     const handleBackStep = () => {
-        if (step > 0) {
+        if (step === 5) {
+            // Skip back to step 3 (Password fields together)
+            setStep(3);
+        } else if (step > 0) {
             setStep(step - 1);
         }
     };
@@ -212,17 +215,17 @@ const Register = () => {
     ];
 
     const getCurrentFields = () => {
-        if (step === 3) {
-            // Group fields
+        if (step === 3 || step === 4) {
+            // Group Password and Confirm Password fields
             return inputFields.filter(
                 (field) =>
                     field.label === "Password:" || field.label === "Confirm Password:"
             );
         }
 
-        // other steps
         return [inputFields[step]];
     };
+
 
     const stepLabels = [
         "Register",
@@ -250,9 +253,9 @@ const Register = () => {
                 </h1>
 
                 {/* Steps & Form */}
-                <div className="w-full flex flex-col gap-8 items-start md:items-center">
+                <div className="w-full flex flex-col gap-8 justify-center items-center md:items-center">
                     {/* Vertical or Horizontal Steps */}
-                    <ul className="steps steps-vertical md:steps-horizontal flex-none text-white w-full">
+                    <ul className="w-full steps steps-vertical md:steps-horizontal text-white">
                         {stepLabels.map((label, index) => (
                             <li
                                 key={index}
@@ -368,7 +371,6 @@ const Register = () => {
                                 </button>
                             )}
                             <div className="flex-grow"></div>
-                            {/* Spacer for alignment */}
                             {step < inputFields.length - 1 && (
                                 <button
                                     onClick={handleNextStep}
