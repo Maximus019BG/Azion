@@ -31,11 +31,11 @@ const List = () => {
 
     return (
         <div className='flex'>
-            <div className='w-1/4'>
+            <div className='lg:w-1/4'>
                 <SideMenu/>
             </div>
-            <div className='w-full flex flex-col justify-start  items-center gap-5'>
-                <h1 className="text-4xl my-16">Organization&apos;s Members</h1>
+            <div className='w-full flex flex-col justify-center items-center gap-5'>
+                <h1 className="text-4xl my-16 text-center">Organization&apos;s Members</h1>
                 {employees.map((employee) => (
                     <DisplayEmployee
                         key={employee.id}
