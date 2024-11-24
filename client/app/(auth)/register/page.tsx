@@ -233,160 +233,172 @@ const Register = () => {
     ];
 
     return (
-        <div className="w-full h-full flex flex-col lg:flex-row justify-center items-center">
-            <div className="w-full h-dvh flex flex-col justify-center items-center">
-                <div
-                    className="h-full min-w-full bg-white flex flex-col justify-center items-center gap-24 p-5 md:p-10">
-                    <Link className="absolute left-6 top-6" href="/">
-                        <FontAwesomeIcon
-                            className="text-4xl text-lightAccent"
-                            icon={faCircleLeft}
-                        />
-                    </Link>
-                    <h1
-                        className={`mt-6 text-lightAccent text-5xl md:text-6xl ${headerText.className}`}
-                    >
-                        Register
-                    </h1>
-                    <div className="w-full flex flex-row md:flex-col justify-center md:gap-10 items-center">
-                        {/* Vertical Steps */}
-                        <ul className="w-1/3 md:w-1/2 steps steps-vertical text-black md:steps-horizontal">
-                            {stepLabels.map((label, index) => (
-                                <li
-                                    key={index}
-                                    className={`step ${index <= step ? "step-accent" : ""}`}
-                                >
-                                    {label}
-                                </li>
-                            ))}
-                        </ul>
-                        {/* Form Fields */}
-                        <div className="w-2/3 flex flex-col justify-center items-center gap-2">
-                            <div className="w-[90%] max-w-md flex flex-col justify-center items-center gap-6">
-                                {getCurrentFields().map((field, index) => (
-                                    <div
-                                        key={index}
-                                        className="w-full flex flex-col justify-center items-center gap-4"
-                                    >
-                                        {field.type === "checkbox" ? (
-                                            <label className="text-black flex items-center">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={field.value as boolean}
-                                                    onChange={(e) => setIsOrgOwner(e.target.checked)}
-                                                    className="mr-2 h-6 w-6"
-                                                />
-                                                {field.label}
-                                            </label>
-                                        ) : field.type === "date" ? (
-                                            <div className="flex flex-col gap-4">
-                                                <div className="flex gap-4">
-                                                    <select
-                                                        value={age.day}
-                                                        onChange={(e) =>
-                                                            setAge({...age, day: e.target.value})
-                                                        }
-                                                        className="bg-[#ceccc8] text-black pl-2 h-12 rounded-xl border border-gray-300"
-                                                    >
-                                                        {Array.from({length: 31}, (_, i) => i + 1).map(
-                                                            (day) => (
-                                                                <option key={day} value={day}>
-                                                                    {day}
-                                                                </option>
-                                                            )
-                                                        )}
-                                                    </select>
-                                                    <select
-                                                        value={age.month}
-                                                        onChange={(e) =>
-                                                            setAge({...age, month: e.target.value})
-                                                        }
-                                                        className="bg-[#ceccc8] text-black pl-2 h-12 rounded-xl border border-gray-300"
-                                                    >
-                                                        {Array.from({length: 12}, (_, i) => i + 1).map(
-                                                            (month) => (
-                                                                <option key={month} value={month}>
-                                                                    {month}
-                                                                </option>
-                                                            )
-                                                        )}
-                                                    </select>
-                                                    <select
-                                                        value={age.year}
-                                                        onChange={(e) =>
-                                                            setAge({...age, year: e.target.value})
-                                                        }
-                                                        className="bg-[#ceccc8] text-black pl-2 h-12 rounded-xl border border-gray-300"
-                                                    >
-                                                        {Array.from(
-                                                            {length: 100},
-                                                            (_, i) => new Date().getFullYear() - i
-                                                        ).map((year) => (
-                                                            <option key={year} value={year}>
-                                                                {year}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-                                                <span className="text-sm text-gray-500">
-                                                    Select your date of birth
-                                                </span>
-                                            </div>
-                                        ) : (
-                                            <input
-                                                type={field.type || "text"}
-                                                value={field.value as string}
-                                                onChange={(e) => field.onChange(e.target.value as any)}
-                                                style={{outline: "none"}}
-                                                placeholder={field.label}
-                                                className="bg-[#ceccc8] text-black pl-6 h-12 placeholder:text-background opacity-100 w-full md:w-10/12 p-2 rounded-3xl border border-gray-300 focus:border-lightAccent focus:ring-lightAccent"
-                                            />
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="w-full flex justify-center items-center gap-4 mt-6">
-                                {step > 0 && (
-                                    <button
-                                        title="click to move to the previous one"
-                                        onClick={handleBackStep}
-                                        className="bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
-                                    >
-                                        Back
-                                    </button>
-                                )}
-                                {step < inputFields.length - 1 && (
-                                    <button
-                                        title="click to move to the next one"
-                                        onClick={handleNextStep}
-                                        className="bg-lightAccent text-slate-50 font-extrabold py-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
-                                    >
-                                        Next
-                                    </button>
-                                )}
-                                {step === inputFields.length - 1 && (
-                                    <button
-                                        title="click to submit"
-                                        onClick={handleSubmit}
-                                        className=" bg-lightAccent text-slate-50 font-extrabold p-2 px-20 text-xl rounded-full hover:bg-accent transition-all duration-300"
-                                    >
-                                        Submit
-                                    </button>
-                                )}
-                            </div>
-                            <h1 className="text-black ">
-                                If you have an existing account, go to{" "}
-                                <Link
-                                    href="/login"
-                                    className="text-lightAccent hover:text-[#51bbb6] font-extrabold text-xl underline"
-                                >
-                                    Login
-                                </Link>
-                            </h1>
+        <div className="w-full h-dvh flex flex-col lg:flex-row justify-center items-center">
+            <div className="max-w-4xl h-full flex flex-col justify-center items-center gap-24">
 
+                {/* Back Button */}
+                <Link className="absolute top-4 left-4" href="/">
+                    <FontAwesomeIcon
+                        className="text-3xl md:text-4xl text-lightAccent"
+                        icon={faCircleLeft}
+                    />
+                </Link>
+
+                {/* Header */}
+                <h1 className={`text-lightAccent text-4xl sm:text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}>
+                    Register
+                </h1>
+
+                {/* Steps & Form */}
+                <div className="w-full flex flex-col gap-8 items-start md:items-center">
+                    {/* Vertical or Horizontal Steps */}
+                    <ul className="steps steps-vertical md:steps-horizontal flex-none text-white w-full">
+                        {stepLabels.map((label, index) => (
+                            <li
+                                key={index}
+                                className={`step ${index <= step ? "step-accent" : ""}`}
+                            >
+                                {label}
+                            </li>
+                        ))}
+                    </ul>
+
+                    {/* Form Fields */}
+                    <div className="flex-1 w-full flex flex-col gap-6">
+                        <div className="flex flex-col gap-4">
+                            {getCurrentFields().map((field, index) => (
+                                <div key={index} className="w-full flex justify-center items-center">
+                                    {field.type === "checkbox" ? (
+                                        <label className="flex items-center text-white">
+                                            <input
+                                                type="checkbox"
+                                                checked={field.value as boolean}
+                                                onChange={(e) =>
+                                                    setIsOrgOwner(e.target.checked)
+                                                }
+                                                className="mr-2 h-5 w-5 rounded"
+                                            />
+                                            {field.label}
+                                        </label>
+                                    ) : field.type === "date" ? (
+                                        <div className="w-full flex gap-4">
+                                            {/* Day */}
+                                            <div className="w-full flex flex-col justify-center items-start">
+                                                <h1 className="text-white">Day:</h1>
+                                                <select
+                                                    value={age.day}
+                                                    onChange={(e) =>
+                                                        setAge({...age, day: e.target.value})
+                                                    }
+                                                    className="w-full bg-base-200 text-white p-2 rounded-lg"
+                                                >
+                                                    {Array.from({length: 31}, (_, i) => i + 1).map(
+                                                        (day) => (
+                                                            <option key={day} value={day}>
+                                                                {day}
+                                                            </option>
+                                                        )
+                                                    )}
+                                                </select>
+                                            </div>
+                                            {/* Month */}
+                                            <div className="w-full flex flex-col justify-center items-start">
+                                                <h1 className="text-white">Month:</h1>
+                                                <select
+                                                    value={age.month}
+                                                    onChange={(e) =>
+                                                        setAge({...age, month: e.target.value})
+                                                    }
+                                                    className="w-full bg-base-200 text-white p-2 rounded-lg"
+                                                >
+                                                    {Array.from({length: 12}, (_, i) => i + 1).map(
+                                                        (month) => (
+                                                            <option key={month} value={month}>
+                                                                {month}
+                                                            </option>
+                                                        )
+                                                    )}
+                                                </select>
+                                            </div>
+                                            {/* Year */}
+                                            <div className="w-full flex flex-col justify-center items-start">
+                                                <h1 className="text-white">Year:</h1>
+                                                <select
+                                                    value={age.year}
+                                                    onChange={(e) =>
+                                                        setAge({...age, year: e.target.value})
+                                                    }
+                                                    className="w-full bg-base-200 text-white p-2 rounded-lg"
+                                                >
+                                                    {Array.from(
+                                                        {length: 100},
+                                                        (_, i) => new Date().getFullYear() - i
+                                                    ).map((year) => (
+                                                        <option key={year} value={year}>
+                                                            {year}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <input
+                                            type={field.type || "text"}
+                                            value={field.value as string}
+                                            onChange={(e) =>
+                                                field.onChange(e.target.value as any)
+                                            }
+                                            placeholder={field.label}
+                                            className="w-full bg-base-200 text-white p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightAccent"
+                                        />
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Navigation Buttons */}
+                        {/* Navigation Buttons */}
+                        <div className="flex justify-between items-center w-full">
+                            {step > 0 && (
+                                <button
+                                    onClick={handleBackStep}
+                                    className="bg-lightAccent text-white px-4 py-2 rounded-lg hover:bg-accent"
+                                >
+                                    Back
+                                </button>
+                            )}
+                            <div className="flex-grow"></div>
+                            {/* Spacer for alignment */}
+                            {step < inputFields.length - 1 && (
+                                <button
+                                    onClick={handleNextStep}
+                                    className="bg-lightAccent text-white px-4 py-2 rounded-lg hover:bg-accent"
+                                >
+                                    Next
+                                </button>
+                            )}
+                            {step === inputFields.length - 1 && (
+                                <button
+                                    onClick={handleSubmit}
+                                    className="bg-accent text-white px-10 py-2 text-lg rounded-lg hover:bg-blue-500"
+                                >
+                                    Submit
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
+
+                {/* Footer */}
+                <p className="text-white text-center">
+                    Already have an account?{" "}
+                    <Link
+                        href="/login"
+                        className="text-lightAccent text-xl font-black underline"
+                    >
+                        Login
+                    </Link>
+                </p>
             </div>
         </div>
     );
