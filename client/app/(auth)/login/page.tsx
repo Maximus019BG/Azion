@@ -114,7 +114,7 @@ const Login = () => {
             {/* Buttons and Links */}
             <div className="w-full flex flex-col justify-center items-center gap-2">
                 <p className="text-black font-bold text-center">
-                    Don't have an account?{" "}
+                    Don&apos;t have an account?{" "}
                     <Link href="/register" className="text-lightAccent hover:text-sky-400 font-bold underline">
                         Register
                     </Link>
