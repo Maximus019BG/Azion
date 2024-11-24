@@ -108,16 +108,16 @@ const Home = () => {
                 initial={{opacity: 0, y: 400}}
                 animate={{opacity: 1, y: 0}}
                 transition={{duration: 1.2}}
-                className="h-[80vh] w-fit flex justify-center items-center md:justify-start md:items-center relative"
+                className="h-[80vh] w-full flex justify-center items-center sm:justify-start md:items-center relative"
             >
                 <motion.div
                     initial={{opacity: 0, y: 20}}
                     animate={{opacity: 1, y: 0}}
                     transition={{duration: 0.6, delay: 0.5}}
-                    className="h-full md:max-w-5xl max-w-lg p-10 flex flex-col justify-center items-center md:justify-center md:items-start z-10"
+                    className="h-full md:max-w-5xl max-w-lg p-10 flex flex-col justify-center items-center md:items-start z-10"
                 >
                     <h1
-                        className={`text-3xl text-white lg:text-6xl text-center md:text-left flex flex-col gap-2 ${HeaderText.className}`}
+                        className={`text-3xl text-white lg:text-6xl text-center sm:text-left flex flex-col gap-2 ${HeaderText.className}`}
                     >
                         {["Improve your workflow", "and Secure your company", "with Azion."].map((line, index) => (
                             <motion.span
@@ -141,7 +141,7 @@ const Home = () => {
                             <motion.button
                                 whileHover={{scale: 1.05}}
                                 whileTap={{scale: 0.95}}
-                                className={`text-white px-16 md:px-24 py-3 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
+                                className={`text-white px-8 sm:px-12 md:px-16 lg:px-24 py-2 sm:py-3 bg-accent rounded-2xl text-sm sm:text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
                             >
                                 {ButtonText1}
                             </motion.button>
@@ -150,12 +150,13 @@ const Home = () => {
                             <motion.button
                                 whileHover={{scale: 1.05}}
                                 whileTap={{scale: 0.95}}
-                                className={`text-white px-12 md:px-20 py-3 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
+                                className={`text-white px-8 sm:px-12 md:px-16 lg:px-20 py-2 sm:py-3 bg-accent rounded-2xl text-sm sm:text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
                             >
                                 {ButtonText2}
                             </motion.button>
                         </Link>
                     </motion.div>
+
                 </motion.div>
             </motion.div>
 

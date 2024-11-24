@@ -102,11 +102,13 @@ const HorizontalScrollCarousel = () => {
                         className={` w-full h-full ${isMobile ? "flex flex-col items-center gap-10" : "flex justify-center items-center gap-[30vw]"}`}
                     >
                         <h1
-                            className={`${HeaderText.className} w-full text-xl sm:text-3xl lg:text-5xl xl:text-7xl uppercase font-extrabold leading-tight tracking-wide text-center md:text-left`}
+                            className={`${HeaderText.className} w-full text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl uppercase font-extrabold leading-tight tracking-wide text-center md:text-left`}
                         >
                             <span
-                                className="text-3xl sm:text-5xl lg:text-7xl xl:text-9xl gradient-text font-black">Azion</span> secures
-                            every part of your account and organisation&apos;s account
+                                className="gradient-text text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black whitespace-nowrap"
+                            >
+                                Azion
+                            </span> secures every part of your account and organisation&apos;s account
                         </h1>
 
                         <div
