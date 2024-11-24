@@ -117,8 +117,9 @@ public class UserController {
             String email = request.get("email");
             String dateOfBirth = request.get("dateOfBirth");
             
-            byte[] profilePicture = userService.convertToBytes(file);
-            user.setProfilePicture(profilePicture);
+            if (file != null) {
+                userService.updateProfilePicture(user.getId(), userService.convertToBytes(file));
+            }
             
             boolean dateOfBirthValid = false;
             if (dateOfBirth != null) {
