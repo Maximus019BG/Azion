@@ -12,7 +12,6 @@ import com.azion.Azion.Token.TokenType;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
-import com.azion.Azion.User.Returns.UserReturns;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
 public class UserService {
     
     private final UserRepository userRepository;
-    private final UserReturns userReturns;
     private final MFAService mfaService;
     private final TokenService tokenService;
     private final TokenRepo tokenRepo;
@@ -36,17 +34,18 @@ public class UserService {
     
     
     @Autowired
-    public UserService(UserRepository userRepository, UserReturns userReturns, MFAService mfaService, TokenService tokenService, TokenRepo tokenRepo, ProjectsRepository projectsRepository) {
+    public UserService(UserRepository userRepository, MFAService mfaService, TokenService tokenService, TokenRepo tokenRepo, ProjectsRepository projectsRepository) {
         this.userRepository = userRepository;
-        this.userReturns = userReturns;
         this.mfaService = mfaService;
         this.tokenService = tokenService;
         this.tokenRepo = tokenRepo;
         this.projectsRepository = projectsRepository;
     }
     
+    //Pfp update
     public User updateProfilePicture(String id, byte[] profilePicture) {
         Optional<User> optionalUser = userRepository.findById(id);
+        //User exists
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setProfilePicture(profilePicture);
@@ -54,12 +53,13 @@ public class UserService {
         }
         return null;
     }
-    
+    //MultipartFile to byte array
     public byte[] convertToBytes(MultipartFile file) throws IOException {
         return file.getBytes();
     }
     
     public ProjectsDTO convertToProjectsDTO(Project project) {
+        //project to projectDTO
         ProjectsDTO dto = new ProjectsDTO();
         dto.setId(project.getProjectID());
         dto.setName(project.getName());
@@ -71,6 +71,7 @@ public class UserService {
         dto.setSource(project.getSource());
         dto.setOrgId(project.getOrg().getOrgID());
         
+        //createdBy to userDTO
         if (project.getCreatedBy() != null) {
             UserDTO userDTO = new UserDTO();
             userDTO.setName(project.getCreatedBy().getName());
@@ -85,12 +86,13 @@ public class UserService {
     }
     
     public Set<ProjectsDTO> convertProjectsToDTO(Set<Project> projects) {
+        //projects to projectDTOs set
         return projects.stream()
                 .map(this::convertToProjectsDTO)
                 .collect(Collectors.toSet());
     }
     
-    //*Validating user
+    //Validating user
     public void userValid(String token) {
         if (token == null || token.isEmpty()) {
             throw new RuntimeException("Invalid token");
@@ -105,19 +107,18 @@ public class UserService {
         }
     }
     
-    //!User admin validation
+    //User admin validation
     public boolean userAdmin(User user) {
         String role = user.getRole();
         int roleLevel = user.getRoleLevel();
         return (roleLevel > 0 && roleLevel < 4) || (Objects.equals(role.toLowerCase(), "admin") || Objects.equals(role.toLowerCase(), "boss"));
     }
     
-    //!User superAdmin validation
+    //User superAdmin validation
     public boolean userSuperAdmin(User user) {
         String role = user.getRole();
         int roleLevel = user.getRoleLevel();
         return (roleLevel > 0 && roleLevel <= 2);
     }
-    
     
 }

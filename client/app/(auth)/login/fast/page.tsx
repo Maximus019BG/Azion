@@ -10,8 +10,6 @@ const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 
 export default function FastLogIn() {
     const videoRef = useRef<HTMLVideoElement | null>(null);
-    const [imageSrc, setImageSrc] = useState("");
-    const [altText, setAltText] = useState("");
     const [showOverlay, setShowOverlay] = useState(false);
 
     useEffect(() => {
@@ -63,7 +61,6 @@ export default function FastLogIn() {
                             },
                         }
                     );
-                    setAltText("Detected Face");
                     Cookies.set("azionAccessToken", response.data.accessToken, {
                         secure: true,
                         sameSite: "Strict",
