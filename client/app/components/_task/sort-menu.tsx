@@ -13,7 +13,7 @@ const SortMenu: React.FC<SortMenuProps> = ({sortCriteria, sortOrder, setSortCrit
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <div className="fixed z-40 top-10 right-10">
+        <div className="fixed z-40 top-5 right-5">
             <button
                 className="bg-base-100 text-white p-2 w-36 rounded shadow-lg flex items-center justify-center hover:bg-gray-600"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}

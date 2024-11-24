@@ -81,7 +81,7 @@ const DisplayEmployee: React.FC<Employee> = ({
                     onChange={handleCollapseChange}
                 />
                 <div
-                    className={`collapse-title bg-slate-800 text-white peer-checked:bg-accent peer-checked:text-white flex flex-col sm:flex-row sm:items-center`}
+                    className={`collapse-title bg-slate-800 text-white peer-checked:bg-accent peer-checked:text-white flex flex-row sm:items-center`}
                 >
                     <div className="avatar">
                         <div className="w-10 rounded-full">
@@ -94,10 +94,10 @@ const DisplayEmployee: React.FC<Employee> = ({
                             />
                         </div>
                     </div>
-                    <h1 className="mt-2 sm:mt-0 sm:ml-3 text-center sm:text-left">{name}</h1>
+                    <h1 className="mt-2 sm:mt-0 ml-3 text-center sm:text-left">{name}</h1>
                 </div>
                 <div
-                    className={`collapse-content bg-slate-800 text-primary-content peer-checked:bg-accent peer-checked:text-white flex flex-col sm:flex-row sm:justify-between sm:items-center`}
+                    className={`collapse-content bg-base-200 text-primary-content peer-checked:bg-accent peer-checked:text-white flex flex-col sm:flex-row sm:justify-between sm:items-center`}
                 >
                     <div className="w-full sm:w-1/2">
                         <p>

@@ -120,7 +120,7 @@ const Tasks: FC<PageProps> = ({params}) => {
 
     return (
         <div className="w-screen h-screen flex overflow-hidden">
-            <div className="w-1/4 h-full">
+            <div className="lg:w-1/4 h-full">
                 <SideMenu/>
             </div>
             <div className="w-full h-full overflow-auto flex flex-col items-center">
