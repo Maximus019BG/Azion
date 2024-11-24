@@ -4,6 +4,8 @@ import axios, {AxiosResponse} from "axios";
 import Link from "next/link";
 import {apiUrl} from "@/app/api/config";
 import {Poppins} from "next/font/google";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
 
 // Font import
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
@@ -40,6 +42,9 @@ const ForgotPassword = () => {
 
     return (
         <Suspense fallback={<div>Loading...</div>}>
+            <Link className="absolute top-6 left-6" href="/login">
+                <FontAwesomeIcon className="text-3xl text-lightAccent" icon={faCircleLeft}/>
+            </Link>
             <div className="min-h-screen flex justify-center items-center">
                 <div
                     className="w-11/12 sm:w-96 bg-base-200 shadow-lg rounded-lg p-6 sm:p-8 flex flex-col justify-evenly items-center">

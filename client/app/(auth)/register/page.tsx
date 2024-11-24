@@ -94,6 +94,7 @@ const Register = () => {
         }
     }, []);
 
+    // DATE
     useEffect(() => {
         const currentDate = new Date();
         const currentYear = currentDate.getFullYear() - 1;
@@ -135,6 +136,7 @@ const Register = () => {
         setDays(newDays);
     }, [selectedYear, selectedMonth]);
 
+// SUBMIT
     const handleSubmit = () => {
         const userData = {
             name,

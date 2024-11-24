@@ -114,7 +114,7 @@ const Home = () => {
                     initial={{opacity: 0, y: 20}}
                     animate={{opacity: 1, y: 0}}
                     transition={{duration: 0.6, delay: 0.5}}
-                    className="h-full md:max-w-5xl max-w-lg p-10 flex flex-col justify-center items-center md:items-start z-10"
+                    className="h-full md:max-w-5xl max-w-lg p-10 flex flex-col justify-center items-center md:items-start gap-8 z-10"
                 >
                     <h1
                         className={`text-3xl text-white lg:text-6xl text-center sm:text-left flex flex-col gap-2 ${HeaderText.className}`}
@@ -135,28 +135,31 @@ const Home = () => {
                         initial={{opacity: 0, y: 50}}
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.8, delay: 0.8}}
-                        className="flex flex-col sm:flex-row md:justify-start md:items-start justify-center items-center gap-4 md:gap-8 mt-5 md:mt-12 w-full"
+                        className="flex flex-col sm:flex-row md:justify-start md:items-start justify-center items-center gap-4 md:gap-8  w-full"
                     >
-                        <Link href={org !== null ? `/dashboard/${org}` : `/register`}>
-                            <motion.button
-                                whileHover={{scale: 1.05}}
-                                whileTap={{scale: 0.95}}
-                                className={`text-white px-8 sm:px-12 md:px-16 lg:px-24 py-2 sm:py-3 bg-accent rounded-2xl text-sm sm:text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
-                            >
-                                {ButtonText1}
-                            </motion.button>
-                        </Link>
-                        <Link href={org !== null ? `/organizations` : `/login`}>
-                            <motion.button
-                                whileHover={{scale: 1.05}}
-                                whileTap={{scale: 0.95}}
-                                className={`text-white px-8 sm:px-12 md:px-16 lg:px-20 py-2 sm:py-3 bg-accent rounded-2xl text-sm sm:text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
-                            >
-                                {ButtonText2}
-                            </motion.button>
-                        </Link>
+                        <div className="w-full">
+                            <Link href={org !== null ? `/dashboard/${org}` : `/register`}>
+                                <motion.button
+                                    whileHover={{scale: 1.05}}
+                                    whileTap={{scale: 0.95}}
+                                    className={`text-white w-full py-3 bg-accent rounded-2xl text-base sm:text-lg md:text-xl hover:bg-blue-900 ${HeaderText.className}`}
+                                >
+                                    {ButtonText1}
+                                </motion.button>
+                            </Link>
+                        </div>
+                        <div className="w-full">
+                            <Link href={org !== null ? `/organizations` : `/login`}>
+                                <motion.button
+                                    whileHover={{scale: 1.05}}
+                                    whileTap={{scale: 0.95}}
+                                    className={`text-white w-full py-3 bg-accent rounded-2xl text-base sm:text-lg md:text-xl hover:bg-blue-900 ${HeaderText.className}`}
+                                >
+                                    {ButtonText2}
+                                </motion.button>
+                            </Link>
+                        </div>
                     </motion.div>
-
                 </motion.div>
             </motion.div>
 
