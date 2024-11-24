@@ -35,7 +35,7 @@ import static org.opencv.imgproc.Imgproc.rectangle;
 @Service
 @Slf4j
 public class MFAService {
-    private static final double THRESHOLD = 8;
+    private static final double THRESHOLD = 13;
     private final UserRepository userRepository;
     private final TokenRepo tokenRepo;
     
@@ -123,37 +123,62 @@ public class MFAService {
         return validateOtp(secret, submittedOtp);
     }
     
-    //!For tests!!! only!
-    public String faceLocation(String base64Image) throws IOException {
+    //Crop the face from the image using the provided rectangle
+    private Mat cropToFace(Mat image, Rect faceRect) {
+        return new Mat(image, faceRect);
+    }
+    
+    //Face location
+    private String faceLocation(String base64Image) throws IOException {
+        //Load the face detection model
         CascadeClassifier faceDetector = new CascadeClassifier();
-        faceDetector.load(getClass().getClassLoader().getResource("haarcascade_frontalface_alt.xml").getPath());
+        InputStream faceCascadeStream = getClass().getClassLoader().getResourceAsStream("haarcascade_frontalface_alt.xml");
+        if (faceCascadeStream == null) {
+            throw new IOException("haarcascade_frontalface_alt.xml not found in resources");
+        }
+        Path tempFile = Files.createTempFile("haarcascade_frontalface_alt", ".xml");
+        Files.copy(faceCascadeStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+        faceDetector.load(tempFile.toString());
+        
+        //Decode the base64 image
         byte[] imageBytes = Base64.getDecoder().decode(base64Image);
         Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
         MatOfRect faceDetections = new MatOfRect();
         faceDetector.detectMultiScale(mat, faceDetections);
         
+        //Crop the first detected face
         if (faceDetections.toArray().length > 0) {
             log.debug("Faces detected: " + faceDetections.toArray().length);
-        } else if (faceDetections.toArray().length == 0) {
+            Rect faceRect = faceDetections.toArray()[0]; // Assuming the first detected face is the target
+            Mat faceMat = cropToFace(mat, faceRect);
+            
+            MatOfByte matOfByte = new MatOfByte();
+            Imgcodecs.imencode(".jpg", faceMat, matOfByte);
+            byte[] processedImageBytes = matOfByte.toArray();
+            return Base64.getEncoder().encodeToString(processedImageBytes);
+        } else {
             log.debug("No faces detected");
             return "no faces detected";
         }
-        for (Rect rect : faceDetections.toArray()) {
-            rectangle(mat, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
-        }
-        
-        MatOfByte matOfByte = new MatOfByte();
-        Imgcodecs.imencode(".jpg", mat, matOfByte);
-        byte[] processedImageBytes = matOfByte.toArray();
-        return Base64.getEncoder().encodeToString(processedImageBytes);
     }
     
-    //!Face identification (for login only)
+    // Recognize the face in the provided base64 image
     public String faceRecognition(String base64Image) throws IOException {
-        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-        Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
+        String croppedFaceBase64 = faceLocation(base64Image);
+        if ("no faces detected".equals(croppedFaceBase64)) {
+            return null;
+        }
         
-        //!Loading models and weights
+        //Decode the cropped face img
+        byte[] imageBytes = Base64.getDecoder().decode(croppedFaceBase64);
+        Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
+        Mat preprocessedImage = preprocessImage(mat);
+        
+        //Convert grayscale image to BGR
+        Mat bgrImage = new Mat();
+        Imgproc.cvtColor(preprocessedImage, bgrImage, Imgproc.COLOR_GRAY2BGR);
+        
+        // Load the DNN model
         InputStream modelConfigStream = getClass().getClassLoader().getResourceAsStream("deploy.prototxt");
         InputStream modelWeightsStream = getClass().getClassLoader().getResourceAsStream("res10_300x300_ssd_iter_140000.caffemodel");
         
@@ -162,7 +187,6 @@ public class MFAService {
             throw new IOException("Model configuration or weights file not found in resources.");
         }
         
-        //*Temp files
         Path tempModelConfigFile = Files.createTempFile("deploy", ".prototxt");
         Path tempModelWeightsFile = Files.createTempFile("res10_300x300_ssd_iter_140000", ".caffemodel");
         
@@ -173,18 +197,18 @@ public class MFAService {
         String modelWeights = tempModelWeightsFile.toString();
         Net net = Dnn.readNetFromCaffe(modelConfiguration, modelWeights);
         
-        //!Image editing
-        Mat blob = Dnn.blobFromImage(mat, 1.0, new Size(300, 300), new Scalar(104.0, 177.0, 124.0), false, false);
+        //Face detection with DNN model
+        Mat blob = Dnn.blobFromImage(bgrImage, 1.0, new Size(300, 300), new Scalar(104.0, 177.0, 123.0), false, false);
         net.setInput(blob);
         Mat detections = net.forward();
         
-        int cols = mat.cols();
-        int rows = mat.rows();
+        int cols = bgrImage.cols();
+        int rows = bgrImage.rows();
         detections = detections.reshape(1, (int) detections.total() / 7);
         
         StringBuilder result = new StringBuilder();
         
-        //!Matrix with img pixels
+        //Iterate through the detections and recognize the face
         for (int i = 0; i < detections.rows(); i++) {
             double confidence = detections.get(i, 2)[0];
             if (confidence > 0.3) {
@@ -193,11 +217,10 @@ public class MFAService {
                 int x2 = (int) (detections.get(i, 5)[0] * cols);
                 int y2 = (int) (detections.get(i, 6)[0] * rows);
                 Rect rect = new Rect(new Point(x1, y1), new Point(x2, y2));
-                rectangle(mat, rect, new Scalar(0, 255, 0));
+                rectangle(bgrImage, rect, new Scalar(0, 255, 0));
                 
-                Mat face = new Mat(mat, rect);
+                Mat face = new Mat(bgrImage, rect);
                 double[] faceEncoding = encodeFace(face);
-                //!Finding person
                 String recognizedPerson = compareFaceEncoding(faceEncoding);
                 if (recognizedPerson != null) {
                     result.append("User scanned before: ").append(recognizedPerson).append("\n");
@@ -218,9 +241,9 @@ public class MFAService {
         return null;
     }
     
-    
-    //!MFA face scan (mfa only)
+    // Perform face identification for MFA faceID setup
     public String faceIdMFAScan(String base64Image, String token) throws IOException {
+        //Validation
         if (token == null) {
             log.error("Token is required");
             return "Token is required";
@@ -230,11 +253,22 @@ public class MFAService {
             log.error("User not found for token: " + token);
             return "User not found for token: " + token;
         }
-        //*Img to byte array
-        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-        Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
+        //Detect the face location
+        String croppedFaceBase64 = faceLocation(base64Image);
+        if ("no faces detected".equals(croppedFaceBase64)) {
+            return "No faces detected";
+        }
         
-        //!Loading models and weights
+        //Decode the cropped face img
+        byte[] imageBytes = Base64.getDecoder().decode(croppedFaceBase64);
+        Mat mat = Imgcodecs.imdecode(new MatOfByte(imageBytes), Imgcodecs.IMREAD_UNCHANGED);
+        Mat preprocessedImage = preprocessImage(mat);
+        
+        //Convert grayscale image to BGR
+        Mat bgrImage = new Mat();
+        Imgproc.cvtColor(preprocessedImage, bgrImage, Imgproc.COLOR_GRAY2BGR);
+        
+        //Load the DNN model
         InputStream modelConfigStream = getClass().getClassLoader().getResourceAsStream("deploy.prototxt");
         InputStream modelWeightsStream = getClass().getClassLoader().getResourceAsStream("res10_300x300_ssd_iter_140000.caffemodel");
         
@@ -242,7 +276,7 @@ public class MFAService {
             log.error("Model configuration or weights file not found in resources.");
             throw new IOException("Model configuration or weights file not found in resources.");
         }
-        //*Temp files
+        
         Path tempModelConfigFile = Files.createTempFile("deploy", ".prototxt");
         Path tempModelWeightsFile = Files.createTempFile("res10_300x300_ssd_iter_140000", ".caffemodel");
         
@@ -253,16 +287,15 @@ public class MFAService {
         String modelWeights = tempModelWeightsFile.toString();
         Net net = Dnn.readNetFromCaffe(modelConfiguration, modelWeights);
         
-        //!Image editing
-        Mat blob = Dnn.blobFromImage(mat, 1.0, new Size(300, 300), new Scalar(104.0, 177.0, 124.0), false, false);
+        //Face detection with DNN model
+        Mat blob = Dnn.blobFromImage(bgrImage, 1.0, new Size(300, 300), new Scalar(104.0, 177.0, 123.0), false, false);
         net.setInput(blob);
         Mat detections = net.forward();
         
-        int cols = mat.cols();
-        int rows = mat.rows();
+        int cols = bgrImage.cols();
+        int rows = bgrImage.rows();
         detections = detections.reshape(1, (int) detections.total() / 7);
         
-        //!Matrix with pixels
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < detections.rows(); i++) {
             double confidence = detections.get(i, 2)[0];
@@ -272,11 +305,12 @@ public class MFAService {
                 int x2 = (int) (detections.get(i, 5)[0] * cols);
                 int y2 = (int) (detections.get(i, 6)[0] * rows);
                 Rect rect = new Rect(new Point(x1, y1), new Point(x2, y2));
-                rectangle(mat, rect, new Scalar(0, 255, 0));
+                rectangle(bgrImage, rect, new Scalar(0, 255, 0));
                 
-                Mat face = new Mat(mat, rect);
+                Mat face = new Mat(bgrImage, rect);
                 double[] faceEncoding = encodeFace(face);
                 
+                //Save the face ID
                 if (user.getFaceID() == null) {
                     log.debug("User face ID not found");
                     try {
@@ -301,32 +335,42 @@ public class MFAService {
         }
         
         MatOfByte matOfByte = new MatOfByte();
-        Imgcodecs.imencode(".jpg", mat, matOfByte);
+        Imgcodecs.imencode(".jpg", bgrImage, matOfByte);
         byte[] processedImageBytes = matOfByte.toArray();
         return Base64.getEncoder().encodeToString(processedImageBytes);
     }
     
-    //*encoding face id
+    //Grayscale and resizing
+    private Mat preprocessImage(Mat image) {
+        Mat grayImage = new Mat();
+        Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.equalizeHist(grayImage, grayImage);
+        Mat resizedImage = new Mat();
+        Imgproc.resize(grayImage, resizedImage, new Size(64, 64)); // consistent size
+        return resizedImage;
+    }
+    
+    //Encode the face
     private double[] encodeFace(Mat face) {
         Mat grayFace = new Mat();
         Imgproc.cvtColor(face, grayFace, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.equalizeHist(grayFace, grayFace);
         Mat resizedFace = new Mat();
-        Size size = new Size(64, 64);
-        Imgproc.resize(grayFace, resizedFace, size);
+        Imgproc.resize(grayFace, resizedFace, new Size(64, 64)); // Ensure consistent size
+        
         int totalElements = (int) (resizedFace.total() * resizedFace.channels());
         byte[] faceEncoding = new byte[totalElements];
         resizedFace.get(0, 0, faceEncoding);
+        
         double[] normalizedFaceEncoding = new double[totalElements];
         for (int i = 0; i < faceEncoding.length; i++) {
             normalizedFaceEncoding[i] = (faceEncoding[i] & 0xFF) / 255.0;
         }
         
-        log.debug("Face encoding: " + Arrays.toString(normalizedFaceEncoding));
-        
         return normalizedFaceEncoding;
     }
     
-    //* comparing faces
+    //Compare the new face encoding with stored face encodings
     public String compareFaceEncoding(double[] newFaceEncoding) {
         List<User> users = userRepository.findAll();
         for (User user : users) {
@@ -334,10 +378,12 @@ public class MFAService {
                 try {
                     double[] storedFaceEncoding = user.getDecryptedFaceID();
                     double distance = calculateEuclideanDistance(newFaceEncoding, storedFaceEncoding);
-                    log.debug("Comparing with known face: " + user.getEmail() + ", distance: " + distance);
-                    if (distance < THRESHOLD) {
+                    log.debug("Comparing with known face: " + user.getEmail() + ", distance: " + distance + ", threshold: " + THRESHOLD);
+                    if (distance < THRESHOLD) { // Adjust threshold as needed
                         log.debug("Recognized user: " + user.getEmail() + " with distance: " + distance);
                         return user.getEmail();
+                    } else {
+                        log.debug("User not recognized: " + user.getEmail() + " with distance: " + distance);
                     }
                 } catch (Exception e) {
                     log.error("Error decrypting face ID for user: " + user.getEmail(), e);
@@ -347,16 +393,16 @@ public class MFAService {
         return null;
     }
     
-    //!Calculating if person is different or the same
+    //Calculate the Euclidean distance between two feature vectors
     private double calculateEuclideanDistance(double[] vector1, double[] vector2) {
         if (vector1.length != vector2.length) {
             throw new IllegalArgumentException("Vector dimensions must match");
         }
         double sum = 0.0;
         for (int i = 0; i < vector1.length; i++) {
-            sum += Math.pow((vector1[i] - vector2[i]), 2);
+            double diff = vector1[i] - vector2[i];
+            sum += diff * diff;
         }
         return Math.sqrt(sum);
     }
-    
 }

@@ -75,8 +75,16 @@ public class ProjectsController extends FileSize {
         String source = (String) request.get("source");
         List<String> usersArr = (List<String>) request.get("users");
         
-        userService.userValid(accessToken);
+        if(accessToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+        }
+        userService.userValid(accessToken);//Token validation
         User user = tokenService.getUserFromToken(accessToken);
+        
+        //Admin check
+        if (!userService.userAdmin(user)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not admin or owner");
+        }
         
         if (title == null || description == null || dueDate == null || priority == null || status == null || source == null || usersArr == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing required fields");

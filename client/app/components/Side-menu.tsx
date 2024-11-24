@@ -12,7 +12,7 @@ import {
     FaTasks,
     FaUserCircle,
     FaUsers,
-    FaUserSecret
+    FaUserSecret,
 } from "react-icons/fa";
 import LogOut from "@/app/components/LogOut";
 import {UserData} from "@/app/func/funcs";
@@ -29,6 +29,7 @@ const SideMenu = () => {
     const [isDashboardOpen, setIsDashboardOpen] = useState(false);
     const [isTasksOpen, setIsTasksOpen] = useState(false);
     const [org, setOrg] = useState<string | null>("");
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     useEffect(() => {
         UserData().then((response) => {
@@ -61,35 +62,62 @@ const SideMenu = () => {
         setIsTasksOpen(!isTasksOpen);
     };
 
+    const toggleDrawer = () => {
+        setIsDrawerOpen(!isDrawerOpen);
+    };
+
     return (
-        <div className="w-fit h-fit drawer lg:drawer-open">
-            <input id="my-drawer-2" type="checkbox" className="drawer-toggle"/>
-            <div className="drawer-content flex flex-col items-center justify-center">
+        <div className="w-fit h-fit drawer lg:drawer-open z-40">
+            <input
+                id="my-drawer-2"
+                type="checkbox"
+                className="drawer-toggle"
+                checked={isDrawerOpen}
+                onChange={toggleDrawer}
+            />
+            <div className="drawer-content flex flex-col items-center justify-center z-50">
                 {/* Page content */}
                 <label
                     htmlFor="my-drawer-2"
-                    className="btn btn-square text-white btn-ghost drawer-button lg:hidden "
+                    className="btn btn-square text-white btn-ghost drawer-button lg:hidden"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        className="inline-block h-2 w-2 stroke-current"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M4 6h16M4 12h16M4 18h16"
-                        ></path>
-                    </svg>
+                    {isDrawerOpen ? (
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            className="absolute top-3 left-3 h-7 w-7 stroke-current"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M6 18L18 6M6 6l12 12"
+                            ></path>
+                        </svg>
+                    ) : (
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            className="absolute top-3 left-3 h-7 w-7 stroke-current"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M4 6h16M4 12h16M4 18h16"
+                            ></path>
+                        </svg>
+                    )}
                 </label>
             </div>
-            <div className="drawer-side ">
+            <div className="drawer-side">
                 <label
                     htmlFor="my-drawer-2"
                     aria-label="close sidebar"
                     className="drawer-overlay"
+                    onClick={toggleDrawer}
                 ></label>
                 <ul className="menu bg-base-300 text-base-content min-h-full w-80 p-6 flex flex-col justify-center items-start">
                     {/* Sidebar content */}
@@ -98,7 +126,7 @@ const SideMenu = () => {
                         {org && (
                             <>
                                 {/* Dashboard Dropdown */}
-                                <li className=" text-md w-full relative">
+                                <li className="text-md w-full relative">
                                     <div className="flex items-center justify-between w-full">
                                         <Link
                                             href={`/dashboard/${org}`}
@@ -121,8 +149,8 @@ const SideMenu = () => {
                                         )}
                                     </div>
                                     {isDashboardOpen && admin && (
-                                        <ul className=" w-full">
-                                            <li className=" py-1 text-md w-full">
+                                        <ul className="w-full">
+                                            <li className="py-1 text-md w-full">
                                                 <Link
                                                     href={`/dashboard/${org}/settings`}
                                                     className="flex items-center w-full"
@@ -156,7 +184,7 @@ const SideMenu = () => {
                                 {/* Tasks Dropdown */}
                                 <li className="text-md w-full relative">
                                     <div className="flex items-center justify-between w-full">
-                                        {admin && (
+                                        {admin ? (
                                             <button
                                                 onClick={toggleTasksDropdown}
                                                 className="flex items-center w-full"
@@ -169,8 +197,7 @@ const SideMenu = () => {
                                                     }`}
                                                 />
                                             </button>
-                                        )}
-                                        {!admin && (
+                                        ) : (
                                             <Link
                                                 href={`/dashboard/${org}/task`}
                                                 className="flex items-center w-full"
@@ -181,7 +208,7 @@ const SideMenu = () => {
                                         )}
                                     </div>
                                     {isTasksOpen && admin && (
-                                        <ul className=" w-full">
+                                        <ul className="w-full">
                                             <li className="py-1 text-md w-full">
                                                 <Link
                                                     href={`/dashboard/${org}/task`}
@@ -191,36 +218,34 @@ const SideMenu = () => {
                                                     Your Tasks
                                                 </Link>
                                             </li>
-                                            {admin && (
-                                                <li className="text-md w-full">
-                                                    <Link
-                                                        href={`/dashboard/${org}/task/create`}
-                                                        className="flex items-center w-full"
-                                                    >
-                                                        <FaPlusCircle className="text-lg mr-2"/>
-                                                        Create Task
-                                                    </Link>
-                                                </li>
-                                            )}
+                                            <li className="text-md w-full">
+                                                <Link
+                                                    href={`/dashboard/${org}/task/create`}
+                                                    className="flex items-center w-full"
+                                                >
+                                                    <FaPlusCircle className="text-lg mr-2"/>
+                                                    Create Task
+                                                </Link>
+                                            </li>
                                         </ul>
                                     )}
                                 </li>
                             </>
                         )}
 
-                        <li className=" text-md w-full">
+                        <li className="text-md w-full">
                             <Link href="/organizations" className="flex items-center w-full">
                                 <FaBuilding className="text-lg mr-2"/>
                                 Organizations
                             </Link>
                         </li>
-                        <li className=" text-md w-full">
+                        <li className="text-md w-full">
                             <Link href="/mfa/face" className="flex items-center w-full">
                                 <TbFaceId className="text-lg mr-2"/>
                                 FaceID
                             </Link>
                         </li>
-                        <li className=" text-md w-full">
+                        <li className="text-md w-full">
                             <Link href="/chat" className="flex items-center w-full">
                                 <FaComments className="text-lg mr-2"/>
                                 Chat

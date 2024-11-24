@@ -5,7 +5,7 @@
 @layer base {
     :root {
         --foreground: 242, 242, 242;
-        --background: linear-gradient(to bottom, rgba(19, 20, 19, 0.9), rgba(10, 12, 13, 0.9));
+        --background: linear-gradient(to bottom, rgba(13, 14, 13, 0.9), rgba(7, 9, 10, 0.9));
         --muted: 115, 115, 115;
         --accent: 37, 99, 235;
         --lightAccent: 14, 165, 233;
@@ -24,7 +24,7 @@
     -webkit-text-fill-color: transparent;
     height: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
 }
 
@@ -114,3 +114,4 @@
     transition: opacity 0.2s;
     opacity: 0;
 }
+

@@ -15,6 +15,7 @@ module.exports = {
                 accent: 'rgb(var(--accent))',
                 lightAccent: 'rgb(var(--lightAccent))',
                 neonAccent: 'rgb(var(--neonAccent))',
+
             },
         },
     },

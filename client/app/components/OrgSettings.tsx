@@ -134,17 +134,16 @@ const OrgSettingsForm = () => {
     }, []);
 
     return (
-        <div
-            className="w-[65vw] h-auto p-8 bg-gray-900 shadow-lg rounded-md flex flex-col justify-center items-center gap-12">
-            <h2 className="text-3xl font-semibold text-white text-center mb-6">
+        <div className="w-full max-w-4xl mx-auto bg-base-300 shadow-xl rounded-xl p-6 sm:p-12 flex flex-col gap-8">
+            <h2 className="text-3xl font-semibold text-white text-center">
                 Organization Settings
             </h2>
 
-            <div className="w-full grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {["orgName", "orgAddress", "orgEmail", "orgType", "orgPhone"].map(
                     (field, index) => (
                         <div className="flex flex-col" key={index}>
-                            <label className="text-sm font-medium text-gray-400 capitalize">
+                            <label className="text-sm font-medium text-gray-300 capitalize">
                                 {field.replace("org", "").replace(/([A-Z])/g, " $1")}:
                             </label>
                             <input
@@ -152,42 +151,42 @@ const OrgSettingsForm = () => {
                                 type={field === "orgEmail" ? "email" : "text"}
                                 value={orgData[field]}
                                 onChange={handleInputChange}
-                                className="mt-2 p-3 bg-gray-700 text-white border-none focus:outline-none rounded-lg w-full"
+                                className="p-2 bg-base-100 text-white rounded-lg w-full transition duration-200 ease-in-out"
                             />
                         </div>
                     )
                 )}
 
-                <div className="col-span-2 flex flex-col">
-                    <label className="text-sm font-medium text-gray-400">
-                        Description:
-                    </label>
+                <div className="col-span-1 sm:col-span-2 md:col-span-3 flex flex-col">
+                    <label className="text-sm font-medium text-gray-300">Description:</label>
                     <textarea
                         name="orgDescription"
                         value={orgData.orgDescription}
                         onChange={handleInputChange}
-                        className="mt-2 p-3 bg-gray-700 text-white border-none focus:outline-none rounded-lg w-full"
+                        className="p-4 bg-base-100 text-white border-2 border-transparent focus:border-blue-500 focus:ring-2 focus:ring-blue-500 rounded-lg w-full resize-none transition duration-200 ease-in-out"
                         rows={4}
                     />
                 </div>
             </div>
 
-            <button
-                onClick={handleSave}
-                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200"
-            >
-                Save Changes
-            </button>
+            <div className="flex flex-col items-center gap-4">
+                <button
+                    onClick={handleSave}
+                    className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out"
+                >
+                    Save Changes
+                </button>
 
-            <h2 className="text-foreground text-2xl text-white mt-6 text-center ">
-                Connection Code: {conString}
-            </h2>
+                <h2 className="text-lg text-gray-300 text-center">
+                    Connection Code: <span className="font-semibold">{conString}</span>
+                </h2>
 
-            {alertMessage && (
-                <div className="mt-4 text-white bg-gray-700 p-3 rounded">
-                    {alertMessage}
-                </div>
-            )}
+                {alertMessage && (
+                    <div className="mt-4 text-white bg-red-500 p-3 rounded-md shadow-md">
+                        {alertMessage}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

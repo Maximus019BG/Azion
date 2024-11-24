@@ -234,49 +234,73 @@ const Calendar: React.FC = () => {
             </div>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="flex flex-col justify-center items-center">
+                <DialogContent className="bg-base-300 rounded-lg shadow-lg p-6 max-w-lg mx-auto">
                     <DialogHeader>
-                        <DialogTitle className="text-2xl">Add New Event</DialogTitle>
+                        <DialogTitle className="text-2xl text-white font-semibold text-center">
+                            Add New Event
+                        </DialogTitle>
                     </DialogHeader>
-                    <form className="space-y-5" onSubmit={handleAddEvent}>
-                        <input
-                            type="text"
-                            placeholder="Event Title"
-                            value={newEventTitle}
-                            onChange={(e) => setNewEventTitle(e.target.value)}
-                            className="input-field"
-                            required
-                        />
-                        <input
-                            type="text"
-                            placeholder="Meeting Link"
-                            value={newMeetingRoomLink}
-                            onChange={(e) => setNewMeetingRoomLink(e.target.value)}
-                            className="input-field"
-                            required
-                        />
-                        <div className="flex gap-3">
+                    <form className="space-y-6" onSubmit={handleAddEvent}>
+                        <div>
+                            <input
+                                type="text"
+                                placeholder="Event Title"
+                                value={newEventTitle}
+                                onChange={(e) => setNewEventTitle(e.target.value)}
+                                className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <input
+                                type="text"
+                                placeholder="Meeting Link"
+                                value={newMeetingRoomLink}
+                                onChange={(e) => setNewMeetingRoomLink(e.target.value)}
+                                className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                required
+                            />
+                        </div>
+                        <div className="flex gap-3 flex-wrap">
                             {availableRoles.map((role) => (
-                                <label key={role} className="text-sm text-gray-700">
+                                <label
+                                    key={role}
+                                    className={`flex justify-center items-center text-sm text-white text-center px-3 py-1 rounded-md cursor-pointer transition-all duration-200 ${
+                                        selectedRoles.includes(role) ? "bg-base-100 border-2 border-accent" : "bg-transparent"
+                                    }`}
+                                    onClick={(e) => {
+                                        // Prevent checkbox from toggling when clicking the label
+                                        e.preventDefault();
+                                        setSelectedRoles((prev) =>
+                                            prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
+                                        );
+                                    }}
+                                >
                                     <input
                                         type="checkbox"
                                         checked={selectedRoles.includes(role)}
                                         onChange={() => {
-                                            setSelectedRoles(prev =>
-                                                prev.includes(role)
-                                                    ? prev.filter(r => r !== role)
-                                                    : [...prev, role]
-                                            );
                                         }}
+                                        className="h-4 w-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
+                                        style={{display: "none"}} // Hide checkbox visually
                                     />
-                                    {role}
+                                    <span>{role}</span>
                                 </label>
                             ))}
                         </div>
-                        <button type="submit" className="button bg-primary text-white">Add Event</button>
+
+                        <div className="text-center">
+                            <button
+                                type="submit"
+                                className="w-full py-3 rounded-md bg-accent text-white font-semibold hover:bg-primary-dark transition duration-300"
+                            >
+                                Add Event
+                            </button>
+                        </div>
                     </form>
                 </DialogContent>
             </Dialog>
+
         </div>
     );
 };

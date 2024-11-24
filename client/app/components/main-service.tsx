@@ -1,8 +1,8 @@
 "use client";
 import {motion, useScroll, useTransform, Variants} from "framer-motion";
-import {useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Poppins} from "next/font/google";
-import Image from "next/image"; // Import Next.js Image component
+import {ThreeDCardDemo} from "@/app/components/3dCard";
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
 
@@ -24,28 +24,23 @@ const cardVariants = (rotateValue: number): Variants => ({
 interface MockupWindowProps {
     rotateValue: number;
     src: string;
+    title: string;
+    description: string;
 }
 
-function MockupWindow({rotateValue, src}: MockupWindowProps) {
+function MockupWindow({rotateValue, src, title, description}: MockupWindowProps) {
     return (
-        <motion.div
-            className="w-[65vw] h-[70vh] mockup-window bg-base-300 border"
-            initial="offscreen"
-            whileInView="onscreen"
-            viewport={{once: true, amount: 0.8}}
-            variants={cardVariants(rotateValue)}
-        >
-            <div className="relative w-full h-full bg-base-200 flex justify-center items-center border-2">
-                <div className="relative w-full h-full"> {/* Added wrapper div */}
-                    <Image
-                        src={src}
-                        alt="Mockup"
-                        fill // This makes the image fill the container
-                        className="object-cover"
-                    />
-                </div>
-            </div>
-        </motion.div>
+        <div className="relative w-full h-full flex flex-col items-center gap-4">
+            {/* Pass the image source and texts to the 3D card */}
+            <ThreeDCardDemo src={src} title={title} description={description}/>
+            <motion.div
+                initial="offscreen"
+                whileInView="onscreen"
+                variants={cardVariants(rotateValue)}
+                className="text-center text-white text-lg font-medium"
+            >
+            </motion.div>
+        </div>
     );
 }
 
@@ -55,48 +50,78 @@ const HorizontalScrollCarousel = () => {
         target: targetRef,
     });
 
-    const x = useTransform(scrollYProgress, [0, 1], ["5%", "-95%"]);
+    const [isMobile, setIsMobile] = useState<boolean>(false);
+
+    const x = useTransform(scrollYProgress, [0, 1], ["1%", "-95%"]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768); // Detect if the screen width is less than 768px (smaller than 'md' breakpoint)
+        };
+        window.addEventListener("resize", handleResize);
+        handleResize(); // Check on initial load
+
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    // Unique titles, descriptions, and texts for each card
+    const cardDetails = [
+        {
+            src: "/Dashboard.png",
+            title: "Dashboard",
+            description: "Here you can see all the important information at a glance. You can have control over your organization's data and manage it effectively and smoothly.",
+        },
+        {
+            src: "/Org.png",
+            title: "Organization",
+            description: "Collaborate with other organizations with ease. Here you can find any organization registered in Azion",
+        },
+        {
+            src: "/Task.png",
+            title: "Task Management",
+            description: "Manage tasks effortlessly with our task functionality. Azion provides easy and efficient task management. You can create, control and delete tasks with ease.",
+        },
+        {
+            src: "/Account.png",
+            title: "Cyber Security",
+            description: "Cyber security is our top priority. Azion provides a secure environment for all the users and companies that are registered. Azion provides MFA, OTP, and other security features to keep your account safe.",
+        },
+    ];
 
     const rotateValues = [5, -5, 10, -10]; // Different rotate values
-    const imageSources = [
-        {src: "/Dashboard.png"},
-        {src: "/Org.png"},
-        {src: "/Task.png"},
-        {src: "/Account.png"},
-    ]; // Different image sources
 
     return (
-        <section ref={targetRef} className="relative h-[300vh] bg-[#060610]">
-            <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+        <section ref={targetRef} className={`relative h-[300vh] bg-[#060610] ${isMobile ? "overflow-auto" : ""}`}>
+            <div
+                className={`sticky top-0 flex h-screen items-center ${isMobile ? "flex-col" : "overflow-hidden"}`}>
                 <motion.div
-                    style={{x}}
-                    className="flex justify-center items-center gap-48"
+                    style={!isMobile ? {x} : undefined}  // Only apply the `x` transform on medium or larger screens
+                    className={`flex ${isMobile ? "flex-col gap-10" : "justify-center items-center gap-48"}`}
                 >
-                    <div className="w-full h-full flex justify-center items-center gap-[30vw]">
+                    <div
+                        className={` w-full h-full ${isMobile ? "flex flex-col items-center gap-10" : "flex justify-center items-center gap-[30vw]"}`}
+                    >
                         <h1
-                            className={`${HeaderText.className} text-5xl min-w-max uppercase leading-snug`}
+                            className={`${HeaderText.className} w-full text-xl sm:text-3xl lg:text-5xl xl:text-7xl uppercase font-extrabold leading-tight tracking-wide text-center md:text-left`}
                         >
-                            <span className="gradient-text">Azion secures every part</span>
-                            of your account and <br/> organisation&apos;s account
+                            <span
+                                className="text-3xl sm:text-5xl lg:text-7xl xl:text-9xl gradient-text font-black">Azion</span> secures
+                            every part of your account and organisation&apos;s account
                         </h1>
 
-                        <div className="w-full h-full flex justify-center items-center gap-44">
-                            {imageSources.map((image, index) => (
+                        <div
+                            className="w-full h-full flex flex-col md:flex-row justify-center items-center gap-3 md:gap-24">
+                            {cardDetails.map((card, index) => (
                                 <MockupWindow
                                     key={index}
                                     rotateValue={rotateValues[index]}
-                                    src={image.src}
+                                    src={card.src}
+                                    title={card.title}
+                                    description={card.description}
                                 />
                             ))}
                         </div>
                     </div>
-                    <motion.div
-                        initial="offscreen"
-                        whileInView="onscreen"
-                        viewport={{once: true, amount: 0.8}}
-                        transition={{delay: 1, duration: 1}}
-                        className=""
-                    ></motion.div>
                 </motion.div>
             </div>
         </section>

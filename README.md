@@ -32,7 +32,7 @@
 - **Web (Chromium, Firefox, Edge)**
 - **Android**
 
-> **Note**: 
+> [!Note] 
 > - *MAC OS* and *Chrome OS* are **NOT** supported by the *desktop app*.
 > - **Other** Linux distributions are not supported by the *desktop app*.
 > - The *Azion mobile app* is not made for *iOS*.
@@ -45,7 +45,7 @@
 - **Maven**: Ensure you have Maven installed for building the Java projects.
 - **Docker**: Ensure you have Docker installed for running the backend services.
 
-### Steps
+### Steps for running the app
 1. **Clone the repository**:
     ```sh
     git clone https://github.com/Maximus019BG/Azion.git
@@ -83,32 +83,18 @@
     ```sh
     npm run build
     ```
+    
+5. **Start the frontend**:
+    ```sh
+    npm start
+    ```
 
-5. **Start the backend services**:
+6. **Start the backend services**:
     ```sh
     cd ../server
     docker-compose up --build
     ```
-
-6. **Start the frontend**:
-    ```sh
-    cd ../client
-    npm start
-    ```
-
-## Usage
-### Running the Application
-- **Development Mode**:
-    ```sh
-    npm run dev
-    ```
-
-- **Production Mode**:
-    ```sh
-    npm run build
-    npm start
-    ```
-
+    
 ## Contributing
 We welcome contributions from the community! To contribute to Azion, please first read the [CONTRIBUTING.md](https://github.com/Maximus019BG/Azion/blob/dev/CONTRIBUTING.md) file.
 

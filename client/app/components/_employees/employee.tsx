@@ -67,7 +67,10 @@ const DisplayEmployee: React.FC<Employee> = ({
                 "Content-Type": "application/json",
                 "authorization": Cookies.get("azionAccessToken")
             }
-        })
+        }).then(() => {}).catch((error) => {
+            console.error("Error removing employee: ", error);
+            alert("Error removing employee");
+        });
     }
 
     return (

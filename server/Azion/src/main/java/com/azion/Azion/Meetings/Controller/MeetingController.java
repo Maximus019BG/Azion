@@ -45,9 +45,12 @@ public class MeetingController {
     @Transactional
     @PostMapping("/create/meeting")
     public ResponseEntity<?> createMeeting(@RequestHeader("authorization") String token, @RequestBody Map<Object, Object> request) {
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing authorization header");
+        }
         userService.userValid(token);   //Token validation
         User user = tokenService.getUserFromToken(token);
-        if (!userService.userAdmin(user)) {
+        if (!userService.userSuperAdmin(user)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not admin or owner");
         }
         //Get the meeting details
@@ -61,7 +64,7 @@ public class MeetingController {
         Date start = Date.from(Instant.parse(startStr));
         Date end = Date.from(Instant.parse(endStr));
         
-        meetingService.createMeeting(title, allDay, start, end, roles, link);
+        meetingService.createMeeting(title, allDay, start, end, roles, link, user);
         
         return ResponseEntity.ok().body(String.format("New meeting about %s created!", title));
     }
@@ -72,7 +75,7 @@ public class MeetingController {
         if (token == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing authorization header");
         }
-        userService.userValid(token);
+        userService.userValid(token); //Token validation
         User user = tokenService.getUserFromToken(token);
         List<MeetingDTO> meetings = meetingService.getMeetings(user);
         return ResponseEntity.ok().body(meetings);
@@ -81,8 +84,15 @@ public class MeetingController {
     @Transactional
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteMeeting(@RequestHeader("authorization") String token, @PathVariable String id) {
-        userService.userValid(token);
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing authorization header");
+        }
+        userService.userValid(token);//Token validation
         User user = tokenService.getUserFromToken(token);
+        //Check if user is super admin
+        if(!userService.userSuperAdmin(user)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not super admin");
+        }
         List<MeetingDTO> meetings = meetingService.getMeetings(user);
         meetingService.deleteMeeting(id);
         return ResponseEntity.ok().body(meetings);
@@ -91,12 +101,16 @@ public class MeetingController {
     @Transactional
     @GetMapping("/list/roles")
     public ResponseEntity<?> listRoles(@RequestHeader("authorization") String token) {
-        userService.userValid(token);
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing authorization header");
+        }
+        userService.userValid(token);//Token validation
         User user = tokenService.getUserFromToken(token);
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
         if (org == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No organization found");
         }
+        //Role list
         List<String> roles = orgService.listRoles(org);
         return ResponseEntity.ok(roles);
     }

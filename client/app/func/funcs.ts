@@ -6,7 +6,6 @@ import {Token} from "@/app/types/types";
 //Checks if user has MFA
 const CheckMFA = async (onMFAPage: boolean) => {
     const accessToken: string | undefined = Cookies.get('azionAccessToken');
-    const data = {accessToken: accessToken};
     axios.put(`${apiUrl}/mfa/check/mfa`, {accessToken: accessToken},
         {
             headers: {

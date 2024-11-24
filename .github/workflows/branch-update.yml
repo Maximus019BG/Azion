@@ -19,7 +19,6 @@ jobs:
           git config --global user.email 'github-azion[bot]@users.noreply.github.com'
           git config --global pull.rebase false
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Maximus019BG/Azion.git
-          git remote add org https://github.com/AzionOnline/Azion.git
 
       - name: Update dev
         run: |
@@ -31,7 +30,6 @@ jobs:
           git pull origin dev --allow-unrelated-histories || true
           git pull origin master --allow-unrelated-histories
           git push origin dev
-          git push org dev
 
       - name: Update dev-mobile
         run: |
@@ -102,7 +100,7 @@ jobs:
             minor=$((minor + 1))
           fi
           
-          if [ "$minor" -ge 10 ]; then
+          if [ "$minor" -ge 10]; then
             minor=0
             major=$((major + 1))
           fi
@@ -110,7 +108,6 @@ jobs:
           NEW_TAG="v.$major.$minor.$patch"
           git tag -a "$NEW_TAG" -m "New version of Azion"
           
-          git push origin ":refs/tags/$NEW_TAG" || true
           git push origin "$NEW_TAG"
           
           gh release create "$NEW_TAG" --title "$NEW_TAG" --notes "New version of Azion v$NEW_TAG"
