@@ -15,7 +15,7 @@ import Puzzle from "@/public/Artboard4.svg";
 import Suitcase from "@/public/Artboard5.svg";
 import Circles from "@/public/Artboard6.svg";
 import Hammer from "@/public/Artboard7.svg";
-import File from "@/public/Artboard8.svg";
+import Building from "@/public/Artboard8.svg";
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
 
@@ -74,22 +74,22 @@ const Home = () => {
 
     const svgs = [
         {Component: Hands, position: "left-[8vw] top-[0vh]", delay: 0},
-        {Component: redCircles, position: "right-[8vw] -top-[3vh]", delay: 0.2},
-        {Component: Puzzle, position: "left-[32vw] top-[61vh]", delay: 0.4},
+        {Component: redCircles, position: "right-[18vw] -top-[3vh]", delay: 0.2},
+        {Component: Puzzle, position: "left-[30vw] top-[61vh]", delay: 0.4},
         {Component: Suitcase, position: "right-[15vw] top-[55vh]", delay: 0.6},
-        {Component: Circles, position: "left-[0vw] top-[57vh]", delay: 0.8},
-        {Component: Hammer, position: "right-[10vw] top-[25vh]", delay: 1},
-        {Component: File, position: "right-[40vw] -top-[5vh]", delay: 1.2},
+        {Component: Circles, position: "left-[0vw] top-[50vh]", delay: 0.8},
+        {Component: Hammer, position: "right-[6vw] top-[25vh]", delay: 1},
+        {Component: Building, position: "right-[40vw] top-[12vh]", delay: 1.2},
     ];
 
     const svgsMobile = [
-        {Component: Hands, position: "left-[5vw] top-[10vh]", delay: 0},
-        {Component: redCircles, position: "right-[8vw] top-[12vh]", delay: 0.2},
-        {Component: Puzzle, position: "left-[10vw] top-[35vh]", delay: 0.4},
-        {Component: Suitcase, position: "right-[12vw] top-[55vh]", delay: 0.6},
+        {Component: Hands, position: "left-[5vw] top-[5vh]", delay: 0},
+        {Component: redCircles, position: "right-[8vw] top-[7vh]", delay: 0.2},
+        {Component: Puzzle, position: "left-[8vw] top-[35vh]", delay: 0.4},
+        {Component: Suitcase, position: "right-[12vw] top-[50vh]", delay: 0.6},
         {Component: Circles, position: "left-[8vw] top-[60vh]", delay: 0.8},
-        {Component: Hammer, position: "right-[10vw] top-[32vh]", delay: 1},
-        {Component: File, position: "right-[20vw] top-[70vh]", delay: 1.2},
+        {Component: Hammer, position: "right-[10vw] top-[27vh]", delay: 1},
+        {Component: Building, position: "right-[20vw] top-[65vh]", delay: 1.2},
     ];
 
 
