@@ -1,16 +1,20 @@
-'use client'
+'use client';
+
 import React, {useEffect, useState} from 'react';
 import Dashboard_Task_Row from "@/app/components/_Dashboard-Elements/Dashboard_Task_Row";
 import {Task} from "@/app/types/types";
 import axios from "axios";
 import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
+import {getOrgName} from "@/app/func/org";
 
 const Dashboard_Task_Card = () => {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [orgName, setOrgName] = useState<string>("");
 
     useEffect(() => {
+        // Fetch tasks
         const GetTopProject = async () => {
             try {
                 const response = await axios.get(`${apiUrl}/projects/top/${Cookies.get("azionAccessToken")}`, {
@@ -25,7 +29,15 @@ const Dashboard_Task_Card = () => {
                 setLoading(false);
             }
         };
+
+        // Fetch organization name
+        const fetchOrgName = async () => {
+            const name = await getOrgName();
+            setOrgName(name);
+        };
+
         GetTopProject();
+        fetchOrgName();
     }, []);
 
     return (
@@ -43,10 +55,10 @@ const Dashboard_Task_Card = () => {
                     </div>
                     <div className="space-y-2">
                         {tasks && tasks.map((task) => (
-                            <Dashboard_Task_Row key={task.id} task={task}/>
+                            <Dashboard_Task_Row key={task.id} task={task} orgName={orgName}/>
                         ))}
-                        {!tasks && (
-                            <p>No tasks </p>
+                        {tasks.length === 0 && (
+                            <p>No tasks available.</p>
                         )}
                     </div>
                 </div>

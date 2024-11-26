@@ -9,6 +9,13 @@ import Footer from "./components/Footer";
 import Cookies from "js-cookie";
 import {sessionCheck} from "./func/funcs";
 import {getOrgName} from "./func/org";
+import Hands from "@/public/Artboard2.svg";
+import redCircles from "@/public/Artboard3.svg";
+import Puzzle from "@/public/Artboard4.svg";
+import Suitcase from "@/public/Artboard5.svg";
+import Circles from "@/public/Artboard6.svg";
+import Hammer from "@/public/Artboard7.svg";
+import File from "@/public/Artboard8.svg";
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
 
@@ -65,25 +72,26 @@ const Home = () => {
         },
     });
 
-    // const svgs = [
-    //     {Component: Artboard2, position: "right-[3vw] top-[0vh]", delay: 0},
-    //     {Component: Artboard3, position: "right-[30vw] -top-[10vh]", delay: 0.2},
-    //     {Component: Artboard4, position: "right-[37vw] top-[20vh]", delay: 0.4},
-    //     {Component: Artboard5, position: "right-[16vw] top-[58vh]", delay: 0.6},
-    //     {Component: Artboard6, position: "left-[0vw] top-[9vh]", delay: 0.8},
-    //     {Component: Artboard7, position: "right-[3vw] top-[32vh]", delay: 1},
-    //     {Component: Artboard8, position: "right-[57vw] -top-[6vh]", delay: 1.2},
-    // ];
-    //
-    // const svgsMobile = [
-    //     {Component: Artboard2, position: "right-[13vw] top-[0vh]", delay: 0},
-    //     {Component: Artboard3, position: "left-[9vw] top-[0vh]", delay: 0.2},
-    //     {Component: Artboard4, position: "left-[0vw] top-[23vh]", delay: 0.4},
-    //     {Component: Artboard5, position: "right-[9vw] top-[64vh]", delay: 0.6},
-    //     {Component: Artboard6, position: "left-[0vw] top-[57vh]", delay: 0.8},
-    //     {Component: Artboard7, position: "right-[10vw] top-[32vh]", delay: 1},
-    //     {Component: Artboard8, position: "right-[40vw] top-[62vh]", delay: 1.2},
-    // ];
+    const svgs = [
+        {Component: Hands, position: "left-[8vw] top-[0vh]", delay: 0},
+        {Component: redCircles, position: "right-[8vw] -top-[3vh]", delay: 0.2},
+        {Component: Puzzle, position: "left-[32vw] top-[61vh]", delay: 0.4},
+        {Component: Suitcase, position: "right-[15vw] top-[55vh]", delay: 0.6},
+        {Component: Circles, position: "left-[0vw] top-[57vh]", delay: 0.8},
+        {Component: Hammer, position: "right-[10vw] top-[25vh]", delay: 1},
+        {Component: File, position: "right-[40vw] -top-[5vh]", delay: 1.2},
+    ];
+
+    const svgsMobile = [
+        {Component: Hands, position: "left-[5vw] top-[10vh]", delay: 0},
+        {Component: redCircles, position: "right-[8vw] top-[12vh]", delay: 0.2},
+        {Component: Puzzle, position: "left-[10vw] top-[35vh]", delay: 0.4},
+        {Component: Suitcase, position: "right-[12vw] top-[55vh]", delay: 0.6},
+        {Component: Circles, position: "left-[8vw] top-[60vh]", delay: 0.8},
+        {Component: Hammer, position: "right-[10vw] top-[32vh]", delay: 1},
+        {Component: File, position: "right-[20vw] top-[70vh]", delay: 1.2},
+    ];
+
 
     return (
         <div className="w-screen h-full">
@@ -91,18 +99,18 @@ const Home = () => {
                 <Navbar/>
             </div>
 
-            {/*<div className="w-screen relative">*/}
-            {/*    /!*{(isMobile ? svgsMobile : svgs).map((svg, index) => (*!/*/}
-            {/*    /!*    <motion.div*!/*/}
-            {/*    /!*        key={index}*!/*/}
-            {/*    /!*        className={`absolute ${svg.position} ${isMobile ? "max-w-[130px] max-h-[130px]" : "max-w-[235px] max-h-[235px]"}`}*!/*/}
-            {/*    /!*        animate={getLoopAnimation(svg.delay).animate}*!/*/}
-            {/*    /!*        transition={getLoopAnimation(svg.delay).transition}*!/*/}
-            {/*    /!*    >*!/*/}
-            {/*    /!*        <svg.Component className="w-full h-full"/>*!/*/}
-            {/*    /!*    </motion.div>*!/*/}
-            {/*    /!*))}*!/*/}
-            {/*</div>*/}
+            <div className="w-screen relative">
+                {(isMobile ? svgsMobile : svgs).map((svg, index) => (
+                    <motion.div
+                        key={index}
+                        className={`absolute ${svg.position} ${isMobile ? "max-w-[130px] max-h-[130px]" : "max-w-[235px] max-h-[235px]"}`}
+                        animate={getLoopAnimation(svg.delay).animate}
+                        transition={getLoopAnimation(svg.delay).transition}
+                    >
+                        <svg.Component className="w-full h-full"/>
+                    </motion.div>
+                ))}
+            </div>
 
             <motion.div
                 initial={{opacity: 0, y: 400}}
