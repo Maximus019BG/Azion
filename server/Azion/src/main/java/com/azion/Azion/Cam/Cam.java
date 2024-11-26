@@ -17,7 +17,6 @@ public class Cam {
     @Column
     private String camName; //Camera id
     
-    @Column
     @OneToOne
     private CamLog log;
     
@@ -44,6 +43,10 @@ public class Cam {
     
     public String getOrgAddress() {
         return orgAddress;
+    }
+    
+    public void setOrgAddress(String orgAddress) {
+        this.orgAddress = orgAddress;
     }
     
     public void setOrgName(String orgAddress) {

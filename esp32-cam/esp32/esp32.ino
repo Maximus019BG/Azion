@@ -3,11 +3,11 @@
 #include <HTTPClient.h>
 
 //Unique camera ID
-#define CAMERA_ID "CAM-eV85kBL6dHmd9iBFKtCAG0LrquG5URaF"  //CAMERA_ID for each camera
+#define CAMERA_ID "CAM-eV85kBL6dHmd9iBFKtCAG0LrquG5URaF"  //CAMERA_ID for each camera EXAMPLE!!!
 
 //Network credentials
-const char *ssid = "A1_52BB";                   // Replace with actual credentials
-const char *password = "48575443B02A39A4B";     // Replace with actual credentials
+const char *ssid = "WIFI_NAME"; // Replace with real!!!
+const char *password = "WIFI_PASS"; // Replace with real!!!
 
 void startCamera() {
     camera_config_t config;
