@@ -78,11 +78,10 @@ public class CamController {
         
         try {
             if(user.getRoleLevel() <= camRepository.findByCamName(auth).get().getRoleLevel()) {
-                camService.addLog(auth, "User " + user.getName() + "got in");
+                camService.addLog(auth, "User " + user.getName() + " got in");
                 emailService.sendLoginEmail(user.getEmail(), "faceID login method", user.getName());
             } else {
-                camService.addLog(auth, "User " + user.getName() + "tried to get in");
-                emailService.sendLoginEmail(user.getEmail(), "faceID login method", user.getName());
+                camService.addLog(auth, "User " + user.getName() + " tried to get in");
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to enter");
             }
         } catch (Exception e) {
