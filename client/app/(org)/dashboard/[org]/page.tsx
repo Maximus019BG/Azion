@@ -90,7 +90,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
                     <Loading/>
                 </div>
             ) : (
-                <div className="w-screen h-screen flex overflow-y-hidden">
+                <div className="w-full h-dvh flex overflow-y-hidden">
                     <div className="w-1/4 h-full">
                         <SideMenu/>
                     </div>
