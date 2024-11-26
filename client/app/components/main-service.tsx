@@ -91,9 +91,10 @@ const HorizontalScrollCarousel = () => {
     const rotateValues = [5, -5, 10, -10]; // Different rotate values
 
     return (
-        <section ref={targetRef} className={`relative h-[300vh] bg-[#060610] ${isMobile ? "overflow-auto" : ""}`}>
+        <section ref={targetRef}
+                 className={`relative h-full lg:h-[300vh] bg-[#060610] ${isMobile ? "overflow-visible" : ""}`}>
             <div
-                className={`sticky top-0 flex h-screen items-center ${isMobile ? "flex-col" : "overflow-hidden"}`}>
+                className={`lg:sticky lg:top-0 flex h-full lg:h-screen items-center ${isMobile ? "flex-col" : "overflow-hidden"}`}>
                 <motion.div
                     style={!isMobile ? {x} : undefined}  // Only apply the `x` transform on medium or larger screens
                     className={`flex ${isMobile ? "flex-col gap-10" : "justify-center items-center gap-48"}`}

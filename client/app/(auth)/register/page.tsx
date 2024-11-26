@@ -177,36 +177,36 @@ const Register = () => {
 
     const inputFields: InputField<any>[] = [
         {
-            label: "Enter your username:",
+            label: "Enter your username",
             value: name,
             onChange: setName,
             type: "text",
         },
         {
-            label: "Enter your email:",
+            label: "Enter your email",
             value: email,
             onChange: setEmail,
             type: "email",
         },
         {
-            label: "Enter your age:",
+            label: "Enter your age",
             value: age,
             onChange: (value: any) => setAge(value),
             type: "date",
         },
         {
-            label: "Password:",
+            label: "Password",
             value: password,
             onChange: setPassword,
             type: "password",
-            combinedWith: "Confirm Password:",
+            combinedWith: "Confirm Password",
         },
         {
-            label: "Confirm Password:",
+            label: "Confirm Password",
             value: password2,
             onChange: setPassword2,
             type: "password",
-            combinedWith: "Password:",
+            combinedWith: "Password",
         },
         {
             label: "I'm an organization owner",
