@@ -57,7 +57,7 @@ public class CamLog {
 
     public void addLog(String logEntry) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String logWithTimestamp = timestamp + " - " + logEntry;
+        String logWithTimestamp = timestamp + " - " + logEntry + "\n";
         
         if (this.log == null) {
             this.log = logWithTimestamp.getBytes();
