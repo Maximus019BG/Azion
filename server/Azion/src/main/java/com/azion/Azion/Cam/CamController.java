@@ -1,5 +1,6 @@
 package com.azion.Azion.Cam;
 
+import com.azion.Azion.Cam.DTO.CamDTO;
 import com.azion.Azion.MFA.Service.MFAService;
 import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.Org.Repository.OrgRepository;
@@ -14,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "AzionCam", allowedHeaders = "*")
@@ -29,9 +32,10 @@ public class CamController {
     private final CamRepository camRepository;
     private final OrgRepository orgRepository;
     private final UserService userService;
+    private final CamLogRepository camLogRepository;
     
     @Autowired
-    public CamController(EmailService emailService, TokenService tokenService, UserRepository userRepository, MFAService mfaService, CamService camService, CamRepository camRepository, OrgRepository orgRepository, UserService userService) {
+    public CamController(EmailService emailService, TokenService tokenService, UserRepository userRepository, MFAService mfaService, CamService camService, CamRepository camRepository, OrgRepository orgRepository, UserService userService, CamLogRepository camLogRepository) {
         this.emailService = emailService;
         this.tokenService = tokenService;
         this.userRepository = userRepository;
@@ -40,6 +44,7 @@ public class CamController {
         this.camRepository = camRepository;
         this.orgRepository = orgRepository;
         this.userService = userService;
+        this.camLogRepository = camLogRepository;
     }
     
     //Route for the camera
@@ -72,28 +77,47 @@ public class CamController {
         }
         
         try {
-            camService.addLog(auth, "User " + user.getName() + "got in");
-            emailService.sendLoginEmail(user.getEmail(), "faceID login method", user.getName());
+            if(user.getRoleLevel() <= camRepository.findByCamName(auth).get().getRoleLevel()) {
+                camService.addLog(auth, "User " + user.getName() + "got in");
+                emailService.sendLoginEmail(user.getEmail(), "faceID login method", user.getName());
+            } else {
+                camService.addLog(auth, "User " + user.getName() + "tried to get in");
+                emailService.sendLoginEmail(user.getEmail(), "faceID login method", user.getName());
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to enter");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return ResponseEntity.ok("Secured");
     }
     
+    @Transactional
     @PostMapping("/add")
     public ResponseEntity<?> addLog(@RequestBody Map<String, Object> requestBody, @RequestHeader("authorization") String auth) {
         String camName = (String) requestBody.get("camName");
         int roleLevel = (int) requestBody.get("roleLevel");
-        User user = userRepository.findByEmail(auth);
+        User user = tokenService.getUserFromToken(auth);
+        
+        if(user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
         
         try {
             if(!userService.userSuperAdmin(user)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to add a camera");
             }
+            //Camera
             Cam cam = new Cam();
             cam.setCamName(camName);
             cam.setRoleLevel(roleLevel);
             cam.setOrgAddress(orgRepository.findById(user.getOrgid()).get().getOrgAddress());
+            camRepository.save(cam);
+            //Logs
+            CamLog camLog = new CamLog();
+            camLog.setCamID(camRepository.findByCamName(camName).get());
+            camLog.addLog("Camera added");
+            camLogRepository.save(camLog);
+            cam.setLog(camLog);
             camRepository.save(cam);
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,5 +125,50 @@ public class CamController {
         }
         
         return ResponseEntity.ok("Cam added");
+    }
+    
+    @Transactional
+    @GetMapping("/logs/{camId}")
+    public ResponseEntity<?> getLog(@RequestHeader("authorization") String auth, @PathVariable String camId) {
+        User user = tokenService.getUserFromToken(auth);
+        //User validation
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+        if (!userService.userSuperAdmin(user)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to view logs");
+        }
+        //Logs
+        CamLog camLog = camRepository.findByCamName(camId).get().getLog();
+        String logMessage = new String(camLog.getLog());
+        Map<String, String> logMap = Map.of("logs", logMessage);
+        return ResponseEntity.ok(logMap);
+    }
+    
+    
+    @Transactional
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllCams(@RequestHeader("authorization") String auth) {
+        User user = tokenService.getUserFromToken(auth);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+        if (!userService.userSuperAdmin(user)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to view logs");
+        }
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Organization not found");
+        }
+        List<CamDTO> camDTOs = camRepository.findByOrgAddress(org.getOrgAddress()).stream()
+            .map(cam -> {
+                CamDTO dto = new CamDTO();
+                dto.setCamName(cam.getCamName());
+                dto.setRoleLevel(cam.getRoleLevel());
+                dto.setOrgAddress(cam.getOrgAddress());
+                return dto;
+            })
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(camDTOs);
     }
 }

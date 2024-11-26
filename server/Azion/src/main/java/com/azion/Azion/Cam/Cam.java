@@ -15,7 +15,7 @@ public class Cam {
     private String orgAddress;
     
     @Column
-    private String camName; //Camera id
+    private String camName;
     
     @OneToOne
     private CamLog log;

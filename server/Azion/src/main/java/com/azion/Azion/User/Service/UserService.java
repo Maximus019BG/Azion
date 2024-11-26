@@ -12,6 +12,7 @@ import com.azion.Azion.Token.TokenType;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -108,6 +109,7 @@ public class UserService {
     }
     
     //User admin validation
+    @Transactional
     public boolean userAdmin(User user) {
         String role = user.getRole();
         int roleLevel = user.getRoleLevel();
@@ -115,10 +117,9 @@ public class UserService {
     }
     
     //User superAdmin validation
+    @Transactional
     public boolean userSuperAdmin(User user) {
-        String role = user.getRole();
         int roleLevel = user.getRoleLevel();
         return (roleLevel > 0 && roleLevel <= 2);
     }
-    
 }

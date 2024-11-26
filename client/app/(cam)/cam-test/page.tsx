@@ -9,7 +9,7 @@ import Side_menu from "@/app/components/Side-menu";
 
 const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
 
-export default function MfaFace() {
+export default function CamTest() {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const [showOverlay, setShowOverlay] = useState(false);
 
@@ -50,13 +50,13 @@ export default function MfaFace() {
                 const base64Image = imageData.split(',')[1];
                 const accessToken = Cookies.get('azionAccessToken');
 
-                const request = { accessToken };
                 const payload = { image: base64Image };
 
                 try {
-                    const response: AxiosResponse<{ image: string }> = await axios.post(`${apiUrl}/mfa/face-scan`, { request, payload }, {
+                    const response: AxiosResponse<{ image: string }> = await axios.post(`${apiUrl}/cam/sec`, { payload }, {
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'authorization': 'TEST1234' // Add authorization header here
                         }
                     });
                     const processedImage = `data:image/jpeg;base64,${response.data.image}`;
@@ -85,7 +85,7 @@ export default function MfaFace() {
             <h1
                 className={`text-white mb-5 text-5xl md:text-6xl lg:text-8xl ${azionText.className}`}
             >
-                Azion<span className="text-lightAccent">Cam</span>.
+                Azion<span className="text-lightAccent">Cam-Test</span>.
             </h1>
             <button
                 className="text-white bg-accent w-fit font-black text-2xl px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
