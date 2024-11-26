@@ -163,7 +163,7 @@ const Home = () => {
                 </motion.div>
             </motion.div>
 
-            <div className="w-full flex flex-col justify-center items-center mt-48">
+            <div className="w-full h-full flex flex-col justify-center items-center">
                 <div className="w-full h-48 bg-gradient-to-b from-[#06061000] via-[#06061078] to-[#060610]"/>
                 <Main_Services/>
             </div>
