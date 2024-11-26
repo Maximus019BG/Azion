@@ -92,19 +92,19 @@ const Login = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     type="text"
                     placeholder="Enter your email"
-                    className="bg-gray-700 text-white pl-4 h-12 placeholder:text-gray-400 rounded-3xl w-full hover:bg-gray-600 transition"
+                    className="bg-gray-700 text-white pl-4 h-12 placeholder:text-gray-400 rounded-lg w-full hover:bg-gray-600 transition"
                 />
                 <input
                     onChange={(e) => setPassword(e.target.value)}
                     type="password"
                     placeholder="Password"
-                    className="bg-gray-700 text-white pl-4 h-12 rounded-3xl w-full placeholder:text-gray-400 hover:bg-gray-600 transition"
+                    className="bg-gray-700 text-white pl-4 h-12 rounded-lg w-full placeholder:text-gray-400 hover:bg-gray-600 transition"
                 />
             </div>
 
             <button
                 onClick={showModal}
-                className="bg-lightAccent text-xl text-white font-black w-full max-w-sm py-3 rounded-3xl hover:scale-105 transition transform"
+                className="bg-lightAccent text-xl text-white font-black w-full max-w-sm py-3 rounded-lg hover:scale-105 transition transform"
             >
                 Continue
             </button>
