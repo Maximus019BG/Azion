@@ -202,7 +202,7 @@ const Calendar: React.FC = () => {
                                     {/* Waste Bin Icon in the bottom-right corner */}
                                     <button
                                         onClick={() => handleDelete(event.id)}
-                                        className="absolute bottom-1 right-1 bg-transparent rounded-lg p-1 shadow-md hover:bg-red-500 hover:text-white"
+                                        className="absolute bottom-1 right-1 bg-red-500 rounded-lg p-1 shadow-md hover:bg-red-400 hover:text-white"
                                     >
                                         <Trash2Icon className="h-4 w-4"/>
                                     </button>

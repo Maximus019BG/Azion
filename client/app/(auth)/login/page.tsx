@@ -78,13 +78,11 @@ const Login = () => {
     };
 
     return (
-        <div className="flex flex-col w-screen h-screen bg-white justify-center items-center gap-10 p-4">
-            <Link className="absolute top-4 left-4" href="/">
+        <div className="flex flex-col w-screen h-screen text-white justify-center items-center gap-10 p-4">
+            <Link className="absolute top-6 left-6" href="/">
                 <FontAwesomeIcon className="text-3xl text-lightAccent" icon={faCircleLeft}/>
             </Link>
-            <h1
-                className={`text-lightAccent text-6xl font-extrabold text-center mb-6 ${headerText.className}`}
-            >
+            <h1 className={`text-lightAccent text-6xl font-extrabold text-center mb-6 ${headerText.className}`}>
                 Login
             </h1>
 
@@ -94,38 +92,38 @@ const Login = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     type="text"
                     placeholder="Enter your email"
-                    className="bg-[#ceccc8] text-black pl-4 h-12 placeholder:text-black rounded-3xl w-full hover:bg-[#c0beba] transition"
+                    className="bg-gray-700 text-white pl-4 h-12 placeholder:text-gray-400 rounded-lg w-full hover:bg-gray-600 transition"
                 />
                 <input
                     onChange={(e) => setPassword(e.target.value)}
                     type="password"
                     placeholder="Password"
-                    className="bg-[#ceccc8] text-black pl-4 h-12 rounded-3xl w-full placeholder:text-black hover:bg-[#c0beba] transition"
+                    className="bg-gray-700 text-white pl-4 h-12 rounded-lg w-full placeholder:text-gray-400 hover:bg-gray-600 transition"
                 />
             </div>
 
             <button
                 onClick={showModal}
-                className="bg-lightAccent text-xl text-white font-black w-full max-w-sm py-3 rounded-3xl hover:scale-105 transition transform"
+                className="bg-lightAccent text-xl text-white font-black w-full max-w-sm py-3 rounded-lg hover:scale-105 transition transform"
             >
                 Continue
             </button>
 
             {/* Buttons and Links */}
             <div className="w-full flex flex-col justify-center items-center gap-2">
-                <p className="text-black font-bold text-center">
+                <p className="text-white font-bold text-center">
                     Don&apos;t have an account?{" "}
                     <Link href="/register" className="text-lightAccent hover:text-sky-400 font-bold underline">
                         Register
                     </Link>
                 </p>
-                <p className="text-black font-bold text-center">
+                <p className="text-white font-bold text-center">
                     Login using{" "}
                     <Link href="/login/fast" className="text-lightAccent hover:text-sky-400 font-bold underline">
                         Your Face
                     </Link>
                 </p>
-                <p className="text-black font-bold text-center">
+                <p className="text-white font-bold text-center">
                     Forgot your{" "}
                     <Link href="/forgot-password" className="text-lightAccent hover:text-sky-400 font-bold underline">
                         Password?

@@ -9,6 +9,13 @@ import Footer from "./components/Footer";
 import Cookies from "js-cookie";
 import {sessionCheck} from "./func/funcs";
 import {getOrgName} from "./func/org";
+import Hands from "@/public/Artboard2.svg";
+import redCircles from "@/public/Artboard3.svg";
+import Puzzle from "@/public/Artboard4.svg";
+import Suitcase from "@/public/Artboard5.svg";
+import Circles from "@/public/Artboard6.svg";
+import Hammer from "@/public/Artboard7.svg";
+import Building from "@/public/Artboard8.svg";
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
 
@@ -65,25 +72,26 @@ const Home = () => {
         },
     });
 
-    // const svgs = [
-    //     {Component: Artboard2, position: "right-[3vw] top-[0vh]", delay: 0},
-    //     {Component: Artboard3, position: "right-[30vw] -top-[10vh]", delay: 0.2},
-    //     {Component: Artboard4, position: "right-[37vw] top-[20vh]", delay: 0.4},
-    //     {Component: Artboard5, position: "right-[16vw] top-[58vh]", delay: 0.6},
-    //     {Component: Artboard6, position: "left-[0vw] top-[9vh]", delay: 0.8},
-    //     {Component: Artboard7, position: "right-[3vw] top-[32vh]", delay: 1},
-    //     {Component: Artboard8, position: "right-[57vw] -top-[6vh]", delay: 1.2},
-    // ];
-    //
-    // const svgsMobile = [
-    //     {Component: Artboard2, position: "right-[13vw] top-[0vh]", delay: 0},
-    //     {Component: Artboard3, position: "left-[9vw] top-[0vh]", delay: 0.2},
-    //     {Component: Artboard4, position: "left-[0vw] top-[23vh]", delay: 0.4},
-    //     {Component: Artboard5, position: "right-[9vw] top-[64vh]", delay: 0.6},
-    //     {Component: Artboard6, position: "left-[0vw] top-[57vh]", delay: 0.8},
-    //     {Component: Artboard7, position: "right-[10vw] top-[32vh]", delay: 1},
-    //     {Component: Artboard8, position: "right-[40vw] top-[62vh]", delay: 1.2},
-    // ];
+    const svgs = [
+        {Component: Hands, position: "left-[8vw] top-[0vh]", delay: 0},
+        {Component: redCircles, position: "right-[18vw] -top-[3vh]", delay: 0.2},
+        {Component: Puzzle, position: "left-[30vw] top-[61vh]", delay: 0.4},
+        {Component: Suitcase, position: "right-[15vw] top-[55vh]", delay: 0.6},
+        {Component: Circles, position: "left-[0vw] top-[50vh]", delay: 0.8},
+        {Component: Hammer, position: "right-[6vw] top-[25vh]", delay: 1},
+        {Component: Building, position: "right-[40vw] top-[12vh]", delay: 1.2},
+    ];
+
+    const svgsMobile = [
+        {Component: Hands, position: "left-[5vw] top-[5vh]", delay: 0},
+        {Component: redCircles, position: "right-[8vw] top-[7vh]", delay: 0.2},
+        {Component: Puzzle, position: "left-[8vw] top-[35vh]", delay: 0.4},
+        {Component: Suitcase, position: "right-[12vw] top-[50vh]", delay: 0.6},
+        {Component: Circles, position: "left-[8vw] top-[60vh]", delay: 0.8},
+        {Component: Hammer, position: "right-[10vw] top-[27vh]", delay: 1},
+        {Component: Building, position: "right-[20vw] top-[65vh]", delay: 1.2},
+    ];
+
 
     return (
         <div className="w-screen h-full">
@@ -91,33 +99,33 @@ const Home = () => {
                 <Navbar/>
             </div>
 
-            {/*<div className="w-screen relative">*/}
-            {/*    /!*{(isMobile ? svgsMobile : svgs).map((svg, index) => (*!/*/}
-            {/*    /!*    <motion.div*!/*/}
-            {/*    /!*        key={index}*!/*/}
-            {/*    /!*        className={`absolute ${svg.position} ${isMobile ? "max-w-[130px] max-h-[130px]" : "max-w-[235px] max-h-[235px]"}`}*!/*/}
-            {/*    /!*        animate={getLoopAnimation(svg.delay).animate}*!/*/}
-            {/*    /!*        transition={getLoopAnimation(svg.delay).transition}*!/*/}
-            {/*    /!*    >*!/*/}
-            {/*    /!*        <svg.Component className="w-full h-full"/>*!/*/}
-            {/*    /!*    </motion.div>*!/*/}
-            {/*    /!*))}*!/*/}
-            {/*</div>*/}
+            <div className="w-screen relative">
+                {(isMobile ? svgsMobile : svgs).map((svg, index) => (
+                    <motion.div
+                        key={index}
+                        className={`absolute ${svg.position} ${isMobile ? "max-w-[130px] max-h-[130px]" : "max-w-[235px] max-h-[235px]"}`}
+                        animate={getLoopAnimation(svg.delay).animate}
+                        transition={getLoopAnimation(svg.delay).transition}
+                    >
+                        <svg.Component className="w-full h-full"/>
+                    </motion.div>
+                ))}
+            </div>
 
             <motion.div
                 initial={{opacity: 0, y: 400}}
                 animate={{opacity: 1, y: 0}}
                 transition={{duration: 1.2}}
-                className="h-[80vh] w-fit flex justify-center items-center md:justify-start md:items-center relative"
+                className="h-[80vh] w-full flex justify-center items-center sm:justify-start md:items-center relative"
             >
                 <motion.div
                     initial={{opacity: 0, y: 20}}
                     animate={{opacity: 1, y: 0}}
                     transition={{duration: 0.6, delay: 0.5}}
-                    className="h-full md:max-w-5xl max-w-lg p-10 flex flex-col justify-center items-center md:justify-center md:items-start z-10"
+                    className="h-full md:max-w-5xl max-w-lg p-10 flex flex-col justify-center items-center md:items-start gap-8 z-10"
                 >
                     <h1
-                        className={`text-3xl text-white lg:text-6xl text-center md:text-left flex flex-col gap-2 ${HeaderText.className}`}
+                        className={`text-3xl text-white lg:text-6xl text-center sm:text-left flex flex-col gap-2 ${HeaderText.className}`}
                     >
                         {["Improve your workflow", "and Secure your company", "with Azion."].map((line, index) => (
                             <motion.span
@@ -135,31 +143,35 @@ const Home = () => {
                         initial={{opacity: 0, y: 50}}
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.8, delay: 0.8}}
-                        className="flex flex-col sm:flex-row md:justify-start md:items-start justify-center items-center gap-4 md:gap-8 mt-5 md:mt-12 w-full"
+                        className="flex flex-col sm:flex-row md:justify-start md:items-start justify-center items-center gap-4 md:gap-8  w-full"
                     >
-                        <Link href={org !== null ? `/dashboard/${org}` : `/register`}>
-                            <motion.button
-                                whileHover={{scale: 1.05}}
-                                whileTap={{scale: 0.95}}
-                                className={`text-white px-16 md:px-24 py-3 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
-                            >
-                                {ButtonText1}
-                            </motion.button>
-                        </Link>
-                        <Link href={org !== null ? `/organizations` : `/login`}>
-                            <motion.button
-                                whileHover={{scale: 1.05}}
-                                whileTap={{scale: 0.95}}
-                                className={`text-white px-12 md:px-20 py-3 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-blue-900 ${HeaderText.className}`}
-                            >
-                                {ButtonText2}
-                            </motion.button>
-                        </Link>
+                        <div className="w-full">
+                            <Link href={org !== null ? `/dashboard/${org}` : `/register`}>
+                                <motion.button
+                                    whileHover={{scale: 1.05}}
+                                    whileTap={{scale: 0.95}}
+                                    className={`text-white w-full py-3 bg-accent rounded-2xl text-base sm:text-lg md:text-xl hover:bg-blue-900 ${HeaderText.className}`}
+                                >
+                                    {ButtonText1}
+                                </motion.button>
+                            </Link>
+                        </div>
+                        <div className="w-full">
+                            <Link href={org !== null ? `/organizations` : `/login`}>
+                                <motion.button
+                                    whileHover={{scale: 1.05}}
+                                    whileTap={{scale: 0.95}}
+                                    className={`text-white w-full py-3 bg-accent rounded-2xl text-base sm:text-lg md:text-xl hover:bg-blue-900 ${HeaderText.className}`}
+                                >
+                                    {ButtonText2}
+                                </motion.button>
+                            </Link>
+                        </div>
                     </motion.div>
                 </motion.div>
             </motion.div>
 
-            <div className="w-full flex flex-col justify-center items-center mt-48">
+            <div className="w-full h-full flex flex-col justify-center items-center">
                 <div className="w-full h-48 bg-gradient-to-b from-[#06061000] via-[#06061078] to-[#060610]"/>
                 <Main_Services/>
             </div>

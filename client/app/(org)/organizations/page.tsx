@@ -36,12 +36,12 @@ const Organizations = () => {
     return (
         <>
             {loading ? (
-                <div className="w-screen h-screen flex justify-center items-center ">
+                <div className="w-screen h-dvh flex justify-center items-center ">
                     <Loading/>
                 </div>
             ) : (
                 <div className="h-screen w-screen overflow-hidden flex">
-                    <div className="w-1/4 bg-background">
+                    <div className="lg:w-1/4 bg-background">
                         <SideMenu/>
                     </div>
                     <div className="w-full flex flex-col justify-start items-center py-8 overflow-y-auto">
@@ -72,10 +72,10 @@ const Organizations = () => {
 
                         {/* Toggle Button */}
                         <button
-                            className="fixed bottom-10 right-10 bg-accent text-white p-3 rounded-btn hover:bg-blue-900"
+                            className="fixed bottom-5 right-5 bg-accent text-white p-4 rounded-btn hover:bg-blue-900"
                             onClick={() => setShowJoinOrg(!showJoinOrg)}
                         >
-                            {showJoinOrg ? "Close Join Org" : "Join Organization"}
+                            {showJoinOrg ? "Close" : "Join"}
                         </button>
 
                         {/* Conditional Rendering of Join Organization */}

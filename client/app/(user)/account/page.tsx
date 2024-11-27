@@ -34,7 +34,7 @@ const Account = () => {
                 </div>
             ) : (
                 <div className="w-screen h-screen flex overflow-hidden">
-                    <div className="w-1/4 h-full">
+                    <div className="lg:w-1/4 h-full">
                         <SideMenu/>
                     </div>
                     <div className="w-full h-full flex flex-col items-center overflow-y-auto">

@@ -87,7 +87,7 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({searchTerm}) => {
         <div className="w-full h-full flex gap-6 flex-wrap justify-center p-4">
             {filteredOrgs.map((org, index) => (
                 <div key={index}
-                     className="flex flex-col justify-start items-start gap-4 p-6 bg-gray-800 rounded-lg w-96 shadow-lg transform transition-transform hover:scale-105 hover:shadow-2xl">
+                     className="flex flex-col justify-start items-start gap-4 p-6 bg-base-200 rounded-lg w-96 shadow-lg transform transition-transform hover:scale-105 hover:shadow-2xl">
                     <h2 className="text-white text-lg md:text-xl font-semibold mb-3">
                         {org.orgName}
                     </h2>

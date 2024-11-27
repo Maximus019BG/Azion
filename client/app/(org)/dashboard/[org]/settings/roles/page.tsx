@@ -58,11 +58,11 @@ const RoleEdit: FC<PageProps> = ({params}) => {
     }
 
     return (
-        <div className="flex">
-            <div className="w-1/4">
+        <div className="w-full h-dvh flex">
+            <div className="lg:w-1/4">
                 <SideMenu/>
             </div>
-            <div className="w-3/4 flex justify-center items-center mt-8 mr-10">
+            <div className="w-full flex justify-center items-center">
                 <div className="">
                     <RoleList/>
                 </div>

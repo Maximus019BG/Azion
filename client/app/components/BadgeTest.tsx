@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import Draggable from "react-draggable";
 import ProfilePicture from "../components/Profile-picture";
 import {Commissioner} from "next/font/google";
 import {UserData} from "../func/funcs";
@@ -76,111 +75,106 @@ const Badge = () => {
     };
 
     return (
-        <Draggable
-            position={position}
-            onStop={handleDragStop}
-            onDrag={(e, data) => setPosition({x: data.x, y: data.y})}
-        >
-            <div
-                className="relative bg-blue-600 w-full h-fit rounded-xl flex flex-col justify-between p-8 text-white shadow-lg cursor-grab transform transition-transform hover:scale-105 hover:shadow-2xl">
-                {/* Header */}
-                <div className="relative z-10 ">
-                    <div className="flex justify-between items-center ">
-                        <div className="text-xl font-bold flex justify-center items-center">
-                            <h1
-                                className={` flex justify-center items-end gap-3 neon-text text-xl md:text-2xl lg:text-4xl ${azionText.className}`}
-                            >
-                                AZION
-                                <span className="border border-white text-white text-xs p-1 rounded">
+
+        <div
+            className="relative bg-blue-600 w-full h-fit rounded-xl flex flex-col justify-between p-8 text-white shadow-lg transform transition-transform hover:scale-105 hover:shadow-2xl">
+            {/* Header */}
+            <div className="relative z-10 ">
+                <div className="flex justify-between items-center ">
+                    <div className="text-xl font-bold flex justify-center items-center">
+                        <h1
+                            className={` flex justify-center items-end gap-3 neon-text text-xl md:text-2xl lg:text-4xl ${azionText.className}`}
+                        >
+                            AZION
+                            <span className="border border-white text-white text-xs p-1 rounded">
                   RL-{roleLevel}
                 </span>
-                            </h1>
-                        </div>
-                        <div className="text-3xl font-bold flex justify-center items-center">
-                            <Image src="/white-logo.png" alt="white-logo-azion" width={70} height={50}></Image>
-                        </div>
+                        </h1>
+                    </div>
+                    <div className="text-3xl font-bold flex justify-center items-center">
+                        <Image src="/white-logo.png" alt="white-logo-azion" width={70} height={50}></Image>
                     </div>
                 </div>
-
-                <div className="w-fit">
-                    <ProfilePicture displayImage={displayImage} onFileChange={(file) => {
-                        setProfilePicture(file);
-                        setIsImageChanged(true);
-                    }}/>
-                </div>
-
-                {/* Name Section */}
-                <div className="relative z-10 w-fit">
-                    {isEditing.name ? (
-                        <div className="relative w-full">
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="w-full px-3 py-2 bg-transparent focus:outline-none text-white border-b border-white border-opacity-50"
-                            />
-                            <FaPencilAlt className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white"/>
-                        </div>
-                    ) : (
-                        <h2 className="text-3xl font-bold"
-                            onDoubleClick={() => setIsEditing({...isEditing, name: true})}>
-                            {prevValues.name}
-                        </h2>
-                    )}
-                    {isEditing.email ? (
-                        <div className="relative w-full">
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-3 py-2 bg-transparent focus:outline-none text-white border-b border-white border-opacity-50"
-                            />
-                            <FaPencilAlt className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white"/>
-                        </div>
-                    ) : (
-                        <h2 className="text-xl font-semibold"
-                            onDoubleClick={() => setIsEditing({...isEditing, email: true})}>
-                            {prevValues.email}
-                        </h2>
-                    )}
-                    <p className="text-sm mt-2 uppercase">{role}</p>
-                </div>
-
-                {/* Date and Event Type */}
-                <div className="relative z-10">
-                    <div className="uppercase text-sm">
-                        <div className="relative z-10 w-fit">
-                            {isEditing.dateOfBirth ? (
-                                <div className="relative w-full">
-                                    <input
-                                        type="date"
-                                        value={dateOfBirth}
-                                        onChange={(e) => setDateOfBirth(e.target.value)}
-                                        className="w-full px-3 py-2 bg-transparent focus:outline-none text-white border-b border-white border-opacity-50"
-                                    />
-                                    <FaPencilAlt
-                                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white"/>
-                                </div>
-                            ) : (
-                                <p className="uppercase text-sm"
-                                   onDoubleClick={() => setIsEditing({...isEditing, dateOfBirth: true})}>
-                                    {prevValues.dateOfBirth}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-                </div>
-                {/* Save Button */}
-                {(isEditing.name || isEditing.email || isEditing.dateOfBirth || isImageChanged) && (
-                    <button
-                        onClick={handleSubmit}
-                        className="bg-gray-800 text-white hover:bg-gray-700 font-bold py-2 px-4 rounded"
-                    >
-                        Save
-                    </button>
-                )}
             </div>
-        </Draggable>
+
+            <div className="w-fit">
+                <ProfilePicture displayImage={displayImage} onFileChange={(file) => {
+                    setProfilePicture(file);
+                    setIsImageChanged(true);
+                }}/>
+            </div>
+
+            {/* Name Section */}
+            <div className="relative z-10 w-fit">
+                {isEditing.name ? (
+                    <div className="relative w-full">
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="w-full px-3 py-2 bg-transparent focus:outline-none text-white border-b border-white border-opacity-50"
+                        />
+                        <FaPencilAlt className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white"/>
+                    </div>
+                ) : (
+                    <h2 className="text-3xl font-bold"
+                        onDoubleClick={() => setIsEditing({...isEditing, name: true})}>
+                        {prevValues.name}
+                    </h2>
+                )}
+                {isEditing.email ? (
+                    <div className="relative w-full">
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full px-3 py-2 bg-transparent focus:outline-none text-white border-b border-white border-opacity-50"
+                        />
+                        <FaPencilAlt className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white"/>
+                    </div>
+                ) : (
+                    <h2 className="text-xl font-semibold"
+                        onDoubleClick={() => setIsEditing({...isEditing, email: true})}>
+                        {prevValues.email}
+                    </h2>
+                )}
+                <p className="text-sm mt-2 uppercase">{role}</p>
+            </div>
+
+            {/* Date and Event Type */}
+            <div className="relative z-10">
+                <div className="uppercase text-sm">
+                    <div className="relative z-10 w-fit">
+                        {isEditing.dateOfBirth ? (
+                            <div className="relative w-full">
+                                <input
+                                    type="date"
+                                    value={dateOfBirth}
+                                    onChange={(e) => setDateOfBirth(e.target.value)}
+                                    className="w-full px-3 py-2 bg-transparent focus:outline-none text-white border-b border-white border-opacity-50"
+                                />
+                                <FaPencilAlt
+                                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white"/>
+                            </div>
+                        ) : (
+                            <p className="uppercase text-sm"
+                               onDoubleClick={() => setIsEditing({...isEditing, dateOfBirth: true})}>
+                                {prevValues.dateOfBirth}
+                            </p>
+                        )}
+                    </div>
+                </div>
+            </div>
+            {/* Save Button */}
+            {(isEditing.name || isEditing.email || isEditing.dateOfBirth || isImageChanged) && (
+                <button
+                    onClick={handleSubmit}
+                    className="bg-gray-800 text-white hover:bg-gray-700 font-bold py-2 px-4 rounded"
+                >
+                    Save
+                </button>
+            )}
+        </div>
     );
 };
 

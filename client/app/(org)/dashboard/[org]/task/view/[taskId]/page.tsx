@@ -158,8 +158,8 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     }
 
     return (
-        <div className={`flex h-screen text-white ${isFullScreen ? "fixed inset-0 z-50" : ""}`}>
-            <div className="w-1/4 min-w-[200px]">
+        <div className={`flex h-dvh text-white ${isFullScreen ? "fixed inset-0 z-50" : ""}`}>
+            <div className="lg:w-1/4">
                 <SideMenu/>
             </div>
             <div className="w-full flex justify-center items-center p-4">

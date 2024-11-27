@@ -173,7 +173,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
             setAlert(true);
             setAlertMessage("Invalid date");
         }
-    }, [selectedDay, selectedMonth, selectedYear,isValidDate]);
+    }, [selectedDay, selectedMonth, selectedYear, isValidDate]);
 
     useEffect(() => {
         handleDueDateChange();
@@ -221,152 +221,178 @@ const CreateTask: FC<PageProps> = ({params}) => {
 
 
     return (
-        <div className="w-screen h-screen flex justify-center items-center overflow-hidden">
+        <div className="flex w-screen h-dvh text-white overflow-hidden">
             {loading ? (
-                <div className="w-screen h-screen flex justify-center items-center">
+                <div className="flex w-screen h-screen items-center justify-center">
                     <Loading/>
                 </div>
             ) : (
                 <>
-                    <div className="w-1/4 min-w-[250px] h-full">
+                    {/* Sidebar */}
+                    <div className=" lg:w-1/4">
                         <SideMenu/>
                     </div>
 
-                    <div className="w-full p-6 overflow-auto flex justify-center items-center">
+                    {/* Main Content */}
+                    <div className="flex-1 self-center p-6 overflow-auto">
                         {alert && (
-                            <CustomAlert message={alertMessage} onClose={() => setAlert(false)}/>
+                            <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+                                <CustomAlert message={alertMessage} onClose={() => setAlert(false)}/>
+                            </div>
                         )}
-                        <div className="flex flex-col justify-center items-center gap-16">
-                            <h1 className="text-5xl font-extrabold">
-                                Create tasks here
+
+                        <div className="container mx-auto">
+                            <h1 className={`text-3xl md:text-5xl font-bold text-center mb-8 ${HeaderText.className}`}>
+                                Create Task
                             </h1>
-                            <div className="flex justify-start items-start gap-48">
-                                <div className="flex flex-col justify-start items-center gap-5">
-                                    <h1 className="text-3xl font-extrabold">Users:</h1>
-                                    <ul className=" flex flex-col justify-center items-center gap-3">
+
+                            <div className="flex flex-col lg:flex-row gap-12">
+                                {/* Users Section */}
+                                <div className="lg:w-1/2 bg-base-300 rounded-xl p-6 shadow-md">
+                                    <h2 className="text-2xl font-semibold mb-4">Select Users</h2>
+                                    <ul className="space-y-3">
                                         {userList.map((user, index) => (
                                             <li
                                                 key={index}
                                                 onClick={() => handleCheckboxChange(user.email)}
-                                                className={`p-2 cursor-pointer mt-0.5 mb-0.5 ${
+                                                className={`p-3 cursor-pointer rounded-lg text-center transition-all ${
                                                     selectedUsers.has(user.email)
-                                                        ? "w-56 flex justify-center items-center cursor-pointer bg-accent rounded-lg"
-                                                        : "w-56 flex justify-center items-center cursor-pointer rounded-lg border-2 border-gray-800 hover:bg-gray-800"
+                                                        ? "bg-blue-600 text-white cursor-pointer"
+                                                        : "bg-base-200 hover:bg-base-100 cursor-pointer"
                                                 }`}
                                             >
-                                                <label className="flex items-center cursor-pointer">
-                                                    <input
-                                                        type="checkbox"
-                                                        value={user.id}
-                                                        onChange={() => handleCheckboxChange(user.email)}
-                                                        className="hidden cursor-pointer"
-                                                    />
-                                                    {user.email === uEmail && (
-                                                        <h1>{user.name} <span className="text-[0.8em]">(you)</span></h1>
-                                                    ) || (
-                                                        <h1>{user.name}</h1>
+                                                <label
+                                                    className="flex w-fit justify-between items-center">
+                                                    {user.email === uEmail ? (
+                                                        <>
+                                                            <span>{user.name} (You)</span>
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={selectedUsers.has(user.email)}
+                                                                onChange={() => handleCheckboxChange(user.email)}
+                                                                className="hidden"
+                                                            />
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <span>{user.name}</span>
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={selectedUsers.has(user.email)}
+                                                                onChange={() => handleCheckboxChange(user.email)}
+                                                                className="hidden"
+                                                            />
+                                                        </>
                                                     )}
                                                 </label>
                                             </li>
                                         ))}
                                     </ul>
                                 </div>
-                                <form
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                        TaskData();
-                                    }}
-                                    className="flex flex-col justify-center items-center gap-10"
-                                >
-                                    <label className="text-xl flex gap-5">
-                                        Title:
-                                        <input
-                                            type="text"
-                                            name="title"
-                                            value={title}
-                                            onChange={(e) => setTitle(e.target.value)}
-                                            className="bg-gray-800 rounded-md text-base text-white pl-2 ml-16"
-                                        />
-                                    </label>
-                                    <label className="text-xl flex gap-5">
-                                        Description:
-                                        <input
-                                            type="text"
-                                            name="description"
-                                            value={description}
-                                            onChange={(e) => setDescription(e.target.value)}
-                                            className="textarea"
-                                        />
-                                    </label>
-                                    <div className="w-full text-xl flex gap-5 items-center">
-                                        Due Date:
-                                        <div className="flex gap-2">
+
+                                {/* Task Form */}
+                                <div className="lg:w-1/2 bg-base-300 rounded-xl p-6 shadow-md">
+                                    <form
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            TaskData();
+                                        }}
+                                        className="space-y-6"
+                                    >
+                                        <div>
+                                            <label className="block text-sm font-medium mb-2">Title</label>
+                                            <input
+                                                type="text"
+                                                name="title"
+                                                value={title}
+                                                onChange={(e) => setTitle(e.target.value)}
+                                                className="w-full bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium mb-2">Description</label>
+                                            <textarea
+                                                name="description"
+                                                value={description}
+                                                onChange={(e) => setDescription(e.target.value)}
+                                                className="w-full bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium mb-2">Due Date</label>
+                                            <div className="flex space-x-2">
+                                                <select
+                                                    value={selectedDay}
+                                                    onChange={(e) => setSelectedDay(e.target.value)}
+                                                    className="bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
+                                                >
+                                                    {days.map((day) => (
+                                                        <option key={day} value={day}>
+                                                            {day}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <select
+                                                    value={selectedMonth}
+                                                    onChange={(e) => setSelectedMonth(e.target.value)}
+                                                    className="bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
+                                                >
+                                                    {months.map((month) => (
+                                                        <option key={month} value={month}>
+                                                            {month}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <select
+                                                    value={selectedYear}
+                                                    onChange={(e) => setSelectedYear(e.target.value)}
+                                                    className="bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
+                                                >
+                                                    {years.map((year) => (
+                                                        <option key={year} value={year}>
+                                                            {year}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium mb-2">Priority</label>
                                             <select
-                                                value={selectedDay}
-                                                onChange={(e) => setSelectedDay(e.target.value)}
-                                                className=" ml-5 bg-gray-800 rounded-md text-white text-base"
+                                                value={priority}
+                                                onChange={(e) => setPriority(e.target.value)}
+                                                className="w-full bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
                                             >
-                                                {days.map((day) => (
-                                                    <option key={day} value={day}>
-                                                        {day}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            <select
-                                                value={selectedMonth}
-                                                onChange={(e) => setSelectedMonth(e.target.value)}
-                                                className="bg-gray-800 rounded-md text-white text-base"
-                                            >
-                                                {months.map((month) => (
-                                                    <option key={month} value={month}>
-                                                        {month}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            <select
-                                                value={selectedYear}
-                                                onChange={(e) => setSelectedYear(e.target.value)}
-                                                className="bg-gray-800 rounded-md text-white text-base"
-                                            >
-                                                {years.map((year) => (
-                                                    <option key={year} value={year}>
-                                                        {year}
+                                                {priorities.map((prio) => (
+                                                    <option key={prio} value={prio}>
+                                                        {prio}
                                                     </option>
                                                 ))}
                                             </select>
                                         </div>
-                                    </div>
-                                    <label className=" w-full text-xl flex gap-5">
-                                        Priority:
-                                        <select
-                                            value={priority}
-                                            onChange={(e) => setPriority(e.target.value)}
-                                            className="bg-gray-800 rounded-md text-base text-white pl-2 ml-10"
+
+                                        <div>
+                                            <label className="block text-sm font-medium mb-2">Source</label>
+                                            <input
+                                                type="text"
+                                                name="source"
+                                                value={source}
+                                                onChange={(e) => setSource(e.target.value)}
+                                                className="w-full bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+
+                                        <button
+                                            type="submit"
+                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg"
                                         >
-                                            {priorities.map((prio) => (
-                                                <option key={prio} value={prio}>
-                                                    {prio}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </label>
-                                    <label className="text-xl flex gap-5">
-                                        Source:
-                                        <input
-                                            type="text"
-                                            name="source"
-                                            value={source}
-                                            onChange={(e) => setSource(e.target.value)}
-                                            className="bg-gray-800 rounded-md text-base text-white pl-2 ml-10"
-                                        />
-                                    </label>
-                                    <button
-                                        className={`neon-text w-full h-10 md:h-12 lg:h-14 bg-accent rounded-2xl text-base md:text-lg lg:text-xl hover:bg-[#106092] ${HeaderText.className}`}
-                                        type="submit"
-                                    >
-                                        Submit
-                                    </button>
-                                </form>
+                                            Create Task
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>

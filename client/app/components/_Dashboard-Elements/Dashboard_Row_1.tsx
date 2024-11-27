@@ -3,7 +3,7 @@ import Dashboard_Task_Card from "@/app/components/_Dashboard-Elements/Dashboard_
 
 const DashboardRow1 = () => {
     return (
-        <div className="w-full h-full flex justify-center items-center px-16 mt-10">
+        <div className="w-full h-full flex justify-center items-center px-10 mt-10">
             <Dashboard_Task_Card/>
         </div>
     );

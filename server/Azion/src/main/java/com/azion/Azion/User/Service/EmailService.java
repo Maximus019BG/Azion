@@ -1,5 +1,7 @@
 package com.azion.Azion.User.Service;
 
+import com.azion.Azion.Org.Model.Org;
+import com.azion.Azion.Org.Repository.OrgRepository;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -7,6 +9,7 @@ import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,13 @@ import java.io.IOException;
 
 @Service
 public class EmailService {
+    
+    private final OrgRepository orgRepository;
+    
+    @Autowired
+    public EmailService(OrgRepository orgRepository) {
+        this.orgRepository = orgRepository;
+    }
 
     @Value("${sendgrid.api.key}")
     private String sendGridApiKey;
@@ -129,4 +139,32 @@ public class EmailService {
             throw new RuntimeException("Failed to send welcome email");
         }
     }
+    
+    public void camErrorEmail(String orgAddres, String camId){
+        Org org = orgRepository.findOrgByOrgAddress(orgAddres).get();
+        String to = org.getOrgEmail();
+        
+        String htmlContent = "<!DOCTYPE html>" +
+                "<html lang=\"en\">" +
+                "<head>" +
+                "    <meta charset=\"UTF-8\">" +
+                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">" +
+                "    <title>Welcome to Azion</title>" +
+                "</head>" +
+                "<body>" +
+                "    <h1></h1>" +
+                "    <p>Cam " + camId + " is not working properly</p>" +
+                "    <p> If this issue continues contact Azion support or admin" +
+                "</body>" +
+                "</html>";
+        try {
+            sendEmail(to, "Camera " + camId +" not working properly", htmlContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to send welcome email");
+        }
+        
+    }
+    
+    //TODO: welcome to work email for cam
 }
