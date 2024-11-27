@@ -35,7 +35,6 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
     const [doneByUser, setDoneByUser] = useState<boolean>(false);
     const [admin, setAdmin] = useState<boolean>(false);
     const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
-    const [notDone, setNotDone] = useState<boolean>(true);
     const [isUser, setIsUser] = useState<boolean>(false);
 
     const SubmitTask = (taskId: string, file: File | null, link: string, editorContent: string) => {
