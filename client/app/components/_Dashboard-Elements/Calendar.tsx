@@ -112,7 +112,6 @@ const Calendar: React.FC = () => {
         };
     }, [userRoleLevel]);
 
-    // Move handleDelete function here, outside handleAddEvent
     const handleDelete = (id: string) => {
         if (window.confirm("Are you sure you want to delete this event?")) {
             axios.delete(`${apiUrl}/schedule/delete/${id}`, {
@@ -182,72 +181,68 @@ const Calendar: React.FC = () => {
     };
 
     return (
-        <div>
-            <div className="flex w-full px-10 justify-start items-start gap-8">
-                <div className="w-3/12 flex flex-col justify-start items-start gap-10">
-                    <div className="text-2xl font-extrabold">
-                        Calendar Events
-                    </div>
-                    <ul className="space-y-4 w-full h-full flex flex-col justify-center items-start">
-                        {currentEvents.length <= 0 && (
-                            <div className="italic text-center text-gray-400">
-                                No Events Present
-                            </div>
-                        )}
-                        {currentEvents.length > 0 &&
-                            currentEvents.map((event: EventData) => (
-                                <li key={event.id} className="bg-accent w-full rounded-btn p-2 break-words relative">
-                                    {event.title}
-
-                                    {/* Waste Bin Icon in the bottom-right corner */}
-                                    <button
-                                        onClick={() => handleDelete(event.id)}
-                                        className="absolute bottom-1 right-1 bg-red-500 rounded-lg p-1 shadow-md hover:bg-red-400 hover:text-white"
-                                    >
-                                        <Trash2Icon className="h-4 w-4"/>
-                                    </button>
-                                </li>
-                            ))}
-                    </ul>
+        <div className="flex flex-col lg:flex-row w-full px-4 lg:px-10 justify-start items-start gap-4 lg:gap-8">
+            <div className="w-full lg:w-3/12 flex flex-col justify-start items-start gap-4 lg:gap-10">
+                <div className="text-3xl lg:text-4xl font-extrabold">
+                    Calendar Events
                 </div>
+                <ul className="space-y-2 lg:space-y-4 w-full h-full flex flex-col justify-center items-start">
+                    {currentEvents.length <= 0 && (
+                        <div className="italic text-center text-gray-400">
+                            No Events Present
+                        </div>
+                    )}
+                    {currentEvents.length > 0 &&
+                        currentEvents.map((event: EventData) => (
+                            <li key={event.id} className="bg-accent w-full rounded-btn p-2 break-words relative">
+                                {event.title}
+                                <button
+                                    onClick={() => handleDelete(event.id)}
+                                    className="absolute bottom-1 right-1 bg-red-500 rounded-lg p-1 shadow-md hover:bg-red-400 hover:text-white"
+                                >
+                                    <Trash2Icon className="h-4 w-4"/>
+                                </button>
+                            </li>
+                        ))}
+                </ul>
+            </div>
 
-                <div className="w-full mt-8">
-                    <FullCalendar
-                        height={"85vh"}
-                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                        headerToolbar={{
-                            left: "prev,next today",
-                            center: "title",
-                            right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
-                        }}
-                        initialView="dayGridMonth"
-                        editable={userRoleLevel >= 1 && userRoleLevel <= 3}
-                        selectable={userRoleLevel >= 1 && userRoleLevel <= 3}
-                        selectMirror={true}
-                        dayMaxEvents={true}
-                        select={handleDateClick}
-                        eventClick={handleEventClick}
-                        events={currentEvents}
-                        dayCellClassNames="hover:bg-[#1a1a1a] transition duration-300"
-                    />
-                </div>
+            <div className="w-full mt-4 lg:mt-8">
+                <FullCalendar
+                    height={"85vh"}
+                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                    headerToolbar={{
+                        left: "prev,next today",
+                        center: "title",
+                        right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
+                    }}
+                    initialView="dayGridMonth"
+                    editable={userRoleLevel >= 1 && userRoleLevel <= 3}
+                    selectable={userRoleLevel >= 1 && userRoleLevel <= 3}
+                    selectMirror={true}
+                    dayMaxEvents={true}
+                    select={handleDateClick}
+                    eventClick={handleEventClick}
+                    events={currentEvents}
+                    dayCellClassNames="hover:bg-[#1a1a1a] transition duration-300 h-16 w-full"
+                />
             </div>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="bg-base-300 rounded-lg shadow-lg p-6 max-w-lg mx-auto">
                     <DialogHeader>
-                        <DialogTitle className="text-2xl text-white font-semibold text-center">
+                        <DialogTitle className="text-xl lg:text-2xl text-white font-semibold text-center">
                             Add New Event
                         </DialogTitle>
                     </DialogHeader>
-                    <form className="space-y-6" onSubmit={handleAddEvent}>
+                    <form className="space-y-4 lg:space-y-6" onSubmit={handleAddEvent}>
                         <div>
                             <input
                                 type="text"
                                 placeholder="Event Title"
                                 value={newEventTitle}
                                 onChange={(e) => setNewEventTitle(e.target.value)}
-                                className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full p-2 lg:p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 required
                             />
                         </div>
@@ -257,19 +252,18 @@ const Calendar: React.FC = () => {
                                 placeholder="Meeting Link"
                                 value={newMeetingRoomLink}
                                 onChange={(e) => setNewMeetingRoomLink(e.target.value)}
-                                className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full p-2 lg:p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 required
                             />
                         </div>
-                        <div className="flex gap-3 flex-wrap">
+                        <div className="flex gap-2 lg:gap-3 flex-wrap">
                             {availableRoles.map((role) => (
                                 <label
                                     key={role}
-                                    className={`flex justify-center items-center text-sm text-white text-center px-3 py-1 rounded-md cursor-pointer transition-all duration-200 ${
+                                    className={`flex justify-center items-center text-sm text-white text-center px-2 lg:px-3 py-1 rounded-md cursor-pointer transition-all duration-200 ${
                                         selectedRoles.includes(role) ? "bg-base-100 border-2 border-accent" : "bg-transparent"
                                     }`}
                                     onClick={(e) => {
-                                        // Prevent checkbox from toggling when clicking the label
                                         e.preventDefault();
                                         setSelectedRoles((prev) =>
                                             prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
@@ -282,7 +276,7 @@ const Calendar: React.FC = () => {
                                         onChange={() => {
                                         }}
                                         className="h-4 w-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
-                                        style={{display: "none"}} // Hide checkbox visually
+                                        style={{display: "none"}}
                                     />
                                     <span>{role}</span>
                                 </label>
@@ -292,7 +286,7 @@ const Calendar: React.FC = () => {
                         <div className="text-center">
                             <button
                                 type="submit"
-                                className="w-full py-3 rounded-md bg-accent text-white font-semibold hover:bg-primary-dark transition duration-300"
+                                className="w-full py-2 lg:py-3 rounded-md bg-accent text-white font-semibold hover:bg-primary-dark transition duration-300"
                             >
                                 Add Event
                             </button>
@@ -300,7 +294,6 @@ const Calendar: React.FC = () => {
                     </form>
                 </DialogContent>
             </Dialog>
-
         </div>
     );
 };

@@ -1,12 +1,15 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import axios, { AxiosResponse } from "axios";
-import { apiUrl } from "@/app/api/config";
+import React, {useEffect, useRef, useState} from "react";
+import axios, {AxiosResponse} from "axios";
+import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
-import { Commissioner } from "next/font/google";
-import { authSessionCheck } from "@/app/func/funcs";
+import {Commissioner} from "next/font/google";
+import {authSessionCheck} from "@/app/func/funcs";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
-const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
+const azionText = Commissioner({subsets: ["latin"], weight: "800"});
 
 export default function FastLogIn() {
     const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -21,7 +24,7 @@ export default function FastLogIn() {
     useEffect(() => {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices
-                .getUserMedia({ video: true })
+                .getUserMedia({video: true})
                 .then((stream) => {
                     if (videoRef.current) {
                         videoRef.current.srcObject = stream;
@@ -46,7 +49,7 @@ export default function FastLogIn() {
                 const base64Image = imageData.split(",")[1];
                 const accessToken: string | undefined = Cookies.get("azionAccessToken");
 
-                const payload = { image: base64Image };
+                const payload = {image: base64Image};
 
                 try {
                     const response: AxiosResponse<{
@@ -54,7 +57,7 @@ export default function FastLogIn() {
                         refreshToken: string;
                     }> = await axios.post(
                         `${apiUrl}/auth/fast-login`,
-                        { payload },
+                        {payload},
                         {
                             headers: {
                                 "Content-Type": "application/json",
@@ -75,7 +78,7 @@ export default function FastLogIn() {
                     ) {
                         authSessionCheck();
                     }
-                } catch (error:any) {
+                } catch (error: any) {
                     console.error("Error sending image to API: ", error);
                     alert(error.response.data);
                 } finally {
@@ -87,23 +90,31 @@ export default function FastLogIn() {
 
     return (
         <div className="w-screen h-screen flex flex-col justify-center items-center gap-16 bg-background relative">
+            <Link className="absolute top-4 left-4" href="/login">
+                <FontAwesomeIcon
+                    className="text-3xl md:text-4xl text-lightAccent"
+                    icon={faCircleLeft}
+                />
+            </Link>
             {showOverlay && <div className="absolute inset-0 bg-white z-50"></div>}
             <video
-                className="rounded-full custom-oval"
+                className="rounded-full"
                 ref={videoRef}
                 autoPlay
             ></video>
-            <h1
-                className={`text-white mb-5 text-5xl md:text-6xl lg:text-8xl ${azionText.className}`}
-            >
-                Azion<span className="text-lightAccent">Cam</span>.
-            </h1>
-            <button
-                className="text-white bg-accent w-fit font-black text-2xl px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
-                onClick={captureAndSendFrame}
-            >
-                Login
-            </button>
+            <div className="flex flex-col justify-center items-center gap-3">
+                <h1
+                    className={`text-white my-3 text-4xl sm:text-5xl md:text-6xl lg:text-8xl ${azionText.className}`}
+                >
+                    Azion<span className="text-lightAccent">Cam</span>.
+                </h1>
+                <button
+                    className="text-white bg-accent w-fit font-black text-lg sm:text-xl md:text-2xl lg:text-3xl px-6 sm:px-10 md:px-20 lg:px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
+                    onClick={captureAndSendFrame}
+                >
+                    Login
+                </button>
+            </div>
         </div>
     );
 }
