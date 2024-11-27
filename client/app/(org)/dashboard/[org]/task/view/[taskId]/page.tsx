@@ -1,20 +1,20 @@
 "use client";
-import React, {FC, useEffect, useState} from "react";
-import {getOrgName, getTasks} from "@/app/func/org";
+import React, { FC, useEffect, useState } from "react";
+import { getOrgName, getTasks } from "@/app/func/org";
 import Loading from "@/app/components/Loading";
 import SideMenu from "@/app/components/Side-menu";
-import {apiUrl} from "@/app/api/config";
+import { apiUrl } from "@/app/api/config";
 import axios from "axios";
 import Cookies from "js-cookie";
 import AzionEditor from "./_editor/AzionEditor";
-import {Task} from "@/app/types/types";
-import {Poppins} from "next/font/google";
-import {FaArrowAltCircleLeft, FaCompress, FaExpand} from "react-icons/fa";
-import {sessionCheck, UserData} from "@/app/func/funcs";
+import { Task } from "@/app/types/types";
+import { Poppins } from "next/font/google";
+import { FaArrowAltCircleLeft, FaCompress, FaExpand } from "react-icons/fa";
+import { sessionCheck, UserData } from "@/app/func/funcs";
 import Link from "next/link";
 import ProgressComponent from "../../../../../../components/ProgressComponent";
 
-const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
+const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
 
 interface PageProps {
     params: {
@@ -23,7 +23,7 @@ interface PageProps {
     };
 }
 
-const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
+const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
     const [orgName, setOrgName] = useState<string | null>(null);
     const [task, setTask] = useState<Task | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -35,6 +35,8 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     const [doneByUser, setDoneByUser] = useState<boolean>(false);
     const [admin, setAdmin] = useState<boolean>(false);
     const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
+    const [notDone, setNotDone] = useState<boolean>(true);
+    const [isUser, setIsUser] = useState<boolean>(false);
 
     const SubmitTask = (taskId: string, file: File | null, link: string, editorContent: string) => {
         const formData = new FormData();
@@ -44,11 +46,11 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
             formData.append("file", file);
         } else if (editorContent) {
             const defaultFileContent = editorContent;
-            const blob = new Blob([defaultFileContent], {type: "text/plain"});
+            const blob = new Blob([defaultFileContent], { type: "text/plain" });
             formData.append("file", blob, "AzionEditorFile.txt");
         } else if (link) {
             const defaultFileContent = link;
-            const blob = new Blob([defaultFileContent], {type: "text/plain"});
+            const blob = new Blob([defaultFileContent], { type: "text/plain" });
             formData.append("file", blob, "AzionLink.txt");
         }
         axios
@@ -143,15 +145,21 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
             } else {
                 setDoneByUser(false);
             }
+
+            if (task && task.users && task.users.some((user) => user.email === uEmail)) {
+                setIsUser(true);
+            } else {
+                setIsUser(false);
+            }
         };
         getUser();
-    }, [org, taskId, task]);
+    }, []);
 
     if (!task) {
         return (
             <div>
                 <div className="w-screen h-screen flex justify-center items-center">
-                    <Loading/>
+                    <Loading />
                 </div>
             </div>
         );
@@ -160,7 +168,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     return (
         <div className={`flex h-dvh text-white ${isFullScreen ? "fixed inset-0 z-50" : ""}`}>
             <div className="lg:w-1/4">
-                <SideMenu/>
+                <SideMenu />
             </div>
             <div className="w-full flex justify-center items-center p-4">
                 <div
@@ -211,7 +219,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                                 <div className="w-full h-full flex flex-col justify-center items-start gap-2">
                                     <p className="font-semibold">Source: </p>
                                     <Link href={task.source} target="_blank"
-                                          className="bg-base-200 p-2 rounded-lg w-full text-blue-400 hover:underline">
+                                        className="bg-base-200 p-2 rounded-lg w-full text-blue-400 hover:underline">
                                         {task.source}
                                     </Link>
                                 </div>
@@ -228,12 +236,12 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                         </div>
 
                         {/*!!!ROW_4!!!*/}
-                        <ProgressComponent progress={task.progress}/>
+                        <ProgressComponent progress={task.progress} />
 
                     </div>
 
                     {/* Task submission section */}
-                    {!task.status.toLowerCase().includes("done") && !admin && (
+                    {!task.status.toLowerCase().includes("done") && (isUser || admin) && (
                         <div className="mt-3 w-full h-fit flex flex-col justify-center gap-2">
                             <div className="flex justify-start items-center gap-3">
                                 <label className="">
@@ -285,15 +293,15 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                                         onClick={() => setInputMethod("")}
                                         className="text-blue-500 mb-2"
                                     >
-                                        <FaArrowAltCircleLeft className="inline mr-2"/>
+                                        <FaArrowAltCircleLeft className="inline mr-2" />
                                         Back
                                     </button>
                                     <button
                                         onClick={() => setIsFullScreen(!isFullScreen)}
                                         className="text-blue-500 mb-2 ml-4"
                                     >
-                                        {isFullScreen ? <FaCompress className="inline mr-2"/> :
-                                            <FaExpand className="inline mr-2"/>}
+                                        {isFullScreen ? <FaCompress className="inline mr-2" /> :
+                                            <FaExpand className="inline mr-2" />}
                                         {isFullScreen ? "Exit Full Screen" : "Full Screen"}
                                     </button>
                                     <AzionEditor
@@ -340,7 +348,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                                         <h3 className="font-semibold">{file.user.name}&apos;s work:</h3>
                                         <a
                                             href={URL.createObjectURL(
-                                                new Blob([atob(file.fileData || "")], {type: file.contentType})
+                                                new Blob([atob(file.fileData || "")], { type: file.contentType })
                                             )}
                                             download={file.fileName}
                                             className="text-blue-400 hover:underline"
@@ -349,7 +357,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                                         </a>
                                         <h3>{file.date}</h3>
                                         <button className="border-accent bordered border-2 rounded-lg px-1"
-                                                onClick={() => ReturnTask(taskId, file.user.email)}>Return
+                                            onClick={() => ReturnTask(taskId, file.user.email)}>Return
                                         </button>
                                     </div>
                                 ))}

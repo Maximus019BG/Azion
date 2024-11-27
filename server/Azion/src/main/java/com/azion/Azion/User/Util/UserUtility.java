@@ -19,9 +19,11 @@ public class UserUtility {
     private static final String rawKey = System.getProperty("secretMFA");
     private static final String ALGORITHM = "AES";
     private static final byte[] key = adjustKeyLength(rawKey);
+    
     public static boolean isValidPhone(String phone) {
         return phone.matches("^\\+?[0-9]{7,15}$");
     }
+    
     public static boolean isValidEmail(String email) {
         EmailValidator emailValidator = EmailValidator.getInstance();
         return emailValidator.isValid(email);
