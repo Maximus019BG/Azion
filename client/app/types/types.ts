@@ -78,3 +78,9 @@ export interface EventData {
     link: string;
     roles: string[];
 }
+
+export interface Cam {
+    camName: string;
+    roleLevel: number;
+    orgAddress: string;
+}

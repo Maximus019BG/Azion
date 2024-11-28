@@ -178,7 +178,14 @@ public class ProjectsService {
         List<Project> projectsAssigned = projectsRepository.findByUsers(user); //!Projects the user is assigned to do
         List<Project> projectsCreatedBy = projectsRepository.findProjectByCreatedBy(user); //!Project the user has created
         
-        //*Join and return
+        //Remove duplicates
+        for(Project project : projectsAssigned) {
+            if(projectsCreatedBy.contains(project)) {
+                projectsCreatedBy.remove(project);
+            }
+        }
+        
+        //Join and return
         List<Project> projects = new ArrayList<>(projectsCreatedBy);
         projects.addAll(projectsAssigned);
         

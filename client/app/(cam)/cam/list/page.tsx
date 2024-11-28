@@ -4,12 +4,8 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { apiUrl } from '@/app/api/config';
 import Cookies from 'js-cookie';
-
-interface Cam {
-    camName: string;
-    roleLevel: number;
-    orgAddress: string;
-}
+import Link from 'next/link';
+import { Cam } from '@/app/types/types';
 
 const CamListPage = () => {
     const [cams, setCams] = useState<Cam[]>([]);
@@ -47,7 +43,7 @@ const CamListPage = () => {
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div className="w-full h-screen flex flex-col justify-center items-center bg-gray-900 text-white">
+        <div className="w-full h-screen flex flex-col justify-center items-center bg-gray-900 text-white relative">
             <h1 className="text-4xl font-bold mb-6">Camera List</h1>
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-4xl overflow-auto">
                 <ul className="list-disc">
@@ -62,6 +58,11 @@ const CamListPage = () => {
                     ))}
                 </ul>
             </div>
+            <Link href="/cam/register">
+                <p className="absolute bottom-4 right-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Register Camera
+                </p>
+            </Link>
         </div>
     );
 };

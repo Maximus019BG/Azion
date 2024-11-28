@@ -91,7 +91,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
                 </div>
             ) : (
                 <div className="w-full h-dvh flex overflow-y-hidden">
-                    <div className="w-1/4 h-full">
+                    <div className="w-fit lg:w-1/4 h-full">
                         <SideMenu/>
                     </div>
                     <div className="w-full h-full flex flex-col justify-start items-start overflow-y-auto">

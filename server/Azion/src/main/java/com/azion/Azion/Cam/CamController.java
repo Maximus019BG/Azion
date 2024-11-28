@@ -105,6 +105,11 @@ public class CamController {
             if(!userService.userSuperAdmin(user)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to add a camera");
             }
+            
+            if(camRepository.findByCamName(camName).isPresent()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Camera already exists");
+            }
+            
             //Camera
             Cam cam = new Cam();
             cam.setCamName(camName);

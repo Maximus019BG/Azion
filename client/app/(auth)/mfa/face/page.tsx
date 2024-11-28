@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect, useRef, useState } from 'react';
-import axios, { AxiosResponse } from 'axios';
-import { apiUrl } from '@/app/api/config';
-import { Commissioner } from "next/font/google";
+import React, {useEffect, useRef, useState} from 'react';
+import axios, {AxiosResponse} from 'axios';
+import {apiUrl} from '@/app/api/config';
+import {Commissioner} from "next/font/google";
 import Cookies from 'js-cookie';
-import {CheckMFA, mfaSessionCheck} from '@/app/func/funcs';
+import {CheckMFA} from '@/app/func/funcs';
 import Side_menu from "@/app/components/Side-menu";
 
 interface Token {
@@ -12,7 +12,7 @@ interface Token {
     accessToken: string;
 }
 
-const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
+const azionText = Commissioner({subsets: ["latin"], weight: "800"});
 
 export default function MfaFace() {
     const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -32,7 +32,7 @@ export default function MfaFace() {
 
     useEffect(() => {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+            navigator.mediaDevices.getUserMedia({video: true}).then((stream) => {
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
                 }
@@ -55,11 +55,13 @@ export default function MfaFace() {
                 const base64Image = imageData.split(',')[1];
                 const accessToken = Cookies.get('azionAccessToken');
 
-                const request = { accessToken };
-                const payload = { image: base64Image };
+                const request = {accessToken};
+                const payload = {image: base64Image};
 
                 try {
-                    const response: AxiosResponse<{ image: string }> = await axios.post(`${apiUrl}/mfa/face-scan`, { request, payload }, {
+                    const response: AxiosResponse<{
+                        image: string
+                    }> = await axios.post(`${apiUrl}/mfa/face-scan`, {request, payload}, {
                         headers: {
                             'Content-Type': 'application/json'
                         }
@@ -69,7 +71,7 @@ export default function MfaFace() {
                     } else {
                         window.location.href = "/organizations";
                     }
-                } catch (error:any) {
+                } catch (error: any) {
                     console.error("Error sending image to API: ", error);
                     alert(error.response.data);
                 } finally {
@@ -80,27 +82,31 @@ export default function MfaFace() {
     };
 
     return (
-        <div className="w-screen h-screen flex flex-col justify-center items-center gap-16 bg-background relative">
+        <div className="w-full h-dvh flex justify-center items-center bg-background">
             {showOverlay && <div className="absolute inset-0 bg-white z-50"></div>}
-            <div className="absolute left-0 top-0">
-                <Side_menu />
+            <div className="w-fit lg:w-1/4 h-full">
+                <Side_menu/>
             </div>
-            <video
-                className="rounded-full custom-oval"
-                ref={videoRef}
-                autoPlay
-            ></video>
-            <h1
-                className={`text-white mb-5 text-5xl md:text-6xl lg:text-8xl ${azionText.className}`}
-            >
-                Azion<span className="text-lightAccent">Cam</span>.
-            </h1>
-            <button
-                className="text-white bg-accent w-fit font-black text-2xl px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
-                onClick={captureAndSendFrame}
-            >
-                Save face
-            </button>
+            <div className="w-full h-full flex flex-col justify-center items-center">
+                <video
+                    className="rounded-full custom-oval"
+                    ref={videoRef}
+                    autoPlay
+                ></video>
+                <div className="flex flex-col justify-center items-center gap-3">
+                    <h1
+                        className={`text-white my-6 text-4xl sm:text-5xl md:text-6xl lg:text-8xl ${azionText.className}`}
+                    >
+                        Azion<span className="text-lightAccent">Cam</span>.
+                    </h1>
+                    <button
+                        className="text-white bg-accent w-fit font-black text-lg sm:text-xl md:text-2xl lg:text-3xl px-6 sm:px-10 md:px-20 lg:px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
+                        onClick={captureAndSendFrame}
+                    >
+                        Save face
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }

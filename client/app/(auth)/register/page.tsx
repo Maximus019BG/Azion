@@ -158,22 +158,25 @@ const Register = () => {
     };
 
     const handleNextStep = () => {
-        if (step === 3) {
-            // Skip step 4
-            setStep(step + 2);
-        } else if (step < inputFields.length - 1) {
-            setStep(step + 1);
+        if (step < stepLabels.length - 1) {
+            setStep(step + 1); // Move to the next step
+        } else {
+            handleSubmit(); // Call submit function on the last step
         }
     };
 
     const handleBackStep = () => {
-        if (step === 5) {
-            // Skip back to step 3 (Password fields together)
-            setStep(3);
-        } else if (step > 0) {
-            setStep(step - 1);
+        if (step > 0) {
+            setStep(step - 1); // Move to the previous step
         }
     };
+
+    const stepLabels = [
+        "User Details",
+        "Password",
+        "Role",
+        "Submit",
+    ];
 
     const inputFields: InputField<any>[] = [
         {
@@ -217,25 +220,17 @@ const Register = () => {
     ];
 
     const getCurrentFields = () => {
-        if (step === 3 || step === 4) {
-            // Group Password and Confirm Password fields
-            return inputFields.filter(
-                (field) =>
-                    field.label === "Password:" || field.label === "Confirm Password:"
-            );
+        switch (step) {
+            case 0:
+                return inputFields.slice(0, 3); // User Details
+            case 1:
+                return inputFields.slice(3, 5); // Password
+            case 2:
+                return inputFields.slice(5, 6); // Role
+            default:
+                return [];
         }
-
-        return [inputFields[step]];
     };
-
-
-    const stepLabels = [
-        "Register",
-        "Enter Details",
-        "Password",
-        "Organization?",
-        "Submit",
-    ];
 
     return (
         <div className="w-full h-dvh flex flex-col lg:flex-row justify-center items-center">
@@ -362,7 +357,6 @@ const Register = () => {
                         </div>
 
                         {/* Navigation Buttons */}
-                        {/* Navigation Buttons */}
                         <div className="flex justify-between items-center w-full">
                             {step > 0 && (
                                 <button
@@ -373,7 +367,7 @@ const Register = () => {
                                 </button>
                             )}
                             <div className="flex-grow"></div>
-                            {step < inputFields.length - 1 && (
+                            {step < stepLabels.length - 1 && (
                                 <button
                                     onClick={handleNextStep}
                                     className="bg-lightAccent text-white px-4 py-2 rounded-lg hover:bg-accent"
@@ -381,10 +375,10 @@ const Register = () => {
                                     Next
                                 </button>
                             )}
-                            {step === inputFields.length - 1 && (
+                            {step === stepLabels.length - 1 && (
                                 <button
                                     onClick={handleSubmit}
-                                    className="bg-accent text-white px-10 py-2 text-lg rounded-lg hover:bg-blue-500"
+                                    className="bg-accent text-white px-6 py-2 text-lg rounded-lg hover:bg-blue-500"
                                 >
                                     Submit
                                 </button>
