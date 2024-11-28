@@ -1,9 +1,12 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import React, {useEffect, useState} from 'react';
+import {usePathname, useSearchParams} from 'next/navigation';
 import axios from 'axios';
-import { apiUrl } from '@/app/api/config';
+import {apiUrl} from '@/app/api/config';
 import Cookies from 'js-cookie';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
 interface Log {
     logs: string;
@@ -46,15 +49,20 @@ const CamLogsPage = () => {
         }
     }, [camId]);
 
-    if (error) return <p>Error: {error}</p>;
+    if (error) return <p className="text-red-500">{error}</p>;
 
     return (
-    <div className="w-full h-dvh flex flex-col justify-center items-center bg-background">
-        <h1 className="text-4xl font-black text-lightAccent">Camera Logs</h1>
-        <pre className="text-gray-400 bg-black p-4 rounded w-full max-w-4xl overflow-auto">
-            {logs.join('\n')}
-        </pre>
-    </div>
+        <div className="w-full h-screen flex flex-col justify-center items-center bg-background p-4">
+            <Link className="absolute top-6 left-6" href="/cam/list">
+                <FontAwesomeIcon className="text-3xl text-lightAccent" icon={faCircleLeft}/>
+            </Link>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-lightAccent mb-6 text-center">Camera
+                Logs</h1>
+            <pre
+                className="text-gray-400 bg-black p-4 rounded w-full max-w-4xl overflow-auto text-xs sm:text-sm md:text-base lg:text-lg">
+                {logs.join('\n')}
+            </pre>
+        </div>
     );
 };
 

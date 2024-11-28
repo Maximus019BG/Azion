@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import axios from 'axios';
-import { apiUrl } from '@/app/api/config';
+import {apiUrl} from '@/app/api/config';
 import Cookies from 'js-cookie';
 
 export default function RegisterCam() {
@@ -32,14 +32,14 @@ export default function RegisterCam() {
     };
 
     return (
-        <div className="w-screen h-screen flex flex-col justify-center items-center gap-16 bg-background relative">
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="w-screen h-screen flex flex-col justify-center items-center gap-8 p-4 bg-background relative">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-md">
                 <input
                     type="text"
                     placeholder="Cam ID"
                     value={camId}
                     onChange={(e) => setCamId(e.target.value)}
-                    className="p-2 border border-gray-300 rounded"
+                    className="p-2 border border-gray-300 rounded w-full"
                     required
                 />
                 <input
@@ -47,12 +47,12 @@ export default function RegisterCam() {
                     placeholder="Role Level"
                     value={roleLevel}
                     onChange={(e) => setRoleLevel(parseInt(e.target.value))}
-                    className="p-2 border border-gray-300 rounded"
+                    className="p-2 border border-gray-300 rounded w-full"
                     required
                 />
                 <button
                     type="submit"
-                    className="text-white bg-accent w-fit font-black text-2xl px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
+                    className="text-white bg-accent w-full font-black text-xl sm:text-2xl px-4 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
                 >
                     Register Cam
                 </button>

@@ -1,13 +1,12 @@
 "use client";
-import React, { useEffect, useRef, useState } from 'react';
-import axios, { AxiosResponse } from 'axios';
-import { apiUrl } from '@/app/api/config';
-import { Commissioner } from "next/font/google";
+import React, {useEffect, useRef, useState} from 'react';
+import axios, {AxiosResponse} from 'axios';
+import {apiUrl} from '@/app/api/config';
+import {Commissioner} from "next/font/google";
 import Cookies from 'js-cookie';
-import { CheckMFA, mfaSessionCheck } from '@/app/func/funcs';
-import Side_menu from "@/app/components/Side-menu";
+import {CheckMFA} from '@/app/func/funcs';
 
-const azionText = Commissioner({ subsets: ["latin"], weight: "800" });
+const azionText = Commissioner({subsets: ["latin"], weight: "800"});
 
 export default function CamTest() {
     const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -27,7 +26,7 @@ export default function CamTest() {
 
     useEffect(() => {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+            navigator.mediaDevices.getUserMedia({video: true}).then((stream) => {
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
                 }
@@ -50,10 +49,12 @@ export default function CamTest() {
                 const base64Image = imageData.split(',')[1];
                 const accessToken = Cookies.get('azionAccessToken');
 
-                const payload = { image: base64Image };
+                const payload = {image: base64Image};
 
                 try {
-                    const response: AxiosResponse<{ image: string }> = await axios.post(`${apiUrl}/cam/sec`, { payload }, {
+                    const response: AxiosResponse<{
+                        image: string
+                    }> = await axios.post(`${apiUrl}/cam/sec`, {payload}, {
                         headers: {
                             'Content-Type': 'application/json',
                             'authorization': 'TEST1234' // Add authorization header here
@@ -91,7 +92,7 @@ export default function CamTest() {
                 className="text-white bg-accent w-fit font-black text-2xl px-56 py-3 rounded-3xl hover:scale-105 transition-all ease-in"
                 onClick={captureAndSendFrame}
             >
-                Save face
+                Test Camera
             </button>
         </div>
     );

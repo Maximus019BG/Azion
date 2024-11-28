@@ -1,16 +1,28 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import axios from 'axios';
-import { apiUrl } from '@/app/api/config';
+import {apiUrl} from '@/app/api/config';
 import Cookies from 'js-cookie';
 import Link from 'next/link';
-import { Cam } from '@/app/types/types';
+import {Cam} from '@/app/types/types';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
+import {getOrgName} from "@/app/func/org";
 
 const CamListPage = () => {
     const [cams, setCams] = useState<Cam[]>([]);
     const [error, setError] = useState('');
+    const [org, setOrg] = useState<string | null>(null);
     const router = useRouter();
+
+    const fetchOrgName = async () => {
+        const result: string = await getOrgName();
+        if (result !== org) {
+            setOrg(result);
+        }
+    };
+    fetchOrgName();
 
     useEffect(() => {
         const fetchCams = async () => {
@@ -40,13 +52,16 @@ const CamListPage = () => {
         router.push(`/cam/logs/${camName}`);
     };
 
-    if (error) return <p>Error: {error}</p>;
+    if (error) return <p className="text-red-500">{error}</p>;
 
     return (
-        <div className="w-full h-screen flex flex-col justify-center items-center bg-gray-900 text-white relative">
-            <h1 className="text-4xl font-bold mb-6">Camera List</h1>
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-4xl overflow-auto">
-                <ul className="list-disc">
+        <div className="w-full h-screen flex flex-col justify-center items-center text-white relative p-4">
+            <Link className="absolute top-6 left-6" href={`/dashboard/${org}`}>
+                <FontAwesomeIcon className="text-3xl text-lightAccent" icon={faCircleLeft}/>
+            </Link>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-center">Camera List</h1>
+            <div className="bg-base-300 p-6 rounded-lg shadow-lg w-full max-w-4xl overflow-auto">
+                <ul className="list-disc space-y-2">
                     {cams.map((cam) => (
                         <li
                             key={cam.camName}
@@ -59,7 +74,7 @@ const CamListPage = () => {
                 </ul>
             </div>
             <Link href="/cam/register">
-                <p className="absolute bottom-4 right-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <p className="absolute bottom-4 right-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm sm:text-base md:text-lg lg:text-xl">
                     Register Camera
                 </p>
             </Link>
