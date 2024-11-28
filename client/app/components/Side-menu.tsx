@@ -14,6 +14,7 @@ import {
     FaUsers,
     FaUserSecret,
 } from "react-icons/fa";
+import { AiFillVideoCamera } from "react-icons/ai";
 import LogOut from "@/app/components/LogOut";
 import {UserData} from "@/app/func/funcs";
 import {TbFaceId} from "react-icons/tb";
@@ -30,6 +31,7 @@ const SideMenu = () => {
     const [isTasksOpen, setIsTasksOpen] = useState(false);
     const [org, setOrg] = useState<string | null>("");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
     useEffect(() => {
         UserData().then((response) => {
@@ -37,6 +39,9 @@ const SideMenu = () => {
             setLoading(false);
             if (response.roleLevel >= 1 && response.roleLevel <= 3) {
                 setAdmin(true);
+            }
+            if(response.roleLevel >= 1 && response.roleLevel <= 2) {
+                setIsSuperAdmin(true);
             }
         });
     }, []);
@@ -229,6 +234,17 @@ const SideMenu = () => {
                                             </li>
                                         </ul>
                                     )}
+                                </li>
+                            </>
+                        )}
+
+                        {isSuperAdmin && (
+                            <>
+                                <li className="text-md w-full">
+                                    <Link href="/cam/list" className="flex items-center w-full">
+                                        <AiFillVideoCamera   className="text-lg mr-2"/>
+                                        Azion Cameras
+                                    </Link>
                                 </li>
                             </>
                         )}

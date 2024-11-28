@@ -2,6 +2,7 @@ import Cookies from 'js-cookie';
 import axios, {AxiosResponse} from 'axios';
 import {apiUrl} from '../api/config';
 import {Token} from "@/app/types/types";
+import {boolean} from "zod";
 
 //Checks if user has MFA
 const CheckMFA = async (onMFAPage: boolean) => {
@@ -279,6 +280,8 @@ const byteArrayToBase64 = async (byteArray: number[]): Promise<string | null> =>
     });
 };
 
+
+
 export {
     CheckMFA,
     PartOfOrg,
@@ -288,5 +291,5 @@ export {
     orgSessionCheck,
     sessionCheck,
     mfaSessionCheck,
-    byteArrayToBase64
+    byteArrayToBase64,
 };
