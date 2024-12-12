@@ -3,7 +3,7 @@ import {motion} from "framer-motion";
 import Link from "next/link";
 import Navbar from "./components/Navbar";
 import {Poppins} from "next/font/google";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Main_Services from "./components/main-service";
 import Footer from "./components/Footer";
 import Cookies from "js-cookie";
@@ -16,6 +16,7 @@ import Suitcase from "@/public/Artboard5.svg";
 import Circles from "@/public/Artboard6.svg";
 import Hammer from "@/public/Artboard7.svg";
 import Building from "@/public/Artboard8.svg";
+import WorkProcess from "@/app/components/WorkProcess";
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
 
@@ -44,18 +45,13 @@ const Home = () => {
         };
         fetchOrgName();
 
-        // Check the window width on initial load
         const handleResize = () => {
-            setIsMobile(window.innerWidth <= 768); // Adjust this value based on your mobile breakpoint
+            setIsMobile(window.innerWidth <= 768);
         };
 
-        // Set the initial value based on the screen width
         handleResize();
-
-        // Add event listener to track window resize
         window.addEventListener("resize", handleResize);
 
-        // Clean up event listener on component unmount
         return () => {
             window.removeEventListener("resize", handleResize);
         };
@@ -91,7 +87,6 @@ const Home = () => {
         {Component: Hammer, position: "right-[10vw] top-[27vh]", delay: 1},
         {Component: Building, position: "right-[20vw] top-[65vh]", delay: 1.2},
     ];
-
 
     return (
         <div className="w-screen h-full">
@@ -132,7 +127,7 @@ const Home = () => {
                                 key={index}
                                 initial={{opacity: 0, y: 50}}
                                 animate={{opacity: 1, y: 0}}
-                                transition={{duration: 0.6, delay: index * 0.5}} // Stagger delay for each line
+                                transition={{duration: 0.6, delay: index * 0.5}}
                             >
                                 {line}
                             </motion.span>
@@ -175,6 +170,8 @@ const Home = () => {
                 <div className="w-full h-48 bg-gradient-to-b from-[#06061000] via-[#06061078] to-[#060610]"/>
                 <Main_Services/>
             </div>
+            <div className="w-full h-48 bg-gradient-to-b from-[#060610] via-[#020514] to-[#020617]"/>
+            <WorkProcess/>
             <Footer/>
         </div>
     );

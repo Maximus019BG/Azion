@@ -6,7 +6,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/app/components/dialog";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/app/components/dialog";
 import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
 import {UserData} from "@/app/func/funcs";
@@ -112,19 +112,34 @@ const Calendar: React.FC = () => {
         };
     }, [userRoleLevel]);
 
+    const [eventToDelete, setEventToDelete] = useState<string | null>(null);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
+
     const handleDelete = (id: string) => {
-        if (window.confirm("Are you sure you want to delete this event?")) {
-            axios.delete(`${apiUrl}/schedule/delete/${id}`, {
+        setEventToDelete(id);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const confirmDelete = () => {
+        if (eventToDelete) {
+            axios.delete(`${apiUrl}/schedule/delete/${eventToDelete}`, {
                 headers: {
                     "Content-Type": "application/json",
                     "authorization": Cookies.get("azionAccessToken"),
                 }
             })
                 .then(() => {
-                    setCurrentEvents(prev => prev.filter(event => event.id !== id));
+                    setCurrentEvents(prev => prev.filter(event => event.id !== eventToDelete));
+                    setEventToDelete(null);
+                    setIsDeleteDialogOpen(false);
                 })
                 .catch(error => console.error("Error deleting event:", error));
         }
+    };
+
+    const handleCloseDeleteDialog = () => {
+        setIsDeleteDialogOpen(false);
+        setEventToDelete(null);
     };
 
     const handleDateClick = (selected: DateSelectArg) => {
@@ -204,6 +219,26 @@ const Calendar: React.FC = () => {
                                 </button>
                             </li>
                         ))}
+                    <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                        <DialogContent className="bg-base-300 rounded-lg shadow-lg h-64 max-w-lg mx-auto">
+                            <DialogHeader>
+                                <DialogTitle className="text-xl lg:text-2xl text-white font-semibold text-center">
+                                    Confirm Delete
+                                </DialogTitle>
+                            </DialogHeader>
+                            <div className="text-center">
+                                <p>Are you sure you want to delete this event?</p>
+                            </div>
+                            <DialogFooter className="w-98 h-fit flex justify-center items-center">
+                                <button onClick={confirmDelete}
+                                        className="bg-red-500 text-white w-full py-1 rounded-btn hover:bg-red-400">Delete
+                                </button>
+                                <button onClick={handleCloseDeleteDialog}
+                                        className="bg-accent text-white w-full py-1 rounded-btn hover:bg-blue-400">Cancel
+                                </button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </ul>
             </div>
 
