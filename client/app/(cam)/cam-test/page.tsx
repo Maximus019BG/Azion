@@ -79,7 +79,7 @@ export default function CamTest() {
         <div className="w-screen h-screen flex flex-col justify-center items-center gap-16 bg-background relative">
             {showOverlay && <div className="absolute inset-0 bg-white z-50"></div>}
             <video
-                className="rounded-full custom-oval"
+                className="rounded-full custom-oval transform scale-x-[-1]"
                 ref={videoRef}
                 autoPlay
             ></video>

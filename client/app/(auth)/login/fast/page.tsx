@@ -98,7 +98,7 @@ export default function FastLogIn() {
             </Link>
             {showOverlay && <div className="absolute inset-0 bg-white z-50"></div>}
             <video
-                className="rounded-full"
+                className="rounded-full custom-oval transform scale-x-[-1]"
                 ref={videoRef}
                 autoPlay
             ></video>

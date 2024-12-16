@@ -46,6 +46,9 @@ const Dashboard: FC<PageProps> = ({params}) => {
         };
 
         fetchData();
+        return () => {
+
+        };
     }, []);
 
     useEffect(() => {

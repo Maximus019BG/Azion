@@ -89,7 +89,7 @@ export default function MfaFace() {
             </div>
             <div className="w-full h-full flex flex-col justify-center items-center">
                 <video
-                    className="rounded-full custom-oval"
+                    className="rounded-full custom-oval transform scale-x-[-1]"
                     ref={videoRef}
                     autoPlay
                 ></video>
