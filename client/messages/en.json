@@ -1,0 +1,27 @@
+{
+  "SidebarLinks": {
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "employees": "Employees",
+    "roles": "Roles",
+    "tasks": "Tasks",
+    "yourTasks": "Your Tasks",
+    "createTasks": "Create Task",
+    "azionCameras": "Azion Cameras",
+    "organizations": "Organizations",
+    "faceID": "Face Recognitions",
+    "chat": "Chat",
+    "account": "Account",
+    "logout": "Logout"
+  },
+  "Home": {
+    "welcome": "Improve your workflow and Secure your company with Azion.",
+    "button1Registered": "Dashboard",
+    "button2Registered": "Oragnizations",
+    "button1": "Register",
+    "button2": "Login"
+  },
+  "Horizontal": {
+    "horizontalText": "AZION secures every part of your account and organisation's account"
+  }
+}

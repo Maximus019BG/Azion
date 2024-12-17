@@ -1,7 +1,16 @@
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./app/i18n.ts');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ['assets.aceternity.com'],
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'assets.aceternity.com',
+            },
+        ],
     },
     webpack(config) {
         config.module.rules.push({
@@ -12,4 +21,4 @@ const nextConfig = {
     },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

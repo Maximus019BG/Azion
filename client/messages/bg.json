@@ -1,0 +1,27 @@
+{
+  "SidebarLinks": {
+    "dashboard": "Начало",
+    "settings": "Настройки",
+    "employees": "Служители",
+    "roles": "роли",
+    "tasks": "Задания",
+    "yourTasks": "Вашите Задания",
+    "createTasks": "Създайте Задание",
+    "azionCameras": "Азион Камери",
+    "organizations": "Организации",
+    "faceID": "Лицево Разпознаване",
+    "chat": "Чат",
+    "account": "Акаунт",
+    "logout": "Изход"
+  },
+  "Home": {
+    "welcome": "Подобрете работния процес и Осигурете вашата компания с Азион.",
+    "button1Registered": "Начало",
+    "button2Registered": "Организации",
+    "button1": "Регистрация",
+    "button2": "Вход"
+  },
+  "Horizontal": {
+    "horizontalText": "АЗИОН осигурява всеки аспект на вашия акаунт и акаунта на вашата организация"
+  }
+}
