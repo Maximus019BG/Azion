@@ -138,7 +138,7 @@ const Home = () => {
                         initial={{opacity: 0, y: 50}}
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.8, delay: 0.8}}
-                        className="flex flex-col sm:flex-row md:justify-start md:items-start justify-center items-center gap-4 md:gap-8  w-full"
+                        className="flex flex-col sm:flex-row md:justify-start md:items-start justify-center items-center gap-4 md:gap-8 w-full"
                     >
                         <div className="w-full">
                             <Link href={org !== null ? `/dashboard/${org}` : `/register`}>
