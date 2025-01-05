@@ -5,11 +5,12 @@ import {Timeline} from "@/components/ui/timeline";
 export function TimelineDemo() {
     const data = [
         {
-            title: "2024",
+            title: "July 2024",
             content: (
                 <div>
-                    <p className="text-neutral-200 text-xs md:text-sm font-normal ">
-                        Built and launched Aceternity UI and Aceternity UI Pro from scratch
+                    <h1 className="text-2xl md:text-4xl mb-4">The Idea</h1>
+                    <p className="text-neutral-200 text-xs md:text-sm font-normal mb-6">
+                        The idea of Azion was born in July 2024. We wanted to create a platform that will help organizations to improve their workflow and secure their company.
                     </p>
                     <div className="grid grid-cols-2 gap-4">
                         <Image
@@ -45,16 +46,15 @@ export function TimelineDemo() {
             ),
         },
         {
-            title: "Early 2023",
+            title: "August 2024",
             content: (
                 <div className="relative">
-                    <p className="text-neutral-200 text-xs md:text-sm font-normal mb-8">
-                        I usually run out of copy, but when I see content this big, I try to
-                        integrate lorem ipsum.
+                    <h1 className="text-2xl md:text-4xl mb-4">Security</h1>
+                    <p className="text-neutral-200 text-xs md:text-sm font-normal">
+                        Security is our top priority. We have implemented various security measures to protect your data.
                     </p>
-                    <p className="text-neutral-800 dark:text-neutral-200 text-xs md:text-sm font-normal mb-8">
-                        Lorem ipsum is for people who are too lazy to write copy. But we are
-                        not. Here are some more example of beautiful designs I built.
+                    <p className="text-neutral-800 dark:text-neutral-200 text-xs md:text-sm font-normal mb-6">
+                        By using Azion, you can be sure that your data is safe and secure. We use the latest encryption technologies to protect your data from unauthorized access.
                     </p>
                     <div className="grid grid-cols-2 gap-4">
                         <Image
@@ -90,32 +90,36 @@ export function TimelineDemo() {
             ),
         },
         {
-            title: "Changelog",
+            title: "October 2024",
             content: (
                 <div>
-                    <p className="text-neutral-200 text-xs md:text-sm font-normal mb-4">
-                        Deployed 5 new components on Aceternity today
+                    <h1 className="text-2xl md:text-4xl mb-4">Launch</h1>
+                    <p className="text-neutral-200 text-xs md:text-sm font-normal">
+                        Deployed the first version of Azion to production in October 2024.
                     </p>
-                    <div className="mb-8">
+                    <p className="text-neutral-200 text-xs md:text-sm font-normal mb-1">
+                        Some of the features that we added after the user feedback:
+                    </p>
+                    <div className="mb-6">
                         <div
                             className="flex gap-2 items-center text-neutral-700 dark:text-neutral-300 text-xs md:text-sm">
-                            ✅ Card grid component
+                            &bull; Better design for the dashboard
                         </div>
                         <div
                             className="flex gap-2 items-center text-neutral-700 dark:text-neutral-300 text-xs md:text-sm">
-                            ✅ Startup template Aceternity
+                            &bull; Improved performance
                         </div>
                         <div
                             className="flex gap-2 items-center text-neutral-700 dark:text-neutral-300 text-xs md:text-sm">
-                            ✅ Random file upload lol
+                            &bull; New security features (Azion Camera)
                         </div>
                         <div
                             className="flex gap-2 items-center text-neutral-700 dark:text-neutral-300 text-xs md:text-sm">
-                            ✅ Himesh Reshammiya Music CD
+                            &bull; Statistics and analytics
                         </div>
                         <div
                             className="flex gap-2 items-center text-neutral-700 dark:text-neutral-300 text-xs md:text-sm">
-                            ✅ Salman Bhai Fan Club registrations open
+                            &bull; Calendar
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
