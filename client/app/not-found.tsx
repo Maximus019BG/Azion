@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import {Poppins} from "next/font/google";
 import Artboard2 from "@/public/Artboard2.svg";
@@ -8,7 +9,6 @@ import Artboard6 from "@/public/Artboard6.svg";
 import Artboard7 from "@/public/Artboard7.svg";
 import Artboard8 from "@/public/Artboard8.svg";
 import {motion} from "framer-motion";
-import RootLayout from '@/app/[locale]/layout';
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
 
@@ -35,23 +35,21 @@ const Custom404 = () => {
     ];
 
     return (
-        <RootLayout params={{locale: 'en'}}>
-            <div className="w-screen h-screen flex justify-center items-center bg-background overflow-hidden">
-                {svgs.map((svg, index) => (
-                    <motion.div
-                        key={index}
-                        className={`absolute ${svg.position}`}
-                        animate={getLoopAnimation(svg.delay).animate}
-                        transition={getLoopAnimation(svg.delay).transition}
-                    >
-                        <svg.Component width={300} height={300}/>
-                    </motion.div>
-                ))}
-                <h1 className={`${HeaderText.className} gradient-text text-5xl`}>
-                    404 - Page Not Found
-                </h1>
-            </div>
-        </RootLayout>
+        <div className="w-screen h-screen flex justify-center items-center bg-background overflow-hidden">
+            {svgs.map((svg, index) => (
+                <motion.div
+                    key={index}
+                    className={`absolute ${svg.position}`}
+                    animate={getLoopAnimation(svg.delay).animate}
+                    transition={getLoopAnimation(svg.delay).transition}
+                >
+                    <svg.Component width={300} height={300}/>
+                </motion.div>
+            ))}
+            <h1 className={`${HeaderText.className} gradient-text text-5xl`}>
+                404 - Page Not Found
+            </h1>
+        </div>
     );
 };
 

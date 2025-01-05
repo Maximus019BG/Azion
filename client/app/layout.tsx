@@ -1,11 +1,9 @@
 import type {Metadata} from "next";
 import {Inter} from "next/font/google";
-import "../globals.css";
-import logo from "../../public/white-logo.png";
-import openGraphImage from "../../public/opengraphThin.png";
-import {MeetingProvider} from "../context/MeetingContext";
-import {NextIntlClientProvider} from "next-intl";
-import {getMessages} from "next-intl/server";
+import "./globals.css";
+import logo from "../public/white-logo.png";
+import openGraphImage from "../public/opengraphThin.png";
+import {MeetingProvider} from "./context/MeetingContext";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -27,7 +25,7 @@ export const metadata: Metadata = {
     authors: [{name: "Azion Team", url: "https://azion.online"}],
     creator: "Azion Team",
 
-    metadataBase: new URL("https://azion.online"),
+    metadataBase: new URL("https://azion.online"), // Fix: Set metadataBase
 
     openGraph: {
         title: "Azion - Improve your workflow and secure your company with Azion.",
@@ -60,26 +58,20 @@ export const metadata: Metadata = {
     },
 };
 
-export default async function RootLayout({
-                                             children,
-                                             params,
-                                         }: Readonly<{
+export default function RootLayout({
+                                       children,
+                                   }: Readonly<{
     children: React.ReactNode;
-    params: { locale?: string };
 }>) {
-    const {locale} = params;
-    const messages = await getMessages({locale});
     return (
-        <html lang={locale}>
+        <html lang="en">
         <head>
             <link rel="icon" href={logo.src}/>
         </head>
         <body className={`${inter.className} bg-background text-white overflow-x-hidden`}>
-        <NextIntlClientProvider messages={messages}>
-            <MeetingProvider>
-                {children}
-            </MeetingProvider>
-        </NextIntlClientProvider>
+        <MeetingProvider>
+            {children}
+        </MeetingProvider>
         </body>
         </html>
     );
