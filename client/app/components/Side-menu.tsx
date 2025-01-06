@@ -133,14 +133,14 @@ const SideMenu = () => {
                                 {/* Dashboard Dropdown */}
                                 <li className="text-md w-full relative">
                                     <div className="flex items-center justify-between w-full">
-                                        <Link
-                                            href={`/dashboard/${org}`}
+                                        <h1
+
                                             className="flex items-center w-full"
                                         >
                                             <FaClipboard className="text-lg mr-2"/>
                                             Dashboard
-                                        </Link>
-                                        {admin && (
+                                        </h1>
+
                                             <button
                                                 onClick={toggleDashboardDropdown}
                                                 className="ml-2"
@@ -151,8 +151,21 @@ const SideMenu = () => {
                                                     }`}
                                                 />
                                             </button>
-                                        )}
+
                                     </div>
+                                    {isDashboardOpen && !admin && (
+                                        <ul className="w-full">
+                                            <li className="py-1 text-md w-full">
+                                                <Link
+                                                    href={`/dashboard/${org}`}
+                                                    className="flex items-center w-full"
+                                                >
+                                                    <FaCog className="text-lg mr-2"/>
+                                                    Home
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    )}
                                     {isDashboardOpen && admin && (
                                         <ul className="w-full">
                                             <li className="py-1 text-md w-full">
