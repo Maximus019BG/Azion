@@ -15,7 +15,7 @@ import {
     FaUserSecret,
     FaHome
 } from "react-icons/fa";
-import { AiFillVideoCamera } from "react-icons/ai";
+import {AiFillVideoCamera} from "react-icons/ai";
 import LogOut from "@/app/components/LogOut";
 import {UserData} from "@/app/func/funcs";
 import {TbFaceId} from "react-icons/tb";
@@ -41,7 +41,7 @@ const SideMenu = () => {
             if (response.roleLevel >= 1 && response.roleLevel <= 3) {
                 setAdmin(true);
             }
-            if(response.roleLevel >= 1 && response.roleLevel <= 2) {
+            if (response.roleLevel >= 1 && response.roleLevel <= 2) {
                 setIsSuperAdmin(true);
             }
         });
@@ -133,7 +133,7 @@ const SideMenu = () => {
                             <>
                                 {/* Dashboard Dropdown */}
                                 <li className="text-md w-full relative">
-                                    <div className="flex items-center justify-between w-full">
+                                    <button className="flex items-center justify-between w-full" onClick={toggleDashboardDropdown}>
                                         <h1
 
                                             className="flex items-center w-full"
@@ -142,18 +142,18 @@ const SideMenu = () => {
                                             Dashboard
                                         </h1>
 
-                                            <button
-                                                onClick={toggleDashboardDropdown}
-                                                className="ml-2"
-                                            >
-                                                <FaChevronDown
-                                                    className={`text-sm transition-transform duration-200 ${
-                                                        isDashboardOpen ? "rotate-180" : ""
-                                                    }`}
-                                                />
-                                            </button>
+                                        <button
+                                            onClick={toggleDashboardDropdown}
+                                            className="ml-2"
+                                        >
+                                            <FaChevronDown
+                                                className={`text-sm transition-transform duration-200 ${
+                                                    isDashboardOpen ? "rotate-180" : ""
+                                                }`}
+                                            />
+                                        </button>
 
-                                    </div>
+                                    </button>
                                     {isDashboardOpen && !admin && (
                                         <ul className="w-full">
                                             <li className="py-1 text-md w-full">
@@ -265,7 +265,7 @@ const SideMenu = () => {
                             <>
                                 <li className="text-md w-full">
                                     <Link href="/cam/list" className="flex items-center w-full">
-                                        <AiFillVideoCamera   className="text-lg mr-2"/>
+                                        <AiFillVideoCamera className="text-lg mr-2"/>
                                         Azion Cameras
                                     </Link>
                                 </li>

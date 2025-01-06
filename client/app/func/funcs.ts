@@ -53,8 +53,24 @@ const PartOfOrg = async (afterDashboard: boolean) => {
             }
         } else {
             console.error("Error response is undefined", error);
+            return null;
         }
         return null;
+    }
+};
+
+//Join btn in org page
+const hideButton = async () => {
+    const data = {accessToken: Cookies.get("azionAccessToken")};
+    try {
+       await axios.post(`${apiUrl}/org/partOfOrg`, data, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        return true;
+    } catch (error: any) {
+       return false
     }
 };
 
@@ -292,4 +308,5 @@ export {
     sessionCheck,
     mfaSessionCheck,
     byteArrayToBase64,
+    hideButton,
 };

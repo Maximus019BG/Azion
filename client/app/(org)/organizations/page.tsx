@@ -6,20 +6,25 @@ import SideMenu from "../../components/Side-menu";
 import Join_Organization from "../../components/JoinOrg";
 import {orgSessionCheck, PartOfOrg} from "../../func/funcs";
 import Loading from "../../components/Loading";
+import {hideButton} from "../../func/funcs";
 
 
 const Organizations = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [showJoinOrg, setShowJoinOrg] = useState(false);
-    const [partOfOrg, setPartOfOrg] = useState(false);
     const [loading, setLoading] = useState<boolean>(true);
+    const [inOrg, setInOrg] = useState<boolean>(false);
 
     useEffect(() => {
         const CheckSessionAndOrg = async () => {
             const isSessionValid = await orgSessionCheck();
             if (isSessionValid) {
                 await PartOfOrg(false);
-                setLoading(false); // Set loading to false when data is fetched
+                await hideButton().then(r => {
+                    setInOrg(r);
+                    // console.log(inOrg);  Debug only!!!!!!
+                });
+                setLoading(false); //Set to false when data is fetched!!!!!!!
             }
         };
 
@@ -71,15 +76,17 @@ const Organizations = () => {
                         </div>
 
                         {/* Toggle Button */}
-                        <button
-                            className="fixed bottom-5 right-5 bg-accent text-white p-4 rounded-btn hover:bg-blue-900"
-                            onClick={() => setShowJoinOrg(!showJoinOrg)}
-                        >
-                            {showJoinOrg ? "Close" : "Join"}
-                        </button>
+                        {!inOrg && (
+                            <button
+                                className="fixed bottom-5 right-5 bg-accent text-white p-4 rounded-btn hover:bg-blue-900"
+                                onClick={() => setShowJoinOrg(!showJoinOrg)}
+                            >
+                                {showJoinOrg ? "Close" : "Join"}
+                            </button>
+                        )}
 
                         {/* Conditional Rendering of Join Organization */}
-                        {showJoinOrg && (
+                        {showJoinOrg && !inOrg && (
                             <div className=" fixed inset-0 flex justify-center items-center z-50">
                                 <Join_Organization onClose={() => setShowJoinOrg(false)}/>
                             </div>
