@@ -13,6 +13,7 @@ import {
     FaUserCircle,
     FaUsers,
     FaUserSecret,
+    FaHome
 } from "react-icons/fa";
 import { AiFillVideoCamera } from "react-icons/ai";
 import LogOut from "@/app/components/LogOut";
@@ -168,6 +169,15 @@ const SideMenu = () => {
                                     )}
                                     {isDashboardOpen && admin && (
                                         <ul className="w-full">
+                                            <li className="py-1 text-md w-full">
+                                                <Link
+                                                    href={`/dashboard/${org}`}
+                                                    className="flex items-center w-full"
+                                                >
+                                                    <FaHome className="text-lg mr-2"/>
+                                                    Home
+                                                </Link>
+                                            </li>
                                             <li className="py-1 text-md w-full">
                                                 <Link
                                                     href={`/dashboard/${org}/settings`}
