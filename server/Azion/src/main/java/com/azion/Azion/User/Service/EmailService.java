@@ -48,7 +48,7 @@ public class EmailService {
 
     // Email to reset the password
     public void sendResetPasswordEmail(String to, String resetToken) throws IOException {
-        String resetLink = "http://localhost:3000/reset-password?token=" + resetToken;
+        String resetLink = "https://azion.online/reset-password?token=" + resetToken;
         String htmlContent = "<!DOCTYPE html>" +
                 "<html lang=\"en\">" +
                 "<head>" +
@@ -72,7 +72,7 @@ public class EmailService {
     }
 
     public void sendLoginEmail(String to, String login, String name) {
-        String link = "http://localhost:3000/account";
+        String link = "https://azion.online/account";
         String htmlContent = "<!DOCTYPE html>" +
                 "<html lang=\"en\">" +
                 "<head>" +
@@ -87,7 +87,7 @@ public class EmailService {
                 "<ul>\n" +
                 "    <li>You recognize this device, no further action is required.</li>\n" +
                 "    <li>You do not recognize this device, please secure your account immediately by going to <a href=\"" + link + "\">Account</a>.</li>\n" +
-                "    <p>If you have any questions or need assistance, please don't hesitate to contact us at <a href=\"mailto:aziononlineteam@gmail.com\">aziononlineteam@gmail.com</a>.</p>" +
+                "    <li>If you have any questions or need assistance, please don't hesitate to contact us at <a href=\"mailto:aziononlineteam@gmail.com\">aziononlineteam@gmail.com</a>.</li>" +
                 "    <p>Thank you,</p>" +
                 "    <p>Azion Team</p>" +
                 "</body>" +
