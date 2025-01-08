@@ -52,7 +52,7 @@ const HorizontalScrollCarousel = () => {
 
     const [isMobile, setIsMobile] = useState<boolean>(false);
 
-    const x = useTransform(scrollYProgress, [0, 1], ["1%", "-95%"]);
+    const x = useTransform(scrollYProgress, [0, 1], ["1%", "-67%"]);
 
     useEffect(() => {
         const handleResize = () => {
