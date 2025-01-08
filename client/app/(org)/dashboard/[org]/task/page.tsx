@@ -136,7 +136,7 @@ const Tasks: FC<PageProps> = ({params}) => {
 
                         {admin && (
                             <Link
-                                className="w-96 h-[25.6vh] flex flex-col justify-center items-center rounded-lg overflow-hidden shadow-lg p-6 bg-base-100 text-white cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl relative"
+                                className="w-96 h-60 flex flex-col justify-center items-center rounded-lg overflow-hidden shadow-lg p-6 bg-base-100 text-white cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl relative"
                                 href={`/dashboard/${orgNameCheck}/task/create`}
                             >
                                 <CiSquarePlus className="text-8xl mb-2"/>

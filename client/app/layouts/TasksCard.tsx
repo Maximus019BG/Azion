@@ -65,7 +65,7 @@ const TasksCard: React.FC<Task> = ({
 
     return (
         <div
-            className="w-96 rounded-lg overflow-hidden shadow-lg p-6 bg-base-300 cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 relative"
+            className="w-96 h-60 rounded-lg overflow-hidden shadow-lg p-6 bg-base-300 cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 relative"
             onClick={onClick}
         >
             <div className="absolute top-4 right-4 flex items-center group">
@@ -76,17 +76,17 @@ const TasksCard: React.FC<Task> = ({
                 </div>
             </div>
             <div className="min-w-96 p-2">
-                <div className="font-bold text-xl mb-4 flex items-center text-white group">
-                    <FaBuilding className="mr-2 text-blue-500 cursor-pointer"/>
+                <div className="text-gray-200 text-base flex items-center mb-2 group">
+                    <FaBuilding className="mr-2 text-2xl text-blue-500"/>
                     {title}
                     <div
                         className="absolute top-2 left-2 mt-0 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">
                         Title: {title}
                     </div>
                 </div>
-                <p className="text-gray-200 text-base flex items-center mb-2 group">
-                    <TbFileDescription className="mr-2 text-2xl text-red-500"/>
-                    {description}
+                <p className="text-gray-200 text-base flex items-center mb-2 -ml-1 group w-full">
+                    <TbFileDescription className="text-2xl text-red-500 mr-2 flex-shrink-0 w-8 h-8"/>
+                    <div className="break-all pr-6">{description}</div>
                     <div
                         className="absolute top-12 left-0 mt-0 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">
                         Description: {description}
