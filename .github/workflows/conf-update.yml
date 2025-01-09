@@ -1,0 +1,34 @@
+name: Update Config
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "v*.*.*"
+  workflow_dispatch: #Manual trigger
+
+jobs:
+  update-config:
+    name: Update Config File
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Update Config File
+        run: |
+          CONFIG_FILE="client/app/api/config.ts"
+
+          # Replace the values in the config file
+          sed -i 's|export const apiUrl: string = "http://localhost:8080/api"|export const apiUrl: string = " https://api.azion.online/api"|g' $CONFIG_FILE
+          sed -i 's|export const chatUrl: string = "http://localhost:8080/chat"|export const chatUrl: string = " https://api.azion.online/chat"|g' $CONFIG_FILE
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add client/app/api/config.ts
+          git commit -m "Update API URLs in config.ts"
+          git push
