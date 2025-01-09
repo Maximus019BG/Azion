@@ -122,7 +122,7 @@ const Home = () => {
                     <h1
                         className={`text-3xl text-white lg:text-6xl text-center sm:text-left flex flex-col gap-2 ${HeaderText.className}`}
                     >
-                        {["Improve your workflow", "and Secure your company", "with Azion."].map((line, index) => (
+                        {["Improve your workflow", "and Secure your company", "with Azion"].map((line, index) => (
                             <motion.span
                                 key={index}
                                 initial={{opacity: 0, y: 50}}
@@ -167,7 +167,6 @@ const Home = () => {
             </motion.div>
 
             <div className="w-full h-full flex flex-col justify-center items-center">
-                <div className="w-full h-48 bg-gradient-to-b from-[#06061000] via-[#06061078] to-[#060610]"/>
                 <Main_Services/>
             </div>
             <div className="w-full h-48 bg-gradient-to-b from-[#060610] via-[#020514] to-[#020617]"/>

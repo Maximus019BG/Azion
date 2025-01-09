@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface OrgRepository extends JpaRepository<Org, String> {
+    
     Optional<Org> findOrgByOrgConnectString(String orgConnectString);
     Optional<Org> findOrgByOrgName(String orgName);
     Optional<Org> findOrgByOrgAddress(String orgAddress);
@@ -18,7 +19,6 @@ public interface OrgRepository extends JpaRepository<Org, String> {
  
     @Query("SELECT o FROM Org o")
     List<OrgDTO> findAllOrgs();
-    
     
     @Query("SELECT CASE WHEN COUNT(o) > 0 THEN true ELSE false END FROM Org o WHERE o.orgID = :orgID AND o.orgConnectString = :orgConnectString " +
             "AND o.orgName = :orgName AND o.orgAddress = :orgAddress AND o.orgEmail = :orgEmail AND o.orgEmail = :orgEmail")

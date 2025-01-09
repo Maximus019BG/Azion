@@ -20,13 +20,42 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrgService {
-
+    
+    
     private static final Logger log = LoggerFactory.getLogger(OrgService.class);
+    //Email domains to exclude
+    private static final String[] exclEmailDomains = {
+            "gmail.com",
+            "yahoo.com",
+            "outlook.com",
+            "hotmail.com",
+            "live.com",
+            "icloud.com",
+            "me.com",
+            "mac.com",
+            "protonmail.com",
+            "zoho.com",
+            "aol.com",
+            "microsoft.com",
+            "yandex.com",
+            "mail.bg",
+            "abv.bg",
+            "gmx.com",
+            "fastmail.com",
+            "tutanota.com",
+            "hushmail.com",
+            "rediffmail.com",
+            "dir.bg"
+    };
+    
+    
     private final OrgRepository orgRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    
     @PersistenceContext
     private EntityManager entityManager;
+    
     @Value("${spring.mail.username}")
     private String fromEmail;
 
@@ -37,13 +66,16 @@ public class OrgService {
         this.emailService = emailService;
     }
 
-
+    
     public void addUserToOrg(Org org, User user) {
         user.setOrgid(org.getOrgID());
         Set<User> users = org.getUsers();
         users.add(user);
         org.setUsers(users);
         orgRepository.save(org);
+        user.setRoleLevel(4);
+        user.setRole("employee");
+        userRepository.save(user);
     }
 
     public Org findOrgByConnectString(String connectString) {
@@ -186,5 +218,41 @@ public class OrgService {
             }
         }
         return roles;
+    }
+    
+    public Map<String,String> listPeople(Org org){
+        Map<String,String> people = new HashMap<>();
+        //Get the org domain
+        String email = org.getOrgEmail();
+        //Check if org has domain
+        boolean emailIsExcluded = false;
+        for (String domain : exclEmailDomains) {
+            if (email.contains(domain)) {
+                emailIsExcluded = true;
+                break;
+            }
+        }
+        
+        //Decide which users to take
+        List<User> employees = new ArrayList<>();
+        if(emailIsExcluded){
+            for(int i = 0; i < 5; i++) {
+                employees.add(userRepository.findRandomUser().get(i));
+            }
+        }
+        else {
+            employees = userRepository.findByEmailDomain(email);
+        }
+        
+        if(employees.size() <= 2){
+            for(int i = 0; i < 3; i++) {
+                employees.add(userRepository.findRandomUser().get(i));
+            }
+        }
+        //Return email and id
+        for(User user : employees) {
+            people.put(user.getEmail(), user.getId());
+        }
+       return people;
     }
 }

@@ -2,9 +2,10 @@
 import React, {useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import Cookies from "js-cookie";
-import {apiUrl} from "@/app/api/config";
+import {apiUrl, clientUrl} from "@/app/api/config";
 import {OrgConnString} from "@/app/func/org";
 import {CheckMFA, PartOfOrg, UserData} from "@/app/func/funcs";
+import {PeopleData} from "@/app/types/types"
 
 const SessionCheck = () => {
     const refreshToken = Cookies.get("azionRefreshToken");
@@ -48,6 +49,8 @@ const OrgSettingsForm = () => {
         orgDescription: "",
     });
     const [alertMessage, setAlertMessage] = useState<string | null>(null);
+    const [invitePopUp, setInvitePopUp] = useState<boolean>(false);
+    const [people, setPeople] = useState<PeopleData>({});
 
     useEffect(() => {
         const fetchOrgData = async () => {
@@ -83,6 +86,11 @@ const OrgSettingsForm = () => {
             [name]: value,
         }));
     };
+
+    //Show/hide popup
+    const handleInviteChange = ()=> {
+        setInvitePopUp(!invitePopUp);
+    }
 
     const handleSave = async () => {
         try {
@@ -133,6 +141,34 @@ const OrgSettingsForm = () => {
             });
     }, []);
 
+    //Get people to invite
+    useEffect(() => {
+        const accessToken = Cookies.get("azionAccessToken");
+
+        const getPeople = async () =>{
+            try {
+                const response: AxiosResponse = await axios.get(`${apiUrl}/org/get/invites`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "authorization": accessToken,
+                    }
+                })
+
+                setPeople(response.data);
+                console.log(response);
+                console.log(response.data);
+            } catch (e) {
+
+            }
+        }
+
+        getPeople();
+    }, []);
+
+    const copyLink = () =>{
+        navigator.clipboard.writeText(`${clientUrl}organizations/${conString}`);
+    }
+
     return (
         <div className="w-full max-w-4xl mx-auto bg-base-300 shadow-xl rounded-xl p-6 sm:p-12 flex flex-col gap-8">
             <h2 className="text-3xl font-semibold text-white text-center">
@@ -177,14 +213,52 @@ const OrgSettingsForm = () => {
                     Save Changes
                 </button>
 
-                <h2 className="text-lg text-gray-300 text-center">
-                    Connection Code: <span className="font-semibold">{conString}</span>
-                </h2>
+                <button onClick={handleInviteChange} className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out">
+                    Invite
+                </button>
 
                 {alertMessage && (
                     <div className="mt-4 text-white bg-red-500 p-3 rounded-md shadow-md">
                         {alertMessage}
                     </div>
+                )}
+
+                {invitePopUp && (
+                    <>
+                        {invitePopUp && (
+                            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                                <div className="bg-blue-950 p-6 rounded-lg shadow-lg w-96 relative">
+                                    {/* Close button (X) */}
+                                    <button
+                                        onClick={handleInviteChange}
+                                        className="absolute top-2 right-2 text-xl font-bold text-gray-600"
+                                    >
+                                        &times;
+                                    </button>
+
+                                    {/* Popup content */}
+                                    <h3 className="text-xl font-semibold mb-4">Invite people:</h3>
+                                    {Object.keys(people).length > 0 ? (
+                                        <ul className="space-y-2">
+                                            {Object.entries(people).map(([email, id]) => (
+                                                <li key={id} className="flex justify-between">
+                                                    <h1>{email}</h1>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className="text-gray-600">No people to invite</p>
+                                    )}
+                                    <div className={'mt-10'}>
+                                        <h1>Or copy <button onClick={copyLink} className={`underline text-red-700`}>link</button></h1>
+                                    </div>
+                                </div>
+
+                            </div>
+                        )}
+
+
+                    </>
                 )}
             </div>
         </div>

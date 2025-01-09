@@ -7,6 +7,7 @@ import com.azion.Azion.Org.Service.OrgService;
 import com.azion.Azion.Org.Util.OrgUtility;
 import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
 import com.azion.Azion.Projects.Model.Project;
+import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
@@ -104,9 +105,52 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already part of an organization.");
         }
         orgService.addUserToOrg(org, user);
-        user.setRoleLevel(4);
-        user.setRole("employee");
         return ResponseEntity.ok("User added to organization.");
+    }
+    
+    @Transactional
+    @PutMapping("/con/str/{conStr}")
+    public ResponseEntity<?> addUserToOrg(@PathVariable String conStr, @RequestBody Map<String, Object> request) {
+        String accessToken = (String) request.get("accessToken");
+        String refreshToken = (String) request.get("refreshToken");
+        //Token validation
+        if(!tokenService.validateToken(accessToken)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token.");
+        }
+        tokenService.sessionCheck(refreshToken,accessToken);
+        
+        User user = tokenService.getUserFromToken(accessToken);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        Org org = orgService.findOrgByConnectString(conStr);
+        if(org == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid link");
+        }
+        orgService.addUserToOrg(org,user);
+        return ResponseEntity.ok("User added to organization.");
+    }
+    
+    @Transactional
+    @GetMapping("/get/invites")
+    public ResponseEntity<?> getInvites(@RequestHeader Map<String, String> headers) {
+        String accessToken = (String) headers.get("authorization");
+        User user = tokenService.getUserFromToken(accessToken);
+        //Validation
+        if(!tokenService.validateToken(accessToken)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token.");
+        }
+        else if(!userService.userSuperAdmin(user)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access denied.");
+        }
+        Org org = orgService.findOrgByUser(user);
+        if(org == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        
+        Map<String,String> result = new HashMap<>();
+        result = orgService.listPeople(org); //Display related people
+        return ResponseEntity.ok(result);
     }
     
     @Transactional
@@ -117,7 +161,6 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
-        
         
         if (org == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");

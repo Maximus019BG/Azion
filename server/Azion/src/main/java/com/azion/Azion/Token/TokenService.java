@@ -102,7 +102,6 @@ public class TokenService {
     }
     
     public boolean validateToken(String token) {
-        
         String secret = System.getProperty("secretJWT");
         Token tokenObj = null;
         boolean isValid = false;

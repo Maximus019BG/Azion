@@ -84,3 +84,7 @@ export interface Cam {
     roleLevel: number;
     orgAddress: string;
 }
+
+export interface PeopleData {
+    [email: string]: string;
+}
