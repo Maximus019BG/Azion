@@ -434,4 +434,17 @@ public class OrgController {
         return ResponseEntity.ok("Employee removed.");
     }
     
+    @Transactional
+    @PutMapping("/invite/{id}")
+    public ResponseEntity<?> invite(@PathVariable String id, @RequestHeader("authorization") String accessToken) {
+        userService.userValid(accessToken);
+        User user = tokenService.getUserFromToken(accessToken);
+        
+        if (!userService.userSuperAdmin(user)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not super admin");
+        }
+        orgService.addUserToOrg(orgService.findOrgByUser(user),userRepository.findById(id).get());
+        
+        return ResponseEntity.ok("User added");
+    }
 }
