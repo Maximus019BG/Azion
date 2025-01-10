@@ -6,6 +6,7 @@ import {apiUrl, clientUrl} from "@/app/api/config";
 import {OrgConnString} from "@/app/func/org";
 import {CheckMFA, PartOfOrg, UserData} from "@/app/func/funcs";
 import {PeopleData} from "@/app/types/types"
+import {headers} from "next/headers";
 
 const SessionCheck = () => {
     const refreshToken = Cookies.get("azionRefreshToken");
@@ -166,7 +167,24 @@ const OrgSettingsForm = () => {
     }, []);
 
     const copyLink = () =>{
-        navigator.clipboard.writeText(`${clientUrl}organizations/${conString}`);
+        navigator.clipboard.writeText(`${clientUrl}/organizations/${conString}`);
+    }
+
+    const inviteUser = async (id:string)=>{
+        const accessToknen:string|undefined = Cookies.get("azionAccessToken");
+        const link = `${clientUrl}/organizations/${conString}`;
+        try {
+            const response:AxiosResponse = await axios.put(`${apiUrl}/org/invite/${id}`,{},{
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization":accessToknen,
+                    "data":link,
+                }
+            })
+        }
+        catch (e){
+            console.error(e)
+        }
     }
 
     return (
@@ -241,7 +259,7 @@ const OrgSettingsForm = () => {
                                     {Object.keys(people).length > 0 ? (
                                         <ul className="space-y-2">
                                             {Object.entries(people).map(([email, id]) => (
-                                                <li key={id} className="flex justify-between">
+                                                <li key={id} className="flex justify-between cursor-pointer hover:border-2 hover:border-gray-900" onClick={()=>inviteUser(id)}>
                                                     <h1>{email}</h1>
                                                 </li>
                                             ))}
@@ -256,8 +274,6 @@ const OrgSettingsForm = () => {
 
                             </div>
                         )}
-
-
                     </>
                 )}
             </div>

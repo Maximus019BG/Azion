@@ -419,14 +419,14 @@ public class OrgController {
     }
     
     @Transactional
-    @DeleteMapping("/remove/employee/{eId}")
-    public ResponseEntity<?> removeEmployee(@PathVariable String eId, @RequestHeader("authorization") String accessToken) {
+    @DeleteMapping("/remove/employee/{id}")
+    public ResponseEntity<?> removeEmployee(@PathVariable String id, @RequestHeader("authorization") String accessToken) {
         userService.userValid(accessToken);
         User user = tokenService.getUserFromToken(accessToken);
         if (!userService.userSuperAdmin(user)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not super admin");
         }
-        User employee = userRepository.findById(eId).orElse(null);
+        User employee = userRepository.findById(id).orElse(null);
         if (employee == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee not found.");
         }
@@ -436,14 +436,20 @@ public class OrgController {
     
     @Transactional
     @PutMapping("/invite/{id}")
-    public ResponseEntity<?> invite(@PathVariable String id, @RequestHeader("authorization") String accessToken) {
+    public ResponseEntity<?> invite(@PathVariable String id, @RequestHeader("authorization") String accessToken, @RequestHeader("data") String link) {
         userService.userValid(accessToken);
         User user = tokenService.getUserFromToken(accessToken);
         
         if (!userService.userSuperAdmin(user)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not super admin");
         }
-        orgService.addUserToOrg(orgService.findOrgByUser(user),userRepository.findById(id).get());
+        User employee = userRepository.findById(id).orElse(null);
+        
+        if (employee == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee not found.");
+        }
+        
+        orgService.inviteEmail(employee.getEmail(),employee.getName(),orgService.findOrgByUser(user).getOrgName(),link);
         
         return ResponseEntity.ok("User added");
     }

@@ -200,7 +200,7 @@ public class OrgService {
                 "    <p>If you have any questions or need support, feel free to reach out to us at <a href=\"mailto:aziononlineteam@gmail.com\">aziononlineteam@gmail.com</a>.</p>" +
                 "    <p>Thank you for choosing Azion for your security and management solutions!</p>" +
                 "    <p>Best regards,</p>" +
-                "    <p>The Azion Team</p>" +
+                "    <p>The AzionOnline Team</p>" +
                 "</body>" +
                 "</html>";
 
@@ -241,7 +241,16 @@ public class OrgService {
         //Decide which users to take
         List<User> employees = new ArrayList<>();
         if(emailIsExcluded){
-            for(int i = 0; i < 5; i++) {
+            //Number of people
+            int len = userRepository.findAll().size();
+            int n;
+            if(len>5) {
+                n = 5;
+            }
+            else {
+                n = len;
+            }
+            for(int i = 0; i < n; i++) {
                 employees.add(userRepository.findRandomUser().get(i));
             }
         }
@@ -249,15 +258,66 @@ public class OrgService {
             employees = userRepository.findByEmailDomain(email);
         }
         
-        if(employees.size() <= 2){
-            for(int i = 0; i < 3; i++) {
-                employees.add(userRepository.findRandomUser().get(i));
-            }
-        }
         //Return email and id
         for(User user : employees) {
-            people.put(user.getEmail(), user.getId());
+            if(user.getOrgid()==null) {
+                people.put(user.getEmail(), user.getId());
+            }
         }
        return people;
     }
+    
+    public void inviteEmail(String to, String name, String orgName, String link) {
+        if(userRepository.findByEmail(to).getOrgid() != null){
+            throw new RuntimeException("User already in organization");
+        }
+        
+        String htmlContent = "<!DOCTYPE html>" +
+                "<html lang=\"en\">" +
+                "<head>" +
+                "    <meta charset=\"UTF-8\">" +
+                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">" +
+                "    <title>" + "Invitation to join " + orgName + "</title>" +
+                "    <style>" +
+                "        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }" +
+                "        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }" +
+                "        h1 { color: #333; font-size: 24px; margin-bottom: 20px; }" +
+                "        p { color: #555; font-size: 16px; line-height: 1.6; }" +
+                "        a { color: #1a73e8; text-decoration: none; font-weight: bold; }" +
+                "        a:hover { text-decoration: underline; }" +
+                "        .footer { margin-top: 20px; font-size: 14px; text-align: center; color: #777; }" +
+                "        .footer a { color: #1a73e8; }" +
+                "        .btn { display: inline-block; background-color: #1a73e8; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; }" +
+                "        .btn:hover { background-color: #155c9d; }" +
+                "    </style>" +
+                "</head>" +
+                "<body>" +
+                "    <div class=\"container\">" +
+                "        <h1>Invitation to Join " + orgName + "</h1>" +
+                "        <p>Dear " + name + ",</p>" +
+                "        <p>We are pleased to invite you to join <strong>" + orgName + "</strong> on the Azion platform.</p>" +
+                "        <p>To accept this invitation, please click the button below:</p>" +
+                "        <p><a href=\""+link+"\" class=\"btn\">Join Now</a></p>" +
+                "        <p>If you have any questions or need support, please feel free to reach out to us at <a href=\"mailto:aziononlineteam@gmail.com\">aziononlineteam@gmail.com</a>.</p>" +
+                "        <p>Thank you for choosing Azion</p>" +
+                "        <p>Best regards,</p>" +
+                "        <p>The AzionOnline Team</p>" +
+                "        <div class=\"footer\">" +
+                "            <p>If you did not request this invitation, please ignore this email.</p>" +
+                "        </div>" +
+                "    </div>" +
+                "</body>" +
+                "</html>";
+        
+        
+        String subject = "Invitation to join "+orgName;
+        
+        try {
+            emailService.sendEmail(to, subject, htmlContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to send welcome email");
+        }
+    }
+    
 }

@@ -7,7 +7,7 @@ const getClientUrl = () => {
         const domain: string = port ? `${hostname}:${port}` : hostname;
         return `${protocol}//${domain}`;
     } else {
-        return "https://azion.online/";
+        return "https://azion.online";
     }
 };
 

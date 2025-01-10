@@ -64,7 +64,7 @@ public class EmailService {
                 "    <p>If you did not request a password reset, please ignore this email.</p>" +
                 "    <p>If you need assistance, please contact us at <a href=\"mailto:aziononlineteam@gmail.com\">aziononlineteam@gmail.com</a>.</p>" +
                 "    <p>Thank you,</p>" +
-                "    <p>Azion Team</p>" +
+                "    <p>AzionOnline Team</p>" +
                 "</body>" +
                 "</html>";
         String subject = "Reset Your Password";
@@ -89,7 +89,7 @@ public class EmailService {
                 "    <li>You do not recognize this device, please secure your account immediately by going to <a href=\"" + link + "\">Account</a>.</li>\n" +
                 "    <li>If you have any questions or need assistance, please don't hesitate to contact us at <a href=\"mailto:aziononlineteam@gmail.com\">aziononlineteam@gmail.com</a>.</li>" +
                 "    <p>Thank you,</p>" +
-                "    <p>Azion Team</p>" +
+                "    <p>AzionOnline Team</p>" +
                 "</body>" +
                 "</html>";
         String subject = "New device has logged in your account";
@@ -125,7 +125,7 @@ public class EmailService {
                 "    <p>If you have any questions or need assistance, please don't hesitate to contact us at <a href=\"mailto:aziononlineteam@gmail.com\">aziononlineteam@gmail.com</a>.</p>" +
                 "    <p>Thank you for choosing Azion!</p>" +
                 "    <p>Best regards,</p>" +
-                "    <p>The Azion Team</p>" +
+                "    <p>The AzionOnline Team</p>" +
                 "</body>" +
                 "</html>";
 

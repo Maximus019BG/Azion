@@ -96,7 +96,7 @@ public class UserController {
     
     @Transactional
     @PutMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestParam Map<String, String> request, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> updateUser(@RequestParam Map<String, String> request, @RequestParam(value ="file", required = false)MultipartFile file) {
         try {
             String token = request.get("accessToken");
             if (token == null) {
