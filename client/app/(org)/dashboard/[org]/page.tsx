@@ -23,9 +23,9 @@ interface PageProps {
 const Dashboard: FC<PageProps> = ({params}) => {
     const [displayName, setDisplayName] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
-    const [orgNameCheck, setOrgNameCheck] = useState<string>('');
     const [meetings, setMeetings] = useState<Meeting[]>([]);
     const orgName: string = params.org;
+
     CheckMFA(false);
 
     useEffect(() => {
@@ -52,20 +52,19 @@ const Dashboard: FC<PageProps> = ({params}) => {
     }, []);
 
     useEffect(() => {
-        const fetchOrgName = async () => {
-            const result: string = await getOrgName();
-            setOrgNameCheck(result);
-        };
-
-        fetchOrgName();
+            const fetchOrgName = async () => {
+                const result: string = await getOrgName();
+                if (result && result !== orgName) {
+                    window.location.href = `/dashboard/${result}`;
+                }
+                else {
+                    setLoading(false);
+                }
+            }
+            fetchOrgName();
+        setLoading(false);
     }, [orgName]);
 
-    useEffect(() => {
-        if (orgNameCheck && orgNameCheck !== orgName) {
-            window.location.href = `/dashboard/${orgNameCheck}`;
-        }
-        setLoading(false);
-    }, [orgNameCheck, orgName]);
 
     useEffect(() => {
         const getMeetings = async () => {
