@@ -324,7 +324,9 @@ public class ProjectsController extends FileSize {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("projects not found");
         }
         
-        return ResponseEntity.ok(projectsService.sortProjectsByDate(projects));
+        int numberOfTasks = Math.min(projects.size(), 3); //The number of task to be shown on the user
+        
+        return ResponseEntity.ok(projectsService.sortProjectsByDate(projects).subList(0,numberOfTasks));
     }
     
     //!Task return

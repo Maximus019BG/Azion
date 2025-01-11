@@ -29,6 +29,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
     CheckMFA(false);
 
     useEffect(() => {
+        console.log(1)
         const fetchData = async () => {
             try {
                 const refreshToken = Cookies.get('azionRefreshToken');
@@ -46,12 +47,11 @@ const Dashboard: FC<PageProps> = ({params}) => {
         };
 
         fetchData();
-        return () => {
-
-        };
+        console.log(1.1)
     }, []);
 
     useEffect(() => {
+        console.log(2)
             const fetchOrgName = async () => {
                 const result: string = await getOrgName();
                 if (result && result !== orgName) {
@@ -63,10 +63,12 @@ const Dashboard: FC<PageProps> = ({params}) => {
             }
             fetchOrgName();
         setLoading(false);
+        console.log(2.1)
     }, [orgName]);
 
 
     useEffect(() => {
+        console.log(3)
         const getMeetings = async () => {
             try {
                 const response = await axios.get(`${apiUrl}/schedule/show/meetings`, {
@@ -75,7 +77,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
                         "authorization": Cookies.get("azionAccessToken"),
                     },
                 });
-                console.log('Fetched meetings:', response.data); // Log the response
+                // console.log('Fetched meetings:', response.data);
                 setMeetings(response.data);
             } catch (error) {
                 console.error('Error fetching meetings:', error);
@@ -83,6 +85,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
             }
         };
         getMeetings();
+        console.log(3.1)
     }, []);
 
     return (
