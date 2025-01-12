@@ -16,6 +16,7 @@ public class UserDTO {
     private String orgid;
     private Set<ProjectsDTO> projects;
     private String profilePicture;
+    private boolean mfaEnabled;
     
     
     public String getId() {
@@ -88,5 +89,12 @@ public class UserDTO {
     
     public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
+    }
+    
+    public boolean isMfaEnabled() {
+        return mfaEnabled;
+    }
+    public void setMfaEnabled(boolean mfaEnabled) {
+        this.mfaEnabled = mfaEnabled;
     }
 }

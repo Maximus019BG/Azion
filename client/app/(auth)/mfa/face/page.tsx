@@ -4,7 +4,6 @@ import axios, {AxiosResponse} from 'axios';
 import {apiUrl} from '@/app/api/config';
 import {Commissioner} from "next/font/google";
 import Cookies from 'js-cookie';
-import {CheckMFA} from '@/app/func/funcs';
 import Side_menu from "@/app/components/Side-menu";
 
 interface Token {
@@ -18,7 +17,6 @@ export default function MfaFace() {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const [showOverlay, setShowOverlay] = useState(false);
 
-    CheckMFA(false);
 
     useEffect(() => {
         const refreshToken = Cookies.get('azionRefreshToken');

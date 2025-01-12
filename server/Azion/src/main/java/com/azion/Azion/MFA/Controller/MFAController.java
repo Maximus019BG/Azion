@@ -3,6 +3,7 @@ package com.azion.Azion.MFA.Controller;
 import com.azion.Azion.MFA.Service.MFAService;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.User;
+import com.azion.Azion.User.Service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,13 @@ public class MFAController {
     
     private final MFAService mfaService;
     private final TokenService tokenService;
+    private final UserService userService;
     
     @Autowired
-    public MFAController(TokenService tokenService, MFAService mfaService) {
+    public MFAController(TokenService tokenService, MFAService mfaService, UserService userService) {
         this.tokenService = tokenService;
         this.mfaService = mfaService;
+        this.userService = userService;
     }
    
 
@@ -61,7 +64,7 @@ public class MFAController {
         }
         try {
             String userEmail = tokenService.getUserFromToken(accessToken).getEmail();
-            String mfaCode = mfaService.generateManualEntryCode(userEmail);
+            String mfaCode = mfaService.getManualEntryCode(userEmail);
             Map<String, String> response = new HashMap<>();
             response.put("mfaCode", mfaCode);
             return ResponseEntity.ok().body(response);
@@ -78,6 +81,7 @@ public class MFAController {
     public ResponseEntity<?> verifyQrCode(@RequestBody Map<String, Object> request) {
         String OTP = (String) request.get("OTP");
         String accessToken = (String) request.get("accessToken");
+        
         log.debug("POST /api/mfa/verify-qr");
         if (accessToken == null) {
             Map<String, String> errorResponse = new HashMap<>();
@@ -155,4 +159,32 @@ public class MFAController {
         }
     }
     
+    @Transactional
+    @PutMapping("/rem")
+    public ResponseEntity<?> removeMFA(@RequestBody Map<Object,String> requestBody) {
+        String accessToken = (String) requestBody.get("accessToken");
+        String OTP = (String) requestBody.get("OTP");
+        
+        if (accessToken == null) {
+            String errorResponse = "Access token is required";
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        try {
+            User user = tokenService.getUserFromToken(accessToken);
+            if (!mfaService.checkMfaCredentials(user.getEmail(), OTP)) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Invalid OTP");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+            } else if (mfaService.checkMfaCredentials(user.getEmail(), OTP)) {
+                userService.remove2FA(user);
+                return ResponseEntity.ok().body("2FA (OTP) removed");
+            }
+            else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid OTP");
+            }
+        } catch (Exception e) {
+            String errorResponse = "Could not check MFA status";
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
 }

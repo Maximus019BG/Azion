@@ -206,6 +206,10 @@ public class User {
         this.roleLevel = roleLevel;
     }
     
+    public void newMFASecret(){
+        generateMfaSecret();
+    }
+    
     @PrePersist
     public void prePersist() {
         generateId();

@@ -122,4 +122,11 @@ public class UserService {
         int roleLevel = user.getRoleLevel();
         return (roleLevel > 0 && roleLevel <= 2);
     }
+    
+    //remove the OTP pass
+    public void remove2FA(User user) {
+        user.setMfaEnabled(false);
+        user.newMFASecret();
+        userRepository.save(user);
+    }
 }

@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import {apiUrl} from "@/app/api/config";
 import Image from "next/image";
 import {FaPencilAlt} from "react-icons/fa";
+import Link from "next/link";
 
 const azionText = Commissioner({subsets: ["latin"], weight: "800"});
 
@@ -20,7 +21,8 @@ const Badge = () => {
     const [prevValues, setPrevValues] = useState({name: "", email: "", dateOfBirth: ""});
     const [profilePicture, setProfilePicture] = useState<File | null>(null);
     const [displayImage, setDisplayImage] = useState<string | null>(null);
-    const [isImageChanged, setIsImageChanged] = useState(false);
+    const [isImageChanged, setIsImageChanged] = useState<boolean>(false);
+    const [isMfaEnabled, setIsMfaEnabled] = useState<boolean>(false)
 
     const [position, setPosition] = useState({x: 0, y: 0});
 
@@ -33,6 +35,7 @@ const Badge = () => {
             setDateOfBirth(response.age.substring(0, 10));
             setPrevValues({name: response.name, email: response.email, dateOfBirth: response.age.substring(0, 10)});
             setDisplayImage(response.profilePicture);
+            setIsMfaEnabled(response.mfaEnabled);
         });
     }, []);
 
@@ -174,8 +177,29 @@ const Badge = () => {
                     Save
                 </button>
             )}
+
+            {isMfaEnabled ? (
+                <Link href={`/mfa/remove`}>
+                    <button
+                        className="bg-gray-800 text-white hover:bg-gray-700 font-bold py-2 px-4 rounded"
+                    >
+                        Remove 2FA
+                    </button>
+                </Link>
+            ) : (
+                <Link href={`/mfa`}>
+                    <button
+                        className="bg-gray-800 text-white hover:bg-gray-700 font-bold py-2 px-4 rounded"
+                    >
+                        Add 2FA
+                    </button>
+                </Link>
+            )}
+
+
         </div>
-    );
+    )
+        ;
 };
 
 export default Badge;

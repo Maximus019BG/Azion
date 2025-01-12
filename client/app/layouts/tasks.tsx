@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
-import { Poppins } from "next/font/google";
 import Cookies from "js-cookie";
-import { CheckMFA, PartOfOrg, UserData } from "../func/funcs";
-import Link from "next/link";
+import { PartOfOrg, UserData } from "../func/funcs";
 
 interface User {
   name: string;

@@ -61,8 +61,6 @@ public class AuthController {
         String name = (String) request.get("name");
         String email = (String) request.get("email");
         String password = (String) request.get("password");
-        String role = (String) request.get("role");
-        boolean mfaEnabled = (boolean) request.get("mfaEnabled");
         String bornAt = (String) request.get("age");
 
         //Date validation
@@ -85,8 +83,7 @@ public class AuthController {
         user.setAge(dateFormat.parse(bornAt, pos));
         user.setEmail(email);
         user.setPassword(password);
-        user.setRole(role);
-        user.setMfaEnabled(mfaEnabled);
+        user.setMfaEnabled(false);
 
         userRepository.save(user);
 
@@ -123,12 +120,15 @@ public class AuthController {
         if (!passwordMatches) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
         }
+        
         //Token creation and validation
         Map<String, String> tokens = authService.loginTokenCreation(user, OTP, UserAgent);
         if (tokens.containsKey("message")) {
+            if(tokens.get("message").equals("OTP required")) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(tokens.get("message"));
+            }
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(tokens.get("message"));
         }
-
         return ResponseEntity.ok(tokens); //Return the tokens
     }
 

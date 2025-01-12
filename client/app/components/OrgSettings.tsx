@@ -4,7 +4,7 @@ import axios, {AxiosResponse} from "axios";
 import Cookies from "js-cookie";
 import {apiUrl, clientUrl} from "@/app/api/config";
 import {OrgConnString} from "@/app/func/org";
-import {CheckMFA, PartOfOrg, UserData} from "@/app/func/funcs";
+import {PartOfOrg, UserData} from "@/app/func/funcs";
 import {PeopleData} from "@/app/types/types"
 import {headers} from "next/headers";
 
@@ -111,8 +111,6 @@ const OrgSettingsForm = () => {
 
     const [loading, setLoading] = useState<boolean>(true);
     const [conString, setConString] = useState<string>("");
-
-    CheckMFA(false);
     PartOfOrg(true);
 
     useEffect(() => {

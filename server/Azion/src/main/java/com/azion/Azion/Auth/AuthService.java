@@ -50,18 +50,21 @@ public class AuthService {
     public Map<String, String> loginTokenCreation( User user, String OTP, String UserAgent) {
         Map<String, String> tokens = new HashMap<>();
         if (user.isMfaEnabled()) {
+            if(OTP == null) {
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "OTP required");
+                return response;
+            }
             if (!mfaService.checkMfaCredentials(user.getEmail(), OTP)) {
                 Map<String, String> response = new HashMap<>();
                 response.put("message", "Invalid OTP");
-                return  response;
-            } else if (mfaService.checkMfaCredentials(user.getEmail(), OTP)) {
+                return response;
+            } else {
                 String accessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"),  UserAgent);
                 String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), UserAgent);
-                
-              
                 tokens.put("accessToken", accessToken);
                 tokens.put("refreshToken", refreshToken);
-                emailService.sendLoginEmail(user.getEmail(), "normal login method", user.getName());
+                emailService.sendLoginEmail(user.getEmail(), "normal login method (with OTP)", user.getName());
                 return tokens;
             }
         }
@@ -70,10 +73,9 @@ public class AuthService {
             String refreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), UserAgent);
             tokens.put("accessToken", accessToken);
             tokens.put("refreshToken", refreshToken);
-            emailService.sendLoginEmail(user.getEmail(), "normal login method", user.getName());
+            emailService.sendLoginEmail(user.getEmail(), "normal login method (without OTP)", user.getName());
             return tokens;
         }
-        return tokens;
     }
     
     public String resetTokenGeneration(User user) {

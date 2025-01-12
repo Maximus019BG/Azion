@@ -2,7 +2,7 @@ import Cookies from 'js-cookie';
 import axios, {AxiosResponse} from 'axios';
 import {apiUrl} from '../api/config';
 import {Token} from "@/app/types/types";
-import {boolean} from "zod";
+import {UserDataType} from "@/app/types/types";
 
 //Checks if user has MFA
 const CheckMFA = async (onMFAPage: boolean) => {
@@ -20,11 +20,12 @@ const CheckMFA = async (onMFAPage: boolean) => {
                 } else {
                     return;
                 }
-            } else if (!onMFAPage) {
-                if (response.data === true) {
-                    return;
+            }
+            else{
+                if (response.data === false) {
+                    window.location.href = '/organizations';
                 } else {
-                    window.location.href = '/mfa';
+                    return;
                 }
             }
         }).catch(function (error) {
@@ -75,15 +76,7 @@ const hideButton = async () => {
 };
 
 //Get user data
-const UserData = async (): Promise<{
-    name: string,
-    email: string,
-    age: string,
-    role: string,
-    roleLevel: number,
-    projects: string[],
-    profilePicture: string
-}> => {
+const UserData = async (): Promise<UserDataType> => {
     const data = {accessToken: Cookies.get("azionAccessToken")};
     return axios
         .post(`${apiUrl}/user/data`, data, {
@@ -99,7 +92,8 @@ const UserData = async (): Promise<{
                 role: response.data.role,
                 roleLevel: response.data.roleLevel,
                 projects: response.data.projects,
-                profilePicture: response.data.profilePicture
+                profilePicture: response.data.profilePicture,
+                mfaEnabled: response.data.mfaEnabled
             };
         })
         .catch((error: any) => {
@@ -181,7 +175,6 @@ const orgSessionCheck = async () => {
     const refreshToken = Cookies.get("azionRefreshToken");
     const accessToken = Cookies.get("azionAccessToken");
     const data = {refreshToken, accessToken};
-    await CheckMFA(false);
     const url = `${apiUrl}/token/session/check`;
     try {
         const response = await axios.post(url, data, {
@@ -254,10 +247,16 @@ const sessionCheck = () => {
 };
 
 //!mfa Only
-const mfaSessionCheck = () => {
+const mfaSessionCheck = (mfaRem:boolean) => {
     const refreshToken = Cookies.get("azionRefreshToken");
     const accessToken = Cookies.get("azionAccessToken");
-    CheckMFA(true);
+
+    //Check if the page is to remove the otp
+    if(!mfaRem) {
+        CheckMFA(true);
+    }else if(mfaRem){
+        CheckMFA(false);
+    }
 
     const data = {refreshToken, accessToken};
 

@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import Link from "next/link";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
-import {CheckMFA, PartOfOrg, sessionCheck} from "@/app/func/funcs";
+import {PartOfOrg, sessionCheck} from "@/app/func/funcs";
 import ConString from "../../../components/ConString";
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
@@ -23,7 +23,6 @@ const Register_Organisation = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [conString, setConString] = useState("");
 
-    CheckMFA(false);
 
     useEffect(() => {
         const refreshToken = Cookies.get("azionRefreshToken");

@@ -4,7 +4,6 @@ import axios, {AxiosResponse} from 'axios';
 import {apiUrl} from '@/app/api/config';
 import {Commissioner} from "next/font/google";
 import Cookies from 'js-cookie';
-import {CheckMFA} from '@/app/func/funcs';
 
 const azionText = Commissioner({subsets: ["latin"], weight: "800"});
 
@@ -12,7 +11,6 @@ export default function CamTest() {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const [showOverlay, setShowOverlay] = useState(false);
 
-    CheckMFA(false);
 
     useEffect(() => {
         const refreshToken = Cookies.get('azionRefreshToken');

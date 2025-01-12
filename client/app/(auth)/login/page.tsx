@@ -17,39 +17,44 @@ interface Token {
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
-const AxiosFunction = (data: any) => {
-    axios
-        .post(`${apiUrl}/auth/login`, data, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        .then(function (response: AxiosResponse) {
-            const accessToken = response.data.accessToken;
-            const refreshToken = response.data.refreshToken;
-            window.location.href = "/organizations";
-            Cookies.set("azionAccessToken", accessToken, {
-                secure: true,
-                sameSite: "None",
-            });
-            Cookies.set("azionRefreshToken", refreshToken, {
-                secure: true,
-                sameSite: "Strict",
-            });
-        })
-        .catch(function (error: any) {
-            if (error.response) {
-                alert(error.response.data);
-            } else {
-                alert("An error occurred, but no server response was received.");
-            }
-            window.location.reload();
-        });
-};
-
 const Login = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [OTPNeeded, setOTPNeeded] = useState<boolean>(false);
+
+    const Login = async (data: any) => {
+        axios
+            .post(`${apiUrl}/auth/login`, data, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then(async function (response: AxiosResponse) {
+                if (response.data.message === "OTP required" || response.status === 204) {
+                    await setOTPNeeded(true);
+                    await showModal();
+                } else {
+                    const accessToken = response.data.accessToken;
+                    const refreshToken = response.data.refreshToken;
+                    window.location.href = "/organizations";
+                    Cookies.set("azionAccessToken", accessToken, {
+                        secure: true,
+                        sameSite: "Strict",
+                    });
+                    Cookies.set("azionRefreshToken", refreshToken, {
+                        secure: true,
+                        sameSite: "Strict",
+                    });
+                }
+            }).catch(function (error: any) {
+                if (error.response) {
+                    alert(error.response.data);
+                } else {
+                    alert("An error occurred, but no server response was received.");
+                }
+                window.location.reload();
+            });
+    };
 
     useEffect(() => {
         if (Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
@@ -57,13 +62,23 @@ const Login = () => {
         }
     }, []);
 
+    //Request before OTP
+    const handleSubmitNoOTP = () => {
+        const userData = {
+            email,
+            password,
+        };
+        Login(userData);
+    };
+
+    //Request after OTP only in needed
     const handleSubmit = (otp: string) => {
         const userData = {
             email,
             password,
-            OTP: otp,
+            OTP:otp,
         };
-        AxiosFunction(userData);
+        Login(userData);
     };
 
     const showModal = () => {
@@ -103,7 +118,7 @@ const Login = () => {
             </div>
 
             <button
-                onClick={showModal}
+                onClick={OTPNeeded ? showModal : handleSubmitNoOTP}
                 className="bg-lightAccent text-xl text-white font-black w-full max-w-sm py-3 rounded-lg hover:scale-105 transition transform"
             >
                 Continue
@@ -136,7 +151,7 @@ const Login = () => {
                 <div className="modal-box flex flex-col items-center gap-6">
                     <h1 className="text-2xl font-bold">Enter your One-Time-Password (OTP)</h1>
                     <p className="text-center text-sm">
-                        Check your authenticator app on your phone for the OTP.
+                        Check your authenticator app on your phone for the OTP
                     </p>
                     <OTP length={6} onComplete={handleSubmit}/>
                     <form method="dialog">

@@ -9,6 +9,7 @@ export interface User {
     projects: any;
 }
 
+//Task file type
 export interface ProjFile {
     fileData?: string;
     fileName?: string;
@@ -59,6 +60,7 @@ export interface Employee {
     projects?: any;
 }
 
+//Meeting type
 export interface Meeting {
     id: string;
     topic: string;
@@ -69,6 +71,7 @@ export interface Meeting {
     link: string;
 }
 
+//Schedule type
 export interface EventData {
     id: string;
     title: string;
@@ -79,12 +82,26 @@ export interface EventData {
     roles: string[];
 }
 
+//Camera type
 export interface Cam {
     camName: string;
     roleLevel: number;
     orgAddress: string;
 }
 
+//Type for invite people
 export interface PeopleData {
     [email: string]: string;
+}
+
+//Types for userdata func
+export interface UserDataType {
+    name: string,
+    email: string,
+    age: string,
+    role: string,
+    roleLevel: number,
+    projects: string[],
+    profilePicture: string | null,
+    mfaEnabled: boolean
 }

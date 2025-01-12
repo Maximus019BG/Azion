@@ -19,7 +19,7 @@ interface InputField<T> {
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
-const AxiosFunction = (data: any, isOwner: boolean) => {
+const handleRegister = (data: any, isOwner: boolean) => {
     axios
         .post(`${apiUrl}/auth/register`, data, {
             headers: {
@@ -37,7 +37,12 @@ const AxiosFunction = (data: any, isOwner: boolean) => {
                 secure: true,
                 sameSite: "Strict",
             });
-            window.location.href = "/mfa";
+            if(isOwner) {
+                window.location.href = "/register/organization";
+            }
+            else{
+                window.location.href = "/organizations"
+            }
         })
         .catch(function (error: any) {
             console.log(error.response ? error.response : error);
@@ -136,22 +141,16 @@ const Register = () => {
         setDays(newDays);
     }, [selectedYear, selectedMonth]);
 
-// SUBMIT
+    //SUBMIT
     const handleSubmit = () => {
         const userData = {
             name,
             email,
-            age: `${age.year}-${age.month.padStart(2, "0")}-${age.day.padStart(
-                2,
-                "0"
-            )}`,
+            age: `${age.year}-${age.month.padStart(2, "0")}-${age.day.padStart(2, "0")}`,
             password,
-            role: isOrgOwner ? "owner" : "none",
-            mfaEnabled: false,
         };
         if (password === password2) {
-            console.log(userData.role);
-            AxiosFunction(userData, isOrgOwner);
+            handleRegister(userData, isOrgOwner);
         } else {
             alert("Passwords do not match.");
         }
@@ -367,7 +366,7 @@ const Register = () => {
                                 </button>
                             )}
                             <div className="flex-grow"></div>
-                            {step < stepLabels.length - 1 && (
+                            {step < stepLabels.length - 2 && (
                                 <button
                                     onClick={handleNextStep}
                                     className="bg-lightAccent text-white px-4 py-2 rounded-lg hover:bg-accent"
@@ -375,7 +374,7 @@ const Register = () => {
                                     Next
                                 </button>
                             )}
-                            {step === stepLabels.length - 1 && (
+                            {step === stepLabels.length - 2 && (
                                 <button
                                     onClick={handleSubmit}
                                     className="bg-accent text-white px-6 py-2 text-lg rounded-lg hover:bg-blue-500"

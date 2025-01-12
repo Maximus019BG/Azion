@@ -49,36 +49,35 @@ public class MFAService {
     public String generateQRCodeImage(String secret, String email) {
         User user = userRepository.findByEmail(email);
         String name = user.getName();
-        
-        String issuer = System.getProperty("issuerName");
         QrData data = new QrData.Builder()
-                .label("Azion:" + name + "/" + email)
+                .label("Azion Online: " + name + "/" + email)
                 .secret(secret)
                 .algorithm(HashingAlgorithm.SHA1)
                 .digits(6)
+                .issuer("Azion Online")
                 .period(30)
                 .build();
         
+        //Qr generator
         QrGenerator generator = new ZxingPngQrGenerator();
         byte[] imageData = new byte[0];
         
         try {
-            imageData = generator.generate(data);
+            imageData = generator.generate(data); //Qr generation
         } catch (Exception e) {
             log.error("Error with generating QR code: ", e);
         }
         return Utils.getDataUriForImage(imageData, generator.getImageMimeType());
     }
     
-    //!Generate otp code !!!instead of qr code!!!
-    public String generateManualEntryCode(String email) {
+    //!Get otp code !!!instead of qr code!!!
+    public String getManualEntryCode(String email) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
             log.error("User not found for email: " + email);
             return null;
         }
         String secret = getUserMFASecret(email);
-        String issuer = System.getProperty("issuerName");
         return secret;
     }
     
@@ -96,7 +95,7 @@ public class MFAService {
         return generateQRCodeImage(secret, email);
     }
     
-    //!Getting user secret
+    //Get user secret helper method
     private String getUserMFASecret(String email) {
         try {
             User user = userRepository.findByEmail(email);

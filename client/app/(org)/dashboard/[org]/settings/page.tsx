@@ -1,7 +1,7 @@
 "use client";
 import React, {FC, useEffect, useState} from "react";
 import SideMenu from "@/app/components/Side-menu";
-import {CheckMFA, PartOfOrg, sessionCheck, UserData} from "@/app/func/funcs";
+import {PartOfOrg, sessionCheck, UserData} from "@/app/func/funcs";
 import Cookies from "js-cookie";
 import {Poppins} from "next/font/google";
 import OrgSettingsForm from "@/app/components/OrgSettings";
@@ -24,7 +24,6 @@ const OrgSettings: FC<PageProps> = ({params}) => {
     const [roleLevel, setRoleLevel] = useState<number>(0);
     const orgName: string = params.org;
 
-    CheckMFA(false);
     PartOfOrg(true);
 
     useEffect(() => {

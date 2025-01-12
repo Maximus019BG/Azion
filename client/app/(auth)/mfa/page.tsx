@@ -20,11 +20,7 @@ const VerifyMFAAxios = (data: any) => {
                 secure: true,
                 sameSite: "Strict",
             });
-            if (Cookies.get("OrgOwner") === "true") {
-                window.location.href = "/register/organization";
-            } else {
-                window.location.href = "/organizations";
-            }
+            window.location.href = "/account";
         })
         .catch(function (error: any) {
             console.log(error.response ? error.response : error);
@@ -57,7 +53,7 @@ const MfaSetupPage = () => {
         const refreshToken = Cookies.get("azionRefreshToken");
         const accessToken = Cookies.get("azionAccessToken");
         if (refreshToken && accessToken) {
-            mfaSessionCheck();
+            mfaSessionCheck(false);
         } else {
             window.location.href = "/login";
         }
@@ -116,10 +112,7 @@ const MfaSetupPage = () => {
         <div className="h-dvh w-full flex flex-col justify-center items-center text-gray-400 px-4 overflow-x-hidden">
             <h1 className="text-4xl md:text-5xl font-black tracking-wide mt-16 text-lightAccent">MFA</h1>
             <ul className="text-center space-y-2 md:space-y-0">
-                <li>Azion requires you to have Multi Factor Authentication (MFA). Without MFA, your organization data is
-                    not secure.
-                </li>
-                <li>Scan the QR code below with your authenticator app.</li>
+                <li>Scan the QR code below with your authenticator app (google authenticator / microsoft authenticator)</li>
                 <li>If you don&apos;t have an authenticator app, you can download one from the app store.</li>
             </ul>
             <div className="flex justify-center my-4">

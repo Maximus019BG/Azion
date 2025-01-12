@@ -4,7 +4,6 @@ import axios, { AxiosResponse } from "axios";
 import { apiUrl } from "../api/config";
 import { Poppins } from "next/font/google";
 import Cookies from "js-cookie";
-import { CheckMFA } from "../func/funcs";
 import {FaSignOutAlt} from "react-icons/fa";
 
 
@@ -47,8 +46,6 @@ const LogOutAxios = () => {
 const SessionCheck = () => {
     const refreshToken: string | undefined = Cookies.get("azionRefreshToken");
     const accessToken: string | undefined = Cookies.get("azionAccessToken");
-
-    CheckMFA(false);
 
     const data: Token = {
         refreshToken: refreshToken ? refreshToken : "",

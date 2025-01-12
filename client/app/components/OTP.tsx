@@ -31,6 +31,18 @@ const OTP = ({ length = 6, onComplete }: InputProps) => {
         }
     };
 
+    //Deleting bug fix
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+        if (e.key === 'Backspace' && OTP[index] === '') {
+            if (index > 0) {
+                inputRef.current[index - 1]?.focus(); //Focus the previous
+                const newPin = [...OTP];
+                newPin[index - 1] = ''; //Clear previous input
+                setOTP(newPin);
+            }
+        }
+    };
+
     //Pasting bug fix
     const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -61,6 +73,7 @@ const OTP = ({ length = 6, onComplete }: InputProps) => {
                     value={OTP[index]}
                     onChange={(e) => handleTextChange(e.target.value, index)}
                     onPaste={handlePaste}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
                     ref={(ref) => {
                         inputRef.current[index] = ref;
                     }}

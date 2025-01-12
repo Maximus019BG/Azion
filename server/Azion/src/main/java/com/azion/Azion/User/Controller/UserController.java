@@ -80,6 +80,8 @@ public class UserController {
             userDTO.setId(user.getId());
             userDTO.setRoleLevel(user.getRoleLevel());
             userDTO.setProjects(userService.convertProjectsToDTO(user.getProjects()));
+            userDTO.setMfaEnabled(user.isMfaEnabled());
+            
             if(user.getProfilePicture() != null) {
                 userDTO.setProfilePicture(Base64.getEncoder().encodeToString(user.getProfilePicture()));
             }
