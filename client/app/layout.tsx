@@ -2,6 +2,7 @@ import type {Metadata} from "next";
 import {Inter} from "next/font/google";
 import "./globals.css";
 import logo from "../public/white-logo.png";
+import logoSEO from "../public/logo.png";
 import openGraphImage from "../public/opengraphThin.png";
 import {MeetingProvider} from "./context/MeetingContext";
 
@@ -45,16 +46,12 @@ export const metadata: Metadata = {
     },
 
     icons: {
-        icon: logo.src,
-        shortcut: logo.src,
+        icon: logoSEO.src,
+        shortcut: logoSEO.src,
     },
 
     alternates: {
-        canonical: "https://azion.online",
-        languages: {
-            "en-US": "https://azion.online/en-US",
-            "es-ES": "https://azion.online/es-ES",
-        },
+        canonical: "https://azion.online"
     },
 };
 

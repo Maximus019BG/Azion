@@ -8,17 +8,16 @@ import {
     FaClipboard,
     FaCog,
     FaComments,
+    FaHome,
     FaPlusCircle,
     FaTasks,
     FaUserCircle,
     FaUsers,
-    FaUserSecret,
-    FaHome
+    FaUserSecret
 } from "react-icons/fa";
 import {AiFillVideoCamera} from "react-icons/ai";
 import LogOut from "@/app/components/LogOut";
 import {UserData} from "@/app/func/funcs";
-import {TbFaceId} from "react-icons/tb";
 import {getOrgName} from "@/app/func/org";
 
 // Font setup
@@ -133,7 +132,8 @@ const SideMenu = () => {
                             <>
                                 {/* Dashboard Dropdown */}
                                 <li className="text-md w-full relative">
-                                    <button className="flex items-center justify-between w-full" onClick={toggleDashboardDropdown}>
+                                    <button className="flex items-center justify-between w-full"
+                                            onClick={toggleDashboardDropdown}>
                                         <h1
 
                                             className="flex items-center w-full"
@@ -276,12 +276,6 @@ const SideMenu = () => {
                             <Link href="/organizations" className="flex items-center w-full">
                                 <FaBuilding className="text-lg mr-2"/>
                                 Organizations
-                            </Link>
-                        </li>
-                        <li className="text-md w-full">
-                            <Link href="/mfa/face" className="flex items-center w-full">
-                                <TbFaceId className="text-lg mr-2"/>
-                                FaceID
                             </Link>
                         </li>
                         <li className="text-md w-full">

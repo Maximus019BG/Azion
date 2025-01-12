@@ -27,64 +27,41 @@ const Dashboard: FC<PageProps> = ({params}) => {
     const orgName: string = params.org;
 
     useEffect(() => {
-        console.log(1)
         const fetchData = async () => {
             try {
                 const refreshToken = Cookies.get('azionRefreshToken');
                 const accessToken = Cookies.get('azionAccessToken');
                 if (refreshToken && accessToken) {
-                    sessionCheck();
-                    const data = await UserData();
-                    setDisplayName(data.name);
+                    await sessionCheck();
+                    const [userData, orgNameResult, meetingsResponse] = await Promise.all([
+                        UserData(),
+                        getOrgName(),
+                        axios.get(`${apiUrl}/schedule/show/meetings`, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                "authorization": accessToken,
+                            },
+                        }),
+                    ]);
+
+                    setDisplayName(userData.name);
+                    if (orgNameResult && orgNameResult !== orgName) {
+                        window.location.href = `/dashboard/${orgNameResult}`;
+                    } else {
+                        setMeetings(meetingsResponse.data);
+                        setLoading(false);
+                    }
                 } else {
                     window.location.href = '/login';
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
+                setLoading(false);
             }
         };
 
         fetchData();
-        console.log(1.1)
-    }, []);
-
-    useEffect(() => {
-        console.log(2)
-            const fetchOrgName = async () => {
-                const result: string = await getOrgName();
-                if (result && result !== orgName) {
-                    window.location.href = `/dashboard/${result}`;
-                }
-                else {
-                    setLoading(false);
-                }
-            }
-            fetchOrgName();
-        setLoading(false);
-        console.log(2.1)
     }, [orgName]);
-
-
-    useEffect(() => {
-        console.log(3)
-        const getMeetings = async () => {
-            try {
-                const response = await axios.get(`${apiUrl}/schedule/show/meetings`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "authorization": Cookies.get("azionAccessToken"),
-                    },
-                });
-                // console.log('Fetched meetings:', response.data);
-                setMeetings(response.data);
-            } catch (error) {
-                console.error('Error fetching meetings:', error);
-                alert('Error fetching meetings');
-            }
-        };
-        getMeetings();
-        console.log(3.1)
-    }, []);
 
     return (
         <>
