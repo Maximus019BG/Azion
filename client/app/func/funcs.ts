@@ -1,8 +1,7 @@
 import Cookies from 'js-cookie';
 import axios, {AxiosResponse} from 'axios';
 import {apiUrl} from '../api/config';
-import {Token} from "@/app/types/types";
-import {UserDataType} from "@/app/types/types";
+import {Token, UserDataType} from "@/app/types/types";
 
 //Checks if user has MFA
 const CheckMFA = async (onMFAPage: boolean) => {
@@ -20,8 +19,7 @@ const CheckMFA = async (onMFAPage: boolean) => {
                 } else {
                     return;
                 }
-            }
-            else{
+            } else {
                 if (response.data === false) {
                     window.location.href = '/organizations';
                 } else {
@@ -64,14 +62,14 @@ const PartOfOrg = async (afterDashboard: boolean) => {
 const hideButton = async () => {
     const data = {accessToken: Cookies.get("azionAccessToken")};
     try {
-       await axios.post(`${apiUrl}/org/partOfOrg`, data, {
+        await axios.post(`${apiUrl}/org/partOfOrg`, data, {
             headers: {
                 "Content-Type": "application/json",
             },
         });
         return true;
     } catch (error: any) {
-       return false
+        return false
     }
 };
 
@@ -247,14 +245,14 @@ const sessionCheck = () => {
 };
 
 //!mfa Only
-const mfaSessionCheck = (mfaRem:boolean) => {
+const mfaSessionCheck = (mfaRem: boolean) => {
     const refreshToken = Cookies.get("azionRefreshToken");
     const accessToken = Cookies.get("azionAccessToken");
 
     //Check if the page is to remove the otp
-    if(!mfaRem) {
+    if (!mfaRem) {
         CheckMFA(true);
-    }else if(mfaRem){
+    } else if (mfaRem) {
         CheckMFA(false);
     }
 
@@ -294,7 +292,6 @@ const byteArrayToBase64 = async (byteArray: number[]): Promise<string | null> =>
         reader.readAsDataURL(blob);
     });
 };
-
 
 
 export {

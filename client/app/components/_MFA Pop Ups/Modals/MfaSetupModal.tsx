@@ -112,8 +112,8 @@ const MfaSetupModal = ({isOpen, onClose}: { isOpen: boolean; onClose: () => void
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
-            <div className="h-full w-full bg-background flex flex-col justify-center items-center p-0">
-                <h1 className="text-4xl md:text-5xl font-black tracking-wide text-lightAccent">MFA</h1>
+            <div className="h-full w-full bg-background flex flex-col justify-center items-center p-4 md:p-0">
+                <h1 className="text-2xl md:text-4xl font-black tracking-wide text-lightAccent">MFA</h1>
                 <ul className="text-center space-y-2 md:space-y-0 px-3">
                     <li>Scan the QR code below with your authenticator app (google authenticator / microsoft
                         authenticator)
@@ -123,18 +123,18 @@ const MfaSetupModal = ({isOpen, onClose}: { isOpen: boolean; onClose: () => void
                 <div className="flex justify-center my-4">
                     <Image src={qrCodeUri} alt="QR Code" width={250} height={250} className="rounded-md"/>
                 </div>
-                <h2 className="text-3xl font-black text-lightAccent">Or</h2>
+                <h2 className="text-2xl md:text-3xl font-black text-lightAccent">Or</h2>
                 <div className="text-center">
                     <p className="text-lg">Enter the code below</p>
                     <p className="font-bold">{mfaCode}</p>
                 </div>
                 <div className="flex flex-col justify-center items-center gap-2 mt-4">
                     <div className="h-1 w-56 bg-gray-400 rounded-3xl"/>
-                    <h2 className="text-3xl font-black text-lightAccent">Then</h2>
+                    <h2 className="text-2xl md:text-3xl font-black text-lightAccent">Then</h2>
                     <p className="mb-3">Enter the One Time Password.</p>
                 </div>
                 <OTP length={6} onComplete={verifyMFA}/>
-                <div className="w-full flex flex-col justify-center items-center mt-10">
+                <div className="w-full flex flex-col justify-center items-center mt-6 md:mt-10">
                     <p className="text-center">
                         &bull; <span className="font-black text-lightAccent uppercase">DO NOT REMOVE</span> THE AZION
                         FIELD FROM YOUR AUTHENTICATOR APP BECAUSE YOU WON&apos;T BE ABLE TO LOG BACK IN &bull;
