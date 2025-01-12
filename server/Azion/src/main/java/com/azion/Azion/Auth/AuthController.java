@@ -84,6 +84,7 @@ public class AuthController {
         user.setEmail(email);
         user.setPassword(password);
         user.setMfaEnabled(false);
+        user.setRole("No role");
 
         userRepository.save(user);
 
