@@ -7,9 +7,6 @@ import {sessionCheck, UserData} from '@/app/func/funcs';
 import {getOrgName} from '@/app/func/org';
 import Loading from '@/app/components/Loading';
 import DashboardRow1 from "@/app/components/_Dashboard-Elements/Dashboard_Row_1";
-import axios from "axios";
-import {apiUrl} from "@/app/api/config";
-import {Meeting} from '@/app/types/types';
 import Calendar from "@/app/components/_Dashboard-Elements/Calendar";
 
 const headerText = Poppins({subsets: ['latin'], weight: '900'});
@@ -23,7 +20,6 @@ interface PageProps {
 const Dashboard: FC<PageProps> = ({params}) => {
     const [displayName, setDisplayName] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
-    const [meetings, setMeetings] = useState<Meeting[]>([]);
     const orgName: string = params.org;
 
     useEffect(() => {
@@ -33,22 +29,15 @@ const Dashboard: FC<PageProps> = ({params}) => {
                 const accessToken = Cookies.get('azionAccessToken');
                 if (refreshToken && accessToken) {
                     await sessionCheck();
-                    const [userData, orgNameResult, meetingsResponse] = await Promise.all([
+                    const [userData, orgNameResult] = await Promise.all([
                         UserData(),
                         getOrgName(),
-                        axios.get(`${apiUrl}/schedule/show/meetings`, {
-                            headers: {
-                                "Content-Type": "application/json",
-                                "authorization": accessToken,
-                            },
-                        }),
                     ]);
 
                     setDisplayName(userData.name);
                     if (orgNameResult && orgNameResult !== orgName) {
                         window.location.href = `/dashboard/${orgNameResult}`;
                     } else {
-                        setMeetings(meetingsResponse.data);
                         setLoading(false);
                     }
                 } else {
