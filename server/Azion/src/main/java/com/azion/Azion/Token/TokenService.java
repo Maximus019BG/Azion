@@ -171,7 +171,7 @@ public class TokenService {
         return null;
     }
     
-    // Show Sessions
+    // Show Page
     public List<TokenPlatformResponse> showAllTokens(String accessToken) {
         // Retrieve the user
         User user = getUserFromToken(accessToken);

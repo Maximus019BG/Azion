@@ -33,7 +33,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/components/band.jsx",
-    "app/components/Badge.tsx",
+    "app/components/UserInfo.tsx",
     "mobile/AzionMobile/react-native-cookies.d.ts"
   ],
   "exclude": [

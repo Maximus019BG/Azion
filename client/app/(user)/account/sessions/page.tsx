@@ -1,14 +1,12 @@
 "use client";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState} from 'react';
 import Cookies from "js-cookie";
 import {PartOfOrg, sessionCheck} from "@/app/func/funcs";
-import SideMenu from "../../components/Side-menu";
-import {UserInfo} from "../../components/UserInfo";
+import SessionCards from "@/app/components/Session-cards";
 import Loading from "@/app/components/Loading";
-import {MfaButtons} from "../../components/MfaButtons";
-import SessionSection from "../../components/SessionSection";
+import SideMenu from "@/app/components/Side-menu";
 
-const Account = () => {
+const Page = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -44,17 +42,7 @@ const Account = () => {
                         <SideMenu/>
                     </div>
                     <div className="w-full h-full flex flex-col items-center overflow-y-auto">
-                        <div className="w-full flex justify-center items-center p-10">
-                            <UserInfo/>
-                        </div>
-                        <div className="w-full h-full flex justify-around items-center">
-                            <div>
-                                <MfaButtons/>
-                            </div>
-                            <div>
-                                <SessionSection/>
-                            </div>
-                        </div>
+                        <SessionCards/>
                     </div>
                 </div>
             )}
@@ -62,4 +50,4 @@ const Account = () => {
     );
 };
 
-export default Account;
+export default Page;

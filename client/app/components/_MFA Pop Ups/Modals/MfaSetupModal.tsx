@@ -8,6 +8,7 @@ import {apiUrl} from "@/app/api/config";
 import {mfaSessionCheck} from "@/app/func/funcs";
 import Loading from "@/app/components/Loading";
 import Modal from "@/app/components/_MFA Pop Ups/Modals/Modal";
+import {FaCopy} from "react-icons/fa";
 
 const VerifyMFAAxios = (data: any) => {
     axios
@@ -106,6 +107,11 @@ const MfaSetupModal = ({isOpen, onClose}: { isOpen: boolean; onClose: () => void
         fetchQrCodeUri(accessToken);
     }, []);
 
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(mfaCode);
+        alert("MFA code copied to clipboard!");
+    };
+
     if (!isOpen) return null;
     if (loading) return <Loading/>;
     if (error) return <p>Error: {error}</p>;
@@ -124,9 +130,15 @@ const MfaSetupModal = ({isOpen, onClose}: { isOpen: boolean; onClose: () => void
                     <Image src={qrCodeUri} alt="QR Code" width={250} height={250} className="rounded-md"/>
                 </div>
                 <h2 className="text-2xl md:text-3xl font-black text-lightAccent">Or</h2>
-                <div className="text-center">
-                    <p className="text-lg">Enter the code below</p>
-                    <p className="font-bold">{mfaCode}</p>
+                <div className="text-center w-full px-4 sm:px-6 md:px-8">
+                    <p className="text-lg sm:text-xl md:text-2xl">Enter the code below</p>
+                    <div className="flex items-center justify-center">
+                        <p className="font-bold w-full text-lg sm:text-xl md:text-2xl break-words">{mfaCode}
+                            <button onClick={copyToClipboard} className="ml-2 text-lg sm:text-xl md:text-2xl">
+                                <FaCopy/>
+                            </button>
+                        </p>
+                    </div>
                 </div>
                 <div className="flex flex-col justify-center items-center gap-2 mt-4">
                     <div className="h-1 w-56 bg-gray-400 rounded-3xl"/>
