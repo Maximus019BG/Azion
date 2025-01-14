@@ -7,6 +7,8 @@ import {OrgConnString} from "@/app/func/org";
 import {PartOfOrg, UserData} from "@/app/func/funcs";
 import {PeopleData} from "@/app/types/types"
 import {headers} from "next/headers";
+import { IoCopy } from "react-icons/io5";
+import Alert from "@/app/components/Alert";
 
 const SessionCheck = () => {
     const refreshToken = Cookies.get("azionRefreshToken");
@@ -168,6 +170,12 @@ const OrgSettingsForm = () => {
         navigator.clipboard.writeText(`${clientUrl}/organizations/${conString}`);
     }
 
+    const copyConStr = () =>{
+        navigator.clipboard.writeText(conString);
+        alert("Connection code copied to clipboard");
+
+    }
+
     const inviteUser = async (id:string)=>{
         const accessToknen:string|undefined = Cookies.get("azionAccessToken");
         const link = `${clientUrl}/organizations/${conString}`;
@@ -232,6 +240,8 @@ const OrgSettingsForm = () => {
                 <button onClick={handleInviteChange} className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out">
                     Invite
                 </button>
+
+                <p className="flex">Or join with connection code: {conString} <span onClick={copyConStr}> <IoCopy /> </span></p>
 
                 {alertMessage && (
                     <div className="mt-4 text-white bg-red-500 p-3 rounded-md shadow-md">

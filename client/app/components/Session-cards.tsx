@@ -85,7 +85,10 @@ const SessionCards = () => {
                             "Content-Type": "application/json",
                         },
                     });
-                    window.location.reload();
+                    setSessions((prevSessions) =>
+                        prevSessions.filter((session) => session.tokenDTO.token !== token)
+                    );
+                    alert("Session removed successfully")
                 } catch (error) {
                     console.error(error);
                 }

@@ -52,7 +52,7 @@ const Login = () => {
                 } else {
                     alert("An error occurred, but no server response was received.");
                 }
-                window.location.reload();
+
             });
     };
 

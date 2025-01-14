@@ -5,6 +5,7 @@ import logo from "../public/white-logo.png";
 import logoSEO from "../public/logo.png";
 import openGraphImage from "../public/opengraphThin.png";
 import {MeetingProvider} from "./context/MeetingContext";
+import {AlertProvider} from "@/app/context/AlertContext";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -66,9 +67,11 @@ export default function RootLayout({
             <link rel="icon" href={logo.src}/>
         </head>
         <body className={`${inter.className} bg-background text-white overflow-x-hidden`}>
-        <MeetingProvider>
-            {children}
-        </MeetingProvider>
+        <AlertProvider>
+            <MeetingProvider>
+                {children}
+            </MeetingProvider>
+        </AlertProvider>
         </body>
         </html>
     );
