@@ -10,20 +10,20 @@ export const MfaButtons = () => {
 
     return (
         <div
-            className="w-fit h-full relative bg-base-300 rounded-xl flex flex-col justify-between p-8 text-white shadow-lg">
+            className="w-full h-fit relative flex flex-col justify-between text-white">
             {isMfaEnabled ? (
                 <button
-                    className="bg-gray-800 w-full mt-3 text-white hover:bg-gray-700 font-bold py-2 px-4 rounded"
+                    className="bg-gray-800 w-full text-white hover:bg-gray-700 font-bold transition duration-200 ease-in-out py-2 px-4 rounded"
                     onClick={() => setIsMfaRemoveModalOpen(true)}
                 >
-                    Remove 2FA
+                    Disable 2FA
                 </button>
             ) : (
                 <button
-                    className="bg-gray-800 w-full mt-3 text-white hover:bg-gray-700 font-bold py-2 px-4 rounded"
+                    className="bg-gray-800 w-full text-white hover:bg-gray-700 transition duration-200 ease-in-out font-bold py-2 px-4 rounded"
                     onClick={() => setIsMfaModalOpen(true)}
                 >
-                    Add 2FA
+                    Enable 2FA
                 </button>
             )}
             {isMfaModalOpen && ReactDOM.createPortal(

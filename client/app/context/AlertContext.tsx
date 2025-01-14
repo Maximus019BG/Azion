@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {createContext, ReactNode, useContext, useEffect, useState} from "react";
 import Alert from "@/app/components/Alert";
 
 type AlertContextType = {
@@ -16,19 +16,21 @@ export const useCustomAlert = () => {
     return context;
 };
 
-export const AlertProvider = ({ children }: { children: ReactNode }) => {
+export const AlertProvider = ({children}: { children: ReactNode }) => {
     const [alert, setAlert] = useState<{ message: string; type: string } | null>(null);
 
     const showAlert = (message: string, type: "success" | "error" = "success") => {
-        setAlert({ message, type });
+        setAlert({message, type});
         setTimeout(() => setAlert(null), 3000); // Auto-hide after 3 seconds
     };
 
-    // Override the global alert function
-    (window as any).alert = showAlert;
+    useEffect(() => {
+        // Override the global alert function in the browser
+        (window as any).alert = showAlert;
+    }, []);
 
     return (
-        <AlertContext.Provider value={{ showAlert }}>
+        <AlertContext.Provider value={{showAlert}}>
             {children}
             {alert && (
                 <Alert

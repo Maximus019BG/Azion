@@ -3,10 +3,11 @@ import React, {useEffect, useState} from "react";
 import Cookies from "js-cookie";
 import {PartOfOrg, sessionCheck} from "@/app/func/funcs";
 import SideMenu from "../../components/Side-menu";
-import {UserInfo} from "../../components/UserInfo";
 import Loading from "@/app/components/Loading";
-import {MfaButtons} from "../../components/MfaButtons";
-import SessionSection from "../../components/SessionSection";
+import AccountUserCard from "@/app/components/AccountUserCard";
+import AccountMfaCard from "@/app/components/AccountMfaCard";
+import AccountDeleteCard from "@/app/components/AccountDeleteCard";
+
 
 const Account = () => {
     const [loading, setLoading] = useState(true);
@@ -44,16 +45,10 @@ const Account = () => {
                         <SideMenu/>
                     </div>
                     <div className="w-full h-full flex flex-col items-center overflow-y-auto">
-                        <div className="w-full flex justify-center items-center p-10">
-                            <UserInfo/>
-                        </div>
-                        <div className="w-full h-full flex justify-around items-center">
-                            <div>
-                                <MfaButtons/>
-                            </div>
-                            <div>
-                                <SessionSection/>
-                            </div>
+                        <div className="w-full flex flex-col justify-center items-center py-12 gap-8">
+                            <AccountUserCard/>
+                            <AccountMfaCard/>
+                            <AccountDeleteCard/>
                         </div>
                     </div>
                 </div>
