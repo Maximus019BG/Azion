@@ -31,7 +31,7 @@ const AccountUserCard = () => {
         <div
             className="w-full max-w-3xl mx-auto border-2 border-base-100 bg-base-300 rounded-lg shadow-md overflow-hidden">
             {/* MAIN SECTION */}
-            <div className="p-8 border-b-2 border-base-100 flex justify-between items-center">
+            <div className="px-8 py-3 border-b-2 border-base-100 flex justify-between items-center">
                 <div className="flex flex-col justify-evenly h-full items-start">
                     <div className="flex items-center group">
                         {isEditing.name ? (
