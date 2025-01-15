@@ -103,5 +103,6 @@ export interface UserDataType {
     roleLevel: number,
     projects: string[],
     profilePicture: string | null,
-    mfaEnabled: boolean
+    mfaEnabled: boolean,
+    faceIdEnabled: boolean
 }

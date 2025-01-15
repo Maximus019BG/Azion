@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { UserData } from "../func/funcs";
-import Link from "next/link";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { apiUrl } from "@/app/api/config";

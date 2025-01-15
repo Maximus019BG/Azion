@@ -17,6 +17,7 @@ public class UserDTO {
     private Set<ProjectsDTO> projects;
     private String profilePicture;
     private boolean mfaEnabled;
+    private boolean faceIdEnabled;
     
     
     public String getId() {
@@ -96,5 +97,12 @@ public class UserDTO {
     }
     public void setMfaEnabled(boolean mfaEnabled) {
         this.mfaEnabled = mfaEnabled;
+    }
+    public boolean isFaceIdEnabled() {
+        return faceIdEnabled;
+    }
+    
+    public void setFaceIdEnabled(boolean faceIDEnabled) {
+        this.faceIdEnabled = faceIDEnabled;
     }
 }

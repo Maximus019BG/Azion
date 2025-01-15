@@ -91,7 +91,8 @@ const UserData = async (): Promise<UserDataType> => {
                 roleLevel: response.data.roleLevel,
                 projects: response.data.projects,
                 profilePicture: response.data.profilePicture,
-                mfaEnabled: response.data.mfaEnabled
+                mfaEnabled: response.data.mfaEnabled,
+                faceIdEnabled: response.data.faceIdEnabled
             };
         })
         .catch((error: any) => {

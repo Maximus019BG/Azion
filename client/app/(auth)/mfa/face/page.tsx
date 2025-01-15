@@ -5,6 +5,7 @@ import {apiUrl} from '@/app/api/config';
 import {Commissioner} from "next/font/google";
 import Cookies from 'js-cookie';
 import Side_menu from "@/app/components/Side-menu";
+import {UserData} from "@/app/func/funcs";
 
 interface Token {
     refreshToken: string;
@@ -16,17 +17,26 @@ const azionText = Commissioner({subsets: ["latin"], weight: "800"});
 export default function MfaFace() {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const [showOverlay, setShowOverlay] = useState(false);
+    const[isFaceIdEnabled, setIsFaceIdEnabled] = useState<boolean>(false)
 
 
     useEffect(() => {
         const refreshToken = Cookies.get('azionRefreshToken');
         const accessToken = Cookies.get('azionAccessToken');
         if (refreshToken && accessToken) {
-            // mfaSessionCheck();
         } else if (!accessToken && !refreshToken) {
             window.location.href = '/login';
         }
-    }, []);
+
+        //check if faceId is on
+        UserData().then((response) => {
+            setIsFaceIdEnabled(response.faceIdEnabled)
+        });
+
+        if(isFaceIdEnabled){
+            window.location.href="/account"
+        }
+    });
 
     useEffect(() => {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -38,7 +48,7 @@ export default function MfaFace() {
                 console.error("Error accessing webcam: ", err);
             });
         }
-    }, []);
+    });
 
     const captureAndSendFrame = async () => {
         if (videoRef.current) {
