@@ -2,6 +2,9 @@ import React, {useEffect, useState} from 'react';
 import ProfilePicture from "../components/Profile-picture";
 import {UserData} from "../func/funcs";
 import {FaPencilAlt} from 'react-icons/fa';
+import Cookies from "js-cookie";
+import axios from "axios";
+import {apiUrl} from "@/app/api/config";
 
 const AccountUserCard = () => {
     const [profilePicture, setProfilePicture] = useState<File | null>(null);
@@ -10,7 +13,7 @@ const AccountUserCard = () => {
     const [email, setEmail] = useState("");
     const [role, setRole] = useState("");
     const [dateOfBirth, setDateOfBirth] = useState("");
-    const [isEditing, setIsEditing] = useState({name: false, email: false, dateOfBirth: false});
+    const [isEditing, setIsEditing] = useState({name: false, email: false, dateOfBirth: false, profilePicture: false});
 
     useEffect(() => {
         UserData().then((response) => {
@@ -22,9 +25,35 @@ const AccountUserCard = () => {
         });
     }, []);
 
-    const handleSave = () => {
-        // Add logic to save the updated information
-        setIsEditing({name: false, email: false, dateOfBirth: false});
+    const handleSave = async () => {
+        const token = Cookies.get("azionAccessToken");
+
+        const formData = new FormData();
+        formData.append("accessToken", token || "");
+        formData.append("name", name);
+        formData.append("email", email);
+        formData.append("dateOfBirth", dateOfBirth);
+        if (profilePicture) {
+            formData.append("file", profilePicture);
+        }
+
+        try {
+            const response = await axios.put(`${apiUrl}/user/update`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            if (response.status === 200) {
+                alert("User updated successfully");
+                setIsEditing({name: false, email: false, dateOfBirth: false, profilePicture: false});
+            } else {
+                alert("Failed to update user");
+            }
+        } catch (error) {
+            console.error("Error updating user:", error);
+            alert("Failed to update user");
+        }
     };
 
     return (
@@ -93,13 +122,14 @@ const AccountUserCard = () => {
                 </div>
                 <ProfilePicture displayImage={displayImage} onFileChange={(file) => {
                     setProfilePicture(file);
+                    setIsEditing({...isEditing, profilePicture: !isEditing.profilePicture});
                 }}/>
             </div>
             {/* END MAIN SECTION */}
             <div className="bg-base-300 p-4">
                 <p className="text-gray-300 text-sm">Update your personal information here to keep your account
                     up-to-date.</p>
-                {(isEditing.name || isEditing.email || isEditing.dateOfBirth) && (
+                {(isEditing.name || isEditing.email || isEditing.dateOfBirth || isEditing.profilePicture) && (
                     <div className="flex justify-end">
                         <button onClick={handleSave}
                                 className="mt-4 bg-accent text-white hover:bg-gray-700 font-bold py-2 px-16 rounded">

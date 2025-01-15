@@ -3,8 +3,11 @@ import ReactDOM from 'react-dom';
 import MfaSetupModal from '../components/_MFA Pop Ups/Modals/MfaSetupModal';
 import MfaRemoveModal from '../components/_MFA Pop Ups/Modals/MfaRemoveModal';
 
-export const MfaButtons = () => {
-    const [isMfaEnabled, setIsMfaEnabled] = useState<boolean>(false);
+interface MfaButtonsProps {
+    isMfaEnabled: boolean;
+}
+
+export const MfaButtons: React.FC<MfaButtonsProps> = ({ isMfaEnabled }) =>{
     const [isMfaModalOpen, setIsMfaModalOpen] = useState<boolean>(false);
     const [isMfaRemoveModalOpen, setIsMfaRemoveModalOpen] = useState<boolean>(false);
 

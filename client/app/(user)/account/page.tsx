@@ -47,7 +47,7 @@ const Account = () => {
                     <div className="w-full h-full flex flex-col items-center overflow-y-auto">
                         <div className="w-full flex flex-col justify-center items-center py-12 gap-8">
                             <AccountUserCard/>
-                            <AccountMfaCard/>
+                            <AccountMfaCard />
                             <AccountDeleteCard/>
                         </div>
                     </div>

@@ -4,28 +4,13 @@ import {MfaButtons} from "../components/MfaButtons";
 import Link from "next/link";
 
 const AccountMfaCard = () => {
-    const [profilePicture, setProfilePicture] = useState<File | null>(null);
-    const [displayImage, setDisplayImage] = useState<string | null>(null);
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [role, setRole] = useState("");
-    const [dateOfBirth, setDateOfBirth] = useState("");
-    const [isEditing, setIsEditing] = useState({name: false, email: false, dateOfBirth: false});
+    const[isMfaEnabled, setIsMfaEnabled] = useState<boolean>(false);
 
     useEffect(() => {
         UserData().then((response) => {
-            setDisplayImage(response.profilePicture);
-            setName(response.name);
-            setEmail(response.email);
-            setRole(response.role);
-            setDateOfBirth(response.age.substring(0, 10));
+            setIsMfaEnabled(response.mfaEnabled);
         });
     }, []);
-
-    const handleSave = () => {
-        // Add logic to save the updated information
-        setIsEditing({name: false, email: false, dateOfBirth: false});
-    };
 
     return (
         <div
@@ -42,7 +27,7 @@ const AccountMfaCard = () => {
             {/* END MAIN SECTION */}
             <div className="bg-base-300">
                 <div className="w-full flex justify-center items-center gap-6 p-4">
-                    <MfaButtons/>
+                    <MfaButtons isMfaEnabled={isMfaEnabled}/>
                     <Link href="/mfa/face" className="w-full">
                         <button
                             className="bg-gray-800 w-full text-white transition duration-200 ease-in-out hover:bg-gray-700 font-bold py-2 px-4 rounded">

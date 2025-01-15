@@ -19,7 +19,6 @@ interface PageProps {
 
 const OrgSettings: FC<PageProps> = ({params}) => {
     const [loading, setLoading] = useState<boolean>(true);
-    const [conString, setConString] = useState<string>("");
     const [orgNameCheck, setOrgNameCheck] = useState<string>("");
     const [roleLevel, setRoleLevel] = useState<number>(0);
     const orgName: string = params.org;
