@@ -1,9 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { UserData } from "../func/funcs";
+import React, {useEffect, useState} from "react";
+import {UserData} from "../func/funcs";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { apiUrl } from "@/app/api/config";
+import {apiUrl} from "@/app/api/config";
 import OTP from "@/app/components/OTP";
 
 const AccountDeleteCard = () => {
@@ -44,9 +44,8 @@ const AccountDeleteCard = () => {
             {/* MAIN SECTION */}
             <div
                 className="p-6 border-b-2 border-red-500 border-opacity-55 flex flex-col justify-between items-start gap-3">
-                <h1 className=" text-2xl font-bold text-white">Delete Account</h1>
-                <p className="text-gray-300 py-3 text-sm">Permanently delete your account. Keep in mind that this
-                    action
+                <h1 className="text-2xl font-bold text-white">Delete Account</h1>
+                <p className="text-gray-300 py-3 text-sm">Permanently delete your account. Keep in mind that this action
                     cannot be undone and will result in the complete removal of all your data from Azion.</p>
             </div>
             {/* END MAIN SECTION */}
@@ -65,7 +64,7 @@ const AccountDeleteCard = () => {
 
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                     <div className="bg-gray-900 p-6 rounded-lg shadow-lg max-w-md w-full">
                         <h2 className="text-xl font-bold mb-4 text-gray-200">Confirm Deletion</h2>
                         {isMfaEnabled ? (
@@ -73,7 +72,7 @@ const AccountDeleteCard = () => {
                                 <p className="text-sm text-gray-200 mb-4">
                                     Enter the OTP sent to your registered device to confirm account deletion.
                                 </p>
-                                <OTP length={6} onComplete={(value:string) => setOtpValue(value)} />
+                                <OTP length={6} onComplete={(value: string) => setOtpValue(value)}/>
                             </div>
                         ) : (
                             <p className="text-sm text-gray-200 mb-4">

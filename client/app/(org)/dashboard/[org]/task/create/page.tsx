@@ -221,7 +221,8 @@ const CreateTask: FC<PageProps> = ({params}) => {
 
 
     return (
-        <div className="flex w-screen h-dvh text-white overflow-hidden">
+        <div
+            className="w-full h-dvh flex flex-col lg:flex-row justify-start items-start text-white overflow-hidden">
             {loading ? (
                 <div className="flex w-screen h-screen items-center justify-center">
                     <Loading/>
@@ -234,9 +235,9 @@ const CreateTask: FC<PageProps> = ({params}) => {
                     </div>
 
                     {/* Main Content */}
-                    <div className="flex-1 self-center p-6 overflow-auto">
+                    <div className="flex w-full p-6 overflow-auto">
                         {alert && (
-                            <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+                            <div className="fixed inset-0 flex items-center justify-center z-50">
                                 <CustomAlert message={alertMessage} onClose={() => setAlert(false)}/>
                             </div>
                         )}
@@ -246,7 +247,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
                                 Create Task
                             </h1>
 
-                            <div className="flex flex-col lg:flex-row gap-12">
+                            <div className="flex flex-col lg:flex-row gap-4">
                                 {/* Users Section */}
                                 <div className="lg:w-1/2 bg-base-300 rounded-xl p-6 shadow-md">
                                     <h2 className="text-2xl font-semibold mb-4">Select Users</h2>

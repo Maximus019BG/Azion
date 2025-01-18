@@ -1,7 +1,7 @@
 "use client";
 
-import React, {FC, useEffect, useState} from "react";
-import axios, {AxiosResponse} from "axios";
+import React, {FC, useEffect, useMemo, useState} from "react";
+import axios from "axios";
 import {apiUrl} from "@/app/api/config";
 import {Poppins} from "next/font/google";
 import Cookies from "js-cookie";
@@ -15,7 +15,6 @@ import SortMenu from "@/app/components/_task/sort-menu";
 import {Task} from "@/app/types/types";
 import {CiSquarePlus} from "react-icons/ci";
 
-
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
 interface PageProps {
@@ -26,7 +25,7 @@ interface PageProps {
 
 const Tasks: FC<PageProps> = ({params}) => {
     const [admin, setAdmin] = useState(false);
-    const [task, setTask] = useState<Task[] | null>(null);
+    const [tasks, setTasks] = useState<Task[] | null>(null);
     const [orgNameCheck, setOrgNameCheck] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
     const [sortCriteria, setSortCriteria] = useState<string>("date");
@@ -34,52 +33,42 @@ const Tasks: FC<PageProps> = ({params}) => {
     const [currentUserEmail, setCurrentUserEmail] = useState<string>("");
     const orgName = params.org;
 
-    const GetTasks = () => {
-        axios
-            .get(`${apiUrl}/projects/list`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    authorization: Cookies.get("azionAccessToken"),
-                },
-            })
-            .then((response: AxiosResponse) => {
-                setTask(response.data);
-                if (response.data.message.toString() === "no projects") {
-                    setTask(null);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const refreshToken = Cookies.get("azionRefreshToken");
+                const accessToken = Cookies.get("azionAccessToken");
+                if (refreshToken && accessToken) {
+                    await sessionCheck();
+                    const [userData, orgNameResult, tasksResponse] = await Promise.all([
+                        UserData(),
+                        getOrgName(),
+                        axios.get(`${apiUrl}/projects/list`, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                authorization: accessToken,
+                            },
+                        }),
+                    ]);
+
+                    setCurrentUserEmail(userData.email);
+                    if (userData.roleLevel >= 1 && userData.roleLevel <= 3) {
+                        setAdmin(true);
+                    }
+
+                    setOrgNameCheck(orgNameResult);
+                    setTasks(tasksResponse.data.message === "no projects" ? null : tasksResponse.data);
+                    setLoading(false);
+                } else {
+                    window.location.href = "/login";
                 }
+            } catch (error) {
+                console.error("Error fetching data:", error);
                 setLoading(false);
-            })
-            .catch((error) => {
-                console.error(error.response ? error.response : error);
-                setLoading(false);
-            });
-    };
-
-    useEffect(() => {
-        const refreshToken = Cookies.get("azionRefreshToken");
-        const accessToken = Cookies.get("azionAccessToken");
-        if (refreshToken && accessToken) {
-            sessionCheck();
-        } else if (!accessToken && !refreshToken) {
-            window.location.href = "/login";
-        }
-        GetTasks();
-    }, []);
-
-    UserData().then((data) => {
-        if (data.roleLevel >= 1 && data.roleLevel <= 3) {
-            setAdmin(true);
-        }
-        setCurrentUserEmail(data.email);
-    });
-
-    useEffect(() => {
-        const fetchOrgName = async () => {
-            const result: string = await getOrgName();
-            setOrgNameCheck(result);
+            }
         };
 
-        fetchOrgName();
+        fetchData();
     }, [orgName]);
 
     useEffect(() => {
@@ -88,11 +77,7 @@ const Tasks: FC<PageProps> = ({params}) => {
         }
     }, [orgNameCheck, orgName]);
 
-    const goToTask = (id: any) => {
-        window.location.href = `/dashboard/${orgNameCheck}/task/view/${id}`;
-    };
-
-    const sortTasks = (tasks: Task[] | null) => {
+    const sortedTasks = useMemo(() => {
         if (Array.isArray(tasks)) {
             return tasks.sort((a, b) => {
                 if (sortCriteria === "date") {
@@ -108,7 +93,7 @@ const Tasks: FC<PageProps> = ({params}) => {
         } else {
             return [];
         }
-    };
+    }, [tasks, sortCriteria, sortOrder]);
 
     if (loading) {
         return (
@@ -119,13 +104,13 @@ const Tasks: FC<PageProps> = ({params}) => {
     }
 
     return (
-        <div className="w-screen h-screen flex overflow-hidden">
-            <div className="lg:w-1/4 h-full">
+        <div className="w-full h-dvh flex flex-col lg:flex-row justify-start items-start overflow-hidden">
+            <div className="lg:w-1/4 h-fit">
                 <SideMenu/>
             </div>
-            <div className="w-full h-full overflow-auto flex flex-col items-center">
-                <div className="flex flex-col justify-around items-center gap-10 ">
-                    <h1 className="text-5xl font-black mt-16">Your tasks:</h1>
+            <div className="w-full h-full overflow-auto flex flex-col justify-start items-center p-6 lg:p-10">
+                <div className="flex flex-col justify-around items-center gap-10 w-full max-w-4xl mx-auto">
+                    <h1 className="text-5xl font-black mt-16 text-center">Your tasks:</h1>
                     <SortMenu
                         sortCriteria={sortCriteria}
                         sortOrder={sortOrder}
@@ -133,17 +118,16 @@ const Tasks: FC<PageProps> = ({params}) => {
                         setSortOrder={setSortOrder}
                     />
                     <div className="w-full flex flex-wrap justify-center items-center gap-5">
-
                         {admin && (
                             <Link
-                                className="w-96 h-60 flex flex-col justify-center items-center rounded-lg overflow-hidden shadow-lg p-6 bg-base-100 text-white cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl relative"
+                                className="w-full max-w-xs h-60 rounded-lg flex flex-col justify-center items-center overflow-hidden shadow-lg p-6 bg-base-100 cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 relative"
                                 href={`/dashboard/${orgNameCheck}/task/create`}
                             >
                                 <CiSquarePlus className="text-8xl mb-2"/>
                                 <span className="text-lg font-semibold">Create Task</span>
                             </Link>
                         )}
-                        {task !== null && sortTasks(task).map((task: Task) => (
+                        {sortedTasks.map((task: Task) => (
                             <TasksCard
                                 key={task.id}
                                 title={task.name}
@@ -152,12 +136,11 @@ const Tasks: FC<PageProps> = ({params}) => {
                                 data={task.date}
                                 createdBy={task.createdBy?.name}
                                 priority={task.priority}
-                                onClick={() => goToTask(task.id)}
+                                onClick={() => window.location.href = `/dashboard/${orgNameCheck}/task/view/${task.id}`}
                                 isCreator={task.createdBy?.email === currentUserEmail}
                                 id={task.id}
                             />
                         ))}
-
                     </div>
                 </div>
             </div>

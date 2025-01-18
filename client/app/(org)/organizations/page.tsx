@@ -4,9 +4,8 @@ import ListAllOrgs from "../../components/listAllOrgs";
 import Cookies from "js-cookie";
 import SideMenu from "../../components/Side-menu";
 import Join_Organization from "../../components/JoinOrg";
-import {orgSessionCheck, PartOfOrg} from "../../func/funcs";
+import {hideButton, orgSessionCheck, PartOfOrg} from "../../func/funcs";
 import Loading from "../../components/Loading";
-import {hideButton} from "../../func/funcs";
 
 
 const Organizations = () => {
@@ -45,7 +44,7 @@ const Organizations = () => {
                     <Loading/>
                 </div>
             ) : (
-                <div className="h-screen w-screen overflow-hidden flex">
+                <div className="h-dvh w-full overflow-hidden flex flex-col lg:flex-row">
                     <div className="lg:w-1/4 bg-background">
                         <SideMenu/>
                     </div>

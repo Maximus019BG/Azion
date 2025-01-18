@@ -16,7 +16,6 @@ interface PageProps {
     };
 }
 
-
 const OrgSettings: FC<PageProps> = ({params}) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [orgNameCheck, setOrgNameCheck] = useState<string>("");
@@ -43,7 +42,6 @@ const OrgSettings: FC<PageProps> = ({params}) => {
         }
     }, []);
 
-
     useEffect(() => {
         const fetchOrgName = async () => {
             const result: string = await getOrgName();
@@ -66,16 +64,15 @@ const OrgSettings: FC<PageProps> = ({params}) => {
                 <div className="w-screen h-screen flex justify-center items-end">
                     <Loading/>
                 </div>
-            ) : (<>
-                    <div className="w-screen h-screen flex overflow-y-hidden">
-                        <div className="w-1/4 h-full">
-                            <SideMenu/>
-                        </div>
-                        <div className="w-full h-screen flex justify-center items-center">
-                            <OrgSettingsForm/>
-                        </div>
+            ) : (
+                <div className="w-screen h-screen flex flex-col lg:flex-row overflow-y-hidden">
+                    <div className="w-full lg:w-1/4 h-full">
+                        <SideMenu/>
                     </div>
-                </>
+                    <div className="w-full h-full flex justify-center items-center p-6 lg:p-10">
+                        <OrgSettingsForm/>
+                    </div>
+                </div>
             )}
         </>
     );

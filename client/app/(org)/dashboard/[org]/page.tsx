@@ -59,7 +59,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
                     <Loading/>
                 </div>
             ) : (
-                <div className="w-full h-dvh flex overflow-y-hidden">
+                <div className="w-full h-dvh flex overflow-hidden">
                     <div className="w-fit lg:w-1/4 h-full">
                         <SideMenu/>
                     </div>
@@ -69,7 +69,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
                         </h2>
                         <div className="w-full h-full flex flex-col gap-10 justify-start items-start">
                             <DashboardRow1/>
-                            <div className="w-full">
+                            <div className="w-full h-full">
                                 <Calendar/>
                             </div>
                         </div>

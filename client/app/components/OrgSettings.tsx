@@ -5,10 +5,8 @@ import Cookies from "js-cookie";
 import {apiUrl, clientUrl} from "@/app/api/config";
 import {OrgConnString} from "@/app/func/org";
 import {PartOfOrg, UserData} from "@/app/func/funcs";
-import {PeopleData} from "@/app/types/types"
-import {headers} from "next/headers";
-import { IoCopy } from "react-icons/io5";
-import Alert from "@/app/components/Alert";
+import {PeopleData} from "@/app/types/types";
+import {IoCopy} from "react-icons/io5";
 
 const SessionCheck = () => {
     const refreshToken = Cookies.get("azionRefreshToken");
@@ -90,10 +88,9 @@ const OrgSettingsForm = () => {
         }));
     };
 
-    //Show/hide popup
-    const handleInviteChange = ()=> {
+    const handleInviteChange = () => {
         setInvitePopUp(!invitePopUp);
-    }
+    };
 
     const handleSave = async () => {
         try {
@@ -142,64 +139,60 @@ const OrgSettingsForm = () => {
             });
     }, []);
 
-    //Get people to invite
     useEffect(() => {
         const accessToken = Cookies.get("azionAccessToken");
 
-        const getPeople = async () =>{
+        const getPeople = async () => {
             try {
                 const response: AxiosResponse = await axios.get(`${apiUrl}/org/get/invites`, {
                     headers: {
                         "Content-Type": "application/json",
                         "authorization": accessToken,
                     }
-                })
+                });
 
                 setPeople(response.data);
-                console.log(response);
-                console.log(response.data);
             } catch (e) {
-
+                console.error(e);
             }
-        }
+        };
 
         getPeople();
     }, []);
 
-    const copyLink = () =>{
+    const copyLink = () => {
         navigator.clipboard.writeText(`${clientUrl}/organizations/${conString}`);
-    }
+    };
 
-    const copyConStr = () =>{
+    const copyConStr = () => {
         navigator.clipboard.writeText(conString);
         alert("Connection code copied to clipboard");
+    };
 
-    }
-
-    const inviteUser = async (id:string)=>{
-        const accessToknen:string|undefined = Cookies.get("azionAccessToken");
+    const inviteUser = async (id: string) => {
+        const accessToken: string | undefined = Cookies.get("azionAccessToken");
         const link = `${clientUrl}/organizations/${conString}`;
         try {
-            const response:AxiosResponse = await axios.put(`${apiUrl}/org/invite/${id}`,{},{
+            await axios.put(`${apiUrl}/org/invite/${id}`, {}, {
                 headers: {
                     "Content-Type": "application/json",
-                    "authorization":accessToknen,
-                    "data":link,
+                    "authorization": accessToken,
+                    "data": link,
                 }
-            })
+            });
+        } catch (e) {
+            console.error(e);
         }
-        catch (e){
-            console.error(e)
-        }
-    }
+    };
 
     return (
-        <div className="w-full max-w-4xl mx-auto bg-base-300 shadow-xl rounded-xl p-6 sm:p-12 flex flex-col gap-8">
-            <h2 className="text-3xl font-semibold text-white text-center">
+        <div
+            className="w-full max-w-4xl mx-auto bg-base-300 shadow-xl rounded-xl p-4 sm:p-6 md:p-8 lg:p-12 flex flex-col gap-4 sm:gap-6 md:gap-8">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-white text-center">
                 Organization Settings
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
                 {["orgName", "orgAddress", "orgEmail", "orgType", "orgPhone"].map(
                     (field, index) => (
                         <div className="flex flex-col" key={index}>
@@ -229,19 +222,21 @@ const OrgSettingsForm = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-4 sm:gap-6 md:gap-8">
                 <button
                     onClick={handleSave}
-                    className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out"
+                    className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out"
                 >
                     Save Changes
                 </button>
 
-                <button onClick={handleInviteChange} className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out">
+                <button onClick={handleInviteChange}
+                        className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out">
                     Invite
                 </button>
 
-                <p className="flex">Or join with connection code: {conString} <span onClick={copyConStr}> <IoCopy /> </span></p>
+                <p className="flex">Or join with connection code: {conString} <span
+                    onClick={copyConStr}> <IoCopy/> </span></p>
 
                 {alertMessage && (
                     <div className="mt-4 text-white bg-red-500 p-3 rounded-md shadow-md">
@@ -250,39 +245,35 @@ const OrgSettingsForm = () => {
                 )}
 
                 {invitePopUp && (
-                    <>
-                        {invitePopUp && (
-                            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                                <div className="bg-blue-950 p-6 rounded-lg shadow-lg w-96 relative">
-                                    {/* Close button (X) */}
-                                    <button
-                                        onClick={handleInviteChange}
-                                        className="absolute top-2 right-2 text-xl font-bold text-gray-600"
-                                    >
-                                        &times;
-                                    </button>
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                        <div className="bg-blue-950 p-6 rounded-lg shadow-lg w-80 sm:w-96 relative">
+                            <button
+                                onClick={handleInviteChange}
+                                className="absolute top-2 right-2 text-xl font-bold text-gray-600"
+                            >
+                                &times;
+                            </button>
 
-                                    {/* Popup content */}
-                                    <h3 className="text-xl font-semibold mb-4">Invite people:</h3>
-                                    {Object.keys(people).length > 0 ? (
-                                        <ul className="space-y-2">
-                                            {Object.entries(people).map(([email, id]) => (
-                                                <li key={id} className="flex justify-between cursor-pointer hover:border-2 hover:border-gray-900" onClick={()=>inviteUser(id)}>
-                                                    <h1>{email}</h1>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    ) : (
-                                        <p className="text-gray-600">No people to invite</p>
-                                    )}
-                                    <div className={'mt-10'}>
-                                        <h1>Or copy <button onClick={copyLink} className={`underline text-red-700`}>link</button></h1>
-                                    </div>
-                                </div>
-
+                            <h3 className="text-xl font-semibold mb-4">Invite people:</h3>
+                            {Object.keys(people).length > 0 ? (
+                                <ul className="space-y-2">
+                                    {Object.entries(people).map(([email, id]) => (
+                                        <li key={id}
+                                            className="flex justify-between cursor-pointer hover:border-2 hover:border-gray-900"
+                                            onClick={() => inviteUser(id)}>
+                                            <h1>{email}</h1>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="text-gray-600">No people to invite</p>
+                            )}
+                            <div className="mt-10">
+                                <h1>Or copy <button onClick={copyLink} className="underline text-red-700">link</button>
+                                </h1>
                             </div>
-                        )}
-                    </>
+                        </div>
+                    </div>
                 )}
             </div>
         </div>

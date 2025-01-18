@@ -40,14 +40,14 @@ const Account = () => {
                     <Loading/>
                 </div>
             ) : (
-                <div className="w-screen h-screen flex overflow-hidden">
-                    <div className="lg:w-1/4 h-full">
+                <div className="w-full h-dvh flex flex-col lg:flex-row overflow-hidden">
+                    <div className="lg:w-1/4 h-fit">
                         <SideMenu/>
                     </div>
                     <div className="w-full h-full flex flex-col items-center overflow-y-auto">
-                        <div className="w-full flex flex-col justify-center items-center py-12 gap-8">
+                        <div className="w-full flex flex-col justify-center items-center py-12 px-3 gap-8">
                             <AccountUserCard/>
-                            <AccountMfaCard />
+                            <AccountMfaCard/>
                             <AccountDeleteCard/>
                         </div>
                     </div>

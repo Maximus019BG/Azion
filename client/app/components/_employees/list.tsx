@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react';
 import {apiUrl} from '@/app/api/config';
 import axios, {AxiosResponse} from 'axios';
 import Cookies from 'js-cookie';
@@ -25,17 +25,18 @@ const List = () => {
                 console.error(error.response ? error.response : error);
             });
     };
+
     useEffect(() => {
         GetUsers();
     }, []);
 
     return (
-        <div className='flex'>
-            <div className='lg:w-1/4'>
+        <div className='flex flex-col lg:flex-row w-full'>
+            <div className='w-full lg:w-1/4'>
                 <SideMenu/>
             </div>
-            <div className='w-full flex flex-col justify-center items-center gap-5'>
-                <h1 className="text-4xl my-16 text-center">Organization&apos;s Members</h1>
+            <div className='w-full flex flex-col justify-center items-center gap-5 p-4 sm:p-6 md:p-8'>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl my-8 text-center">Organization&apos;s Members</h1>
                 {employees.map((employee) => (
                     <DisplayEmployee
                         key={employee.id}
@@ -51,7 +52,7 @@ const List = () => {
                 ))}
             </div>
         </div>
-    )
+    );
 }
 
 export default List;

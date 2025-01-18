@@ -150,9 +150,9 @@ const RoleList = () => {
 
     return (
         <div
-            className="w-[75vw] h-full max-w-4xl p-8 bg-base-300 shadow-lg rounded-md flex flex-col justify-center items-center gap-12">
+            className="w-full max-w-4xl p-4 sm:p-6 md:p-8 bg-base-300 shadow-lg rounded-md flex flex-col justify-center items-center gap-12">
             {/* Roles Section */}
-            <div className="w-full flex flex-col ">
+            <div className="w-full flex flex-col">
                 <h2 className="text-2xl font-semibold text-white mb-6 text-center">Edit Roles</h2>
                 <table className="w-full text-sm text-left text-gray-400">
                     <thead className="text-xs uppercase bg-base-100 text-gray-400">
@@ -164,13 +164,13 @@ const RoleList = () => {
                     </thead>
                     <tbody>
                     {Object.entries(roles).map(([role, level], index) => (
-                        <tr key={index} className={`border-t bg-base-200 even:bg-slate-950 border-gray-700`}>
+                        <tr key={index} className="border-t bg-base-200 even:bg-slate-950 border-gray-700">
                             <td className="py-4 px-6">
                                 <input
                                     type="text"
                                     value={role}
                                     onChange={(e) => handleRoleNameChange(role, e.target.value)}
-                                    className={`bg-gray-700  border-non focus:outline-none rounded w-full py-2 px-3 ${role === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
+                                    className={`bg-gray-700 border-none focus:outline-none rounded w-full py-2 px-3 ${role === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
                                     ref={(el) => {
                                         refs.current[role] = el;
                                     }}
@@ -243,7 +243,7 @@ const RoleList = () => {
                     <tbody>
                     {users.map((user) => (
                         <tr key={user.id} className="border-b bg-base-200 border-gray-700">
-                            <td className="py-4 ">{user.name} ({user.email})</td>
+                            <td className="py-4">{user.name} ({user.email})</td>
                             <td className="py-4">
                                 <select
                                     value={user.role}

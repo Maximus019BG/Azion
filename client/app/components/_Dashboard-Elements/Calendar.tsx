@@ -259,7 +259,9 @@ const Calendar: React.FC = () => {
                     select={handleDateClick}
                     eventClick={handleEventClick}
                     events={currentEvents}
-                    dayCellClassNames="hover:bg-[#1a1a1a] transition duration-300 h-16 w-full"
+                    dayCellClassNames="hover:bg-[#1a1a1a] transition duration-300 h-10 sm:h-14 md:h-16 w-fit"
+                    contentHeight="auto"
+                    aspectRatio={1.35}
                 />
             </div>
 

@@ -6,7 +6,6 @@ import RoleList from "@/app/components/role-list";
 import SideMenu from "@/app/components/Side-menu";
 import {getOrgName} from "@/app/func/org";
 
-
 interface PageProps {
     params: {
         org: string;
@@ -58,14 +57,12 @@ const RoleEdit: FC<PageProps> = ({params}) => {
     }
 
     return (
-        <div className="w-full h-dvh flex">
-            <div className="lg:w-1/4">
+        <div className="w-full min-h-screen flex flex-col lg:flex-row">
+            <div className="w-full lg:w-1/4">
                 <SideMenu/>
             </div>
-            <div className="w-full flex justify-center items-center">
-                <div className="">
-                    <RoleList/>
-                </div>
+            <div className="w-full flex justify-center items-center p-4 sm:p-6 md:p-8">
+                <RoleList/>
             </div>
         </div>
     );
