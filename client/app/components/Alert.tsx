@@ -43,7 +43,7 @@ const Alert = ({
                 </button>
             </div>
             <div
-                className={`h-1 ${type === "success" ? " bg-success":"bg-red-600"} rounded-full mt-2`}
+                className={`h-1 ${type === "success" ? " bg-accent" : "bg-red-600"} rounded-full mt-2`}
                 style={{
                     width: `${progress}%`,
                     transition: "width 50ms linear", // Smooth progress bar animation

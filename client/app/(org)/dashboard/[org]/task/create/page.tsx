@@ -6,7 +6,6 @@ import Cookies from "js-cookie";
 import {sessionCheck, UserData} from "@/app/func/funcs";
 import {Poppins} from "next/font/google";
 import SideMenu from "@/app/components/Side-menu";
-import CustomAlert from "@/app/components/CustomAlert";
 import {getOrgName} from "@/app/func/org";
 import Loading from "@/app/components/Loading";
 
@@ -48,8 +47,6 @@ const CreateTask: FC<PageProps> = ({params}) => {
     const [dueDate, setDueDate] = useState(
         `${selectedMonth}/${selectedDay}/${selectedYear}`
     );
-    const [alert, setAlert] = useState(false);
-    const [alertMessage, setAlertMessage] = useState("");
     const [orgNameCheck, setOrgNameCheck] = useState<string>("");
     const orgName = params.org;
     const progress = 0;
@@ -112,10 +109,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
         if (!source) missingFields.push("Source");
 
         if (missingFields.length > 0) {
-            setAlert(true);
-            setAlertMessage(
-                "Please fill in the following fields: " + missingFields.join(", ")
-            );
+            alert("Please fill in the following fields: " + missingFields.join(", "));
             return;
         }
         const data = {
@@ -136,12 +130,10 @@ const CreateTask: FC<PageProps> = ({params}) => {
                 },
             })
             .then((response: AxiosResponse) => {
-                setAlert(true);
-                setAlertMessage("Task created");
+                alert("Task created");
             })
             .catch((error) => {
-                setAlert(true);
-                setAlertMessage("Error creating task: " + error.response.data);
+                alert("Error creating task: " + error.response.data);
             });
     };
 
@@ -170,8 +162,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
         if (isValidDate(selectedDay, selectedMonth, selectedYear)) {
             setDueDate(`${selectedMonth}/${selectedDay}/${selectedYear}`);
         } else {
-            setAlert(true);
-            setAlertMessage("Invalid date");
+            alert("Invalid date");
         }
     }, [selectedDay, selectedMonth, selectedYear, isValidDate]);
 
@@ -236,11 +227,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
 
                     {/* Main Content */}
                     <div className="flex w-full p-6 overflow-auto">
-                        {alert && (
-                            <div className="fixed inset-0 flex items-center justify-center z-50">
-                                <CustomAlert message={alertMessage} onClose={() => setAlert(false)}/>
-                            </div>
-                        )}
+
 
                         <div className="container mx-auto">
                             <h1 className={`text-3xl md:text-5xl font-bold text-center mb-8 ${HeaderText.className}`}>
