@@ -13,22 +13,27 @@ const EditRoleSection = () => {
     const [accesField7, setAccesField7] = useState(false);
 
     return (
-        <div className="h-full w-full flex flex-col justify-center items-center space-y-4 p-4">
-            {[accesField0, accesField1, accesField2, accesField3, accesField4, accesField5, accesField6, accesField7].map((field, index) => (
-                <div key={index}
-                     className="flex justify-between items-center w-full max-w-md p-4 bg-gray-800 rounded-md shadow-md">
-                    <h1 className="text-white text-lg">Func{index + 1}: {field.toString()}</h1>
-                    <input
-                        className="toggle theme-controller"
-                        type="checkbox"
-                        checked={field}
-                        onChange={() => {
-                            const setters = [setAccesField0, setAccesField1, setAccesField2, setAccesField3, setAccesField4, setAccesField5, setAccesField6, setAccesField7];
-                            setters[index](!field);
-                        }}
-                    />
-                </div>
-            ))}
+        <div className="h-fit w-full flex flex-col justify-center items-center space-y-4 p-4">
+            {[{label: 'Calendar', state: accesField0, setState: setAccesField0},
+                {label: 'Settings', state: accesField1, setState: setAccesField1},
+                {label: 'Employees', state: accesField2, setState: setAccesField2},
+                {label: 'Roles', state: accesField3, setState: setAccesField3},
+                {label: 'Create Tasks', state: accesField4, setState: setAccesField4},
+                {label: 'View Tasks', state: accesField5, setState: setAccesField5},
+                {label: 'Azion Cameras (Write)', state: accesField6, setState: setAccesField6},
+                {label: 'Azion Cameras (Read)', state: accesField7, setState: setAccesField7}]
+                .map((field, index) => (
+                    <div key={index}
+                         className="flex justify-between items-center w-full max-w-md p-4 bg-gray-800 rounded-md shadow-md">
+                        <h1 className="text-white text-lg">{field.label}</h1>
+                        <input
+                            className={`toggle ${field.state ? 'toggle-accent' : ''}`}
+                            type="checkbox"
+                            checked={field.state}
+                            onChange={() => field.setState(!field.state)}
+                        />
+                    </div>
+                ))}
         </div>
     );
 };

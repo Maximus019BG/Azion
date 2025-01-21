@@ -106,6 +106,11 @@ const RoleList = () => {
         }, 0);
     };
 
+    const handleUpdateRole = (role: string) => {
+        const currentPath = window.location.href;
+        window.location.href = `${currentPath}/${role}`;
+    };
+
     const handleUserRoleChange = (userId: string, newRole: string) => {
         setUsers((prevUsers) => {
             return prevUsers.map((user) => {
@@ -154,51 +159,50 @@ const RoleList = () => {
             {/* Roles Section */}
             <div className="w-full flex flex-col">
                 <h2 className="text-2xl font-semibold text-white mb-6 text-center">Edit Roles</h2>
-                <table className="w-full text-sm text-left text-gray-400">
-                    <thead className="text-xs uppercase bg-base-100 text-gray-400">
-                    <tr>
-                        <th scope="col" className="py-3 px-6">Role Name</th>
-                        <th scope="col" className="py-3 px-6">Level</th>
-                        <th scope="col" className="py-3 px-6">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {Object.entries(roles).map(([role, level], index) => (
-                        <tr key={index} className="border-t bg-base-200 even:bg-slate-950 border-gray-700">
-                            <td className="py-4 px-6">
-                                <input
-                                    type="text"
-                                    value={role}
-                                    onChange={(e) => handleRoleNameChange(role, e.target.value)}
-                                    className={`bg-gray-700 border-none focus:outline-none rounded w-full py-2 px-3 ${role === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
-                                    ref={(el) => {
-                                        refs.current[role] = el;
-                                    }}
-                                    disabled={role === "owner"}
-                                />
-                            </td>
-                            <td className="py-4 px-6">
-                                <input
-                                    type="number"
-                                    value={level}
-                                    onChange={(e) => handleInputChange(role, parseInt(e.target.value))}
-                                    className={`bg-gray-700 border-none focus:outline-none rounded w-full py-2 px-3 ${role === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
-                                    disabled={role === "owner"}
-                                />
-                            </td>
-                            <td className="py-4 px-6">
-                                <button
-                                    onClick={() => handleRemoveRole(role)}
-                                    className={`font-medium ${role === "owner" ? "text-gray-500 cursor-not-allowed" : "text-red-500 hover:text-red-600"}`}
-                                    disabled={role === "owner"}
-                                >
-                                    Remove
-                                </button>
-                            </td>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left text-gray-400">
+                        <thead className="text-xs uppercase bg-base-100 text-gray-400">
+                        <tr>
+                            <th scope="col" className="py-3 px-6">Role Name</th>
+                            <th scope="col" className="py-3 px-6">Edit</th>
+                            <th scope="col" className="py-3 px-6">Actions</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {Object.entries(roles).map(([role, level], index) => (
+                            <tr key={index} className="border-t bg-base-200 even:bg-slate-950 border-gray-700">
+                                <td className="py-4 px-6">
+                                    <input
+                                        type="text"
+                                        value={role}
+                                        onChange={(e) => handleRoleNameChange(role, e.target.value)}
+                                        className={`bg-gray-700 border-none focus:outline-none rounded w-full py-2 px-3 ${role === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
+                                        ref={(el) => {
+                                            refs.current[role] = el;
+                                        }}
+                                        disabled={role === "owner"}
+                                    />
+                                </td>
+                                <td className="py-4 px-6">
+                                    <button
+                                        className={`bg-gray-700 border-none focus:outline-none rounded w-full py-2 px-3 ${role === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
+                                    >Edit
+                                    </button>
+                                </td>
+                                <td className="py-4 px-6">
+                                    <button
+                                        onClick={() => handleRemoveRole(role)}
+                                        className={`font-medium ${role === "owner" ? "text-gray-500 cursor-not-allowed" : "text-red-500 hover:text-red-600"}`}
+                                        disabled={role === "owner"}
+                                    >
+                                        Remove
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
                 <button
                     onClick={() => setShowNewRole(!showNewRole)}
                     className="mt-4 text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-md py-2 px-4 transition duration-200 self-end"
@@ -206,7 +210,7 @@ const RoleList = () => {
                     {showNewRole ? "Cancel" : "Add New Role"}
                 </button>
                 {showNewRole && (
-                    <div className="mt-4 flex gap-4">
+                    <div className="mt-4 flex flex-col sm:flex-row gap-4">
                         <input
                             type="text"
                             value={newRole}
@@ -214,16 +218,15 @@ const RoleList = () => {
                             placeholder="New Role"
                             className="bg-gray-700 text-white border-none focus:outline-none rounded w-full py-2 px-3"
                         />
-                        <input
-                            type="number"
-                            value={newLevel}
-                            onChange={(e) => setNewLevel(parseInt(e.target.value))}
-                            placeholder="Level"
-                            className="bg-gray-700 text-white border-none focus:outline-none rounded w-1/3 py-2 px-3"
-                        />
+                        <button
+                            onClick={() => handleUpdateRole(newRole)}
+                            className={`bg-gray-700 border-none focus:outline-none rounded py-2 px-16 ${newRole === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
+                        >
+                            Edit
+                        </button>
                         <button
                             onClick={handleAddRole}
-                            className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 w-1/5 rounded transition duration-200"
+                            className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 w-full sm:w-1/5 rounded transition duration-200"
                         >
                             Add Role
                         </button>
@@ -233,34 +236,36 @@ const RoleList = () => {
             {/* User Roles Section */}
             <div className="w-full">
                 <h2 className="text-2xl font-semibold text-white mb-6 text-center">Edit User Roles</h2>
-                <table className="w-full text-sm text-left text-gray-400">
-                    <thead className="text-xs uppercase bg-base-100 text-gray-400">
-                    <tr>
-                        <th scope="col" className="py-3 px-6">User Name</th>
-                        <th scope="col" className="py-3 px-6">Role</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {users.map((user) => (
-                        <tr key={user.id} className="border-b bg-base-200 border-gray-700">
-                            <td className="py-4">{user.name} ({user.email})</td>
-                            <td className="py-4">
-                                <select
-                                    value={user.role}
-                                    onChange={(e) => handleUserRoleChange(user.id, e.target.value)}
-                                    className="bg-gray-700 text-white border-none focus:outline-none rounded w-full py-2 px-3"
-                                >
-                                    {Object.keys(roles).map((role) => (
-                                        <option key={role} value={role} className="text-black">
-                                            {role}
-                                        </option>
-                                    ))}
-                                </select>
-                            </td>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left text-gray-400">
+                        <thead className="text-xs uppercase bg-base-100 text-gray-400">
+                        <tr>
+                            <th scope="col" className="py-3 px-6">User Name</th>
+                            <th scope="col" className="py-3 px-6">Role</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {users.map((user) => (
+                            <tr key={user.id} className="border-b bg-base-200 border-gray-700">
+                                <td className="py-4">{user.name} ({user.email})</td>
+                                <td className="py-4">
+                                    <select
+                                        value={user.role}
+                                        onChange={(e) => handleUserRoleChange(user.id, e.target.value)}
+                                        className="bg-gray-700 text-white border-none focus:outline-none rounded w-full py-2 px-3"
+                                    >
+                                        {Object.keys(roles).map((role) => (
+                                            <option key={role} value={role} className="text-black">
+                                                {role}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
             {/* Save Button and Alert Message */}
             <div className="w-full mt-8">
