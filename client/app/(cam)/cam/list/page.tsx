@@ -9,6 +9,7 @@ import {Cam} from '@/app/types/types';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
 import {getOrgName} from "@/app/func/org";
+import {sessionCheck, UserHasRight} from "@/app/func/funcs";
 
 const CamListPage = () => {
     const [cams, setCams] = useState<Cam[]>([]);
@@ -24,6 +25,10 @@ const CamListPage = () => {
     };
     fetchOrgName();
 
+    useEffect(() => {
+        UserHasRight(7);
+        sessionCheck();
+    });
     useEffect(() => {
         const fetchCams = async () => {
             const accessToken = Cookies.get('azionAccessToken');

@@ -50,7 +50,7 @@ public class MeetingController {
         }
         userService.userValid(token);   //Token validation
         User user = tokenService.getUserFromToken(token);
-        if (!userService.userSuperAdmin(user)) {
+        if (!userService.UserHasRight(user,0)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not admin or owner");
         }
         //Get the meeting details
@@ -90,7 +90,7 @@ public class MeetingController {
         userService.userValid(token);//Token validation
         User user = tokenService.getUserFromToken(token);
         //Check if user is super admin
-        if(!userService.userSuperAdmin(user)) {
+        if(!userService.UserHasRight(user,0)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not super admin");
         }
         List<MeetingDTO> meetings = meetingService.getMeetings(user);

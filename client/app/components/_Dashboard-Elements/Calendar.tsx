@@ -9,7 +9,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/app/components/dialog";
 import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
-import {UserData} from "@/app/func/funcs";
+import {canEditCalendar, UserData} from "@/app/func/funcs";
 import {EventData} from "@/app/types/types";
 import {Trash2Icon} from "lucide-react";
 
@@ -21,7 +21,17 @@ const Calendar: React.FC = () => {
     const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
     const [availableRoles, setAvailableRoles] = useState<string[]>([]);
     const [selectedDate, setSelectedDate] = useState<DateSelectArg | null>(null);
-    const [userRoleLevel, setUserRoleLevel] = useState<number>(0);
+    const [admin, setAdmin] = useState(false);
+
+
+    useEffect(() => {
+        canEditCalendar().then((r) => {
+            if (r) {
+                setAdmin(true);
+                console.log("Admin")
+            }
+        })
+    });
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -64,22 +74,16 @@ const Calendar: React.FC = () => {
             }
         };
 
-        const fetchUserRoleLevel = async () => {
-            UserData().then((data) => {
-                setUserRoleLevel(data.roleLevel);
-            });
-        };
 
         fetchEvents();
         fetchRoles();
-        fetchUserRoleLevel();
     }, []);
 
     useEffect(() => {
         const tooltip = document.getElementById("tooltip");
 
         const showTooltip = (e: MouseEvent) => {
-            if (tooltip && userRoleLevel >= 1 && userRoleLevel <= 3) {
+            if (admin && tooltip !== null) {
                 tooltip.style.left = `${e.pageX + 10}px`;
                 tooltip.style.top = `${e.pageY + 10}px`;
                 tooltip.style.opacity = "1";
@@ -93,7 +97,7 @@ const Calendar: React.FC = () => {
         };
 
         document.querySelectorAll<HTMLElement>(".fc-daygrid-day").forEach(cell => {
-            if (userRoleLevel >= 1 && userRoleLevel <= 3) {
+            if (admin) {
                 cell.classList.add("cursor-pointer");
                 cell.addEventListener("mouseenter", showTooltip);
                 cell.addEventListener("mouseleave", hideTooltip);
@@ -110,7 +114,7 @@ const Calendar: React.FC = () => {
                 cell.removeEventListener("mouseleave", hideTooltip);
             });
         };
-    }, [userRoleLevel]);
+    });
 
     const [eventToDelete, setEventToDelete] = useState<string | null>(null);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
@@ -143,7 +147,7 @@ const Calendar: React.FC = () => {
     };
 
     const handleDateClick = (selected: DateSelectArg) => {
-        if (userRoleLevel >= 1 && userRoleLevel <= 3) {
+        if (admin) {
             setSelectedDate(selected);
             setIsDialogOpen(true);
         }
@@ -252,8 +256,8 @@ const Calendar: React.FC = () => {
                         right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
                     }}
                     initialView="dayGridMonth"
-                    editable={userRoleLevel >= 1 && userRoleLevel <= 3}
-                    selectable={userRoleLevel >= 1 && userRoleLevel <= 3}
+                    editable={admin}
+                    selectable={admin}
                     selectMirror={true}
                     dayMaxEvents={true}
                     select={handleDateClick}

@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import {sessionCheck, UserHasRight} from "@/app/func/funcs";
 
 interface Log {
     logs: string;
@@ -18,6 +19,11 @@ const CamLogsPage = () => {
     const camId = pathname.split('/').pop();
     const [logs, setLogs] = useState<string[]>([]);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        UserHasRight(7);
+        sessionCheck();
+    });
 
     useEffect(() => {
         if (camId) {

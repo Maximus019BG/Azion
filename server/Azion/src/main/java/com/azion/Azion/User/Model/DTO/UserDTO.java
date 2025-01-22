@@ -12,7 +12,7 @@ public class UserDTO {
     private String email;
     private String age;
     private String role;
-    private Integer roleLevel;
+    private String roleAccess;
     private String orgid;
     private Set<ProjectsDTO> projects;
     private String profilePicture;
@@ -68,12 +68,12 @@ public class UserDTO {
         this.role = role;
     }
     
-    public Integer getRoleLevel() {
-        return roleLevel;
+    public String getRoleAccess() {
+        return roleAccess;
     }
     
-    public void setRoleLevel(Integer roleLevel) {
-        this.roleLevel = roleLevel;
+    public void setRoleAccess(String roleLevel) {
+        this.roleAccess = roleLevel;
     }
     
     public Set<ProjectsDTO> getProjects() {

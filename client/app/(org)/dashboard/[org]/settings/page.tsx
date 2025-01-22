@@ -1,7 +1,7 @@
 "use client";
 import React, {FC, useEffect, useState} from "react";
 import SideMenu from "@/app/components/Side-menu";
-import {PartOfOrg, sessionCheck, UserData} from "@/app/func/funcs";
+import {PartOfOrg, sessionCheck, UserData, UserHasRight} from "@/app/func/funcs";
 import Cookies from "js-cookie";
 import {Poppins} from "next/font/google";
 import OrgSettingsForm from "@/app/components/OrgSettings";
@@ -19,7 +19,6 @@ interface PageProps {
 const OrgSettings: FC<PageProps> = ({params}) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [orgNameCheck, setOrgNameCheck] = useState<string>("");
-    const [roleLevel, setRoleLevel] = useState<number>(0);
     const orgName: string = params.org;
 
     PartOfOrg(true);
@@ -33,7 +32,6 @@ const OrgSettings: FC<PageProps> = ({params}) => {
             sessionCheck();
             setTimeout(() => {
                 UserData().then((response) => {
-                    setRoleLevel(response.roleLevel);
                     setLoading(false);
                 });
             }, 1000);
@@ -53,11 +51,11 @@ const OrgSettings: FC<PageProps> = ({params}) => {
         }
     }, [orgNameCheck, orgName]);
 
-    if (!loading) {
-        if (roleLevel !== 1) {
-            window.location.href = `/dashboard/${orgName}`;
-        }
-    }
+    useEffect(() => {
+        UserHasRight(1);
+        sessionCheck();
+    });
+
     return (
         <>
             {loading ? (

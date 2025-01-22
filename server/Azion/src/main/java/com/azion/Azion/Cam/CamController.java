@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -56,6 +57,7 @@ public class CamController {
         if (!camService.camValid(auth)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Camera not registered in Azion");
         }
+        //Person id from pic
         try {
             String base64Image = payload.get("image");
             String userEmail = mfaService.faceRecognition(base64Image);
@@ -77,7 +79,8 @@ public class CamController {
         }
         
         try {
-            if(user.getRoleLevel() <= camRepository.findByCamName(auth).get().getRoleLevel()) {
+            //Get what people can go in and what not
+            if(Objects.equals(user.getRoleAccess(), camRepository.findByCamName(auth).get().getRoleLevel()) || Objects.equals(user.getRoleAccess(), userService.highestAccess())) {
                 camService.addLog(auth, "User " + user.getName() + " got in");
                 emailService.sendLoginEmail(user.getEmail(), "faceID login method", user.getName());
             } else {
@@ -94,7 +97,7 @@ public class CamController {
     @PostMapping("/add")
     public ResponseEntity<?> addLog(@RequestBody Map<String, Object> requestBody, @RequestHeader("authorization") String auth) {
         String camName = (String) requestBody.get("camName");
-        int roleLevel = (int) requestBody.get("roleLevel");
+        String roleLevel = (String) requestBody.get("roleLevel");
         User user = tokenService.getUserFromToken(auth);
         
         if(user == null) {
@@ -102,7 +105,7 @@ public class CamController {
         }
         
         try {
-            if(!userService.userSuperAdmin(user)) {
+            if(!userService.UserHasRight(user,6)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to add a camera");
             }
             
@@ -139,7 +142,7 @@ public class CamController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
-        if (!userService.userSuperAdmin(user)) {
+        if (!userService.UserHasRight(user,7)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to view logs");
         }
         //Logs
@@ -157,7 +160,7 @@ public class CamController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
-        if (!userService.userSuperAdmin(user)) {
+        if (userService.UserHasRight(user,7)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to view logs");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);

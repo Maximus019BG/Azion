@@ -21,7 +21,7 @@ public class Cam {
     private CamLog log;
     
     @Column
-    private int roleLevel;
+    private String roleLevel;
     
     @PrePersist
     public void prePersist() {
@@ -69,11 +69,11 @@ public class Cam {
         this.log = log;
     }
     
-    public int getRoleLevel() {
+    public String getRoleLevel() {
         return roleLevel;
     }
     
-    public void setRoleLevel(int roleLevel) {
+    public void setRoleLevel(String roleLevel) {
         this.roleLevel = roleLevel;
     }
 }

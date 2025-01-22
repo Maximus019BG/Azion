@@ -88,7 +88,7 @@ const UserData = async (): Promise<UserDataType> => {
                 email: response.data.email,
                 age: response.data.age,
                 role: response.data.role,
-                roleLevel: response.data.roleLevel,
+                roleAccess: response.data.roleAccess,
                 projects: response.data.projects,
                 profilePicture: response.data.profilePicture,
                 mfaEnabled: response.data.mfaEnabled,
@@ -99,6 +99,39 @@ const UserData = async (): Promise<UserDataType> => {
             throw error;
         });
 };
+
+//Check if user has a right to do something
+/*IN ORDER:
+*
+* Calendar                0
+*
+* Settings                1
+*
+* Employees               2
+*
+* Roles                   3
+*
+* Create Tasks            4
+*
+* View Tasks              5
+*
+* Azion Cameras (Write)   6
+*
+* Azion Cameras (Read)    7
+*/
+const UserHasRight = async (right: number) => {
+    try {
+        const r = await UserData();
+        if(r.roleAccess[right] !== "1"){
+            window.location.href="/organizations";
+        }
+    } catch (error) {
+        console.error("Error checking user rights:", error);
+        window.location.href="/organizations";
+        return false;
+    }
+};
+
 
 
 const DeleteSession = async () => {
@@ -294,6 +327,15 @@ const byteArrayToBase64 = async (byteArray: number[]): Promise<string | null> =>
     });
 };
 
+const canEditCalendar = async ():Promise<boolean|undefined>  =>{
+    try {
+        const r = await UserData();
+        return r.roleAccess[0] === "1";
+    } catch (error) {
+        console.error("Error checking user rights:", error);
+        return false;
+    }
+}
 
 export {
     CheckMFA,
@@ -306,4 +348,6 @@ export {
     mfaSessionCheck,
     byteArrayToBase64,
     hideButton,
+    UserHasRight,
+    canEditCalendar
 };

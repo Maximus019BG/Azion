@@ -74,6 +74,9 @@ public class Org {
     }
 
     public void setOrgName(String orgName) {
+        if(orgName.contains(" ")){
+            throw new IllegalArgumentException("Name contains spaces");
+        }
         this.orgName = orgName;
     }
 

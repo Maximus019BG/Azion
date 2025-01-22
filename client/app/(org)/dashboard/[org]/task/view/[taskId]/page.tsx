@@ -10,7 +10,7 @@ import AzionEditor from "./_editor/AzionEditor";
 import { Task } from "@/app/types/types";
 import { Poppins } from "next/font/google";
 import { FaArrowAltCircleLeft, FaCompress, FaExpand } from "react-icons/fa";
-import { sessionCheck, UserData } from "@/app/func/funcs";
+import {sessionCheck, UserData, UserHasRight} from "@/app/func/funcs";
 import Link from "next/link";
 import ProgressComponent from "../../../../../../components/ProgressComponent";
 
@@ -87,6 +87,7 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
     useEffect(() => {
         if (Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
             sessionCheck();
+            UserHasRight(5);
         } else {
             window.location.href = "/login";
         }
@@ -132,8 +133,10 @@ const TaskView: FC<PageProps> = ({ params: { taskId, org } }) => {
             //!Set who can see the submitted files
             if (task?.createdBy?.email === uEmail)
                 setAdmin(true);
-            else if (result.roleLevel === 1 || result.roleLevel === 2)
-                setAdmin(true);
+            UserData().then((r)=>{
+               if (r.role === "owner")
+                   setAdmin(true);
+            })
 
             if (
                 task &&

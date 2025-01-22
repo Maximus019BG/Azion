@@ -7,7 +7,6 @@ import com.azion.Azion.Org.Service.OrgService;
 import com.azion.Azion.Org.Util.OrgUtility;
 import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
 import com.azion.Azion.Projects.Model.Project;
-import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
@@ -77,9 +76,10 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
         
+        //Update user
         orgService.addUserToOrg(org, user);
         user.setRole("owner");
-        user.setRoleLevel(1);
+        user.setRoleAccess(userService.highestAccess()); //Has all rights in org
         userRepository.save(user);
         orgService.welcomeEmail(user.getEmail(), user.getName(), org.getOrgName());
         
@@ -140,7 +140,7 @@ public class OrgController {
         if(!tokenService.validateToken(accessToken)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token.");
         }
-        else if(!userService.userSuperAdmin(user)){
+        else if(!userService.UserHasRight(user,1)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access denied.");
         }
         Org org = orgService.findOrgByUser(user);
@@ -201,7 +201,7 @@ public class OrgController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
-        if (user.getRoleLevel() != 1) {
+        if (!userService.UserHasRight(user, 1)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not admin");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
@@ -295,7 +295,7 @@ public class OrgController {
         userDTO.setAge(user.getAge().toString());
         userDTO.setRole(user.getRole());
         userDTO.setOrgid(user.getOrgid());
-        userDTO.setRoleLevel(user.getRoleLevel());
+        userDTO.setRoleAccess(user.getRoleAccess());
         userDTO.setProfilePicture(Arrays.toString(user.getProfilePicture()));
         
         Hibernate.initialize(user.getProjects());
@@ -346,85 +346,18 @@ public class OrgController {
         if (org == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
         }
-        Map<String, Integer> roles = orgService.getOrgRoles(org);
+        Map<String, String> roles = orgService.getOrgRoles(org);
         return ResponseEntity.ok(roles);
     }
     
-    @Transactional
-    @PutMapping("/update/roles/{accessToken}")
-    public ResponseEntity<?> updateRole(@RequestBody Map<String, Object> request, @PathVariable String accessToken) {
-        User user = tokenService.getUserFromToken(accessToken);
-        
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
-        }
-        if (user.getRoleLevel() > 3 || user.getRoleLevel() < 1) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not have permission to update roles.");
-        }
-        Map<String, Integer> roles = (Map<String, Integer>) request.get("roles");
-        Map<String, String> users = (Map<String, String>) request.get("users");
-        boolean isOwner = user.getRoleLevel() == 1;
-        boolean triedToChangeOwner = false;
-        
-        if (roles == null || users == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Roles or users not found.");
-        }
-        
-        for (Map.Entry<String, String> entry : users.entrySet()) {
-            String email = entry.getKey();
-            String role = entry.getValue();
-            User u = userRepository.findByEmail(email);
-            if (u == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with email " + email + " not found.");
-            }
-            if (isOwner) {
-                u.setRole(role);
-            } else {
-                if (!role.equals("owner")) {
-                    u.setRole(role);
-                }
-            }
-        }
-        
-        for (Map.Entry<String, Integer> entry : roles.entrySet()) {
-            String role = entry.getKey();
-            Integer roleLevel = entry.getValue();
-            for (Map.Entry<String, String> userEntry : users.entrySet()) {
-                String email = userEntry.getKey();
-                String userRole = userEntry.getValue();
-                User u = userRepository.findByEmail(email);
-                if (u == null) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with email " + email + " not found.");
-                }
-                if (isOwner) {
-                    if (u.getRole().equals(role)) {
-                        u.setRoleLevel(roleLevel);
-                    }
-                } else {
-                    if (u.getRoleLevel() != 1 && u.getRole().equals(role) && roleLevel != 1) {
-                        u.setRoleLevel(roleLevel);
-                    } else if (u.getRoleLevel() != 1 && u.getRole().equals(role) && roleLevel == 1) {
-                        triedToChangeOwner = true;
-                    }
-                }
-            }
-        }
-        
-        orgService.ensureOwnerHasLevelOne(user.getOrgid());
-        
-        if (triedToChangeOwner) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Roles and user updated. Except for the roleLevel 1");
-        }
-        return ResponseEntity.ok("Roles and users updated.");
-    }
     
     @Transactional
     @DeleteMapping("/remove/employee/{id}")
     public ResponseEntity<?> removeEmployee(@PathVariable String id, @RequestHeader("authorization") String accessToken) {
         userService.userValid(accessToken);
         User user = tokenService.getUserFromToken(accessToken);
-        if (!userService.userSuperAdmin(user)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not super admin");
+        if (!userService.UserHasRight(user,2)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
         User employee = userRepository.findById(id).orElse(null);
         if (employee == null) {
@@ -440,8 +373,8 @@ public class OrgController {
         userService.userValid(accessToken);
         User user = tokenService.getUserFromToken(accessToken);
         
-        if (!userService.userSuperAdmin(user)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not super admin");
+        if (!userService.UserHasRight(user,1)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
         User employee = userRepository.findById(id).orElse(null);
         
@@ -452,5 +385,39 @@ public class OrgController {
         orgService.inviteEmail(employee.getEmail(),employee.getName(),orgService.findOrgByUser(user).getOrgName(),link);
         
         return ResponseEntity.ok("User added");
+    }
+    
+    @Transactional
+    @PutMapping("/role/update/{roleName}")
+    public ResponseEntity<?> roleAccessUpdate(@PathVariable String roleName, @RequestHeader("authorization") String accessToken, @RequestBody Map<Object, String> request) {
+        userService.userValid(accessToken);
+        User user = tokenService.getUserFromToken(accessToken);
+        if(!userService.UserHasRight(user,3)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
+        }
+        if(roleName == "owner"){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
+        }
+        if(request.get("accessFields") == null){
+            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access fields is required");
+        }
+        
+        userService.updateRoleAccess(roleName,request.get("accessFields"),user.getOrgid());
+        return ResponseEntity.ok("Access granted");
+    }
+    
+    @Transactional
+    @GetMapping("/role/access/{roleName}")
+    public ResponseEntity<?> getRoleAccess(@PathVariable String roleName, @RequestHeader("authorization") String accessToken) {
+        userService.userValid(accessToken);
+        User user = tokenService.getUserFromToken(accessToken);
+        if(!userService.UserHasRight(user,3)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
+        }
+        if(roleName == "owner"){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
+        }
+        
+        return ResponseEntity.ok(userService.getAccessByRoleName(roleName, user.getOrgid()));
     }
 }

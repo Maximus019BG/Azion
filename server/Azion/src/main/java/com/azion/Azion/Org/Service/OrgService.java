@@ -6,6 +6,7 @@ import com.azion.Azion.Org.Util.OrgUtility;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.EmailService;
+import com.azion.Azion.User.Service.UserService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
@@ -52,6 +53,7 @@ public class OrgService {
     private final OrgRepository orgRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final UserService userService;
     
     @PersistenceContext
     private EntityManager entityManager;
@@ -60,10 +62,11 @@ public class OrgService {
     private String fromEmail;
 
     @Autowired
-    private OrgService(OrgRepository orgRepository, UserRepository userRepository, EmailService emailService) {
+    private OrgService(OrgRepository orgRepository, UserRepository userRepository, EmailService emailService, UserService userService) {
         this.orgRepository = orgRepository;
         this.userRepository = userRepository;
         this.emailService = emailService;
+        this.userService = userService;
     }
 
     
@@ -78,7 +81,7 @@ public class OrgService {
         users.add(user);
         org.setUsers(users);
         orgRepository.save(org);
-        user.setRoleLevel(4);
+        user.setRoleAccess("00000100"); //Can view tasks
         user.setRole("employee");
         userRepository.save(user);
     }
@@ -101,8 +104,8 @@ public class OrgService {
     }
 
     public void removeEmployee(User user) {
-        if (user.getRoleLevel() == 1 || user.getRoleLevel() == 2) {
-            throw new RuntimeException("can't remove super admins");
+        if (!userService.UserHasRight(user,2)) {
+            throw new RuntimeException("");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
         List<User> employees = new ArrayList<>(org.getUsers());
@@ -112,13 +115,12 @@ public class OrgService {
         userRepository.save(user);
     }
 
-    public Map<String, Integer> getOrgRoles(Org org) {
+    public Map<String, String> getOrgRoles(Org org) {
         List<User> users = org.getUsers().stream().collect(Collectors.toList());
-        Map<String, Integer> roleLevels = new HashMap<>();
+        Map<String, String> roleLevels = new HashMap<>();
         for (User user : users) {
-            if (user.getRole() != null && !user.getRole().equals("none")
-                    && user.getRoleLevel() != null && user.getRoleLevel() != 0) {
-                roleLevels.put(user.getRole(), user.getRoleLevel());
+            if (userService.UserHasRight(user,3)) {
+                roleLevels.put(user.getRole(), user.getRoleAccess());
             }
         }
         return roleLevels;
@@ -137,38 +139,41 @@ public class OrgService {
 
     //!Owner remover blocker
     public void ensureOwnerHasLevelOne(String orgId) {
-        List<User> usersWithLevelOne = userRepository.findByRoleLevelAndOrgid(1, orgId);
+        List<User> usersWithLevelOne = userRepository.findByRoleAccessAndOrgid(userService.highestAccess(), orgId);
         if (usersWithLevelOne.isEmpty()) {
+            //Find all users and their roles in org
             List<User> owners = userRepository.findByRoleAndOrgid("owner", orgId);
             List<User> boss = userRepository.findByRoleAndOrgid("boss", orgId);
             List<User> admins = userRepository.findByRoleAndOrgid("admin", orgId);
             List<User> employees = userRepository.findByRoleAndOrgid("employee", orgId);
             List<User> noRoleUsers = userRepository.findByRoleAndOrgid("none", orgId);
+            
+            //Each case
             if (!owners.isEmpty()) {
                 User owner = owners.get(0);
-                owner.setRoleLevel(1);
+                owner.setRoleAccess(userService.highestAccess());//All rights
                 userRepository.save(owner);
             } else if (!boss.isEmpty()) {
                 User bossUser = boss.get(0);
-                bossUser.setRoleLevel(1);
+                bossUser.setRoleAccess(userService.highestAccess());//All rights
                 userRepository.save(bossUser);
             } else if (!admins.isEmpty()) {
                 User admin = admins.get(0);
-                admin.setRoleLevel(1);
+                admin.setRoleAccess(userService.highestAccess());//All rights
                 userRepository.save(admin);
             } else if (!employees.isEmpty()) {
 
                 User employee = employees.get(0);
-                employee.setRoleLevel(1);
+                employee.setRoleAccess(userService.highestAccess());//All rights
                 userRepository.save(employee);
             } else if (!noRoleUsers.isEmpty()) {
                 User noRoleUser = noRoleUsers.get(0);
-                noRoleUser.setRoleLevel(1);
+                noRoleUser.setRoleAccess(userService.highestAccess());//All rights
                 userRepository.save(noRoleUser);
             } else {
                 //*Final hope
                 User randomUser = userRepository.findByOrgid(orgId).get(0);
-                randomUser.setRoleLevel(1);
+                randomUser.setRoleAccess(userService.highestAccess()); //All rights
                 userRepository.save(randomUser);
             }
         }

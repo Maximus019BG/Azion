@@ -5,7 +5,7 @@ import axios from "axios";
 import {apiUrl} from "@/app/api/config";
 import {Poppins} from "next/font/google";
 import Cookies from "js-cookie";
-import {sessionCheck, UserData} from "@/app/func/funcs";
+import {sessionCheck, UserData, UserHasRight} from "@/app/func/funcs";
 import Link from "next/link";
 import SideMenu from "@/app/components/Side-menu";
 import TasksCard from "@/app/layouts/TasksCard";
@@ -51,11 +51,9 @@ const Tasks: FC<PageProps> = ({params}) => {
                         }),
                     ]);
 
-                    setCurrentUserEmail(userData.email);
-                    if (userData.roleLevel >= 1 && userData.roleLevel <= 3) {
-                        setAdmin(true);
-                    }
+                    UserHasRight(5);
 
+                    setCurrentUserEmail(userData.email);
                     setOrgNameCheck(orgNameResult);
                     setTasks(tasksResponse.data.message === "no projects" ? null : tasksResponse.data);
                     setLoading(false);

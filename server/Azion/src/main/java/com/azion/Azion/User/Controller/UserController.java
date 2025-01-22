@@ -81,7 +81,7 @@ public class UserController {
             userDTO.setRole(user.getRole());
             userDTO.setOrgid(user.getOrgid());
             userDTO.setId(user.getId());
-            userDTO.setRoleLevel(user.getRoleLevel());
+            userDTO.setRoleAccess(user.getRoleAccess());
             userDTO.setProjects(userService.convertProjectsToDTO(user.getProjects()));
             userDTO.setMfaEnabled(user.isMfaEnabled());
             userDTO.setFaceIdEnabled(user.getFaceID()!=null);

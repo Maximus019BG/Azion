@@ -4,8 +4,6 @@ import com.azion.Azion.User.Util.UserUtility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import jakarta.persistence.*;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Date;
@@ -59,8 +57,8 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
     private Set<Project> projects;
     
-    @Column(name = "roleLevel", nullable = true, columnDefinition = "INTEGER DEFAULT 0")
-    private Integer roleLevel;
+    @Column(name = "roleAccess", nullable = true, columnDefinition = "CHAR(8) DEFAULT 00000000")
+    private String roleAccess;
     
     public String getOrgid() {
         return orgid;
@@ -79,7 +77,6 @@ public class User {
     }
     
     
-   
     private void generateId() {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         this.id = uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis();
@@ -198,12 +195,32 @@ public class User {
         this.resetToken = resetToken;
     }
     
-    public Integer getRoleLevel() {
-        return roleLevel;
+    public String getRoleAccess() {
+        return roleAccess;
     }
     
-    public void setRoleLevel(Integer roleLevel) {
-        this.roleLevel = roleLevel;
+    ///<summary>IN ORDER:
+    /// Calendar                0
+    ///
+    /// Settings                1
+    ///
+    /// Employees               2
+    ///
+    /// Roles                   3
+    ///
+    /// Create Tasks            4
+    ///
+    /// View Tasks              5
+    ///
+    /// Azion Cameras (Write)   6
+    ///
+    /// Azion Cameras (Read)    7
+    /// </summary>
+    public void setRoleAccess(String roleLevel) {
+        if(roleLevel.length() != 8){
+            throw new RuntimeException("Impossible access");
+        }
+        this.roleAccess = roleLevel;
     }
     
     public void newMFASecret(){

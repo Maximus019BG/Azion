@@ -2,7 +2,7 @@ package com.azion.Azion.Cam.DTO;
 
 public class CamDTO {
     private String camName;
-    private int roleLevel;
+    private String roleLevel;
     private String orgAddress;
 
     
@@ -14,11 +14,11 @@ public class CamDTO {
         this.camName = camName;
     }
 
-    public int getRoleLevel() {
+    public String getRoleLevel() {
         return roleLevel;
     }
 
-    public void setRoleLevel(int roleLevel) {
+    public void setRoleLevel(String roleLevel) {
         this.roleLevel = roleLevel;
     }
 

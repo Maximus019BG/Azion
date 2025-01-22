@@ -82,8 +82,8 @@ public class ProjectsController extends FileSize {
         User user = tokenService.getUserFromToken(accessToken);
         
         //Admin check
-        if (!userService.userAdmin(user)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not admin or owner");
+        if (!userService.UserHasRight(user, 4)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing privileges");
         }
         
         if (title == null || description == null || dueDate == null || priority == null || status == null || source == null || usersArr == null) {
@@ -174,7 +174,7 @@ public class ProjectsController extends FileSize {
                 projectDTO.setCreatedBy(convertToUserDTO(project.get().getCreatedBy()));
             }
             
-            if (project.get().getCreatedBy().getEmail().equals(user.getEmail()) || (user.getRoleLevel() >= 1 && user.getRoleLevel() <= 3) && user.getOrgid().equals(project.get().getOrg().getOrgID())) {
+            if (project.get().getCreatedBy().getEmail().equals(user.getEmail()) || (userService.UserHasRight(user,4) && userService.UserHasRight(user,5))) {
                 projectDTO.setIsCreator(true);
                 projectDTO.setUsers(projectsService.convertToUserDTOSet(project.get().getUsers()));
                 if (project.get().getFiles() != null) {

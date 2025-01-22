@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -108,19 +109,45 @@ public class UserService {
         }
     }
     
-    //User admin validation
-    @Transactional
-    public boolean userAdmin(User user) {
-        String role = user.getRole();
-        int roleLevel = user.getRoleLevel();
-        return (roleLevel > 0 && roleLevel < 4) || (Objects.equals(role.toLowerCase(), "admin") || Objects.equals(role.toLowerCase(), "boss"));
+    //Check if user has a right to do something
+    ///<summary>IN ORDER:
+    ///
+    /// Calendar                0
+    ///
+    /// Settings                1
+    ///
+    /// Employees               2
+    ///
+    /// Roles                   3
+    ///
+    /// Create Tasks            4
+    ///
+    /// View Tasks              5
+    ///
+    /// Azion Cameras (Write)   6
+    ///
+    /// Azion Cameras (Read)    7
+    /// </summary>
+    public boolean UserHasRight(User user, int right) {
+        return user.getRoleAccess().charAt(right) == '1';
+    }
+   
+    //Get max access
+    public String highestAccess(){
+        return "11111111";
     }
     
-    //User superAdmin validation
-    @Transactional
-    public boolean userSuperAdmin(User user) {
-        int roleLevel = user.getRoleLevel();
-        return (roleLevel > 0 && roleLevel <= 2);
+    //Give new access to a row
+    public void updateRoleAccess(String roleName, String roleAccess, String orgId){
+        List<User> users = userRepository.findByRoleAndOrgid(roleName, orgId);
+        for (User user : users) {
+            user.setRoleAccess(roleAccess);
+        }
+    }
+    
+    public String getAccessByRoleName(String roleName, String orgId){
+        User user = userRepository.findByRoleAndOrgid(roleName, orgId).get(0);
+        return user.getRoleAccess();
     }
     
     //remove the OTP pass

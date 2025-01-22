@@ -3,7 +3,7 @@ import React, {FC, useCallback, useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
-import {sessionCheck, UserData} from "@/app/func/funcs";
+import {sessionCheck, UserData, UserHasRight} from "@/app/func/funcs";
 import {Poppins} from "next/font/google";
 import SideMenu from "@/app/components/Side-menu";
 import {getOrgName} from "@/app/func/org";
@@ -26,7 +26,6 @@ interface PageProps {
 }
 
 const CreateTask: FC<PageProps> = ({params}) => {
-    const [admin, setAdmin] = useState(false);
     const [title, setTitle] = useState("");
     const [uEmail, setUEmail] = useState("")
     const [description, setDescription] = useState("");
@@ -77,16 +76,13 @@ const CreateTask: FC<PageProps> = ({params}) => {
             window.location.href = "/login";
         }
 
-        GetUsers();
+        UserHasRight(4);
 
+
+        GetUsers();
         UserData().then((data) => {
-            if (data.roleLevel >= 1 && data.roleLevel <= 3) {
                 setUEmail(data.email)
                 setLoading(false)
-                setAdmin(true);
-            } else {
-                window.location.href = `/dashboard/${orgName}/task`;
-            }
         });
     }, [orgName]);
 

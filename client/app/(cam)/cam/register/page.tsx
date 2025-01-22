@@ -1,12 +1,18 @@
 "use client";
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {apiUrl} from '@/app/api/config';
 import Cookies from 'js-cookie';
+import {sessionCheck, UserHasRight} from "@/app/func/funcs";
 
 export default function RegisterCam() {
     const [camId, setCamId] = useState('');
     const [roleLevel, setRoleLevel] = useState(0);
+
+    useEffect(() => {
+        UserHasRight(6);
+        sessionCheck();
+    });
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();

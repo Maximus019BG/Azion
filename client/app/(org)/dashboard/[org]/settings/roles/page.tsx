@@ -1,7 +1,7 @@
 "use client";
 import React, {FC, useEffect, useState} from 'react';
 import Cookies from 'js-cookie';
-import {PartOfOrg, sessionCheck, UserData} from "@/app/func/funcs";
+import {PartOfOrg, sessionCheck, UserData, UserHasRight} from "@/app/func/funcs";
 import RoleList from "@/app/components/role-list";
 import SideMenu from "@/app/components/Side-menu";
 import {getOrgName} from "@/app/func/org";
@@ -13,7 +13,6 @@ interface PageProps {
 }
 
 const RoleEdit: FC<PageProps> = ({params}) => {
-    const [roleLevel, setRoleLevel] = useState(0);
     const [loading, setLoading] = useState(true);
     const [orgNameCheck, setOrgNameCheck] = useState("");
     const orgName: string = params.org;
@@ -27,7 +26,6 @@ const RoleEdit: FC<PageProps> = ({params}) => {
             sessionCheck();
             setTimeout(() => {
                 UserData().then((response) => {
-                    setRoleLevel(response.roleLevel);
                     setLoading(false);
                 });
             }, 1000);
@@ -35,6 +33,11 @@ const RoleEdit: FC<PageProps> = ({params}) => {
             window.location.href = "/login";
         }
     }, []);
+
+    useEffect(() => {
+        UserHasRight(6);
+        sessionCheck();
+    });
 
     useEffect(() => {
         const fetchOrgName = async () => {
@@ -50,11 +53,6 @@ const RoleEdit: FC<PageProps> = ({params}) => {
         }
     }, [orgNameCheck, orgName]);
 
-    if (!loading) {
-        if (roleLevel < 1 || roleLevel > 3) {
-            window.location.href = `/dashboard/${orgName}`;
-        }
-    }
 
     return (
         <div className="w-full min-h-screen flex flex-col lg:flex-row">
