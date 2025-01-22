@@ -24,27 +24,13 @@ import {getOrgName} from "@/app/func/org";
 const azionText = Commissioner({subsets: ["latin"], weight: "800"});
 
 const SideMenu = () => {
-    const [roleLevel, setRoleLevel] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [admin, setAdmin] = useState(false);
     const [isDashboardOpen, setIsDashboardOpen] = useState(false);
     const [isTasksOpen, setIsTasksOpen] = useState(false);
     const [org, setOrg] = useState<string | null>("");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+    const [access,  setAccess] = useState<string>("")
 
-    useEffect(() => {
-        UserData().then((response) => {
-            setRoleLevel(response.roleLevel);
-            setLoading(false);
-            if (response.roleLevel >= 1 && response.roleLevel <= 3) {
-                setAdmin(true);
-            }
-            if (response.roleLevel >= 1 && response.roleLevel <= 2) {
-                setIsSuperAdmin(true);
-            }
-        });
-    }, []);
 
     useEffect(() => {
         const fetchOrgName = async () => {
@@ -55,6 +41,14 @@ const SideMenu = () => {
                 setOrg(result);
             }
         };
+
+        const PageAccess =  () => {
+            UserData().then((r) => {
+                setAccess(r.roleAccess);
+            })
+        };
+
+        PageAccess();
         fetchOrgName();
     }, []);
 
@@ -154,20 +148,7 @@ const SideMenu = () => {
                                         </button>
 
                                     </button>
-                                    {isDashboardOpen && !admin && (
-                                        <ul className="w-full">
-                                            <li className="py-1 text-md w-full">
-                                                <Link
-                                                    href={`/dashboard/${org}`}
-                                                    className="flex items-center w-full"
-                                                >
-                                                    <FaCog className="text-lg mr-2"/>
-                                                    Home
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    )}
-                                    {isDashboardOpen && admin && (
+                                    {isDashboardOpen && (
                                         <ul className="w-full">
                                             <li className="py-1 text-md w-full">
                                                 <Link
@@ -178,15 +159,18 @@ const SideMenu = () => {
                                                     Home
                                                 </Link>
                                             </li>
-                                            <li className="py-1 text-md w-full">
-                                                <Link
-                                                    href={`/dashboard/${org}/settings`}
-                                                    className="flex items-center w-full"
-                                                >
-                                                    <FaCog className="text-lg mr-2"/>
-                                                    Settings
-                                                </Link>
-                                            </li>
+                                            {access[1] === '1' && (
+                                                <li className="py-1 text-md w-full">
+                                                    <Link
+                                                        href={`/dashboard/${org}/settings`}
+                                                        className="flex items-center w-full"
+                                                    >
+                                                        <FaCog className="text-lg mr-2"/>
+                                                        Settings
+                                                    </Link>
+                                                </li>
+                                            )}
+                                            {access[2] === '1' && (
                                             <li className="text-md w-full">
                                                 <Link
                                                     href={`/dashboard/${org}/settings/employees`}
@@ -195,7 +179,8 @@ const SideMenu = () => {
                                                     <FaUsers className="text-lg mr-2"/>
                                                     Employees
                                                 </Link>
-                                            </li>
+                                            </li>)}
+                                            {access[3] === '1' && (
                                             <li className="text-md w-full">
                                                 <Link
                                                     href={`/dashboard/${org}/settings/roles`}
@@ -204,7 +189,7 @@ const SideMenu = () => {
                                                     <FaUserSecret className="text-lg mr-2"/>
                                                     Roles
                                                 </Link>
-                                            </li>
+                                            </li>)}
                                         </ul>
                                     )}
                                 </li>
@@ -212,7 +197,7 @@ const SideMenu = () => {
                                 {/* Tasks Dropdown */}
                                 <li className="text-md w-full relative">
                                     <div className="flex items-center justify-between w-full">
-                                        {admin ? (
+                                        {access[4] === '1' ? (
                                             <button
                                                 onClick={toggleTasksDropdown}
                                                 className="flex items-center w-full"
@@ -235,8 +220,9 @@ const SideMenu = () => {
                                             </Link>
                                         )}
                                     </div>
-                                    {isTasksOpen && admin && (
+                                    {isTasksOpen && (
                                         <ul className="w-full">
+                                            {access[5] === '1' && (
                                             <li className="py-1 text-md w-full">
                                                 <Link
                                                     href={`/dashboard/${org}/task`}
@@ -245,7 +231,8 @@ const SideMenu = () => {
                                                     <FaTasks className="text-lg mr-2"/>
                                                     Your Tasks
                                                 </Link>
-                                            </li>
+                                            </li>)}
+                                            {access[4] === '1' && (
                                             <li className="text-md w-full">
                                                 <Link
                                                     href={`/dashboard/${org}/task/create`}
@@ -254,14 +241,14 @@ const SideMenu = () => {
                                                     <FaPlusCircle className="text-lg mr-2"/>
                                                     Create Task
                                                 </Link>
-                                            </li>
+                                            </li>)}
                                         </ul>
                                     )}
                                 </li>
                             </>
                         )}
 
-                        {isSuperAdmin && (
+                        {(access[7] === '1' || access[6] === '1') &&(
                             <>
                                 <li className="text-md w-full">
                                     <Link href="/cam/list" className="flex items-center w-full">
