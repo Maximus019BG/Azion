@@ -201,6 +201,9 @@ public class OrgController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
+        if(orgName.contains(" ")){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Name can't have spaces");
+        }
         if (!userService.UserHasRight(user, 1)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not admin");
         }

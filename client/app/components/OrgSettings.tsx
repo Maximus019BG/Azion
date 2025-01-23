@@ -49,9 +49,9 @@ const OrgSettingsForm = () => {
         orgPhone: "",
         orgDescription: "",
     });
-    const [alertMessage, setAlertMessage] = useState<string | null>(null);
     const [invitePopUp, setInvitePopUp] = useState<boolean>(false);
     const [people, setPeople] = useState<PeopleData>({});
+    const [madeChange, setMadeChange] = useState(false);
 
     useEffect(() => {
         const fetchOrgData = async () => {
@@ -86,6 +86,7 @@ const OrgSettingsForm = () => {
             ...prevState,
             [name]: value,
         }));
+        setMadeChange(true);
     };
 
     const handleInviteChange = () => {
@@ -93,18 +94,25 @@ const OrgSettingsForm = () => {
     };
 
     const handleSave = async () => {
-        try {
-            await axios.put(
-                `${apiUrl}/org/update/${Cookies.get("azionAccessToken")}`,
-                orgData,
-                {
-                    headers: {"Content-Type": "application/json"},
-                }
-            );
-            setAlertMessage("Organization details updated successfully");
-        } catch (error) {
-            console.error(error);
-            setAlertMessage("Failed to update organization details");
+        if(orgData["orgName"].includes(" ")){
+            alert("Organization name can't contain spaces");
+        }
+
+        else {
+            try {
+                await axios.put(
+                    `${apiUrl}/org/update/${Cookies.get("azionAccessToken")}`,
+                    orgData,
+                    {
+                        headers: {"Content-Type": "application/json"},
+                    }
+                );
+                setMadeChange(false);
+                alert("Organization details updated successfully");
+            } catch (error) {
+                console.error(error);
+                alert("Failed to update organization details");
+            }
         }
     };
 
@@ -211,7 +219,7 @@ const OrgSettingsForm = () => {
                 )}
 
                 <div className="col-span-1 sm:col-span-2 md:col-span-3 flex flex-col">
-                    <label className="text-sm font-medium text-gray-300">Description:</label>
+                    <label className="text-sm font-medium text-gray-300">Description</label>
                     <textarea
                         name="orgDescription"
                         value={orgData.orgDescription}
@@ -223,12 +231,15 @@ const OrgSettingsForm = () => {
             </div>
 
             <div className="flex flex-col items-center gap-4 sm:gap-6 md:gap-8">
-                <button
-                    onClick={handleSave}
-                    className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out"
-                >
-                    Save Changes
-                </button>
+                {madeChange && (
+                    <button
+                        onClick={handleSave}
+                        className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out"
+                    >
+                        Save Changes
+                    </button>
+                )}
+
 
                 <button onClick={handleInviteChange}
                         className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out">
@@ -238,11 +249,6 @@ const OrgSettingsForm = () => {
                 <p className="flex">Or join with connection code: {conString} <span
                     onClick={copyConStr}> <IoCopy/> </span></p>
 
-                {alertMessage && (
-                    <div className="mt-4 text-white bg-red-500 p-3 rounded-md shadow-md">
-                        {alertMessage}
-                    </div>
-                )}
 
                 {invitePopUp && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
