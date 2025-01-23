@@ -53,12 +53,16 @@ export default function MfaFace() {
     const captureAndSendFrame = async () => {
         if (videoRef.current) {
             setShowOverlay(true);
+            //Flash
+            await new Promise((resolve) => setTimeout(resolve, 350));
+            //Img
+            const current = videoRef.current;
             const canvas = document.createElement('canvas');
-            canvas.width = videoRef.current.videoWidth;
-            canvas.height = videoRef.current.videoHeight;
+            canvas.width = current.videoWidth;
+            canvas.height = current.videoHeight;
             const context = canvas.getContext('2d');
             if (context) {
-                context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+                context.drawImage(current, 0, 0, canvas.width, canvas.height);
                 const imageData = canvas.toDataURL('image/jpeg');
                 const base64Image = imageData.split(',')[1];
                 const accessToken = Cookies.get('azionAccessToken');
@@ -68,22 +72,25 @@ export default function MfaFace() {
 
                 try {
                     const response: AxiosResponse<{
-                        image: string
+                        image: string;
                     }> = await axios.post(`${apiUrl}/mfa/face-scan`, {request, payload}, {
                         headers: {
-                            'Content-Type': 'application/json'
-                        }
+                            'Content-Type': 'application/json',
+                        },
                     });
                     const processedImage = `data:image/jpeg;base64,${response.data.image}`;
-                    if (response.data.image === 'no faces detected') {
+                    if (response.data.image === 'No faces detected') {
+                        alert('No faces detected');
                     } else {
-                        window.location.href = "/organizations";
+                        // window.location.href = "/account";
                     }
                 } catch (error: any) {
-                    console.error("Error sending image to API: ", error);
+                    console.error('Error sending image to API: ', error);
                     alert(error.response.data);
                 } finally {
-                    setTimeout(() => setShowOverlay(false), 200); // Hide overlay after 200ms
+                    // Wait for another 0.1 seconds after capturing before removing the overlay
+                    await new Promise((resolve) => setTimeout(resolve, 100));
+                    setShowOverlay(false);
                 }
             }
         }

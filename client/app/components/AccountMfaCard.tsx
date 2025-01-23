@@ -3,6 +3,9 @@ import {UserData} from "../func/funcs";
 import OTP from "@/app/components/OTP";
 import {MfaButtons} from "../components/MfaButtons";
 import Link from "next/link";
+import {apiUrl} from "@/app/api/config";
+import axios, {AxiosResponse} from "axios";
+import Cookies from "js-cookie";
 
 const AccountMfaCard = () => {
     const [isMfaEnabled, setIsMfaEnabled] = useState<boolean>(false);
@@ -28,13 +31,30 @@ const AccountMfaCard = () => {
 
     // Disable FaceID action
     const handleDisableFaceId = () => {
-        if (isMfaEnabled) {
-            setShowOtpModal(true); // Show OTP modal if MFA is enabled
-        } else {
-            setShowConfirmModal(true); // Show confirmation modal if MFA is not enabled
-        }
+        setShowConfirmModal(true); // Show confirmation modal if MFA is not enabled
     };
 
+    const RemFaceID =()=>{
+        const data = {
+            accessToken: Cookies.get("azionAccessToken")
+        }
+        axios
+            .put(`${apiUrl}/mfa/rem/face`, data, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then(function (response: AxiosResponse) {
+                Cookies.set("mfaChecked" + response.data.email, "true", {
+                    secure: true,
+                    sameSite: "Strict",
+                });
+                window.location.href = "/account";
+            })
+            .catch(function (error: any) {
+                console.log(error.response ? error.response : error);
+            });
+    }
     return (
         <div
             className="w-full max-w-3xl mx-auto border-2 border-base-100 bg-base-300 rounded-lg shadow-md overflow-hidden">
@@ -125,7 +145,7 @@ const AccountMfaCard = () => {
                             <button
                                 onClick={() => {
                                     // Logic for disabling FaceID
-                                    console.log("FaceID Disabled");
+                                    RemFaceID();
                                     setShowConfirmModal(false); // Close modal after action
                                 }}
                                 className="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"

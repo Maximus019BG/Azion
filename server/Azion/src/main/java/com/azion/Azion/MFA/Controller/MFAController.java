@@ -3,6 +3,7 @@ package com.azion.Azion.MFA.Controller;
 import com.azion.Azion.MFA.Service.MFAService;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.User;
+import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +24,14 @@ public class MFAController {
     private final MFAService mfaService;
     private final TokenService tokenService;
     private final UserService userService;
+    private final UserRepository userRepository;
     
     @Autowired
-    public MFAController(TokenService tokenService, MFAService mfaService, UserService userService) {
+    public MFAController(TokenService tokenService, MFAService mfaService, UserService userService, UserRepository userRepository) {
         this.tokenService = tokenService;
         this.mfaService = mfaService;
         this.userService = userService;
+        this.userRepository = userRepository;
     }
    
 
@@ -184,6 +187,27 @@ public class MFAController {
             }
         } catch (Exception e) {
             String errorResponse = "Could not check MFA status";
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
+    
+    @Transactional
+    @PutMapping("/rem/face")
+    public ResponseEntity<?> removeFaceID(@RequestBody Map<Object,String> requestBody) {
+        String accessToken = (String) requestBody.get("accessToken");
+        
+        if (accessToken == null) {
+            String errorResponse = "Access token is required";
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        try {
+            User user = tokenService.getUserFromToken(accessToken);
+            user.setFaceID(null);
+            userRepository.save(user);
+            return ResponseEntity.ok().body("Face ID removed");
+        } catch (Exception e) {
+            String errorResponse = "Could remove faceId";
+            log.info(e.toString());
             return ResponseEntity.internalServerError().body(errorResponse);
         }
     }

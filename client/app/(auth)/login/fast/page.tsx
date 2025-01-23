@@ -39,17 +39,20 @@ export default function FastLogIn() {
     const captureAndSendFrame = async () => {
         if (videoRef.current) {
             setShowOverlay(true);
+            //Flash
+            await new Promise((resolve) => setTimeout(resolve, 350));
+            //Img
+            const current = videoRef.current;
             const canvas = document.createElement("canvas");
-            canvas.width = videoRef.current.videoWidth;
-            canvas.height = videoRef.current.videoHeight;
+            canvas.width = current.videoWidth;
+            canvas.height = current.videoHeight;
             const context = canvas.getContext("2d");
+
             if (context) {
-                context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+                context.drawImage(current, 0, 0, canvas.width, canvas.height);
                 const imageData = canvas.toDataURL("image/jpeg");
                 const base64Image = imageData.split(",")[1];
-                const accessToken: string | undefined = Cookies.get("azionAccessToken");
-
-                const payload = {image: base64Image};
+                const payload = { image: base64Image };
 
                 try {
                     const response: AxiosResponse<{
@@ -57,7 +60,7 @@ export default function FastLogIn() {
                         refreshToken: string;
                     }> = await axios.post(
                         `${apiUrl}/auth/fast-login`,
-                        {payload},
+                        { payload },
                         {
                             headers: {
                                 "Content-Type": "application/json",
@@ -82,11 +85,14 @@ export default function FastLogIn() {
                     console.error("Error sending image to API: ", error);
                     alert(error.response.data);
                 } finally {
-                    setTimeout(() => setShowOverlay(false), 200); // Hide overlay after 200ms
+                    // Wait for another 0.1 seconds after capturing before removing the overlay
+                    await new Promise((resolve) => setTimeout(resolve, 100));
+                    setShowOverlay(false);
                 }
             }
         }
     };
+
 
     return (
         <div className="w-screen h-screen flex flex-col justify-center items-center gap-16 bg-background relative">

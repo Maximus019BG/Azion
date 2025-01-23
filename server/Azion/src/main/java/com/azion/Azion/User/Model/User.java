@@ -132,8 +132,12 @@ public class User {
     }
     
     public void setFaceID(double[] faceID) throws Exception {
+        if(faceID == null){
+            this.faceID = null;
+            return;
+        }
+        
         String faceIDString = UserUtility.doubleArrayToString(faceID);
-        System.out.println(faceIDString);
         this.faceID = UserUtility.encryptFaceId(faceIDString);
     }
     public double[] getDecryptedFaceID() throws Exception {
