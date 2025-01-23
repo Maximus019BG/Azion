@@ -24,7 +24,6 @@ import {getOrgName} from "@/app/func/org";
 const azionText = Commissioner({subsets: ["latin"], weight: "800"});
 
 const SideMenu = () => {
-    const [loading, setLoading] = useState(true);
     const [isDashboardOpen, setIsDashboardOpen] = useState(false);
     const [isTasksOpen, setIsTasksOpen] = useState(false);
     const [org, setOrg] = useState<string | null>("");

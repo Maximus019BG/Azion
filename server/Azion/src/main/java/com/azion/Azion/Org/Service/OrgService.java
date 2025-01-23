@@ -78,12 +78,12 @@ public class OrgService {
         
         user.setOrgid(org.getOrgID());
         Set<User> users = org.getUsers();
-        users.add(user);
-        org.setUsers(users);
-        orgRepository.save(org);
         user.setRoleAccess("00000100"); //Can view tasks
         user.setRole("employee");
         userRepository.save(user);
+        users.add(user);
+        org.setUsers(users);
+        orgRepository.save(org);
     }
 
     public Org findOrgByConnectString(String connectString) {
@@ -119,9 +119,7 @@ public class OrgService {
         List<User> users = org.getUsers().stream().collect(Collectors.toList());
         Map<String, String> roleLevels = new HashMap<>();
         for (User user : users) {
-            if (userService.UserHasRight(user,3)) {
-                roleLevels.put(user.getRole(), user.getRoleAccess());
-            }
+            roleLevels.put(user.getRole(), user.getRoleAccess());
         }
         return roleLevels;
     }

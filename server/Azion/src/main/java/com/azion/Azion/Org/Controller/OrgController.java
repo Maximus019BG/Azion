@@ -395,7 +395,7 @@ public class OrgController {
         if(!userService.UserHasRight(user,3)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
-        if(roleName == "owner"){
+        if(Objects.equals(roleName, "owner")){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
         if(request.get("accessFields") == null){
@@ -414,10 +414,89 @@ public class OrgController {
         if(!userService.UserHasRight(user,3)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
-        if(roleName == "owner"){
+        if(Objects.equals(roleName, "owner")){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
         
         return ResponseEntity.ok(userService.getAccessByRoleName(roleName, user.getOrgid()));
+    }
+    
+    
+    //Update roles to users
+    @Transactional
+    @PutMapping("/update/roles/{accessToken}")
+    public ResponseEntity<?> updateRole(@RequestBody Map<String, Object> request, @PathVariable String accessToken) {
+        User user = tokenService.getUserFromToken(accessToken);
+        
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        
+        if (!userService.UserHasRight(user, 3)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not have permission to update roles.");
+        }
+        
+        Map<String, String> roles = (Map<String, String>) request.get("roles");
+        Map<String, String> users = (Map<String, String>) request.get("users");
+        int ownerCount = 0;
+        for (String role : users.values()) {
+            if (role.equals("owner")) {
+                ownerCount++;
+            }
+        }
+        
+        if(ownerCount > 1) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Can't have two owners");
+        }
+        
+        boolean isOwner = Objects.equals(user.getRoleAccess(), userService.highestAccess());
+        boolean triedToChangeOwner = false;
+        
+        if (roles == null || users == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Roles or users not provided.");
+        }
+        
+        // Update user roles
+        for (Map.Entry<String, String> userEntry : users.entrySet()) {
+            String email = userEntry.getKey();
+            String newRole = userEntry.getValue();
+            
+            User u = userRepository.findByEmail(email);
+            if (u == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with email " + email + " not found.");
+            }
+            
+            if (isOwner || (!newRole.equals("owner") && !u.getRole().equals("owner"))) {
+                u.setRole(newRole);
+                userRepository.save(u);
+            } else if (!isOwner && newRole.equals("owner")) {
+                triedToChangeOwner = true;
+            }
+        }
+        
+        // Update role access levels
+        for (Map.Entry<String, String> roleEntry : roles.entrySet()) {
+            String role = roleEntry.getKey();
+            String newRoleAccess = roleEntry.getValue();
+            
+            List<User> usersWithRole = userRepository.findByRoleAndOrgid(role, user.getOrgid());
+            for (User u : usersWithRole) {
+                if (isOwner || !Objects.equals(u.getRoleAccess(), userService.highestAccess())) {
+                    u.setRoleAccess(newRoleAccess);
+                    userRepository.save(u);
+                } else {
+                    triedToChangeOwner = true;
+                }
+            }
+        }
+        
+        // Ensure the organization has at least one owner with level 1 access
+        orgService.ensureOwnerHasLevelOne(user.getOrgid());
+        
+        if (triedToChangeOwner) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Roles and users updated. Except for the roleLevel 1.");
+        }
+        
+        return ResponseEntity.ok("Roles and users updated successfully.");
     }
 }

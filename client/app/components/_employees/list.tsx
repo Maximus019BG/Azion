@@ -32,9 +32,6 @@ const List = () => {
 
     return (
         <div className='flex flex-col lg:flex-row w-full'>
-            <div className='w-full lg:w-1/4'>
-                <SideMenu/>
-            </div>
             <div className='w-full flex flex-col justify-center items-center gap-5 p-4 sm:p-6 md:p-8'>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl my-8 text-center">Organization&apos;s Members</h1>
                 {employees.map((employee) => (

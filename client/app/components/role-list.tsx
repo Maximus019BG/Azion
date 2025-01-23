@@ -12,12 +12,12 @@ interface User {
 }
 
 const RoleList = () => {
-    const [roles, setRoles] = useState<{ [key: string]: number }>({});
+    const [roles, setRoles] = useState<{ [key: string]: string }>({});
     const [users, setUsers] = useState<User[]>([]);
     const [newRole, setNewRole] = useState<string>("");
-    const [newLevel, setNewLevel] = useState<number>(0);
-    const [alertMessage, setAlertMessage] = useState<string | null>(null);
+    const [newLevel, setNewLevel] = useState<string>("");
     const [showNewRole, setShowNewRole] = useState<boolean>(false);
+    const [madeChanges, setMadeChanges] = useState<boolean>(false);
     const refs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
     useEffect(() => {
@@ -76,35 +76,53 @@ const RoleList = () => {
                     },
                 }
             );
-            setAlertMessage("Roles and user roles updated successfully");
-            setTimeout(() => setAlertMessage(null), 2500);
+            setMadeChanges(false);
+            alert("Roles and user roles updated successfully");
         } catch (error) {
             console.error(error);
-            setAlertMessage("Failed to update roles and user roles");
+            alert("Failed to update roles and user roles");
         }
     };
 
-    const handleInputChange = (role: string, value: number) => {
+    const handleInputChange = (role: string, value: string) => {
         setRoles((prevRoles) => ({
             ...prevRoles,
             [role]: value,
         }));
+        setMadeChanges(true);
     };
 
     const handleRoleNameChange = (oldRole: string, newRole: string) => {
+        if (roles[newRole]) {
+            alert("This role name already exists.");
+            return;
+        }
+
+        // Update roles
         setRoles((prevRoles) => {
-            const updatedRoles = {...prevRoles};
+            const updatedRoles = { ...prevRoles };
             const level = updatedRoles[oldRole];
             delete updatedRoles[oldRole];
             updatedRoles[newRole] = level;
             return updatedRoles;
         });
+
+        // Update users with the old roleName
+        setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+                user.role === oldRole ? { ...user, role: newRole } : user
+            )
+        );
+
         setTimeout(() => {
             if (refs.current[newRole]) {
                 refs.current[newRole]?.focus();
             }
         }, 0);
+
+        setMadeChanges(true);
     };
+
 
     const handleUpdateRole = (role: string) => {
         const currentPath = window.location.href;
@@ -129,20 +147,22 @@ const RoleList = () => {
                 return user;
             });
         });
+        setMadeChanges(true);
     };
 
     const handleAddRole = () => {
-        if (newRole && newLevel > 0 && !roles[newRole]) {
+        if (newRole && !roles[newRole]) {
             setRoles((prevRoles) => ({
                 ...prevRoles,
-                [newRole]: newLevel,
+                [newRole]: "00000000",
             }));
             setNewRole("");
-            setNewLevel(0);
+            setNewLevel("00000000");
             setShowNewRole(false);
+            alert("New role added. Before editing privileges save changes")
         } else {
-            setAlertMessage("Role already exists or invalid level.");
         }
+        setMadeChanges(true);
     };
 
     const handleRemoveRole = (role: string) => {
@@ -151,7 +171,12 @@ const RoleList = () => {
             delete updatedRoles[role];
             return updatedRoles;
         });
+        setMadeChanges(true);
     };
+
+    const editAccess =(role:string)=>{
+        window.location.href = window.location.pathname + "/" + role;
+    }
 
     return (
         <div
@@ -169,7 +194,7 @@ const RoleList = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {Object.entries(roles).map(([role, level], index) => (
+                        {Object.entries(roles).map(([role], index) => (
                             <tr key={index} className="border-t bg-base-200 even:bg-slate-950 border-gray-700">
                                 <td className="py-4 px-6">
                                     <input
@@ -185,6 +210,7 @@ const RoleList = () => {
                                 </td>
                                 <td className="py-4 px-6">
                                     <button
+                                        onClick={()=>editAccess(role)}
                                         className={`bg-gray-700 border-none focus:outline-none rounded w-full py-2 px-3 ${role === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
                                     >Edit
                                     </button>
@@ -267,20 +293,17 @@ const RoleList = () => {
                     </table>
                 </div>
             </div>
+
             {/* Save Button and Alert Message */}
-            <div className="w-full mt-8">
+            {madeChanges && (<div className="w-full mt-8">
                 <button
                     onClick={handleSave}
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded transition duration-200"
                 >
                     Save Changes
                 </button>
-            </div>
-            {alertMessage && (
-                <div className="mt-4 text-white bg-gray-700 p-3 rounded">
-                    {alertMessage}
-                </div>
-            )}
+            </div>)}
+
         </div>
     );
 };

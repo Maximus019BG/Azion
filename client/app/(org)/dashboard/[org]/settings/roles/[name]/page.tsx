@@ -14,6 +14,9 @@ const EditRole: React.FC<PageProps> = ({params}) => {
     const {name} = params;
 
     useEffect(() => {
+        if(name === "owner"){
+            window.location.href = window.location.pathname.slice(0,window.location.pathname.length-6);
+        }
         UserHasRight(3);
         sessionCheck();
     });

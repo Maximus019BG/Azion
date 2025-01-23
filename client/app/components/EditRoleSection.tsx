@@ -99,11 +99,6 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({ RoleName }) => {
                 </div>
             ))}
 
-            {/* Display the binary string */}
-            <div className="text-white text-lg mt-4">
-                <strong>Binary String:</strong> {binaryString}
-            </div>
-
             {/* Reset Button */}
             <button
                 className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700"
