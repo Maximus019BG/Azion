@@ -2,7 +2,7 @@ package com.azion.Azion.Auth;
 
 
 import com.azion.Azion.MFA.Service.MFAService;
-import com.azion.Azion.Projects.Service.ProjectsService;
+import com.azion.Azion.Tasks.Service.ProjectsService;
 import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.User;
@@ -24,7 +24,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import static com.azion.Azion.Token.TokenType.ACCESS_TOKEN;
 import static com.azion.Azion.Token.TokenType.REFRESH_TOKEN;

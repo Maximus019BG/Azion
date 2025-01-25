@@ -99,7 +99,7 @@
 We welcome contributions from the community! To contribute to Azion, please first read the [CONTRIBUTING.md](https://github.com/Maximus019BG/Azion/blob/dev/CONTRIBUTING.md) file.
 
 ## License
-This project is licensed under the GPL v3 License - see the [LICENSE](https://github.com/Maximus019BG/Azion/blob/master/LICENSE) file for details.
+This task is licensed under the GPL v3 License - see the [LICENSE](https://github.com/Maximus019BG/Azion/blob/master/LICENSE) file for details.
 
 ## Authors
 - [@Maximus019](https://github.com/Maximus019BG)

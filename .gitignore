@@ -17,7 +17,7 @@ vs/
 # Log file
 *.log
 
-# BlueJ projectFiles
+# BlueJ taskFiles
 *.ctxt
 
 # Mobile Tools for Java (J2ME)
@@ -46,7 +46,7 @@ target/
 .apt_generated
 .classpath
 .factorypath
-.project
+.task
 .settings
 .springBeans
 .sts4-cache

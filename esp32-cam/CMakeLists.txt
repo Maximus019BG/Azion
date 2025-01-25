@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.24.0)
-project(esp32cam)
+task(esp32cam)
 set(IDF_TARGET "esp32")
-include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+include($ENV{IDF_PATH}/tools/cmake/task.cmake)
 
-project(esp32_cam_project)
+task(esp32_cam_project)
 
 # Specify source files
 set(SRCS

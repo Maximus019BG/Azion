@@ -1,4 +1,4 @@
-package com.azion.Azion.Projects.Model.DTO;
+package com.azion.Azion.Tasks.Model.DTO;
 
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProjectsDTO {
+public class TasksDTO {
     private String id;
     private String name;
     private String description;

@@ -11,6 +11,6 @@ public class FileSize {
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<String> handleMaxSizeException(MaxUploadSizeExceededException exc) {
-        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("ProjectFiles size exceeds the maximum limit!");
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("TaskFiles size exceeds the maximum limit!");
     }
 }

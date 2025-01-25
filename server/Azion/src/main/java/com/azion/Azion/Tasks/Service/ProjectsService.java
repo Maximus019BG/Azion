@@ -1,10 +1,10 @@
-package com.azion.Azion.Projects.Service;
+package com.azion.Azion.Tasks.Service;
 
-import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
-import com.azion.Azion.Projects.Model.Project;
-import com.azion.Azion.Projects.Model.ProjectFiles;
-import com.azion.Azion.Projects.Repository.FileRepo;
-import com.azion.Azion.Projects.Repository.ProjectsRepository;
+import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
+import com.azion.Azion.Tasks.Model.Task;
+import com.azion.Azion.Tasks.Model.TaskFiles;
+import com.azion.Azion.Tasks.Repository.FileRepo;
+import com.azion.Azion.Tasks.Repository.ProjectsRepository;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -49,8 +49,8 @@ public class ProjectsService {
     
     
     //!Proj to Data Transfer Object
-    private ProjectsDTO convertToDTO(Project project) {
-        ProjectsDTO dto = new ProjectsDTO();
+    private TasksDTO convertToDTO(Task project) {
+        TasksDTO dto = new TasksDTO();
         dto.setId(project.getProjectID());
         dto.setName(project.getName());
         dto.setDescription(project.getDescription());
@@ -109,13 +109,13 @@ public class ProjectsService {
     }
     
     //!Returns tasks to user
-    public void taskReturner(User user, Project project) {
+    public void taskReturner(User user, Task project) {
         Set<User> users = project.getDoneBy();
         users.remove(user);
         project.setDoneBy(users);       //NOT users it won't work use doneBy!
-        List<ProjectFiles> files = project.getFiles();
+        List<TaskFiles> files = project.getFiles();
         //*Find user's work and delete it
-        for (ProjectFiles file : files) {
+        for (TaskFiles file : files) {
             if (file.getUser() == user) {
                 fileRepo.delete(file);
             }
@@ -128,7 +128,7 @@ public class ProjectsService {
     }
     
     //*Calculates project progress
-    public void progressCalc(Project project) {
+    public void progressCalc(Task project) {
         Set<User> doneUsers = project.getDoneBy();
         Set<User> allUsers = project.getUsers();
         List<User> notDoneUsers = new ArrayList<>();
@@ -148,20 +148,20 @@ public class ProjectsService {
     }
     
     //*List top 3 projects by
-    public List<ProjectsDTO> sortProjectsByDate(List<Project> projects) {
+    public List<TasksDTO> sortProjectsByDate(List<Task> projects) {
         projects.sort(Comparator
-                .comparing(Project::getDate) //!Compare by date
-                .thenComparing(Comparator.comparing(Project::getPriority).reversed()) //!Compare by priority
+                .comparing(Task::getDate) //!Compare by date
+                .thenComparing(Comparator.comparing(Task::getPriority).reversed()) //!Compare by priority
         );
-        List<ProjectsDTO> topProjects = new ArrayList<>();
+        List<TasksDTO> topProjects = new ArrayList<>();
         
         if (projects.size() >= 3) {
             topProjects.add(convertToDTO(projects.get(0)));
             topProjects.add(convertToDTO(projects.get(1)));
             topProjects.add(convertToDTO(projects.get(2)));
         } else {
-            for (Project project : projects) {
-                topProjects.add(convertToDTO(project));
+            for (Task task : projects) {
+                topProjects.add(convertToDTO(task));
             }
         }
         return topProjects;
@@ -174,19 +174,19 @@ public class ProjectsService {
     }
     
     @Transactional
-    public List<ProjectsDTO> getProjectByUser(User user) {
-        List<Project> projectsAssigned = projectsRepository.findByUsers(user); //!Projects the user is assigned to do
-        List<Project> projectsCreatedBy = projectsRepository.findProjectByCreatedBy(user); //!Project the user has created
+    public List<TasksDTO> getProjectByUser(User user) {
+        List<Task> projectsAssigned = projectsRepository.findByUsers(user); //!Projects the user is assigned to do
+        List<Task> projectsCreatedBy = projectsRepository.findProjectByCreatedBy(user); //!Task the user has created
         
         //Remove duplicates
-        for(Project project : projectsAssigned) {
-            if(projectsCreatedBy.contains(project)) {
-                projectsCreatedBy.remove(project);
+        for(Task task : projectsAssigned) {
+            if(projectsCreatedBy.contains(task)) {
+                projectsCreatedBy.remove(task);
             }
         }
         
         //Join and return
-        List<Project> projects = new ArrayList<>(projectsCreatedBy);
+        List<Task> projects = new ArrayList<>(projectsCreatedBy);
         projects.addAll(projectsAssigned);
         
         return projects.stream()
@@ -197,9 +197,9 @@ public class ProjectsService {
     //!Task deleting func
     @Transactional
     public void deleteTask(String id) {
-        Project projectObj = projectsRepository.findById(id).get();
+        Task projectObj = projectsRepository.findById(id).get();
         if (projectObj == null) {
-            throw new RuntimeException("Project not found");
+            throw new RuntimeException("Task not found");
         }
         try {
             projectObj.setUsers(null);
@@ -239,10 +239,10 @@ public class ProjectsService {
         }
     }
     
-    //*ProjectFiles safety checks with VT API
+    //*TaskFiles safety checks with VT API
     public boolean isFileSafe(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new RuntimeException("ProjectFiles is empty");
+            throw new RuntimeException("TaskFiles is empty");
         }
         try {
             File convertedFile = convertMultipartFileToFile(file);

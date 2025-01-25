@@ -1,4 +1,4 @@
-package com.azion.Azion.Projects.Model;
+package com.azion.Azion.Tasks.Model;
 
 import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.User.Model.User;
@@ -11,8 +11,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "projects_azion")
-public class Project {
+@Table(name = "tasks_azion")
+public class Task {
     
     @Id
     private String projectID;
@@ -56,13 +56,13 @@ public class Project {
     
     @JoinColumn
     @OneToMany
-    private List<ProjectFiles> projectFiles;
+    private List<TaskFiles> taskFiles;
     
     
-    public Project() {
+    public Task() {
     }
     
-    public Project(String name, String description, LocalDate date, Set<User> users, Org org) {
+    public Task(String name, String description, LocalDate date, Set<User> users, Org org) {
         setName(name);
         setDescription(description);
         setDate(date);
@@ -172,12 +172,12 @@ public class Project {
         this.createdBy = createdBy;
     }
     
-    public List<ProjectFiles> getFiles() {
-        return projectFiles;
+    public List<TaskFiles> getFiles() {
+        return taskFiles;
     }
     
-    public void setFiles(List<ProjectFiles> projectFiles) {
-        this.projectFiles = projectFiles;
+    public void setFiles(List<TaskFiles> taskFiles) {
+        this.taskFiles = taskFiles;
     }
     
 }

@@ -9,7 +9,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
-import com.azion.Azion.Projects.Model.Project;
+import com.azion.Azion.Tasks.Model.Task;
 
 
 @Entity
@@ -55,7 +55,7 @@ public class User {
     
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
-    private Set<Project> projects;
+    private Set<Task> projects;
     
     @Column(name = "roleAccess", nullable = true, columnDefinition = "CHAR(8) DEFAULT 00000000")
     private String roleAccess;
@@ -68,11 +68,11 @@ public class User {
         this.orgid = orgid;
     }
     
-    public Set<Project> getProjects() {
+    public Set<Task> getProjects() {
         return projects;
     }
     
-    public void setProjects(Set<Project> projects) {
+    public void setProjects(Set<Task> projects) {
         this.projects = projects;
     }
     

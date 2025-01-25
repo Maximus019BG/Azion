@@ -1,16 +1,16 @@
-package com.azion.Azion.Projects.Controller;
+package com.azion.Azion.Tasks.Controller;
 
 import com.azion.Azion.Exception.FileSize;
 import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.Org.Repository.OrgRepository;
-import com.azion.Azion.Projects.Enum.SubmitType;
-import com.azion.Azion.Projects.Model.DTO.FileDTO;
-import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
-import com.azion.Azion.Projects.Model.Project;
-import com.azion.Azion.Projects.Model.ProjectFiles;
-import com.azion.Azion.Projects.Repository.FileRepo;
-import com.azion.Azion.Projects.Repository.ProjectsRepository;
-import com.azion.Azion.Projects.Service.ProjectsService;
+import com.azion.Azion.Tasks.Enum.SubmitType;
+import com.azion.Azion.Tasks.Model.DTO.FileDTO;
+import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
+import com.azion.Azion.Tasks.Model.Task;
+import com.azion.Azion.Tasks.Model.TaskFiles;
+import com.azion.Azion.Tasks.Repository.FileRepo;
+import com.azion.Azion.Tasks.Repository.ProjectsRepository;
+import com.azion.Azion.Tasks.Service.ProjectsService;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
@@ -35,7 +35,7 @@ import java.util.*;
 @Slf4j
 @RestController
 @RequestMapping("/api/projects")
-public class ProjectsController extends FileSize {
+public class TasksController extends FileSize {
     
     private final ProjectsRepository projectsRepository;
     private final ProjectsService projectsService;
@@ -46,7 +46,7 @@ public class ProjectsController extends FileSize {
     private final UserService userService;
     
     @Autowired
-    public ProjectsController(ProjectsRepository projectsRepository, ProjectsService projectsService, UserRepository userRepository, TokenService tokenService, OrgRepository orgRepository, FileRepo fileRepo, UserService userService) {
+    public TasksController(ProjectsRepository projectsRepository, ProjectsService projectsService, UserRepository userRepository, TokenService tokenService, OrgRepository orgRepository, FileRepo fileRepo, UserService userService) {
         this.projectsService = projectsService;
         this.projectsRepository = projectsRepository;
         this.userRepository = userRepository;
@@ -57,7 +57,7 @@ public class ProjectsController extends FileSize {
     }
     
     @GetMapping
-    public List<Project> getAllProjects() {
+    public List<Task> getAllProjects() {
         return projectsRepository.findAll();
     }
     
@@ -91,9 +91,9 @@ public class ProjectsController extends FileSize {
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
         
-        Project project = new Project();
-        project.setName(title);
-        project.setDescription(description);
+        Task task = new Task();
+        task.setName(title);
+        task.setDescription(description);
         
         //Date validation
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -103,7 +103,7 @@ public class ProjectsController extends FileSize {
             if (!projectsService.dateIsValid(date, false)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date.");
             }
-            project.setDate(date);
+            task.setDate(date);
         } catch (DateTimeParseException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date");
         }
@@ -111,12 +111,12 @@ public class ProjectsController extends FileSize {
         //!This fixes error 500
         //!DO NOT REMOVE
         user.getEmail();
-        project.setOrg(org);
-        project.setPriority(priority);
-        project.setStatus(status);
-        project.setProgress(progress);
-        project.setSource(source);
-        project.setCreatedBy(user);
+        task.setOrg(org);
+        task.setPriority(priority);
+        task.setStatus(status);
+        task.setProgress(progress);
+        task.setSource(source);
+        task.setCreatedBy(user);
         
         Set<User> users = new HashSet<>();
         for (String email : usersArr) {
@@ -126,10 +126,10 @@ public class ProjectsController extends FileSize {
             }
             users.add(u);
         }
-        project.setUsers(users);
-        projectsRepository.save(project);
+        task.setUsers(users);
+        projectsRepository.save(task);
         
-        return ResponseEntity.status(HttpStatus.CREATED).body("Project created successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Task created successfully");
     }
     
     @Transactional
@@ -143,7 +143,7 @@ public class ProjectsController extends FileSize {
         if (org == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
         }
-        List<ProjectsDTO> projects = projectsService.getProjectByUser(user);
+        List<TasksDTO> projects = projectsService.getProjectByUser(user);
         if (projects.isEmpty()) {
             return ResponseEntity.ok("no projects");
         }
@@ -157,8 +157,8 @@ public class ProjectsController extends FileSize {
         userService.userValid(token);
         User user = tokenService.getUserFromToken(token);
         
-        Optional<Project> project = projectsRepository.findById(id);
-        ProjectsDTO projectDTO = new ProjectsDTO();
+        Optional<Task> project = projectsRepository.findById(id);
+        TasksDTO projectDTO = new TasksDTO();
         if (project.isPresent()) {
             projectDTO.setId(project.get().getProjectID());
             projectDTO.setName(project.get().getName());
@@ -204,10 +204,10 @@ public class ProjectsController extends FileSize {
         return dto;
     }
     
-    private List<FileDTO> convertToFileDTO(List<ProjectFiles> files) {
+    private List<FileDTO> convertToFileDTO(List<TaskFiles> files) {
         List<FileDTO> dtos = new ArrayList<>();
         
-        for (ProjectFiles file : files) {
+        for (TaskFiles file : files) {
             FileDTO dto = new FileDTO();
             dto.setFileData(file.getFileData());
             dto.setLink(file.getLink());
@@ -241,16 +241,16 @@ public class ProjectsController extends FileSize {
         
         boolean fileSafe = projectsService.isFileSafe(file);
         if (!fileSafe) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ProjectFiles could be harmful");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("TaskFiles could be harmful");
         }
         boolean typeLink = false;
-        Optional<Project> project = projectsRepository.findById(id);
+        Optional<Task> project = projectsRepository.findById(id);
         if (project.isPresent()) {
             if (file.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.OK).body("Marked as done");
             }
             try {
-                ProjectFiles fileObj = new ProjectFiles();
+                TaskFiles fileObj = new TaskFiles();
                 try {
                     byte[] fileContent = file.getBytes();
                     String content = new String(fileContent);
@@ -276,8 +276,8 @@ public class ProjectsController extends FileSize {
                 fileObj.setDate(LocalDate.now());
                 fileRepo.save(fileObj);
                 
-                Project proj = project.get();
-                List<ProjectFiles> listProj = proj.getFiles();
+                Task proj = project.get();
+                List<TaskFiles> listProj = proj.getFiles();
                 listProj.add(fileObj);
                 proj.setFiles(listProj);
                 
@@ -303,9 +303,9 @@ public class ProjectsController extends FileSize {
                 throw new RuntimeException(e);
             }
             
-            return ResponseEntity.ok("Project submitted successfully");
+            return ResponseEntity.ok("Task submitted successfully");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Project not found");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");
     }
     
     //*List top projects
@@ -319,7 +319,7 @@ public class ProjectsController extends FileSize {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
-        List<Project> projects = projectsRepository.findByUsers(user);
+        List<Task> projects = projectsRepository.findByUsers(user);
         if (projects.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("projects not found");
         }
@@ -337,12 +337,12 @@ public class ProjectsController extends FileSize {
         String userREmail = request.get("email");
         
         User user = userRepository.findByEmail(userREmail);
-        Project project = projectsRepository.findById(id).get();
+        Task task = projectsRepository.findById(id).get();
         
-        if (project == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Project not found");
+        if (task == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");
         }
-        projectsService.taskReturner(user, project);
+        projectsService.taskReturner(user, task);
         
         return ResponseEntity.ok("User task returned");
     }

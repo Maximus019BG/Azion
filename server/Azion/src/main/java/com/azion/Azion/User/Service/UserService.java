@@ -2,9 +2,9 @@ package com.azion.Azion.User.Service;
 
 
 import com.azion.Azion.MFA.Service.MFAService;
-import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
-import com.azion.Azion.Projects.Model.Project;
-import com.azion.Azion.Projects.Repository.ProjectsRepository;
+import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
+import com.azion.Azion.Tasks.Model.Task;
+import com.azion.Azion.Tasks.Repository.ProjectsRepository;
 import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
@@ -12,14 +12,12 @@ import com.azion.Azion.Token.TokenType;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -60,9 +58,9 @@ public class UserService {
         return file.getBytes();
     }
     
-    public ProjectsDTO convertToProjectsDTO(Project project) {
+    public TasksDTO convertToProjectsDTO(Task project) {
         //project to projectDTO
-        ProjectsDTO dto = new ProjectsDTO();
+        TasksDTO dto = new TasksDTO();
         dto.setId(project.getProjectID());
         dto.setName(project.getName());
         dto.setDescription(project.getDescription());
@@ -87,7 +85,7 @@ public class UserService {
         return dto;
     }
     
-    public Set<ProjectsDTO> convertProjectsToDTO(Set<Project> projects) {
+    public Set<TasksDTO> convertProjectsToDTO(Set<Task> projects) {
         //projects to projectDTOs set
         return projects.stream()
                 .map(this::convertToProjectsDTO)

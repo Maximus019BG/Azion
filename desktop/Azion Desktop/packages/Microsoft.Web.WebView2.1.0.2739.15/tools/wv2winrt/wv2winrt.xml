@@ -39,13 +39,13 @@
              <param name="winmdPaths">Path(s) to winmd files containing types to generate code from/for.</param>
              <param name="outputPath">Path to a folder into which to place generated source code. Or `--` to write all generated code to standard out.</param>
              <param name="outputNamespace">Namespace where generated source code will be placed.</param>
-             <param name="useFullNamespace">If set, wv2winrt will use full namespace names for dispatch adapter source files. Use this option when the output namespace is different to the consuming project's root namespace.</param>
+             <param name="useFullNamespace">If set, wv2winrt will use full namespace names for dispatch adapter source files. Use this option when the output namespace is different to the consuming task's root namespace.</param>
              <param name="useJavascriptCase">If set, wv2winrt will use javascript casing for projection properties, methods, and events.</param>
              <param name="explicitIncludesOnly">If set, wv2winrt won't automatically follow references from other included types.</param>
              <param name="requireAllowForWebAttribute">If set, wv2winrt will only generate wrappers for runtimeclasses with the AllowForWeb attribute. By default, runtimeclasses with or without the AllowForWeb attribute will be included and will have wrapper code generated.</param>
              <param name="ignoreWebHostHiddenAttribute">If set, wv2winrt will generate wrappers for runtimeclasses with the WebHostHidden attribute. By default, runtimeclasses with the WebHostHidden attribute will be skipped and will not have generated wrapper code.</param>
-             <param name="pch">Optional precompiled header filename of the project consuming the generated source code.</param>
-             <param name="idl">Optional flag to generate only the idl file. Run with this option before MIDL if the consuming project defines its own WinRT types.</param>
+             <param name="pch">Optional precompiled header filename of the task consuming the generated source code.</param>
+             <param name="idl">Optional flag to generate only the idl file. Run with this option before MIDL if the consuming task defines its own WinRT types.</param>
              <param name="include">List of namespaces or runtimeclass names to be included in the generated output.</param>
              <param name="exclude">List of namespaces or runtimeclass names to be excluded from the generated output.</param>
              <param name="verbose">If set, generate verbose output including when a namespace or runtimeclass is excluded.</param>

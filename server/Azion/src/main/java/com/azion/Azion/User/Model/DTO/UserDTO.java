@@ -1,9 +1,7 @@
 package com.azion.Azion.User.Model.DTO;
 
-import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
-import com.azion.Azion.Projects.Model.Project;
+import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
 
-import java.util.Date;
 import java.util.Set;
 
 public class UserDTO {
@@ -14,7 +12,7 @@ public class UserDTO {
     private String role;
     private String roleAccess;
     private String orgid;
-    private Set<ProjectsDTO> projects;
+    private Set<TasksDTO> projects;
     private String profilePicture;
     private boolean mfaEnabled;
     private boolean faceIdEnabled;
@@ -76,11 +74,11 @@ public class UserDTO {
         this.roleAccess = roleLevel;
     }
     
-    public Set<ProjectsDTO> getProjects() {
+    public Set<TasksDTO> getProjects() {
         return projects;
     }
     
-    public void setProjects(Set<ProjectsDTO> projects) {
+    public void setProjects(Set<TasksDTO> projects) {
         this.projects = projects;
     }
     

@@ -1,6 +1,6 @@
-package com.azion.Azion.Projects.Model;
+package com.azion.Azion.Tasks.Model;
 
-import com.azion.Azion.Projects.Enum.SubmitType;
+import com.azion.Azion.Tasks.Enum.SubmitType;
 import com.azion.Azion.User.Model.User;
 import jakarta.persistence.*;
 
@@ -8,11 +8,11 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "project_files_azion")
-public class ProjectFiles {
+@Table(name = "task_files_azion")
+public class TaskFiles {
     
     @Id
-    private String projectID;
+    private String taskFileID;
     
     @JoinColumn(nullable = true)
     @ManyToOne
@@ -29,7 +29,7 @@ public class ProjectFiles {
     @Column
     private String link;
     
-    //!type of submit(Link,Text, ProjectFiles)
+    //!type of submit(Link,Text, TaskFiles)
     @Enumerated(EnumType.STRING)
     @Column
     private SubmitType submitType;
@@ -41,17 +41,17 @@ public class ProjectFiles {
     private String contentType;
     
     
-    public ProjectFiles() {
+    public TaskFiles() {
     }
     
     @PrePersist
     public void generateId() {
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        this.projectID = uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis();
+        this.taskFileID = uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis();
     }
     
     public String getProjectID() {
-        return projectID;
+        return taskFileID;
     }
     
     public User getUser() {

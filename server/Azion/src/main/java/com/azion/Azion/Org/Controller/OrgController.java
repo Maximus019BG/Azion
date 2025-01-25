@@ -5,8 +5,8 @@ import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.Org.Repository.OrgRepository;
 import com.azion.Azion.Org.Service.OrgService;
 import com.azion.Azion.Org.Util.OrgUtility;
-import com.azion.Azion.Projects.Model.DTO.ProjectsDTO;
-import com.azion.Azion.Projects.Model.Project;
+import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
+import com.azion.Azion.Tasks.Model.Task;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
@@ -302,8 +302,8 @@ public class OrgController {
         userDTO.setProfilePicture(Arrays.toString(user.getProfilePicture()));
         
         Hibernate.initialize(user.getProjects());
-        Set<Project> projects = user.getProjects();
-        Set<ProjectsDTO> projectDTOs = userService.convertProjectsToDTO(projects);
+        Set<Task> projects = user.getProjects();
+        Set<TasksDTO> projectDTOs = userService.convertProjectsToDTO(projects);
         userDTO.setProjects(projectDTOs);
         
         return userDTO;
