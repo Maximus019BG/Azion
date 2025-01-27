@@ -18,6 +18,7 @@ public class AzionApplication {
 		System.setProperty("secretJWT", dotenv.get("SECRET_JWT"));
 		System.setProperty("issuerName", dotenv.get("ISSUER_NAME"));
 		System.setProperty("secretMFA", dotenv.get("SECRET_MFA"));
+		System.setProperty("secretGoogle", dotenv.get("SECRET_GOOGLE"));
 		System.setProperty("os", dotenv.get("OS"));
 		System.setProperty("spring.mail.username", dotenv.get("EMAIL"));
 		System.setProperty("spring.mail.password", dotenv.get("EMAIL_PASSWORD"));
@@ -25,6 +26,9 @@ public class AzionApplication {
 		System.setProperty("requestOriginMobile", dotenv.get("REQUEST_ORIGIN_MOBILE"));
 		System.setProperty("virusTotalApiKey", dotenv.get("VIRUS_TOTAL_API_KEY"));
 		System.setProperty("sendgrid.api.key", dotenv.get("SENDGRID_API_KEY"));
+		System.setProperty("google.client.id", dotenv.get("GOOGLE_CLIENT_ID"));
+		System.setProperty("google.client.secret", dotenv.get("GOOGLE_CLIENT_SECRET"));
+		System.setProperty("google.redirect.uri", dotenv.get("GOOGLE_REDIRECT_URI"));
 		
 		SpringApplication.run(AzionApplication.class, args);
 	}

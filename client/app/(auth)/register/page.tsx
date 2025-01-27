@@ -8,6 +8,7 @@ import Link from "next/link";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
 import {authSessionCheck} from "@/app/func/funcs";
+import GoogleLoginButton from "@/app/components/_auth/googleSSO";
 
 interface InputField<T> {
     label: string;
@@ -396,6 +397,10 @@ const Register = () => {
                         Login
                     </Link>
                 </p>
+
+                <div>
+                    <GoogleLoginButton />
+                </div>
             </div>
         </div>
     );

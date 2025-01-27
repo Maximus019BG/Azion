@@ -1,6 +1,6 @@
 import { AES, enc } from 'crypto-ts';
 
-const key = process.env.REACT_APP_KEY || "gaAF62h12asd@9lbASF&59"
+const key = process.env.CHAT_MSG_KEY|| "gaAF62h12asd@9lbASF&59";
 
 // Encrypt
 const Encrypt = (message: string) => {

@@ -9,7 +9,7 @@ import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
 import com.azion.Azion.Tasks.Model.Task;
 import com.azion.Azion.Tasks.Model.TaskFiles;
 import com.azion.Azion.Tasks.Repository.FileRepo;
-import com.azion.Azion.Tasks.Repository.ProjectsRepository;
+import com.azion.Azion.Tasks.Repository.TasksRepository;
 import com.azion.Azion.Tasks.Service.ProjectsService;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.DTO.UserDTO;
@@ -37,7 +37,7 @@ import java.util.*;
 @RequestMapping("/api/projects")
 public class TasksController extends FileSize {
     
-    private final ProjectsRepository projectsRepository;
+    private final TasksRepository tasksRepository;
     private final ProjectsService projectsService;
     private final UserRepository userRepository;
     private final TokenService tokenService;
@@ -46,9 +46,9 @@ public class TasksController extends FileSize {
     private final UserService userService;
     
     @Autowired
-    public TasksController(ProjectsRepository projectsRepository, ProjectsService projectsService, UserRepository userRepository, TokenService tokenService, OrgRepository orgRepository, FileRepo fileRepo, UserService userService) {
+    public TasksController(TasksRepository tasksRepository, ProjectsService projectsService, UserRepository userRepository, TokenService tokenService, OrgRepository orgRepository, FileRepo fileRepo, UserService userService) {
         this.projectsService = projectsService;
-        this.projectsRepository = projectsRepository;
+        this.tasksRepository = tasksRepository;
         this.userRepository = userRepository;
         this.tokenService = tokenService;
         this.orgRepository = orgRepository;
@@ -58,7 +58,7 @@ public class TasksController extends FileSize {
     
     @GetMapping
     public List<Task> getAllProjects() {
-        return projectsRepository.findAll();
+        return tasksRepository.findAll();
     }
     
     
@@ -127,7 +127,7 @@ public class TasksController extends FileSize {
             users.add(u);
         }
         task.setUsers(users);
-        projectsRepository.save(task);
+        tasksRepository.save(task);
         
         return ResponseEntity.status(HttpStatus.CREATED).body("Task created successfully");
     }
@@ -157,7 +157,7 @@ public class TasksController extends FileSize {
         userService.userValid(token);
         User user = tokenService.getUserFromToken(token);
         
-        Optional<Task> project = projectsRepository.findById(id);
+        Optional<Task> project = tasksRepository.findById(id);
         TasksDTO projectDTO = new TasksDTO();
         if (project.isPresent()) {
             projectDTO.setId(project.get().getProjectID());
@@ -225,8 +225,8 @@ public class TasksController extends FileSize {
     
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable String id) {
-        projectsRepository.findById(id)
-                .ifPresent(projectsRepository::delete);
+        tasksRepository.findById(id)
+                .ifPresent(tasksRepository::delete);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     
@@ -244,7 +244,7 @@ public class TasksController extends FileSize {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("TaskFiles could be harmful");
         }
         boolean typeLink = false;
-        Optional<Task> project = projectsRepository.findById(id);
+        Optional<Task> project = tasksRepository.findById(id);
         if (project.isPresent()) {
             if (file.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.OK).body("Marked as done");
@@ -284,7 +284,7 @@ public class TasksController extends FileSize {
                 Set<User> doneUsers = proj.getDoneBy();
                 doneUsers.add(user);
                 Set<User> allUsers = proj.getUsers();
-                projectsRepository.save(proj);
+                tasksRepository.save(proj);
                 
                 if (doneUsers.containsAll(allUsers)) {
                     log.debug("done");
@@ -298,7 +298,7 @@ public class TasksController extends FileSize {
                     log.debug("not done");
                     projectsService.progressCalc(proj);
                 }
-                projectsRepository.save(proj);
+                tasksRepository.save(proj);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -319,7 +319,7 @@ public class TasksController extends FileSize {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
-        List<Task> projects = projectsRepository.findByUsers(user);
+        List<Task> projects = tasksRepository.findByUsers(user);
         if (projects.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("projects not found");
         }
@@ -337,7 +337,7 @@ public class TasksController extends FileSize {
         String userREmail = request.get("email");
         
         User user = userRepository.findByEmail(userREmail);
-        Task task = projectsRepository.findById(id).get();
+        Task task = tasksRepository.findById(id).get();
         
         if (task == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");

@@ -17,6 +17,7 @@ import org.apache.commons.codec.binary.Base32;
 public class UserUtility {
 
     private static final String rawKey = System.getProperty("secretMFA");
+    private static final String rawKey2 = System.getProperty("secretGoogle");
     private static final String ALGORITHM = "AES";
     private static final byte[] key = adjustKeyLength(rawKey);
     
@@ -120,6 +121,14 @@ public class UserUtility {
             array[i] = Double.parseDouble(parts[i]);
         }
         return array;
+    }
+    
+    public static String encryptGoogleSecret(String secret) throws Exception {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(key, ALGORITHM);
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+        byte[] encryptedValue = cipher.doFinal(secret.getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(encryptedValue);
     }
     
 }

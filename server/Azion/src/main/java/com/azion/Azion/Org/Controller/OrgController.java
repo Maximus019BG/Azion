@@ -276,8 +276,8 @@ public class OrgController {
             }
             Hibernate.initialize(org.getUsers());
             org.getUsers().forEach(u -> {
-                Hibernate.initialize(u.getProjects());
-                u.getProjects().forEach(project -> Hibernate.initialize(project.getUsers()));
+                Hibernate.initialize(u.getTasks());
+                u.getTasks().forEach(project -> Hibernate.initialize(project.getUsers()));
             });
             
             Set<UserDTO> userDTOs = org.getUsers().stream()
@@ -301,8 +301,8 @@ public class OrgController {
         userDTO.setRoleAccess(user.getRoleAccess());
         userDTO.setProfilePicture(Arrays.toString(user.getProfilePicture()));
         
-        Hibernate.initialize(user.getProjects());
-        Set<Task> projects = user.getProjects();
+        Hibernate.initialize(user.getTasks());
+        Set<Task> projects = user.getTasks();
         Set<TasksDTO> projectDTOs = userService.convertProjectsToDTO(projects);
         userDTO.setProjects(projectDTOs);
         

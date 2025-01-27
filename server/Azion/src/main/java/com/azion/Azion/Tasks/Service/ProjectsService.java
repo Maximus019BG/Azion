@@ -4,7 +4,7 @@ import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
 import com.azion.Azion.Tasks.Model.Task;
 import com.azion.Azion.Tasks.Model.TaskFiles;
 import com.azion.Azion.Tasks.Repository.FileRepo;
-import com.azion.Azion.Tasks.Repository.ProjectsRepository;
+import com.azion.Azion.Tasks.Repository.TasksRepository;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,11 +30,11 @@ public class ProjectsService {
     private static final String API_KEY = System.getProperty("virusTotalApiKey");
     private static final String VIRUSTOTAL_URL = "https://www.virustotal.com/api/v3/files";
     
-    private final ProjectsRepository projectsRepository;
+    private final TasksRepository tasksRepository;
     private final FileRepo fileRepo;
     
-    public ProjectsService(ProjectsRepository projectsRepository, FileRepo fileRepo) {
-        this.projectsRepository = projectsRepository;
+    public ProjectsService(TasksRepository tasksRepository, FileRepo fileRepo) {
+        this.tasksRepository = tasksRepository;
         this.fileRepo = fileRepo;
     }
     
@@ -124,7 +124,7 @@ public class ProjectsService {
             project.setStatus("Due");
         }
         progressCalc(project);      //!DO NOT FORGET TO CALCULATE THE PROGRESS AGAIN
-        projectsRepository.save(project);
+        tasksRepository.save(project);
     }
     
     //*Calculates project progress
@@ -144,7 +144,7 @@ public class ProjectsService {
         log.debug("progress: " + progress);
         project.setProgress(progress);
         project.setStatus("In Progress");
-        projectsRepository.save(project);
+        tasksRepository.save(project);
     }
     
     //*List top 3 projects by
@@ -175,8 +175,8 @@ public class ProjectsService {
     
     @Transactional
     public List<TasksDTO> getProjectByUser(User user) {
-        List<Task> projectsAssigned = projectsRepository.findByUsers(user); //!Projects the user is assigned to do
-        List<Task> projectsCreatedBy = projectsRepository.findProjectByCreatedBy(user); //!Task the user has created
+        List<Task> projectsAssigned = tasksRepository.findByUsers(user); //!Projects the user is assigned to do
+        List<Task> projectsCreatedBy = tasksRepository.findProjectByCreatedBy(user); //!Task the user has created
         
         //Remove duplicates
         for(Task task : projectsAssigned) {
@@ -197,15 +197,15 @@ public class ProjectsService {
     //!Task deleting func
     @Transactional
     public void deleteTask(String id) {
-        Task projectObj = projectsRepository.findById(id).get();
+        Task projectObj = tasksRepository.findById(id).get();
         if (projectObj == null) {
             throw new RuntimeException("Task not found");
         }
         try {
             projectObj.setUsers(null);
             projectObj.setCreatedBy(null);
-            projectsRepository.save(projectObj);
-            projectsRepository.delete(projectObj);
+            tasksRepository.save(projectObj);
+            tasksRepository.delete(projectObj);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
             

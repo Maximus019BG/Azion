@@ -1,5 +1,6 @@
 package com.azion.Azion.User.Controller;
 
+import com.azion.Azion.Tasks.Repository.TasksRepository;
 import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
@@ -11,13 +12,11 @@ import com.azion.Azion.MFA.Service.MFAService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,14 +34,16 @@ public class UserController {
     private final MFAService mfaService;
     private final TokenRepo tokenRepo;
     private final TokenService tokenService;
+    private final TasksRepository tasksRepository;
     
     @Autowired
-    public UserController(UserService userService, UserRepository userRepository, MFAService mfaService, TokenRepo tokenRepo, TokenService tokenService) {
+    public UserController(UserService userService, UserRepository userRepository, MFAService mfaService, TokenRepo tokenRepo, TokenService tokenService, TasksRepository tasksRepository) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.mfaService = mfaService;
         this.tokenRepo = tokenRepo;
         this.tokenService = tokenService;
+        this.tasksRepository = tasksRepository;
     }
     
     @GetMapping("/delete/{email}")
@@ -82,14 +83,13 @@ public class UserController {
             userDTO.setOrgid(user.getOrgid());
             userDTO.setId(user.getId());
             userDTO.setRoleAccess(user.getRoleAccess());
-            userDTO.setProjects(userService.convertProjectsToDTO(user.getProjects()));
+            userDTO.setProjects(userService.convertProjectsToDTO(user.getTasks()));
             userDTO.setMfaEnabled(user.isMfaEnabled());
-            userDTO.setFaceIdEnabled(user.getFaceID()!=null);
+            userDTO.setFaceIdEnabled(user.getFaceID() != null);
             
-            if(user.getProfilePicture() != null) {
+            if (user.getProfilePicture() != null) {
                 userDTO.setProfilePicture(Base64.getEncoder().encodeToString(user.getProfilePicture()));
-            }
-            else if(user.getProfilePicture() == null) {
+            } else if (user.getProfilePicture() == null) {
                 userDTO.setProfilePicture(null);
             }
             
@@ -100,35 +100,41 @@ public class UserController {
         }
     }
     
-    @Transactional
-    @DeleteMapping("/user/delete")
-    public ResponseEntity<?> deleteUser(@RequestHeader("authorization") String authorization, @RequestHeader(value = "OTP", required = false) String otp ) {
-        String token =  authorization;
-        if (token == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Access token is missing.");
-        }
-        User user = tokenService.getUserFromToken(token);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
-        }
-        
-        if(user.isMfaEnabled()){
-            String OTP = otp;
-            if(!mfaService.checkMfaCredentials(user.getEmail(), OTP)){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("OTP does not match.");
-            }
-        }
-        
-        //Delete user and relationships
-        tokenRepo.deleteBySubject(user);
-        userRepository.delete(user);
-        return ResponseEntity.ok("User deleted ");
+@Transactional
+@DeleteMapping("/user/delete")
+public ResponseEntity<?> deleteUser(@RequestHeader("authorization") String authorization, @RequestHeader(value = "OTP", required = false) String otp) {
+    String token = authorization;
+    if (token == null) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Access token is missing.");
+    }
+    User user = tokenService.getUserFromToken(token);
+    if (user == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
     }
     
+    if (user.isMfaEnabled()) {
+        String OTP = otp;
+        if (!mfaService.checkMfaCredentials(user.getEmail(), OTP)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("OTP does not match.");
+        }
+    }
+    
+    // Remove user from tasks and delete tasks created by the user
+    tasksRepository.findByUsers(user).forEach(task -> task.getUsers().remove(user));
+    tasksRepository.deleteByCreatedBy(user);
+    
+    user.setOrgid(null);
+    user.setTasks(null);
+    
+    // Delete user and relationships
+    tokenRepo.deleteBySubject(user);
+    userRepository.delete(user);
+    return ResponseEntity.ok("User deleted");
+}
     
     @Transactional
     @PutMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestParam Map<String, String> request, @RequestParam(value ="file", required = false)MultipartFile file) {
+    public ResponseEntity<?> updateUser(@RequestParam Map<String, String> request, @RequestParam(value = "file", required = false) MultipartFile file) {
         try {
             String token = request.get("accessToken");
             if (token == null) {

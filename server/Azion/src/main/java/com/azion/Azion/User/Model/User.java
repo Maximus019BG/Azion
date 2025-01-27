@@ -68,11 +68,11 @@ public class User {
         this.orgid = orgid;
     }
     
-    public Set<Task> getProjects() {
+    public Set<Task> getTasks() {
         return projects;
     }
     
-    public void setProjects(Set<Task> projects) {
+    public void setTasks(Set<Task> projects) {
         this.projects = projects;
     }
     

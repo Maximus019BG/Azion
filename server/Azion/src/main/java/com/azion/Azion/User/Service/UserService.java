@@ -4,7 +4,7 @@ package com.azion.Azion.User.Service;
 import com.azion.Azion.MFA.Service.MFAService;
 import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
 import com.azion.Azion.Tasks.Model.Task;
-import com.azion.Azion.Tasks.Repository.ProjectsRepository;
+import com.azion.Azion.Tasks.Repository.TasksRepository;
 import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
@@ -30,16 +30,16 @@ public class UserService {
     private final MFAService mfaService;
     private final TokenService tokenService;
     private final TokenRepo tokenRepo;
-    private final ProjectsRepository projectsRepository;
+    private final TasksRepository tasksRepository;
     
     
     @Autowired
-    public UserService(UserRepository userRepository, MFAService mfaService, TokenService tokenService, TokenRepo tokenRepo, ProjectsRepository projectsRepository) {
+    public UserService(UserRepository userRepository, MFAService mfaService, TokenService tokenService, TokenRepo tokenRepo, TasksRepository tasksRepository) {
         this.userRepository = userRepository;
         this.mfaService = mfaService;
         this.tokenService = tokenService;
         this.tokenRepo = tokenRepo;
-        this.projectsRepository = projectsRepository;
+        this.tasksRepository = tasksRepository;
     }
     
     //Pfp update
@@ -133,6 +133,10 @@ public class UserService {
     //Get max access
     public String highestAccess(){
         return "11111111";
+    }
+    
+    public String lowestAccess(){
+        return "00000000";
     }
     
     //Give new access to a row
