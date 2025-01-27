@@ -1,4 +1,5 @@
 'use client';
+import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import { useEffect } from 'react';
@@ -33,9 +34,9 @@ const GoogleCallback: React.FC = () => {
         } else {
             console.error('No authorization code found.');
         }
-    }, []);
+    }, [code]);
 
     return <div>Processing Google Login...</div>;
 };
 
-export default GoogleCallback;
+export default dynamic(() => Promise.resolve(GoogleCallback), { ssr: false });
