@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class ProjectsService {
+public class TasksService {
     
     //VirusTotal config
     private static final String API_KEY = System.getProperty("virusTotalApiKey");
@@ -33,7 +33,7 @@ public class ProjectsService {
     private final TasksRepository tasksRepository;
     private final FileRepo fileRepo;
     
-    public ProjectsService(TasksRepository tasksRepository, FileRepo fileRepo) {
+    public TasksService(TasksRepository tasksRepository, FileRepo fileRepo) {
         this.tasksRepository = tasksRepository;
         this.fileRepo = fileRepo;
     }

@@ -10,7 +10,7 @@ import com.azion.Azion.Tasks.Model.Task;
 import com.azion.Azion.Tasks.Model.TaskFiles;
 import com.azion.Azion.Tasks.Repository.FileRepo;
 import com.azion.Azion.Tasks.Repository.TasksRepository;
-import com.azion.Azion.Tasks.Service.ProjectsService;
+import com.azion.Azion.Tasks.Service.TasksService;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.User;
@@ -38,7 +38,7 @@ import java.util.*;
 public class TasksController extends FileSize {
     
     private final TasksRepository tasksRepository;
-    private final ProjectsService projectsService;
+    private final TasksService tasksService;
     private final UserRepository userRepository;
     private final TokenService tokenService;
     private final OrgRepository orgRepository;
@@ -46,8 +46,8 @@ public class TasksController extends FileSize {
     private final UserService userService;
     
     @Autowired
-    public TasksController(TasksRepository tasksRepository, ProjectsService projectsService, UserRepository userRepository, TokenService tokenService, OrgRepository orgRepository, FileRepo fileRepo, UserService userService) {
-        this.projectsService = projectsService;
+    public TasksController(TasksRepository tasksRepository, TasksService tasksService, UserRepository userRepository, TokenService tokenService, OrgRepository orgRepository, FileRepo fileRepo, UserService userService) {
+        this.tasksService = tasksService;
         this.tasksRepository = tasksRepository;
         this.userRepository = userRepository;
         this.tokenService = tokenService;
@@ -100,7 +100,7 @@ public class TasksController extends FileSize {
         
         try {
             LocalDate date = LocalDate.parse(dueDate, formatter);
-            if (!projectsService.dateIsValid(date, false)) {
+            if (!tasksService.dateIsValid(date, false)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date.");
             }
             task.setDate(date);
@@ -143,7 +143,7 @@ public class TasksController extends FileSize {
         if (org == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
         }
-        List<TasksDTO> projects = projectsService.getProjectByUser(user);
+        List<TasksDTO> projects = tasksService.getProjectByUser(user);
         if (projects.isEmpty()) {
             return ResponseEntity.ok("no projects");
         }
@@ -176,7 +176,7 @@ public class TasksController extends FileSize {
             
             if (project.get().getCreatedBy().getEmail().equals(user.getEmail()) || (userService.UserHasRight(user,4) && userService.UserHasRight(user,5))) {
                 projectDTO.setIsCreator(true);
-                projectDTO.setUsers(projectsService.convertToUserDTOSet(project.get().getUsers()));
+                projectDTO.setUsers(tasksService.convertToUserDTOSet(project.get().getUsers()));
                 if (project.get().getFiles() != null) {
                     projectDTO.setFiles(convertToFileDTO(project.get().getFiles()));
                 }
@@ -184,7 +184,7 @@ public class TasksController extends FileSize {
                 projectDTO.setIsCreator(false);
                 projectDTO.setUsers(null);
             }
-            projectDTO.setDoneBy(projectsService.convertToUserDTOSet(project.get().getDoneBy()).stream().toList());
+            projectDTO.setDoneBy(tasksService.convertToUserDTOSet(project.get().getDoneBy()).stream().toList());
             return ResponseEntity.ok(projectDTO);
         } else {
             return ResponseEntity.notFound().build();
@@ -239,7 +239,7 @@ public class TasksController extends FileSize {
         
         User user = tokenService.getUserFromToken(token);
         
-        boolean fileSafe = projectsService.isFileSafe(file);
+        boolean fileSafe = tasksService.isFileSafe(file);
         if (!fileSafe) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("TaskFiles could be harmful");
         }
@@ -296,7 +296,7 @@ public class TasksController extends FileSize {
                     }
                 } else {
                     log.debug("not done");
-                    projectsService.progressCalc(proj);
+                    tasksService.progressCalc(proj);
                 }
                 tasksRepository.save(proj);
             } catch (IOException e) {
@@ -326,7 +326,7 @@ public class TasksController extends FileSize {
         
         int numberOfTasks = Math.min(projects.size(), 3); //The number of task to be shown on the user
         
-        return ResponseEntity.ok(projectsService.sortProjectsByDate(projects).subList(0,numberOfTasks));
+        return ResponseEntity.ok(tasksService.sortProjectsByDate(projects).subList(0,numberOfTasks));
     }
     
     //!Task return
@@ -342,7 +342,7 @@ public class TasksController extends FileSize {
         if (task == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");
         }
-        projectsService.taskReturner(user, task);
+        tasksService.taskReturner(user, task);
         
         return ResponseEntity.ok("User task returned");
     }
@@ -351,7 +351,7 @@ public class TasksController extends FileSize {
     @DeleteMapping("/delete/task/{id}")
     public ResponseEntity<?> deleteTask(@PathVariable String id, @RequestHeader("authorization") String token) {
         userService.userValid(token);
-        projectsService.deleteTask(id);
+        tasksService.deleteTask(id);
         return ResponseEntity.ok("task deleted successfully");
     }
 }
