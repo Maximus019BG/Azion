@@ -38,10 +38,9 @@ const handleRegister = (data: any, isOwner: boolean) => {
                 secure: true,
                 sameSite: "Strict",
             });
-            if(isOwner) {
+            if (isOwner) {
                 window.location.href = "/register/organization";
-            }
-            else{
+            } else {
                 window.location.href = "/organizations"
             }
         })
@@ -387,20 +386,23 @@ const Register = () => {
                     </div>
                 </div>
 
-                {/* Footer */}
-                <p className="text-white text-center">
-                    Already have an account?{" "}
-                    <Link
-                        href="/login"
-                        className="text-lightAccent text-xl font-black underline"
-                    >
-                        Login
-                    </Link>
-                </p>
 
-                <div>
-                    <GoogleLoginButton />
+                <div className=" flex flex-col justify-center items-center gap-4">
+                    {/* Footer */}
+                    <p className="text-white text-center">
+                        Already have an account?{" "}
+                        <Link
+                            href="/login"
+                            className="text-lightAccent text-xl font-black underline"
+                        >
+                            Login
+                        </Link>
+                    </p>
+                    <div className="h-fit">
+                        <GoogleLoginButton text="Sign up with Google"/>
+                    </div>
                 </div>
+
             </div>
         </div>
     );
