@@ -114,6 +114,7 @@ public class AuthController {
             
             int responseCode = connection.getResponseCode();
             ObjectMapper objectMapper = new ObjectMapper();
+            log.info(responseCode+" "+ connection.getResponseMessage() + " " + connection.getContent());
             
             if (responseCode == 200) {
                 Map<String, Object> tokenResponse = objectMapper.readValue(connection.getInputStream(), Map.class);
