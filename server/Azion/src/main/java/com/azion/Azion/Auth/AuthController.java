@@ -2,7 +2,7 @@ package com.azion.Azion.Auth;
 
 
 import com.azion.Azion.MFA.Service.MFAService;
-import com.azion.Azion.Tasks.Service.ProjectsService;
+import com.azion.Azion.Tasks.Service.TasksService;
 import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.User;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -49,18 +48,18 @@ public class AuthController {
     private final UserRepository userRepository;
     private final MFAService mfaService;
     private final EmailService emailService;
-    private final ProjectsService projectsService;
+    private final TasksService tasksService;
     private final AuthService authService;
     
     @Autowired
-    public AuthController(TokenService tokenService, UserService userService, TokenRepo tokenRepo, UserRepository userRepository, MFAService mfaService, EmailService emailService, ProjectsService projectsService, AuthService authService) {
+    public AuthController(TokenService tokenService, UserService userService, TokenRepo tokenRepo, UserRepository userRepository, MFAService mfaService, EmailService emailService, TasksService tasksService, AuthService authService) {
         this.tokenService = tokenService;
         this.userService = userService;
         this.tokenRepo = tokenRepo;
         this.userRepository = userRepository;
         this.mfaService = mfaService;
         this.emailService = emailService;
-        this.projectsService = projectsService;
+        this.tasksService = tasksService;
         this.authService = authService;
     }
     
@@ -220,7 +219,7 @@ public class AuthController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
             LocalDate date = LocalDate.parse(bornAt, formatter);
-            if (!projectsService.dateIsValid(date, true)) {
+            if (!tasksService.dateIsValid(date, true)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date.");
             }
         } catch (DateTimeParseException e) {
