@@ -42,7 +42,7 @@ const Dashboard_Task_Card = () => {
 
     return (
         <div
-            className="w-full p-6 bg-base-300 rounded-lg shadow-md transition-transform transform hover:scale-105">
+            className="w-full p-6 bg-base-300 rounded-lg shadow-md">
             {loading ? (
                 <div className="text-center text-gray-400">Loading...</div>
             ) : (

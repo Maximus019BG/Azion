@@ -9,6 +9,7 @@ import Link from "next/link";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
 import {authSessionCheck} from "@/app/func/funcs";
+import GoogleLoginButton from "@/app/components/_auth/googleSSO";
 
 interface Token {
     refreshToken: string;
@@ -47,13 +48,13 @@ const Login = () => {
                     });
                 }
             }).catch(function (error: any) {
-                if (error.response) {
-                    alert(error.response.data);
-                } else {
-                    alert("An error occurred, but no server response was received.");
-                }
+            if (error.response) {
+                alert(error.response.data);
+            } else {
+                alert("An error occurred, but no server response was received.");
+            }
 
-            });
+        });
     };
 
     useEffect(() => {
@@ -76,7 +77,7 @@ const Login = () => {
         const userData = {
             email,
             password,
-            OTP:otp,
+            OTP: otp,
         };
         Login(userData);
     };
@@ -144,6 +145,9 @@ const Login = () => {
                         Password?
                     </Link>
                 </p>
+                <div className="h-fit mt-4">
+                    <GoogleLoginButton text="Sign in with Google"/>
+                </div>
             </div>
 
             {/* OTP Modal */}
