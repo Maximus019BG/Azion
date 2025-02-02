@@ -19,7 +19,7 @@ const Footer = () => {
                 {/* Navigation Links */}
                 <nav className="flex flex-col items-center">
                     <h3 className="font-bold text-lg">Quick Links</h3>
-                    <a href="/download" className="link link-hover mt-2">Downlowad our Desktop App</a>
+                    <a href="/download" className="link link-hover mt-2">Download our Desktop App</a>
                 </nav>
 
                 {/* Social Media Links */}
