@@ -6,7 +6,7 @@ import {Poppins} from "next/font/google";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
+import {faCircleLeft, faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 import {authSessionCheck} from "@/app/func/funcs";
 import GoogleLoginButton from "@/app/components/_auth/googleSSO";
 
@@ -77,6 +77,12 @@ const isValidDate = (day: string, month: string, year: string): boolean => {
     return dayInt <= daysInMonth[monthInt - 1];
 };
 
+const isValidEmailDomain = (email: string): boolean => {
+    const domain = email.split('@')[1];
+    const validDomains = ["gmail.com", "yahoo.com", "outlook.com"]; // Add more valid domains as needed
+    return validDomains.includes(domain);
+};
+
 const Register = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -92,6 +98,12 @@ const Register = () => {
     const [days, setDays] = useState<string[]>([]);
     const [months, setMonths] = useState<string[]>([]);
     const [years, setYears] = useState<string[]>([]);
+    const [nameError, setNameError] = useState<string>("");
+    const [emailError, setEmailError] = useState<string>("");
+    const [passwordError, setPasswordError] = useState<string>("");
+    const [password2Error, setPassword2Error] = useState<string>("");
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [showPassword2, setShowPassword2] = useState<boolean>(false);
 
     useEffect(() => {
         if (Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
@@ -143,24 +155,90 @@ const Register = () => {
 
     //SUBMIT
     const handleSubmit = () => {
-        const userData = {
-            name,
-            email,
-            age: `${age.year}-${age.month.padStart(2, "0")}-${age.day.padStart(2, "0")}`,
-            password,
-        };
-        if (password === password2) {
-            handleRegister(userData, isOrgOwner);
+        let valid = true;
+        if (!name) {
+            setNameError("Name is required");
+            valid = false;
         } else {
-            alert("Passwords do not match.");
+            setNameError("");
+        }
+
+        if (!email) {
+            setEmailError("Email is required");
+            valid = false;
+        } else if (!isValidEmailDomain(email)) {
+            setEmailError("Invalid email domain");
+            valid = false;
+        } else {
+            setEmailError("");
+        }
+
+        if (!password) {
+            setPasswordError("Password is required");
+            valid = false;
+        } else {
+            setPasswordError("");
+        }
+
+        if (password !== password2) {
+            setPassword2Error("Passwords do not match");
+            valid = false;
+        } else {
+            setPassword2Error("");
+        }
+
+        if (valid) {
+            const userData = {
+                name,
+                email,
+                age: `${age.year}-${age.month.padStart(2, "0")}-${age.day.padStart(2, "0")}`,
+                password,
+            };
+            handleRegister(userData, isOrgOwner);
         }
     };
 
     const handleNextStep = () => {
-        if (step < stepLabels.length - 1) {
-            setStep(step + 1); // Move to the next step
-        } else {
-            handleSubmit(); // Call submit function on the last step
+        let valid = true;
+        if (step === 0) {
+            if (!name) {
+                setNameError("Name is required");
+                valid = false;
+            } else {
+                setNameError("");
+            }
+
+            if (!email) {
+                setEmailError("Email is required");
+                valid = false;
+            } else if (!isValidEmailDomain(email)) {
+                setEmailError("Invalid email domain");
+                valid = false;
+            } else {
+                setEmailError("");
+            }
+        } else if (step === 1) {
+            if (!password) {
+                setPasswordError("Password is required");
+                valid = false;
+            } else {
+                setPasswordError("");
+            }
+
+            if (password !== password2) {
+                setPassword2Error("Passwords do not match");
+                valid = false;
+            } else {
+                setPassword2Error("");
+            }
+        }
+
+        if (valid) {
+            if (step < stepLabels.length - 1) {
+                setStep(step + 1); // Move to the next step
+            } else {
+                handleSubmit(); // Call submit function on the last step
+            }
         }
     };
 
@@ -266,7 +344,7 @@ const Register = () => {
                     <div className="flex-1 w-full flex flex-col gap-6">
                         <div className="flex flex-col gap-4">
                             {getCurrentFields().map((field, index) => (
-                                <div key={index} className="w-full flex justify-center items-center">
+                                <div key={index} className="w-full flex flex-col justify-center items-center">
                                     {field.type === "checkbox" ? (
                                         <label className="flex items-center text-white">
                                             <input
@@ -341,15 +419,32 @@ const Register = () => {
                                             </div>
                                         </div>
                                     ) : (
-                                        <input
-                                            type={field.type || "text"}
-                                            value={field.value as string}
-                                            onChange={(e) =>
-                                                field.onChange(e.target.value as any)
-                                            }
-                                            placeholder={field.label}
-                                            className="w-full bg-base-200 text-white p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightAccent"
-                                        />
+                                        <div className="w-full flex flex-col">
+                                            <div className="relative w-full">
+                                                <input
+                                                    type={field.type === "password" && (field.label === "Password" ? showPassword : showPassword2) ? "text" : field.type}
+                                                    value={field.value as string}
+                                                    onChange={(e) =>
+                                                        field.onChange(e.target.value as any)
+                                                    }
+                                                    placeholder={field.label}
+                                                    className="w-full bg-base-200 text-white p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightAccent"
+                                                />
+                                                {field.type === "password" && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => field.label === "Password" ? setShowPassword(!showPassword) : setShowPassword2(!showPassword2)}
+                                                        className="absolute right-3 top-3 text-gray-500"
+                                                    >
+                                                        <FontAwesomeIcon
+                                                            icon={field.label === "Password" ? (showPassword ? faEyeSlash : faEye) : (showPassword2 ? faEyeSlash : faEye)}/>
+                                                    </button>
+                                                )}
+                                            </div>
+                                            {field.label === "Enter your email" && emailError && (
+                                                <p className="text-red-500 text-sm mt-1">{emailError}</p>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                             ))}
@@ -386,8 +481,7 @@ const Register = () => {
                     </div>
                 </div>
 
-
-                <div className=" flex flex-col justify-center items-center gap-4">
+                <div className="flex flex-col justify-center items-center gap-4">
                     {/* Footer */}
                     <p className="text-white text-center">
                         Already have an account?{" "}

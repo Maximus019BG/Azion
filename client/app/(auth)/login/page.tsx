@@ -18,10 +18,18 @@ interface Token {
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
+const isValidEmailDomain = (email: string): boolean => {
+    const domain = email.split('@')[1];
+    const validDomains = ["gmail.com", "yahoo.com", "outlook.com"]; // Add more valid domains as needed
+    return validDomains.includes(domain);
+};
+
 const Login = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [OTPNeeded, setOTPNeeded] = useState<boolean>(false);
+    const [emailError, setEmailError] = useState<string>("");
+    const [passwordError, setPasswordError] = useState<string>("");
 
     const Login = async (data: any) => {
         axios
@@ -65,21 +73,61 @@ const Login = () => {
 
     //Request before OTP
     const handleSubmitNoOTP = () => {
-        const userData = {
-            email,
-            password,
-        };
-        Login(userData);
+        let valid = true;
+        if (!email) {
+            setEmailError("Email is required");
+            valid = false;
+        } else if (!isValidEmailDomain(email)) {
+            setEmailError("Invalid email domain");
+            valid = false;
+        } else {
+            setEmailError("");
+        }
+
+        if (!password) {
+            setPasswordError("Password is required");
+            valid = false;
+        } else {
+            setPasswordError("");
+        }
+
+        if (valid) {
+            const userData = {
+                email,
+                password,
+            };
+            Login(userData);
+        }
     };
 
     //Request after OTP only in needed
     const handleSubmit = (otp: string) => {
-        const userData = {
-            email,
-            password,
-            OTP: otp,
-        };
-        Login(userData);
+        let valid = true;
+        if (!email) {
+            setEmailError("Email is required");
+            valid = false;
+        } else if (!isValidEmailDomain(email)) {
+            setEmailError("Invalid email domain");
+            valid = false;
+        } else {
+            setEmailError("");
+        }
+
+        if (!password) {
+            setPasswordError("Password is required");
+            valid = false;
+        } else {
+            setPasswordError("");
+        }
+
+        if (valid) {
+            const userData = {
+                email,
+                password,
+                OTP: otp,
+            };
+            Login(userData);
+        }
     };
 
     const showModal = () => {
@@ -103,19 +151,21 @@ const Login = () => {
             </h1>
 
             {/* Input Fields */}
-            <div className="w-full flex flex-col gap-6 max-w-sm">
+            <div className="w-full flex flex-col gap-3 max-w-sm">
                 <input
                     onChange={(e) => setEmail(e.target.value)}
                     type="text"
                     placeholder="Enter your email"
                     className="bg-gray-700 text-white pl-4 h-12 placeholder:text-gray-400 rounded-lg w-full hover:bg-gray-600 transition"
                 />
+                {emailError && <p className="text-red-500">{emailError}</p>}
                 <input
                     onChange={(e) => setPassword(e.target.value)}
                     type="password"
                     placeholder="Password"
                     className="bg-gray-700 text-white pl-4 h-12 rounded-lg w-full placeholder:text-gray-400 hover:bg-gray-600 transition"
                 />
+                {passwordError && <p className="text-red-500">{passwordError}</p>}
             </div>
 
             <button

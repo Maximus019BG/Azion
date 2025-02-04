@@ -94,11 +94,9 @@ const OrgSettingsForm = () => {
     };
 
     const handleSave = async () => {
-        if(orgData["orgName"].includes(" ")){
+        if (orgData["orgName"].includes(" ")) {
             alert("Organization name can't contain spaces");
-        }
-
-        else {
+        } else {
             try {
                 await axios.put(
                     `${apiUrl}/org/update/${Cookies.get("azionAccessToken")}`,
@@ -251,31 +249,37 @@ const OrgSettingsForm = () => {
 
 
                 {invitePopUp && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                        <div className="bg-blue-950 p-6 rounded-lg shadow-lg w-80 sm:w-96 relative">
+                    <div
+                        className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 transition-opacity duration-300">
+                        <div
+                            className="bg-accent p-6 rounded-lg shadow-lg w-80 sm:w-96 relative transform transition-transform duration-300 scale-95">
                             <button
                                 onClick={handleInviteChange}
-                                className="absolute top-2 right-2 text-xl font-bold text-gray-600"
+                                className="absolute top-2 right-2 text-xl font-bold text-gray-300 hover:text-gray-100 transition-colors duration-200"
                             >
                                 &times;
                             </button>
 
-                            <h3 className="text-xl font-semibold mb-4">Invite people:</h3>
+                            <h3 className="text-xl font-semibold mb-4 text-white">Invite people:</h3>
                             {Object.keys(people).length > 0 ? (
                                 <ul className="space-y-2">
                                     {Object.entries(people).map(([email, id]) => (
                                         <li key={id}
-                                            className="flex justify-between cursor-pointer hover:border-2 hover:border-gray-900"
+                                            className="flex justify-between cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors duration-200"
                                             onClick={() => inviteUser(id)}>
-                                            <h1>{email}</h1>
+                                            <h1 className="text-white">{email}</h1>
                                         </li>
                                     ))}
                                 </ul>
                             ) : (
-                                <p className="text-gray-600">No people to invite</p>
+                                <p className="text-gray-400">Nobody to invite</p>
                             )}
                             <div className="mt-10">
-                                <h1>Or copy <button onClick={copyLink} className="underline text-red-700">link</button>
+                                <h1 className="text-white flex gap-2">Or copy
+                                    <button onClick={copyLink}
+                                            className="underline text-white hover:text-slate-400 transition-colors duration-200">
+                                        link
+                                    </button>
                                 </h1>
                             </div>
                         </div>
