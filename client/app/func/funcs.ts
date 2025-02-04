@@ -88,7 +88,7 @@ const UserData = async (): Promise<UserDataType> => {
                 email: response.data.email,
                 age: response.data.age,
                 role: response.data.role,
-                roleAccess: response.data.roleAccess,
+                access: response.data.access,
                 projects: response.data.projects,
                 profilePicture: response.data.profilePicture,
                 mfaEnabled: response.data.mfaEnabled,
@@ -122,7 +122,7 @@ const UserData = async (): Promise<UserDataType> => {
 const UserHasRight = async (right: number) => {
     try {
         const r = await UserData();
-        if(r.roleAccess[right] !== "1"){
+        if(r.access[right] !== "1"){
             window.location.href="/organizations";
         }
     } catch (error) {
@@ -330,7 +330,7 @@ const byteArrayToBase64 = async (byteArray: number[]): Promise<string | null> =>
 const canEditCalendar = async ():Promise<boolean|undefined>  =>{
     try {
         const r = await UserData();
-        return r.roleAccess[0] === "1";
+        return r.access[0] === "1";
     } catch (error) {
         console.error("Error checking user rights:", error);
         return false;

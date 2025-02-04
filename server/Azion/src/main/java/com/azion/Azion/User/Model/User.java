@@ -1,7 +1,9 @@
 package com.azion.Azion.User.Model;
 
+import com.azion.Azion.Tasks.Model.Task;
 import com.azion.Azion.User.Util.UserUtility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.BCrypt;
@@ -9,7 +11,6 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
-import com.azion.Azion.Tasks.Model.Task;
 
 
 @Entity
@@ -33,9 +34,11 @@ public class User {
     
     @Column(nullable = true, length = 14336)
     private String faceID;
-
-    @Column(nullable = false)
-    private String role;
+    
+    @ManyToOne
+    @JoinColumn(nullable = true)
+    @JsonManagedReference
+    private Role role;
 
     @Column
     private String orgid;
@@ -57,8 +60,6 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
     private Set<Task> projects;
     
-    @Column(name = "roleAccess", nullable = true, columnDefinition = "CHAR(8) DEFAULT 00000000")
-    private String roleAccess;
     
     public String getOrgid() {
         return orgid;
@@ -89,11 +90,11 @@ public class User {
         this.id = id;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
@@ -199,33 +200,6 @@ public class User {
         this.resetToken = resetToken;
     }
     
-    public String getRoleAccess() {
-        return roleAccess;
-    }
-    
-    ///<summary>IN ORDER:
-    /// Calendar                0
-    ///
-    /// Settings                1
-    ///
-    /// Employees               2
-    ///
-    /// Roles                   3
-    ///
-    /// Create Tasks            4
-    ///
-    /// View Tasks              5
-    ///
-    /// Azion Cameras (Write)   6
-    ///
-    /// Azion Cameras (Read)    7
-    /// </summary>
-    public void setRoleAccess(String roleLevel) {
-        if(roleLevel.length() != 8){
-            throw new RuntimeException("Impossible access");
-        }
-        this.roleAccess = roleLevel;
-    }
     
     public void newMFASecret(){
         generateMfaSecret();
@@ -239,7 +213,7 @@ public class User {
     
     public User() {
     }
-    public User(String name, Date age, String email, String password, double[] faceID, String role, byte[] profilePicture) throws Exception {
+    public User(String name, Date age, String email, String password, double[] faceID, Role role, byte[] profilePicture) throws Exception {
         setName(name);
         setAge(age);
         setEmail(email);

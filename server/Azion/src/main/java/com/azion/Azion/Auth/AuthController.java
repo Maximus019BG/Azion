@@ -1,6 +1,5 @@
 package com.azion.Azion.Auth;
 
-
 import com.azion.Azion.MFA.Service.MFAService;
 import com.azion.Azion.Tasks.Service.TasksService;
 import com.azion.Azion.Token.TokenRepo;
@@ -144,8 +143,7 @@ public class AuthController {
                         user.setName(name);
                         user.setPassword(""); // Google users don't have a password
                         user.setMfaEnabled(false);
-                        user.setRole("none");
-                        user.setRoleAccess(userService.lowestAccess());
+                        user.setRole(null);
                         
                         byte[] profilePicture = null;
                         if (pictureUrl != null) {
@@ -236,7 +234,7 @@ public class AuthController {
         user.setEmail(email);
         user.setPassword(password);
         user.setMfaEnabled(false);
-        user.setRole("No role");
+        user.setRole(null);
         
         userRepository.save(user);
         

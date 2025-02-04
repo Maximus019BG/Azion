@@ -28,7 +28,7 @@ const SideMenu = () => {
     const [isTasksOpen, setIsTasksOpen] = useState(false);
     const [org, setOrg] = useState<string | null>("");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [access,  setAccess] = useState<string>("")
+    const [access, setAccess] = useState<string>("")
 
 
     useEffect(() => {
@@ -41,10 +41,9 @@ const SideMenu = () => {
             }
         };
 
-        const PageAccess =  () => {
-            UserData().then((r) => {
-                setAccess(r.roleAccess);
-            })
+        const PageAccess = async () => {
+            const userData = await UserData();
+            setAccess(userData.access);
         };
 
         PageAccess();
@@ -170,25 +169,25 @@ const SideMenu = () => {
                                                 </li>
                                             )}
                                             {access[2] === '1' && (
-                                            <li className="text-md w-full">
-                                                <Link
-                                                    href={`/dashboard/${org}/settings/employees`}
-                                                    className="flex items-center w-full"
-                                                >
-                                                    <FaUsers className="text-lg mr-2"/>
-                                                    Employees
-                                                </Link>
-                                            </li>)}
+                                                <li className="text-md w-full">
+                                                    <Link
+                                                        href={`/dashboard/${org}/settings/employees`}
+                                                        className="flex items-center w-full"
+                                                    >
+                                                        <FaUsers className="text-lg mr-2"/>
+                                                        Employees
+                                                    </Link>
+                                                </li>)}
                                             {access[3] === '1' && (
-                                            <li className="text-md w-full">
-                                                <Link
-                                                    href={`/dashboard/${org}/settings/roles`}
-                                                    className="flex items-center w-full"
-                                                >
-                                                    <FaUserSecret className="text-lg mr-2"/>
-                                                    Roles
-                                                </Link>
-                                            </li>)}
+                                                <li className="text-md w-full">
+                                                    <Link
+                                                        href={`/dashboard/${org}/settings/roles`}
+                                                        className="flex items-center w-full"
+                                                    >
+                                                        <FaUserSecret className="text-lg mr-2"/>
+                                                        Roles
+                                                    </Link>
+                                                </li>)}
                                         </ul>
                                     )}
                                 </li>
@@ -222,32 +221,32 @@ const SideMenu = () => {
                                     {isTasksOpen && (
                                         <ul className="w-full">
                                             {access[5] === '1' && (
-                                            <li className="py-1 text-md w-full">
-                                                <Link
-                                                    href={`/dashboard/${org}/task`}
-                                                    className="flex items-center w-full"
-                                                >
-                                                    <FaTasks className="text-lg mr-2"/>
-                                                    Your Tasks
-                                                </Link>
-                                            </li>)}
+                                                <li className="py-1 text-md w-full">
+                                                    <Link
+                                                        href={`/dashboard/${org}/task`}
+                                                        className="flex items-center w-full"
+                                                    >
+                                                        <FaTasks className="text-lg mr-2"/>
+                                                        Your Tasks
+                                                    </Link>
+                                                </li>)}
                                             {access[4] === '1' && (
-                                            <li className="text-md w-full">
-                                                <Link
-                                                    href={`/dashboard/${org}/task/create`}
-                                                    className="flex items-center w-full"
-                                                >
-                                                    <FaPlusCircle className="text-lg mr-2"/>
-                                                    Create Task
-                                                </Link>
-                                            </li>)}
+                                                <li className="text-md w-full">
+                                                    <Link
+                                                        href={`/dashboard/${org}/task/create`}
+                                                        className="flex items-center w-full"
+                                                    >
+                                                        <FaPlusCircle className="text-lg mr-2"/>
+                                                        Create Task
+                                                    </Link>
+                                                </li>)}
                                         </ul>
                                     )}
                                 </li>
                             </>
                         )}
 
-                        {(access[7] === '1' || access[6] === '1') &&(
+                        {(access[7] === '1' || access[6] === '1') && (
                             <>
                                 <li className="text-md w-full">
                                     <Link href="/cam/list" className="flex items-center w-full">

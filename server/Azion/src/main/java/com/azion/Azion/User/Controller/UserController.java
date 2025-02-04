@@ -79,10 +79,16 @@ public class UserController {
             userDTO.setName(user.getName());
             userDTO.setEmail(user.getEmail());
             userDTO.setAge(user.getAge().toString());
+            if(user.getRole() != null){
+                userDTO.setAccess(user.getRole().getRoleAccess());
+         
+            }
+            else {
+                userDTO.setAccess("00000000");
+            }
             userDTO.setRole(user.getRole());
             userDTO.setOrgid(user.getOrgid());
             userDTO.setId(user.getId());
-            userDTO.setRoleAccess(user.getRoleAccess());
             userDTO.setProjects(userService.convertProjectsToDTO(user.getTasks()));
             userDTO.setMfaEnabled(user.isMfaEnabled());
             userDTO.setFaceIdEnabled(user.getFaceID() != null);

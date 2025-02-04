@@ -9,7 +9,9 @@ import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
 import com.azion.Azion.Tasks.Model.Task;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.DTO.UserDTO;
+import com.azion.Azion.User.Model.Role;
 import com.azion.Azion.User.Model.User;
+import com.azion.Azion.User.Repository.RoleRepository;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +35,16 @@ public class OrgController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final TokenService tokenService;
+    private final RoleRepository roleRepository;
     
     @Autowired
-    public OrgController(OrgService orgService, OrgRepository orgRepository, UserService userService, UserRepository userRepository, TokenService tokenService) {
+    public OrgController(OrgService orgService, OrgRepository orgRepository, UserService userService, UserRepository userRepository, TokenService tokenService, RoleRepository roleRepository) {
         this.orgService = orgService;
         this.orgRepository = orgRepository;
         this.userService = userService;
         this.userRepository = userRepository;
         this.tokenService = tokenService;
+        this.roleRepository = roleRepository;
     }
     
     
@@ -75,11 +79,28 @@ public class OrgController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
+        Role defaultRole = new Role();
+        defaultRole.setName("employee");
+        defaultRole.setRoleAccess("00000100");
+        defaultRole.setOrg(org);
+        defaultRole.setColor("#0000ff");
+        roleRepository.save(defaultRole);
+        
+        
+        Role role = new Role();
+        role.setName("owner");
+        role.setRoleAccess(userService.highestAccess());
+        Set<User> users = new HashSet<>();
+        users.add(user);
+        role.setUsers(users);
+        role.setOrg(org);
+        role.setColor("#0000ff");
+        roleRepository.save(role);
+        
         
         //Update user
         orgService.addUserToOrg(org, user);
-        user.setRole("owner");
-        user.setRoleAccess(userService.highestAccess()); //Has all rights in org
+        user.setRole(role);
         userRepository.save(user);
         orgService.welcomeEmail(user.getEmail(), user.getName(), org.getOrgName());
         
@@ -114,20 +135,20 @@ public class OrgController {
         String accessToken = (String) request.get("accessToken");
         String refreshToken = (String) request.get("refreshToken");
         //Token validation
-        if(!tokenService.validateToken(accessToken)){
+        if (!tokenService.validateToken(accessToken)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token.");
         }
-        tokenService.sessionCheck(refreshToken,accessToken);
+        tokenService.sessionCheck(refreshToken, accessToken);
         
         User user = tokenService.getUserFromToken(accessToken);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
         Org org = orgService.findOrgByConnectString(conStr);
-        if(org == null){
+        if (org == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid link");
         }
-        orgService.addUserToOrg(org,user);
+        orgService.addUserToOrg(org, user);
         return ResponseEntity.ok("User added to organization.");
     }
     
@@ -137,18 +158,17 @@ public class OrgController {
         String accessToken = (String) headers.get("authorization");
         User user = tokenService.getUserFromToken(accessToken);
         //Validation
-        if(!tokenService.validateToken(accessToken)){
+        if (!tokenService.validateToken(accessToken)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token.");
-        }
-        else if(!userService.UserHasRight(user,1)){
+        } else if (!userService.UserHasRight(user, 1)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access denied.");
         }
         Org org = orgService.findOrgByUser(user);
-        if(org == null){
+        if (org == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
         
-        Map<String,String> result = new HashMap<>();
+        Map<String, String> result = new HashMap<>();
         result = orgService.listPeople(org); //Display related people
         return ResponseEntity.ok(result);
     }
@@ -201,7 +221,7 @@ public class OrgController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
-        if(orgName.contains(" ")){
+        if (orgName.contains(" ")) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Name can't have spaces");
         }
         if (!userService.UserHasRight(user, 1)) {
@@ -298,7 +318,6 @@ public class OrgController {
         userDTO.setAge(user.getAge().toString());
         userDTO.setRole(user.getRole());
         userDTO.setOrgid(user.getOrgid());
-        userDTO.setRoleAccess(user.getRoleAccess());
         userDTO.setProfilePicture(Arrays.toString(user.getProfilePicture()));
         
         Hibernate.initialize(user.getTasks());
@@ -359,7 +378,7 @@ public class OrgController {
     public ResponseEntity<?> removeEmployee(@PathVariable String id, @RequestHeader("authorization") String accessToken) {
         userService.userValid(accessToken);
         User user = tokenService.getUserFromToken(accessToken);
-        if (!userService.UserHasRight(user,2)) {
+        if (!userService.UserHasRight(user, 2)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
         User employee = userRepository.findById(id).orElse(null);
@@ -376,7 +395,7 @@ public class OrgController {
         userService.userValid(accessToken);
         User user = tokenService.getUserFromToken(accessToken);
         
-        if (!userService.UserHasRight(user,1)) {
+        if (!userService.UserHasRight(user, 1)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
         User employee = userRepository.findById(id).orElse(null);
@@ -385,7 +404,7 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee not found.");
         }
         
-        orgService.inviteEmail(employee.getEmail(),employee.getName(),orgService.findOrgByUser(user).getOrgName(),link);
+        orgService.inviteEmail(employee.getEmail(), employee.getName(), orgService.findOrgByUser(user).getOrgName(), link);
         
         return ResponseEntity.ok("User added");
     }
@@ -395,17 +414,17 @@ public class OrgController {
     public ResponseEntity<?> roleAccessUpdate(@PathVariable String roleName, @RequestHeader("authorization") String accessToken, @RequestBody Map<Object, String> request) {
         userService.userValid(accessToken);
         User user = tokenService.getUserFromToken(accessToken);
-        if(!userService.UserHasRight(user,3)) {
+        if (!userService.UserHasRight(user, 3)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
-        if(Objects.equals(roleName, "owner")){
+        if (Objects.equals(roleName, "owner")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
-        if(request.get("accessFields") == null){
-            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access fields is required");
+        if (request.get("accessFields") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access fields is required");
         }
         
-        userService.updateRoleAccess(roleName,request.get("accessFields"),user.getOrgid());
+        userService.updateRoleAccess(roleName, request.get("accessFields"), user.getOrgid());
         return ResponseEntity.ok("Access granted");
     }
     
@@ -414,18 +433,17 @@ public class OrgController {
     public ResponseEntity<?> getRoleAccess(@PathVariable String roleName, @RequestHeader("authorization") String accessToken) {
         userService.userValid(accessToken);
         User user = tokenService.getUserFromToken(accessToken);
-        if(!userService.UserHasRight(user,3)) {
+        if (!userService.UserHasRight(user, 3)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
-        if(Objects.equals(roleName, "owner")){
+        if (Objects.equals(roleName, "owner")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
         
         return ResponseEntity.ok(userService.getAccessByRoleName(roleName, user.getOrgid()));
     }
     
-    
-    //Update roles to users
+    // Update roles to users
     @Transactional
     @PutMapping("/update/roles/{accessToken}")
     public ResponseEntity<?> updateRole(@RequestBody Map<String, Object> request, @PathVariable String accessToken) {
@@ -442,17 +460,18 @@ public class OrgController {
         Map<String, String> roles = (Map<String, String>) request.get("roles");
         Map<String, String> users = (Map<String, String>) request.get("users");
         int ownerCount = 0;
-        for (String role : users.values()) {
-            if (role.equals("owner")) {
+        for (String roleId : users.values()) {
+            Role role = roleRepository.findById(roleId).orElse(null);
+            if (role != null && role.getName().equals("owner")) {
                 ownerCount++;
             }
         }
         
-        if(ownerCount > 1) {
+        if (ownerCount > 1) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Can't have two owners");
         }
         
-        boolean isOwner = Objects.equals(user.getRoleAccess(), userService.highestAccess());
+        boolean isOwner = user.getRole().getName().equals("owner");
         boolean triedToChangeOwner = false;
         
         if (roles == null || users == null) {
@@ -462,35 +481,34 @@ public class OrgController {
         // Update user roles
         for (Map.Entry<String, String> userEntry : users.entrySet()) {
             String email = userEntry.getKey();
-            String newRole = userEntry.getValue();
+            String roleName = userEntry.getValue();
             
             User u = userRepository.findByEmail(email);
-            if (u == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with email " + email + " not found.");
+            Role newRole = roleRepository.findByNameAndOrg(roleName, user.getOrgid()).orElse(null);
+            if (u == null || newRole == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or role not found.");
             }
             
-            if (isOwner || (!newRole.equals("owner") && !u.getRole().equals("owner"))) {
+            if (isOwner || (!newRole.getName().equals("owner") && !u.getRole().getName().equals("owner"))) {
                 u.setRole(newRole);
                 userRepository.save(u);
-            } else if (!isOwner && newRole.equals("owner")) {
+            } else if (!isOwner && newRole.getName().equals("owner")) {
                 triedToChangeOwner = true;
             }
         }
         
         // Update role access levels
         for (Map.Entry<String, String> roleEntry : roles.entrySet()) {
-            String role = roleEntry.getKey();
+            String roleId = roleEntry.getKey();
             String newRoleAccess = roleEntry.getValue();
             
-            List<User> usersWithRole = userRepository.findByRoleAndOrgid(role, user.getOrgid());
-            for (User u : usersWithRole) {
-                if (isOwner || !Objects.equals(u.getRoleAccess(), userService.highestAccess())) {
-                    u.setRoleAccess(newRoleAccess);
-                    userRepository.save(u);
-                } else {
-                    triedToChangeOwner = true;
-                }
+            Role role = roleRepository.findById(roleId).orElse(null);
+            if (role == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Role not found.");
             }
+            
+            role.setRoleAccess(newRoleAccess);
+            roleRepository.save(role);
         }
         
         // Ensure the organization has at least one owner with level 1 access

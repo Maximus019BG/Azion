@@ -100,7 +100,7 @@ export interface UserDataType {
     email: string,
     age: string,
     role: string,
-    roleAccess: string,
+    access: string,
     projects: string[],
     profilePicture: string | null,
     mfaEnabled: boolean,

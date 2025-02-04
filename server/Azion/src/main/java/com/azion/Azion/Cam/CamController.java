@@ -80,7 +80,7 @@ public class CamController {
         
         try {
             //Get what people can go in and what not
-            if(Objects.equals(user.getRoleAccess(), camRepository.findByCamName(auth).get().getRoleLevel()) || Objects.equals(user.getRoleAccess(), userService.highestAccess())) {
+            if(Objects.equals(user.getRole().getRoleAccess(), camRepository.findByCamName(auth).get().getRoleLevel()) || Objects.equals(user.getRole().getRoleAccess(), userService.highestAccess())) {
                 camService.addLog(auth, "User " + user.getName() + " got in");
                 emailService.sendLoginEmail(user.getEmail(), "faceID login method", user.getName());
             } else {

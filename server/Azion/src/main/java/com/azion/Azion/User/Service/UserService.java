@@ -10,9 +10,12 @@ import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.Token.TokenType;
 import com.azion.Azion.User.Model.DTO.UserDTO;
+import com.azion.Azion.User.Model.Role;
 import com.azion.Azion.User.Model.User;
+import com.azion.Azion.User.Repository.RoleRepository;
 import com.azion.Azion.User.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +25,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
 @Service
 public class UserService {
     
@@ -31,15 +33,17 @@ public class UserService {
     private final TokenService tokenService;
     private final TokenRepo tokenRepo;
     private final TasksRepository tasksRepository;
+    private final RoleRepository roleRepository;
     
     
     @Autowired
-    public UserService(UserRepository userRepository, MFAService mfaService, TokenService tokenService, TokenRepo tokenRepo, TasksRepository tasksRepository) {
+    public UserService(UserRepository userRepository, MFAService mfaService, TokenService tokenService, TokenRepo tokenRepo, TasksRepository tasksRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.mfaService = mfaService;
         this.tokenService = tokenService;
         this.tokenRepo = tokenRepo;
         this.tasksRepository = tasksRepository;
+        this.roleRepository = roleRepository;
     }
     
     //Pfp update
@@ -127,7 +131,8 @@ public class UserService {
     /// Azion Cameras (Read)    7
     /// </summary>
     public boolean UserHasRight(User user, int right) {
-        return user.getRoleAccess().charAt(right) == '1';
+        Role role = user.getRole();
+        return role.getRoleAccess().charAt(right) == '1';
     }
    
     //Get max access
@@ -141,15 +146,13 @@ public class UserService {
     
     //Give new access to a row
     public void updateRoleAccess(String roleName, String roleAccess, String orgId){
-        List<User> users = userRepository.findByRoleAndOrgid(roleName, orgId);
-        for (User user : users) {
-            user.setRoleAccess(roleAccess);
-        }
+        Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
+        role.setRoleAccess(roleAccess);
     }
     
     public String getAccessByRoleName(String roleName, String orgId){
-        User user = userRepository.findByRoleAndOrgid(roleName, orgId).get(0);
-        return user.getRoleAccess();
+        Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
+        return role.getRoleAccess();
     }
     
     //remove the OTP pass
