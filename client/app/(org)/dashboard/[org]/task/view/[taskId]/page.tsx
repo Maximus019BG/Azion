@@ -87,7 +87,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
     useEffect(() => {
         if (Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
             sessionCheck();
-            UserHasRight(5);
+            UserHasRight("tasks:read");
         } else {
             window.location.href = "/login";
         }
@@ -138,7 +138,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                 setAdmin(true);
             }
             UserData().then((r) => {
-                if (r.role === "owner") {
+                if (r.role.name === "owner") {
                     setAdmin(true);
                 }
             });

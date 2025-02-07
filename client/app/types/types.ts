@@ -99,10 +99,17 @@ export interface UserDataType {
     name: string,
     email: string,
     age: string,
-    role: string,
+    role: Role,
     access: string,
     projects: string[],
     profilePicture: string | null,
     mfaEnabled: boolean,
     faceIdEnabled: boolean
+}
+
+interface Role{
+    id: string;
+    name: string;
+    roleAccess: string;
+    color: string;
 }

@@ -10,7 +10,7 @@ public class UserDTO {
     private String name;
     private String email;
     private String age;
-    private Role role;
+    private RoleDTO role;
     private String access;
     private String orgid;
     private Set<TasksDTO> projects;
@@ -59,11 +59,11 @@ public class UserDTO {
         this.orgid = orgid;
     }
     
-    public Role getRole() {
+    public RoleDTO getRole() {
         return role;
     }
     
-    public void setRole(Role role) {
+    public void setRole(RoleDTO role) {
         this.role = role;
     }
     

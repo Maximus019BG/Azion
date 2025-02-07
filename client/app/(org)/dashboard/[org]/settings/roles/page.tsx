@@ -35,7 +35,7 @@ const RoleEdit: FC<PageProps> = ({params}) => {
     }, []);
 
     useEffect(() => {
-        UserHasRight(6);
+        UserHasRight("roles:write");
         sessionCheck();
     });
 

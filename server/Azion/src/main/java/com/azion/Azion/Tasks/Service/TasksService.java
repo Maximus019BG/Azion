@@ -5,7 +5,9 @@ import com.azion.Azion.Tasks.Model.Task;
 import com.azion.Azion.Tasks.Model.TaskFiles;
 import com.azion.Azion.Tasks.Repository.FileRepo;
 import com.azion.Azion.Tasks.Repository.TasksRepository;
+import com.azion.Azion.User.Model.DTO.RoleDTO;
 import com.azion.Azion.User.Model.DTO.UserDTO;
+import com.azion.Azion.User.Model.Role;
 import com.azion.Azion.User.Model.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +40,15 @@ public class TasksService {
         this.fileRepo = fileRepo;
     }
     
+    private RoleDTO convertToRoleDTO(Role role){
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setId(role.getId());
+        roleDTO.setName(role.getName());
+        roleDTO.setRoleAccess(role.getRoleAccess());
+        roleDTO.setColor(role.getColor());
+        return roleDTO;
+    }
+    
     //*Converter (file to MLTFile)
     public static File convertMultipartFileToFile(MultipartFile multipartFile) throws IOException {
         File file = new File(multipartFile.getOriginalFilename());
@@ -66,7 +77,7 @@ public class TasksService {
             userDTO.setName(project.getCreatedBy().getName());
             userDTO.setEmail(project.getCreatedBy().getEmail());
             userDTO.setAge(project.getCreatedBy().getAge().toString());
-            userDTO.setRole(project.getCreatedBy().getRole());
+            userDTO.setRole(convertToRoleDTO(project.getCreatedBy().getRole()));
             userDTO.setOrgid(project.getCreatedBy().getOrgid());
             dto.setCreatedBy(userDTO);
         }
@@ -85,7 +96,7 @@ public class TasksService {
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         dto.setAge(user.getAge().toString());
-        dto.setRole(user.getRole());
+        dto.setRole(convertToRoleDTO(user.getRole()));
         dto.setOrgid(user.getOrgid());
         
         return dto;

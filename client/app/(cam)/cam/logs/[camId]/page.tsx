@@ -21,7 +21,7 @@ const CamLogsPage = () => {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        UserHasRight(7);
+        UserHasRight("cameras:read");
         sessionCheck();
     });
 

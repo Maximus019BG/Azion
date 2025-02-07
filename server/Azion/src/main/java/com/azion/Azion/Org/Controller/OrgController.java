@@ -8,6 +8,7 @@ import com.azion.Azion.Org.Util.OrgUtility;
 import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
 import com.azion.Azion.Tasks.Model.Task;
 import com.azion.Azion.Token.TokenService;
+import com.azion.Azion.User.Model.DTO.RoleDTO;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.Role;
 import com.azion.Azion.User.Model.User;
@@ -48,6 +49,15 @@ public class OrgController {
     }
     
     
+    private RoleDTO convertToRoleDTO(Role role){
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setId(role.getId());
+        roleDTO.setName(role.getName());
+        roleDTO.setRoleAccess(role.getRoleAccess());
+        roleDTO.setColor(role.getColor());
+        return roleDTO;
+    }
+    
     @Transactional
     @PostMapping("/create")
     public ResponseEntity<?> createOrg(@RequestBody Map<String, Object> request) {
@@ -81,7 +91,7 @@ public class OrgController {
         }
         Role defaultRole = new Role();
         defaultRole.setName("employee");
-        defaultRole.setRoleAccess("00000100");
+        defaultRole.setRoleAccess("tasks:read, ");
         defaultRole.setOrg(org);
         defaultRole.setColor("#0000ff");
         roleRepository.save(defaultRole);
@@ -160,7 +170,7 @@ public class OrgController {
         //Validation
         if (!tokenService.validateToken(accessToken)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token.");
-        } else if (!userService.UserHasRight(user, 1)) {
+        } else if (!userService.UserHasRight(user, "settings:write")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access denied.");
         }
         Org org = orgService.findOrgByUser(user);
@@ -224,7 +234,7 @@ public class OrgController {
         if (orgName.contains(" ")) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Name can't have spaces");
         }
-        if (!userService.UserHasRight(user, 1)) {
+        if (!userService.UserHasRight(user, "settings:write")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not admin");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
@@ -316,7 +326,7 @@ public class OrgController {
         userDTO.setName(user.getName());
         userDTO.setEmail(user.getEmail());
         userDTO.setAge(user.getAge().toString());
-        userDTO.setRole(user.getRole());
+        userDTO.setRole(convertToRoleDTO(user.getRole()));
         userDTO.setOrgid(user.getOrgid());
         userDTO.setProfilePicture(Arrays.toString(user.getProfilePicture()));
         
@@ -378,7 +388,7 @@ public class OrgController {
     public ResponseEntity<?> removeEmployee(@PathVariable String id, @RequestHeader("authorization") String accessToken) {
         userService.userValid(accessToken);
         User user = tokenService.getUserFromToken(accessToken);
-        if (!userService.UserHasRight(user, 2)) {
+        if (!userService.UserHasRight(user, "employees:read")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
         User employee = userRepository.findById(id).orElse(null);
@@ -395,7 +405,7 @@ public class OrgController {
         userService.userValid(accessToken);
         User user = tokenService.getUserFromToken(accessToken);
         
-        if (!userService.UserHasRight(user, 1)) {
+        if (!userService.UserHasRight(user, "settings:write")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
         User employee = userRepository.findById(id).orElse(null);
@@ -414,7 +424,7 @@ public class OrgController {
     public ResponseEntity<?> roleAccessUpdate(@PathVariable String roleName, @RequestHeader("authorization") String accessToken, @RequestBody Map<Object, String> request) {
         userService.userValid(accessToken);
         User user = tokenService.getUserFromToken(accessToken);
-        if (!userService.UserHasRight(user, 3)) {
+        if (!userService.UserHasRight(user, "roles:write")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
         if (Objects.equals(roleName, "owner")) {
@@ -433,7 +443,7 @@ public class OrgController {
     public ResponseEntity<?> getRoleAccess(@PathVariable String roleName, @RequestHeader("authorization") String accessToken) {
         userService.userValid(accessToken);
         User user = tokenService.getUserFromToken(accessToken);
-        if (!userService.UserHasRight(user, 3)) {
+        if (!userService.UserHasRight(user, "roles:write")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
         if (Objects.equals(roleName, "owner")) {
@@ -453,7 +463,7 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
         
-        if (!userService.UserHasRight(user, 3)) {
+        if (!userService.UserHasRight(user, "roles:write")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not have permission to update roles.");
         }
         

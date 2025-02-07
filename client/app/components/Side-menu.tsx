@@ -30,7 +30,6 @@ const SideMenu = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [access, setAccess] = useState<string>("")
 
-
     useEffect(() => {
         const fetchOrgName = async () => {
             const result: string = await getOrgName();
@@ -126,14 +125,10 @@ const SideMenu = () => {
                                 <li className="text-md w-full relative">
                                     <button className="flex items-center justify-between w-full"
                                             onClick={toggleDashboardDropdown}>
-                                        <h1
-
-                                            className="flex items-center w-full"
-                                        >
+                                        <h1 className="flex items-center w-full">
                                             <FaClipboard className="text-lg mr-2"/>
                                             Dashboard
                                         </h1>
-
                                         <button
                                             onClick={toggleDashboardDropdown}
                                             className="ml-2"
@@ -144,7 +139,6 @@ const SideMenu = () => {
                                                 }`}
                                             />
                                         </button>
-
                                     </button>
                                     {isDashboardOpen && (
                                         <ul className="w-full">
@@ -157,7 +151,7 @@ const SideMenu = () => {
                                                     Home
                                                 </Link>
                                             </li>
-                                            {access[1] === '1' && (
+                                            {access.includes("calendar:write") && (
                                                 <li className="py-1 text-md w-full">
                                                     <Link
                                                         href={`/dashboard/${org}/settings`}
@@ -168,7 +162,7 @@ const SideMenu = () => {
                                                     </Link>
                                                 </li>
                                             )}
-                                            {access[2] === '1' && (
+                                            {access.includes("employees:read") && (
                                                 <li className="text-md w-full">
                                                     <Link
                                                         href={`/dashboard/${org}/settings/employees`}
@@ -178,7 +172,7 @@ const SideMenu = () => {
                                                         Employees
                                                     </Link>
                                                 </li>)}
-                                            {access[3] === '1' && (
+                                            {access.includes("roles:read") && (
                                                 <li className="text-md w-full">
                                                     <Link
                                                         href={`/dashboard/${org}/settings/roles`}
@@ -195,7 +189,7 @@ const SideMenu = () => {
                                 {/* Tasks Dropdown */}
                                 <li className="text-md w-full relative">
                                     <div className="flex items-center justify-between w-full">
-                                        {access[4] === '1' ? (
+                                        {access.includes("tasks:write") ? (
                                             <button
                                                 onClick={toggleTasksDropdown}
                                                 className="flex items-center w-full"
@@ -220,7 +214,7 @@ const SideMenu = () => {
                                     </div>
                                     {isTasksOpen && (
                                         <ul className="w-full">
-                                            {access[5] === '1' && (
+                                            {access.includes("tasks:read") && (
                                                 <li className="py-1 text-md w-full">
                                                     <Link
                                                         href={`/dashboard/${org}/task`}
@@ -230,7 +224,7 @@ const SideMenu = () => {
                                                         Your Tasks
                                                     </Link>
                                                 </li>)}
-                                            {access[4] === '1' && (
+                                            {access.includes("tasks:write") && (
                                                 <li className="text-md w-full">
                                                     <Link
                                                         href={`/dashboard/${org}/task/create`}
@@ -246,7 +240,7 @@ const SideMenu = () => {
                             </>
                         )}
 
-                        {(access[7] === '1' || access[6] === '1') && (
+                        {(access.includes("cameras:read") || access.includes("cameras:write")) && (
                             <>
                                 <li className="text-md w-full">
                                     <Link href="/cam/list" className="flex items-center w-full">

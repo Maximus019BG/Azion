@@ -111,7 +111,7 @@ public class OrgService {
     }
     
     public void removeEmployee(User user) {
-        if (!userService.UserHasRight(user, 2)) {
+        if (!userService.UserHasRight(user, "employees:read")) {
             throw new RuntimeException("");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
@@ -164,7 +164,7 @@ public class OrgService {
         Role role = new Role();
         role.setName("owner");
         role.setColor("#000000");
-        role.setRoleAccess("11111111");
+        role.setRoleAccess(userService.highestAccess());
         return role;
     }
     public void welcomeEmail(String to, String name, String orgName) {

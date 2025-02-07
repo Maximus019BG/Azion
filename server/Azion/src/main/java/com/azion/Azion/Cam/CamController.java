@@ -105,7 +105,7 @@ public class CamController {
         }
         
         try {
-            if(!userService.UserHasRight(user,6)) {
+            if(!userService.UserHasRight(user,"cameras:write")) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to add a camera");
             }
             
@@ -142,7 +142,7 @@ public class CamController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
-        if (!userService.UserHasRight(user,7)) {
+        if (!userService.UserHasRight(user,"cameras:read")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to view logs");
         }
         //Logs
@@ -160,7 +160,7 @@ public class CamController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
-        if (userService.UserHasRight(user,7)) {
+        if (userService.UserHasRight(user,"cameras:read")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to view logs");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);

@@ -84,7 +84,7 @@ const TasksLayout = () => {
   }, []);
 
   UserData().then((data) => {
-    if (data.role == "owner" || data.role == "admin") {
+    if (data.role.name == "owner") {
       setAdmin(true);
     }
   });

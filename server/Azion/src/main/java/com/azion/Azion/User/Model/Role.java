@@ -18,13 +18,13 @@ public class Role {
     @Column(nullable = false)
     private String name;
     
-    @Column(name = "roleAccess", nullable = true, columnDefinition = "CHAR(8) DEFAULT 00000000")
+    @Column(name = "roleAccess", nullable = true, columnDefinition = "TEXT")
     private String roleAccess;
     
-    @Column(name = "color", nullable = true, columnDefinition = "CHAR(8) DEFAULT 00000000")
+    @Column(name = "color", nullable = true, columnDefinition = "CHAR(8) DEFAULT '00000")
     private String color;
     
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private Set<User> users;
     
     @ManyToOne
@@ -42,29 +42,28 @@ public class Role {
         return roleAccess;
     }
     
-    ///<summary>IN ORDER:
-    /// Calendar                0
+    ///<summary>
+    /// IN ORDER:
     ///
-    /// Settings                1
+    /// Calendar                calendar:write
     ///
-    /// Employees               2
+    /// Settings                settings:write  settings:read
     ///
-    /// Roles                   3
+    /// Employees               employees:read
     ///
-    /// Create Tasks            4
+    /// Roles                   roles:write     roles:read
+    /// Create Tasks            tasks:write
     ///
-    /// View Tasks              5
+    /// View Tasks              tasks:read
     ///
-    /// Azion Cameras (Write)   6
+    /// Azion Cameras (Write)   cameras:write
     ///
-    /// Azion Cameras (Read)    7
+    /// Azion Cameras (Read)    cameras:read
     /// </summary>
-    public void setRoleAccess(String roleLevel) {
-        if(roleLevel.length() != 8){
-            throw new RuntimeException("Impossible access");
-        }
-        this.roleAccess = roleLevel;
+    public void setRoleAccess(String roleAccess) {
+        this.roleAccess = roleAccess;
     }
+    
     
     public String getId() {
         return id;

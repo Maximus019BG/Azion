@@ -9,6 +9,7 @@ import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.Token.TokenType;
+import com.azion.Azion.User.Model.DTO.RoleDTO;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Model.Role;
 import com.azion.Azion.User.Model.User;
@@ -46,6 +47,15 @@ public class UserService {
         this.roleRepository = roleRepository;
     }
     
+    private RoleDTO convertToRoleDTO(Role role) {
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setId(role.getId());
+        roleDTO.setName(role.getName());
+        roleDTO.setRoleAccess(role.getRoleAccess());
+        roleDTO.setColor(role.getColor());
+        return roleDTO;
+    }
+    
     //Pfp update
     public User updateProfilePicture(String id, byte[] profilePicture) {
         Optional<User> optionalUser = userRepository.findById(id);
@@ -57,6 +67,7 @@ public class UserService {
         }
         return null;
     }
+    
     //MultipartFile to byte array
     public byte[] convertToBytes(MultipartFile file) throws IOException {
         return file.getBytes();
@@ -81,7 +92,7 @@ public class UserService {
             userDTO.setName(project.getCreatedBy().getName());
             userDTO.setEmail(project.getCreatedBy().getEmail());
             userDTO.setAge(project.getCreatedBy().getAge().toString());
-            userDTO.setRole(project.getCreatedBy().getRole());
+            userDTO.setRole(convertToRoleDTO(project.getCreatedBy().getRole()));
             userDTO.setOrgid(project.getCreatedBy().getOrgid());
             dto.setCreatedBy(userDTO);
         }
@@ -111,46 +122,45 @@ public class UserService {
         }
     }
     
-    //Check if user has a right to do something
-    ///<summary>IN ORDER:
+    /// <summary>
+    /// IN ORDER:
     ///
-    /// Calendar                0
+    /// Calendar                calendar:write
     ///
-    /// Settings                1
+    /// Settings                settings:write  settings:read
     ///
-    /// Employees               2
+    /// Employees               employees:read
     ///
-    /// Roles                   3
+    /// Roles                   roles:write     roles:read
+    /// Create Tasks            tasks:write
     ///
-    /// Create Tasks            4
+    /// View Tasks              tasks:read
     ///
-    /// View Tasks              5
+    /// Azion Cameras (Write)   cameras:write
     ///
-    /// Azion Cameras (Write)   6
-    ///
-    /// Azion Cameras (Read)    7
+    /// Azion Cameras (Read)    cameras:read
     /// </summary>
-    public boolean UserHasRight(User user, int right) {
+    public boolean UserHasRight(User user, String right) {
         Role role = user.getRole();
-        return role.getRoleAccess().charAt(right) == '1';
-    }
-   
-    //Get max access
-    public String highestAccess(){
-        return "11111111";
+        return role.getRoleAccess().contains(right.trim());
     }
     
-    public String lowestAccess(){
-        return "00000000";
+    //Get max access
+    public String highestAccess() {
+        return "task:write, task:read, roles:write, roles:read, settings:write, settings:read, employees:read, calendar:write, cameras:write, cameras:read";
+    }
+    
+    public String lowestAccess() {
+        return " ";
     }
     
     //Give new access to a row
-    public void updateRoleAccess(String roleName, String roleAccess, String orgId){
+    public void updateRoleAccess(String roleName, String roleAccess, String orgId) {
         Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
         role.setRoleAccess(roleAccess);
     }
     
-    public String getAccessByRoleName(String roleName, String orgId){
+    public String getAccessByRoleName(String roleName, String orgId) {
         Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
         return role.getRoleAccess();
     }

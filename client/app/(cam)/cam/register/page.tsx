@@ -10,7 +10,7 @@ export default function RegisterCam() {
     const [roleLevel, setRoleLevel] = useState(0);
 
     useEffect(() => {
-        UserHasRight(6);
+        UserHasRight("cameras:write");
         sessionCheck();
     });
 
