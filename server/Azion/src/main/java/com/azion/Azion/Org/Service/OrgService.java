@@ -3,6 +3,7 @@ package com.azion.Azion.Org.Service;
 import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.Org.Repository.OrgRepository;
 import com.azion.Azion.Org.Util.OrgUtility;
+import com.azion.Azion.User.Model.DTO.RoleDTO;
 import com.azion.Azion.User.Model.Role;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.RoleRepository;
@@ -74,6 +75,15 @@ public class OrgService {
     }
     
     
+    private RoleDTO convertToRoleDTO(Role role){
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setId(role.getId());
+        roleDTO.setName(role.getName());
+        roleDTO.setRoleAccess(role.getRoleAccess());
+        roleDTO.setColor(role.getColor());
+        return roleDTO;
+    }
+    
     public void addUserToOrg(Org org, User user) {
         
         if (user.getOrgid() != null) {
@@ -122,12 +132,11 @@ public class OrgService {
         userRepository.save(user);
     }
     
-    public Map<String, String> getOrgRoles(Org org) {
-        HashMap<String, String> roleLevels = new HashMap<>();
+    public Set<RoleDTO> getOrgRoles(Org org) {
+        Set<RoleDTO> roleLevels = new HashSet<>();
         Set<Role> roles = roleRepository.findByOrg(org);
-        
-        for(Role role : roles) {
-            roleLevels.put(role.getName(), role.getRoleAccess());
+        for (Role role : roles) {
+            roleLevels.add(convertToRoleDTO(role));
         }
         return roleLevels;
     }

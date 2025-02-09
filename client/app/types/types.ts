@@ -107,7 +107,7 @@ export interface UserDataType {
     faceIdEnabled: boolean
 }
 
-interface Role{
+export interface Role{
     id: string;
     name: string;
     roleAccess: string;
