@@ -27,8 +27,8 @@ const CheckMFA = async (onMFAPage: boolean) => {
                 }
             }
         }).catch(function (error) {
-
-    });
+            console.error(error);
+        });
 
 }
 
@@ -88,7 +88,7 @@ const UserData = async (): Promise<UserDataType> => {
                 email: response.data.email,
                 age: response.data.age,
                 role: response.data.role,
-                roleAccess: response.data.roleAccess,
+                access: response.data.role.roleAccess,
                 projects: response.data.projects,
                 profilePicture: response.data.profilePicture,
                 mfaEnabled: response.data.mfaEnabled,
@@ -102,27 +102,30 @@ const UserData = async (): Promise<UserDataType> => {
 
 //Check if user has a right to do something
 /*IN ORDER:
-*
-* Calendar                0
-*
-* Settings                1
-*
-* Employees               2
-*
-* Roles                   3
-*
-* Create Tasks            4
-*
-* View Tasks              5
-*
-* Azion Cameras (Write)   6
-*
-* Azion Cameras (Read)    7
+    *
+    * IN ORDER:
+    *
+    * Calendar                calendar:write
+    *
+    * Settings                settings:write  settings:read
+    *
+    * Employees               employees:read
+    *
+    * Roles                   roles:write     roles:read
+    *
+    * Create Tasks            tasks:write
+    *
+    * View Tasks              tasks:read
+    *
+    * Azion Cameras (Write)   cameras:write
+    *
+    * Azion Cameras (Read)    cameras:read
+    * </summary>
 */
-const UserHasRight = async (right: number) => {
+const UserHasRight = async (right: string) => {
     try {
         const r = await UserData();
-        if(r.roleAccess[right] !== "1"){
+        if(!r.access.includes(right)){
             window.location.href="/organizations";
         }
     } catch (error) {
@@ -330,7 +333,7 @@ const byteArrayToBase64 = async (byteArray: number[]): Promise<string | null> =>
 const canEditCalendar = async ():Promise<boolean|undefined>  =>{
     try {
         const r = await UserData();
-        return r.roleAccess[0] === "1";
+        return r.access.includes("calendar:write");
     } catch (error) {
         console.error("Error checking user rights:", error);
         return false;

@@ -9,10 +9,14 @@ import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.Token.TokenType;
+import com.azion.Azion.User.Model.DTO.RoleDTO;
 import com.azion.Azion.User.Model.DTO.UserDTO;
+import com.azion.Azion.User.Model.Role;
 import com.azion.Azion.User.Model.User;
+import com.azion.Azion.User.Repository.RoleRepository;
 import com.azion.Azion.User.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +26,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
 @Service
 public class UserService {
     
@@ -31,15 +34,26 @@ public class UserService {
     private final TokenService tokenService;
     private final TokenRepo tokenRepo;
     private final TasksRepository tasksRepository;
+    private final RoleRepository roleRepository;
     
     
     @Autowired
-    public UserService(UserRepository userRepository, MFAService mfaService, TokenService tokenService, TokenRepo tokenRepo, TasksRepository tasksRepository) {
+    public UserService(UserRepository userRepository, MFAService mfaService, TokenService tokenService, TokenRepo tokenRepo, TasksRepository tasksRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.mfaService = mfaService;
         this.tokenService = tokenService;
         this.tokenRepo = tokenRepo;
         this.tasksRepository = tasksRepository;
+        this.roleRepository = roleRepository;
+    }
+    
+    private RoleDTO convertToRoleDTO(Role role) {
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setId(role.getId());
+        roleDTO.setName(role.getName());
+        roleDTO.setRoleAccess(role.getRoleAccess());
+        roleDTO.setColor(role.getColor());
+        return roleDTO;
     }
     
     //Pfp update
@@ -53,6 +67,7 @@ public class UserService {
         }
         return null;
     }
+    
     //MultipartFile to byte array
     public byte[] convertToBytes(MultipartFile file) throws IOException {
         return file.getBytes();
@@ -77,7 +92,7 @@ public class UserService {
             userDTO.setName(project.getCreatedBy().getName());
             userDTO.setEmail(project.getCreatedBy().getEmail());
             userDTO.setAge(project.getCreatedBy().getAge().toString());
-            userDTO.setRole(project.getCreatedBy().getRole());
+            userDTO.setRole(convertToRoleDTO(project.getCreatedBy().getRole()));
             userDTO.setOrgid(project.getCreatedBy().getOrgid());
             dto.setCreatedBy(userDTO);
         }
@@ -107,49 +122,47 @@ public class UserService {
         }
     }
     
-    //Check if user has a right to do something
-    ///<summary>IN ORDER:
+    /// <summary>
+    /// IN ORDER:
     ///
-    /// Calendar                0
+    /// Calendar                calendar:write
     ///
-    /// Settings                1
+    /// Settings                settings:write  settings:read
     ///
-    /// Employees               2
+    /// Employees               employees:read
     ///
-    /// Roles                   3
+    /// Roles                   roles:write     roles:read
+    /// Create Tasks            tasks:write
     ///
-    /// Create Tasks            4
+    /// View Tasks              tasks:read
     ///
-    /// View Tasks              5
+    /// Azion Cameras (Write)   cameras:write
     ///
-    /// Azion Cameras (Write)   6
-    ///
-    /// Azion Cameras (Read)    7
+    /// Azion Cameras (Read)    cameras:read
     /// </summary>
-    public boolean UserHasRight(User user, int right) {
-        return user.getRoleAccess().charAt(right) == '1';
-    }
-   
-    //Get max access
-    public String highestAccess(){
-        return "11111111";
+    public boolean UserHasRight(User user, String right) {
+        Role role = user.getRole();
+        return role.getRoleAccess().contains(right.trim());
     }
     
-    public String lowestAccess(){
-        return "00000000";
+    //Get max access
+    public String highestAccess() {
+        return "task:write, task:read, roles:write, roles:read, settings:write, settings:read, employees:read, calendar:write, cameras:write, cameras:read";
+    }
+    
+    public String lowestAccess() {
+        return " ";
     }
     
     //Give new access to a row
-    public void updateRoleAccess(String roleName, String roleAccess, String orgId){
-        List<User> users = userRepository.findByRoleAndOrgid(roleName, orgId);
-        for (User user : users) {
-            user.setRoleAccess(roleAccess);
-        }
+    public void updateRoleAccess(String roleName, String roleAccess, String orgId) {
+        Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
+        role.setRoleAccess(roleAccess);
     }
     
-    public String getAccessByRoleName(String roleName, String orgId){
-        User user = userRepository.findByRoleAndOrgid(roleName, orgId).get(0);
-        return user.getRoleAccess();
+    public String getAccessByRoleName(String roleName, String orgId) {
+        Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
+        return role.getRoleAccess();
     }
     
     //remove the OTP pass

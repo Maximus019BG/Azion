@@ -28,8 +28,7 @@ const SideMenu = () => {
     const [isTasksOpen, setIsTasksOpen] = useState(false);
     const [org, setOrg] = useState<string | null>("");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [access,  setAccess] = useState<string>("")
-
+    const [access, setAccess] = useState<string>("")
 
     useEffect(() => {
         const fetchOrgName = async () => {
@@ -41,10 +40,9 @@ const SideMenu = () => {
             }
         };
 
-        const PageAccess =  () => {
-            UserData().then((r) => {
-                setAccess(r.roleAccess);
-            })
+        const PageAccess = async () => {
+            const userData = await UserData();
+            setAccess(userData.access);
         };
 
         PageAccess();
@@ -127,14 +125,10 @@ const SideMenu = () => {
                                 <li className="text-md w-full relative">
                                     <button className="flex items-center justify-between w-full"
                                             onClick={toggleDashboardDropdown}>
-                                        <h1
-
-                                            className="flex items-center w-full"
-                                        >
+                                        <h1 className="flex items-center w-full">
                                             <FaClipboard className="text-lg mr-2"/>
                                             Dashboard
                                         </h1>
-
                                         <button
                                             onClick={toggleDashboardDropdown}
                                             className="ml-2"
@@ -145,7 +139,6 @@ const SideMenu = () => {
                                                 }`}
                                             />
                                         </button>
-
                                     </button>
                                     {isDashboardOpen && (
                                         <ul className="w-full">
@@ -158,7 +151,7 @@ const SideMenu = () => {
                                                     Home
                                                 </Link>
                                             </li>
-                                            {access[1] === '1' && (
+                                            {access.includes("calendar:write") && (
                                                 <li className="py-1 text-md w-full">
                                                     <Link
                                                         href={`/dashboard/${org}/settings`}
@@ -169,26 +162,26 @@ const SideMenu = () => {
                                                     </Link>
                                                 </li>
                                             )}
-                                            {access[2] === '1' && (
-                                            <li className="text-md w-full">
-                                                <Link
-                                                    href={`/dashboard/${org}/settings/employees`}
-                                                    className="flex items-center w-full"
-                                                >
-                                                    <FaUsers className="text-lg mr-2"/>
-                                                    Employees
-                                                </Link>
-                                            </li>)}
-                                            {access[3] === '1' && (
-                                            <li className="text-md w-full">
-                                                <Link
-                                                    href={`/dashboard/${org}/settings/roles`}
-                                                    className="flex items-center w-full"
-                                                >
-                                                    <FaUserSecret className="text-lg mr-2"/>
-                                                    Roles
-                                                </Link>
-                                            </li>)}
+                                            {access.includes("employees:read") && (
+                                                <li className="text-md w-full">
+                                                    <Link
+                                                        href={`/dashboard/${org}/settings/employees`}
+                                                        className="flex items-center w-full"
+                                                    >
+                                                        <FaUsers className="text-lg mr-2"/>
+                                                        Employees
+                                                    </Link>
+                                                </li>)}
+                                            {access.includes("roles:read") && (
+                                                <li className="text-md w-full">
+                                                    <Link
+                                                        href={`/dashboard/${org}/settings/roles`}
+                                                        className="flex items-center w-full"
+                                                    >
+                                                        <FaUserSecret className="text-lg mr-2"/>
+                                                        Roles
+                                                    </Link>
+                                                </li>)}
                                         </ul>
                                     )}
                                 </li>
@@ -196,7 +189,7 @@ const SideMenu = () => {
                                 {/* Tasks Dropdown */}
                                 <li className="text-md w-full relative">
                                     <div className="flex items-center justify-between w-full">
-                                        {access[4] === '1' ? (
+                                        {access.includes("tasks:write") ? (
                                             <button
                                                 onClick={toggleTasksDropdown}
                                                 className="flex items-center w-full"
@@ -221,33 +214,33 @@ const SideMenu = () => {
                                     </div>
                                     {isTasksOpen && (
                                         <ul className="w-full">
-                                            {access[5] === '1' && (
-                                            <li className="py-1 text-md w-full">
-                                                <Link
-                                                    href={`/dashboard/${org}/task`}
-                                                    className="flex items-center w-full"
-                                                >
-                                                    <FaTasks className="text-lg mr-2"/>
-                                                    Your Tasks
-                                                </Link>
-                                            </li>)}
-                                            {access[4] === '1' && (
-                                            <li className="text-md w-full">
-                                                <Link
-                                                    href={`/dashboard/${org}/task/create`}
-                                                    className="flex items-center w-full"
-                                                >
-                                                    <FaPlusCircle className="text-lg mr-2"/>
-                                                    Create Task
-                                                </Link>
-                                            </li>)}
+                                            {access.includes("tasks:read") && (
+                                                <li className="py-1 text-md w-full">
+                                                    <Link
+                                                        href={`/dashboard/${org}/task`}
+                                                        className="flex items-center w-full"
+                                                    >
+                                                        <FaTasks className="text-lg mr-2"/>
+                                                        Your Tasks
+                                                    </Link>
+                                                </li>)}
+                                            {access.includes("tasks:write") && (
+                                                <li className="text-md w-full">
+                                                    <Link
+                                                        href={`/dashboard/${org}/task/create`}
+                                                        className="flex items-center w-full"
+                                                    >
+                                                        <FaPlusCircle className="text-lg mr-2"/>
+                                                        Create Task
+                                                    </Link>
+                                                </li>)}
                                         </ul>
                                     )}
                                 </li>
                             </>
                         )}
 
-                        {(access[7] === '1' || access[6] === '1') &&(
+                        {(access.includes("cameras:read") || access.includes("cameras:write")) && (
                             <>
                                 <li className="text-md w-full">
                                     <Link href="/cam/list" className="flex items-center w-full">

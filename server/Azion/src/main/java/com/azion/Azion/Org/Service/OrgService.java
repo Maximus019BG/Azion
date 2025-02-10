@@ -3,7 +3,10 @@ package com.azion.Azion.Org.Service;
 import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.Org.Repository.OrgRepository;
 import com.azion.Azion.Org.Util.OrgUtility;
+import com.azion.Azion.User.Model.DTO.RoleDTO;
+import com.azion.Azion.User.Model.Role;
 import com.azion.Azion.User.Model.User;
+import com.azion.Azion.User.Repository.RoleRepository;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.EmailService;
 import com.azion.Azion.User.Service.UserService;
@@ -54,38 +57,52 @@ public class OrgService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final UserService userService;
+    private final RoleRepository roleRepository;
     
     @PersistenceContext
     private EntityManager entityManager;
     
     @Value("${spring.mail.username}")
     private String fromEmail;
-
+    
     @Autowired
-    private OrgService(OrgRepository orgRepository, UserRepository userRepository, EmailService emailService, UserService userService) {
+    private OrgService(OrgRepository orgRepository, UserRepository userRepository, EmailService emailService, UserService userService, RoleRepository roleRepository) {
         this.orgRepository = orgRepository;
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.userService = userService;
+        this.roleRepository = roleRepository;
     }
-
+    
+    
+    private RoleDTO convertToRoleDTO(Role role){
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setId(role.getId());
+        roleDTO.setName(role.getName());
+        roleDTO.setRoleAccess(role.getRoleAccess());
+        roleDTO.setColor(role.getColor());
+        return roleDTO;
+    }
     
     public void addUserToOrg(Org org, User user) {
         
-        if(user.getOrgid() != null) {
+        if (user.getOrgid() != null) {
             throw new RuntimeException("User is already in org");
         }
         
         user.setOrgid(org.getOrgID());
         Set<User> users = org.getUsers();
-        user.setRoleAccess("00000100"); //Can view tasks
-        user.setRole("employee");
+        user.setRole(defaultRole(org.getOrgID())); //Default role access
         userRepository.save(user);
         users.add(user);
         org.setUsers(users);
         orgRepository.save(org);
     }
-
+    
+    public Role defaultRole(String orgId) {
+        return roleRepository.findByNameAndOrg("employee", orgId).orElse(null);
+    }
+    
     public Org findOrgByConnectString(String connectString) {
         List<Org> orgs = orgRepository.findAll();
         for (Org org : orgs) {
@@ -102,9 +119,9 @@ public class OrgService {
         }
         return null;
     }
-
+    
     public void removeEmployee(User user) {
-        if (!userService.UserHasRight(user,2)) {
+        if (!userService.UserHasRight(user, "employees:read")) {
             throw new RuntimeException("");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
@@ -114,16 +131,16 @@ public class OrgService {
         orgRepository.save(org);
         userRepository.save(user);
     }
-
-    public Map<String, String> getOrgRoles(Org org) {
-        List<User> users = org.getUsers().stream().collect(Collectors.toList());
-        Map<String, String> roleLevels = new HashMap<>();
-        for (User user : users) {
-            roleLevels.put(user.getRole(), user.getRoleAccess());
+    
+    public Set<RoleDTO> getOrgRoles(Org org) {
+        Set<RoleDTO> roleLevels = new HashSet<>();
+        Set<Role> roles = roleRepository.findByOrg(org);
+        for (Role role : roles) {
+            roleLevels.add(convertToRoleDTO(role));
         }
         return roleLevels;
     }
-
+    
     public Org findOrgByUser(User user) {
         String jpql = "SELECT o FROM Org o JOIN o.users u WHERE u.id = :userId";
         List<Org> results = entityManager.createQuery(jpql, Org.class)
@@ -134,53 +151,37 @@ public class OrgService {
         }
         return results.get(0);
     }
-
+    
     //!Owner remover blocker
     public void ensureOwnerHasLevelOne(String orgId) {
-        List<User> usersWithLevelOne = userRepository.findByRoleAccessAndOrgid(userService.highestAccess(), orgId);
-        if (usersWithLevelOne.isEmpty()) {
-            //Find all users and their roles in org
-            List<User> owners = userRepository.findByRoleAndOrgid("owner", orgId);
-            List<User> boss = userRepository.findByRoleAndOrgid("boss", orgId);
-            List<User> admins = userRepository.findByRoleAndOrgid("admin", orgId);
-            List<User> employees = userRepository.findByRoleAndOrgid("employee", orgId);
-            List<User> noRoleUsers = userRepository.findByRoleAndOrgid("none", orgId);
-            
-            //Each case
-            if (!owners.isEmpty()) {
-                User owner = owners.get(0);
-                owner.setRoleAccess(userService.highestAccess());//All rights
-                userRepository.save(owner);
-            } else if (!boss.isEmpty()) {
-                User bossUser = boss.get(0);
-                bossUser.setRoleAccess(userService.highestAccess());//All rights
-                userRepository.save(bossUser);
-            } else if (!admins.isEmpty()) {
-                User admin = admins.get(0);
-                admin.setRoleAccess(userService.highestAccess());//All rights
-                userRepository.save(admin);
-            } else if (!employees.isEmpty()) {
-
-                User employee = employees.get(0);
-                employee.setRoleAccess(userService.highestAccess());//All rights
-                userRepository.save(employee);
-            } else if (!noRoleUsers.isEmpty()) {
-                User noRoleUser = noRoleUsers.get(0);
-                noRoleUser.setRoleAccess(userService.highestAccess());//All rights
-                userRepository.save(noRoleUser);
-            } else {
-                //*Final hope
-                User randomUser = userRepository.findByOrgid(orgId).get(0);
-                randomUser.setRoleAccess(userService.highestAccess()); //All rights
-                userRepository.save(randomUser);
-            }
+        Role role = ownerRole();
+        role.setOrg(orgRepository.findById(orgId).get());
+        
+        if(roleRepository.findByNameAndOrg("owner", orgId).isEmpty()){
+            roleRepository.save(role);
+            //*Final hope
+            User randomUser = userRepository.findByOrgid(orgId).get(0);
+            randomUser.setRole(role);
+            userRepository.save(randomUser);
         }
+        else{
+            return;
+        }
+        
     }
-
+    
     public Set<User> getUsersOfOrg(Org org) {
         return org.getUsers();
     }
-
+    
+    //Create owner role
+    public Role ownerRole() {
+        Role role = new Role();
+        role.setName("owner");
+        role.setColor("#000000");
+        role.setRoleAccess(userService.highestAccess());
+        return role;
+    }
     public void welcomeEmail(String to, String name, String orgName) {
         String htmlContent = "<!DOCTYPE html>" +
                 "<html lang=\"en\">" +
@@ -206,9 +207,9 @@ public class OrgService {
                 "    <p>The AzionOnline Team</p>" +
                 "</body>" +
                 "</html>";
-
+        
         String subject = orgName + " is in Azion";
-
+        
         try {
             emailService.sendEmail(to, subject, htmlContent);
         } catch (IOException e) {
@@ -219,17 +220,15 @@ public class OrgService {
     
     public List<String> listRoles(Org org) {
         List<String> roles = new ArrayList<>();
-        Set<User> users = org.getUsers();
-        for (User user : users) {
-            if (!roles.contains(user.getRole())) {
-                roles.add(user.getRole());
-            }
+        Set<Role> roleSet = roleRepository.findByOrg(org);
+        for (Role role : roleSet) {
+            roles.add(role.getName());
         }
         return roles;
     }
     
-    public Map<String,String> listPeople(Org org){
-        Map<String,String> people = new HashMap<>();
+    public Map<String, String> listPeople(Org org) {
+        Map<String, String> people = new HashMap<>();
         //Get the org domain
         String email = org.getOrgEmail();
         //Check if org has domain
@@ -243,35 +242,33 @@ public class OrgService {
         
         //Decide which users to take
         List<User> employees = new ArrayList<>();
-        if(emailIsExcluded){
+        if (emailIsExcluded) {
             //Number of people
             int len = userRepository.findAll().size();
             int n;
-            if(len>5) {
+            if (len > 5) {
                 n = 5;
-            }
-            else {
+            } else {
                 n = len;
             }
-            for(int i = 0; i < n; i++) {
+            for (int i = 0; i < n; i++) {
                 employees.add(userRepository.findRandomUser().get(i));
             }
-        }
-        else {
+        } else {
             employees = userRepository.findByEmailDomain(email);
         }
         
         //Return email and id
-        for(User user : employees) {
-            if(user.getOrgid()==null) {
+        for (User user : employees) {
+            if (user.getOrgid() == null) {
                 people.put(user.getEmail(), user.getId());
             }
         }
-       return people;
+        return people;
     }
     
     public void inviteEmail(String to, String name, String orgName, String link) {
-        if(userRepository.findByEmail(to).getOrgid() != null){
+        if (userRepository.findByEmail(to).getOrgid() != null) {
             throw new RuntimeException("User already in organization");
         }
         
@@ -300,7 +297,7 @@ public class OrgService {
                 "        <p>Dear " + name + ",</p>" +
                 "        <p>We are pleased to invite you to join <strong>" + orgName + "</strong> on the Azion platform.</p>" +
                 "        <p>To accept this invitation, please click the button below:</p>" +
-                "        <p><a href=\""+link+"\" class=\"btn\">Join Now</a></p>" +
+                "        <p><a href=\"" + link + "\" class=\"btn\">Join Now</a></p>" +
                 "        <p>If you have any questions or need support, please feel free to reach out to us at <a href=\"mailto:aziononlineteam@gmail.com\">aziononlineteam@gmail.com</a>.</p>" +
                 "        <p>Thank you for choosing Azion</p>" +
                 "        <p>Best regards,</p>" +
@@ -313,7 +310,7 @@ public class OrgService {
                 "</html>";
         
         
-        String subject = "Invitation to join "+orgName;
+        String subject = "Invitation to join " + orgName;
         
         try {
             emailService.sendEmail(to, subject, htmlContent);

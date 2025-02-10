@@ -4,6 +4,8 @@ import com.azion.Azion.Tasks.Repository.TasksRepository;
 import com.azion.Azion.Token.Token;
 import com.azion.Azion.Token.TokenRepo;
 import com.azion.Azion.Token.TokenService;
+import com.azion.Azion.User.Model.DTO.RoleDTO;
+import com.azion.Azion.User.Model.Role;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.azion.Azion.User.Repository.UserRepository;
@@ -46,6 +48,15 @@ public class UserController {
         this.tasksRepository = tasksRepository;
     }
     
+    private RoleDTO convertToRoleDTO(Role role){
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setId(role.getId());
+        roleDTO.setName(role.getName());
+        roleDTO.setRoleAccess(role.getRoleAccess());
+        roleDTO.setColor(role.getColor());
+        return roleDTO;
+    }
+    
     @GetMapping("/delete/{email}")
     public ResponseEntity<?> removeUserFromOrg(@PathVariable String email) {
         User user = userRepository.findByEmail(email);
@@ -79,10 +90,14 @@ public class UserController {
             userDTO.setName(user.getName());
             userDTO.setEmail(user.getEmail());
             userDTO.setAge(user.getAge().toString());
-            userDTO.setRole(user.getRole());
+            if (user.getRole() != null) {
+                userDTO.setAccess(user.getRole().getRoleAccess());
+            } else {
+                userDTO.setAccess(" ");
+            }
+            userDTO.setRole(convertToRoleDTO(user.getRole()));
             userDTO.setOrgid(user.getOrgid());
             userDTO.setId(user.getId());
-            userDTO.setRoleAccess(user.getRoleAccess());
             userDTO.setProjects(userService.convertProjectsToDTO(user.getTasks()));
             userDTO.setMfaEnabled(user.isMfaEnabled());
             userDTO.setFaceIdEnabled(user.getFaceID() != null);
@@ -100,37 +115,37 @@ public class UserController {
         }
     }
     
-@Transactional
-@DeleteMapping("/user/delete")
-public ResponseEntity<?> deleteUser(@RequestHeader("authorization") String authorization, @RequestHeader(value = "OTP", required = false) String otp) {
-    String token = authorization;
-    if (token == null) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Access token is missing.");
-    }
-    User user = tokenService.getUserFromToken(token);
-    if (user == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
-    }
-    
-    if (user.isMfaEnabled()) {
-        String OTP = otp;
-        if (!mfaService.checkMfaCredentials(user.getEmail(), OTP)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("OTP does not match.");
+    @Transactional
+    @DeleteMapping("/user/delete")
+    public ResponseEntity<?> deleteUser(@RequestHeader("authorization") String authorization, @RequestHeader(value = "OTP", required = false) String otp) {
+        String token = authorization;
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Access token is missing.");
         }
+        User user = tokenService.getUserFromToken(token);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
+        }
+        
+        if (user.isMfaEnabled()) {
+            String OTP = otp;
+            if (!mfaService.checkMfaCredentials(user.getEmail(), OTP)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("OTP does not match.");
+            }
+        }
+        
+        // Remove user from tasks and delete tasks created by the user
+        tasksRepository.findByUsers(user).forEach(task -> task.getUsers().remove(user));
+        tasksRepository.deleteByCreatedBy(user);
+        
+        user.setOrgid(null);
+        user.setTasks(null);
+        
+        // Delete user and relationships
+        tokenRepo.deleteBySubject(user);
+        userRepository.delete(user);
+        return ResponseEntity.ok("User deleted");
     }
-    
-    // Remove user from tasks and delete tasks created by the user
-    tasksRepository.findByUsers(user).forEach(task -> task.getUsers().remove(user));
-    tasksRepository.deleteByCreatedBy(user);
-    
-    user.setOrgid(null);
-    user.setTasks(null);
-    
-    // Delete user and relationships
-    tokenRepo.deleteBySubject(user);
-    userRepository.delete(user);
-    return ResponseEntity.ok("User deleted");
-}
     
     @Transactional
     @PutMapping("/update")

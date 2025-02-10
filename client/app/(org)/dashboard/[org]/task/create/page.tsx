@@ -76,7 +76,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
             window.location.href = "/login";
         }
 
-        UserHasRight(4);
+        UserHasRight("task:write");
 
 
         GetUsers();

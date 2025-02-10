@@ -12,7 +12,9 @@ import com.azion.Azion.Tasks.Repository.FileRepo;
 import com.azion.Azion.Tasks.Repository.TasksRepository;
 import com.azion.Azion.Tasks.Service.TasksService;
 import com.azion.Azion.Token.TokenService;
+import com.azion.Azion.User.Model.DTO.RoleDTO;
 import com.azion.Azion.User.Model.DTO.UserDTO;
+import com.azion.Azion.User.Model.Role;
 import com.azion.Azion.User.Model.User;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.UserService;
@@ -56,6 +58,15 @@ public class TasksController extends FileSize {
         this.userService = userService;
     }
     
+    private RoleDTO convertToRoleDTO(Role role){
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setId(role.getId());
+        roleDTO.setName(role.getName());
+        roleDTO.setRoleAccess(role.getRoleAccess());
+        roleDTO.setColor(role.getColor());
+        return roleDTO;
+    }
+    
     @GetMapping
     public List<Task> getAllProjects() {
         return tasksRepository.findAll();
@@ -82,7 +93,7 @@ public class TasksController extends FileSize {
         User user = tokenService.getUserFromToken(accessToken);
         
         //Admin check
-        if (!userService.UserHasRight(user, 4)) {
+        if (!userService.UserHasRight(user, "tasks:write")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing privileges");
         }
         
@@ -174,7 +185,7 @@ public class TasksController extends FileSize {
                 projectDTO.setCreatedBy(convertToUserDTO(project.get().getCreatedBy()));
             }
             
-            if (project.get().getCreatedBy().getEmail().equals(user.getEmail()) || (userService.UserHasRight(user,4) && userService.UserHasRight(user,5))) {
+            if (project.get().getCreatedBy().getEmail().equals(user.getEmail()) || (userService.UserHasRight(user,"tasks:write") && userService.UserHasRight(user," tasks:read"))) {
                 projectDTO.setIsCreator(true);
                 projectDTO.setUsers(tasksService.convertToUserDTOSet(project.get().getUsers()));
                 if (project.get().getFiles() != null) {
@@ -198,7 +209,7 @@ public class TasksController extends FileSize {
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         dto.setAge(user.getAge().toString());
-        dto.setRole(user.getRole());
+        dto.setRole(convertToRoleDTO(user.getRole()));
         dto.setOrgid(user.getOrgid());
         
         return dto;

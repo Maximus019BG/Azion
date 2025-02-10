@@ -51,8 +51,7 @@ const Tasks: FC<PageProps> = ({params}) => {
                         }),
                     ]);
 
-                    UserHasRight(5);
-
+                    UserHasRight("tasks:read");
                     setCurrentUserEmail(userData.email);
                     setOrgNameCheck(orgNameResult);
                     setTasks(tasksResponse.data.message === "no projects" ? null : tasksResponse.data);

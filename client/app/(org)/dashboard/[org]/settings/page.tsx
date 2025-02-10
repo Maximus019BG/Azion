@@ -52,7 +52,7 @@ const OrgSettings: FC<PageProps> = ({params}) => {
     }, [orgNameCheck, orgName]);
 
     useEffect(() => {
-        UserHasRight(1);
+        UserHasRight("settings:write");
         sessionCheck();
     });
 

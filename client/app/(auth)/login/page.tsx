@@ -9,6 +9,7 @@ import Link from "next/link";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
 import {authSessionCheck} from "@/app/func/funcs";
+import GoogleLoginButton from "@/app/components/_auth/googleSSO";
 
 interface Token {
     refreshToken: string;
@@ -17,10 +18,18 @@ interface Token {
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
+const isValidEmailDomain = (email: string): boolean => {
+    const domain = email.split('@')[1];
+    const validDomains = ["gmail.com", "yahoo.com", "outlook.com"]; // Add more valid domains as needed
+    return validDomains.includes(domain);
+};
+
 const Login = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [OTPNeeded, setOTPNeeded] = useState<boolean>(false);
+    const [emailError, setEmailError] = useState<string>("");
+    const [passwordError, setPasswordError] = useState<string>("");
 
     const Login = async (data: any) => {
         axios
@@ -47,13 +56,13 @@ const Login = () => {
                     });
                 }
             }).catch(function (error: any) {
-                if (error.response) {
-                    alert(error.response.data);
-                } else {
-                    alert("An error occurred, but no server response was received.");
-                }
+            if (error.response) {
+                alert(error.response.data);
+            } else {
+                alert("An error occurred, but no server response was received.");
+            }
 
-            });
+        });
     };
 
     useEffect(() => {
@@ -64,21 +73,61 @@ const Login = () => {
 
     //Request before OTP
     const handleSubmitNoOTP = () => {
-        const userData = {
-            email,
-            password,
-        };
-        Login(userData);
+        let valid = true;
+        if (!email) {
+            setEmailError("Email is required");
+            valid = false;
+        } else if (!isValidEmailDomain(email)) {
+            setEmailError("Invalid email domain");
+            valid = false;
+        } else {
+            setEmailError("");
+        }
+
+        if (!password) {
+            setPasswordError("Password is required");
+            valid = false;
+        } else {
+            setPasswordError("");
+        }
+
+        if (valid) {
+            const userData = {
+                email,
+                password,
+            };
+            Login(userData);
+        }
     };
 
     //Request after OTP only in needed
     const handleSubmit = (otp: string) => {
-        const userData = {
-            email,
-            password,
-            OTP:otp,
-        };
-        Login(userData);
+        let valid = true;
+        if (!email) {
+            setEmailError("Email is required");
+            valid = false;
+        } else if (!isValidEmailDomain(email)) {
+            setEmailError("Invalid email domain");
+            valid = false;
+        } else {
+            setEmailError("");
+        }
+
+        if (!password) {
+            setPasswordError("Password is required");
+            valid = false;
+        } else {
+            setPasswordError("");
+        }
+
+        if (valid) {
+            const userData = {
+                email,
+                password,
+                OTP: otp,
+            };
+            Login(userData);
+        }
     };
 
     const showModal = () => {
@@ -102,19 +151,21 @@ const Login = () => {
             </h1>
 
             {/* Input Fields */}
-            <div className="w-full flex flex-col gap-6 max-w-sm">
+            <div className="w-full flex flex-col gap-3 max-w-sm">
                 <input
                     onChange={(e) => setEmail(e.target.value)}
                     type="text"
                     placeholder="Enter your email"
                     className="bg-gray-700 text-white pl-4 h-12 placeholder:text-gray-400 rounded-lg w-full hover:bg-gray-600 transition"
                 />
+                {emailError && <p className="text-red-500">{emailError}</p>}
                 <input
                     onChange={(e) => setPassword(e.target.value)}
                     type="password"
                     placeholder="Password"
                     className="bg-gray-700 text-white pl-4 h-12 rounded-lg w-full placeholder:text-gray-400 hover:bg-gray-600 transition"
                 />
+                {passwordError && <p className="text-red-500">{passwordError}</p>}
             </div>
 
             <button
@@ -144,6 +195,9 @@ const Login = () => {
                         Password?
                     </Link>
                 </p>
+                <div className="h-fit mt-4">
+                    <GoogleLoginButton text="Sign in with Google"/>
+                </div>
             </div>
 
             {/* OTP Modal */}

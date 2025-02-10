@@ -1,18 +1,12 @@
-"use client";
 import React, {useEffect, useRef, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import Cookies from "js-cookie";
 import {apiUrl} from "@/app/api/config";
-
-interface User {
-    id: string;
-    name: string;
-    role: string;
-    email: string;
-}
+import {Role} from "@/app/types/types";
+import {User} from "@/app/types/types";
 
 const RoleList = () => {
-    const [roles, setRoles] = useState<{ [key: string]: string }>({});
+    const [roles, setRoles] = useState<Role[]>([]);
     const [users, setUsers] = useState<User[]>([]);
     const [newRole, setNewRole] = useState<string>("");
     const [newLevel, setNewLevel] = useState<string>("");
@@ -23,7 +17,7 @@ const RoleList = () => {
     useEffect(() => {
         const fetchRoles = async () => {
             try {
-                const response: AxiosResponse = await axios.get(
+                const response: AxiosResponse<Role[]> = await axios.get(
                     `${apiUrl}/org/list/roles/${Cookies.get("azionAccessToken")}`,
                     {
                         headers: {
@@ -61,12 +55,20 @@ const RoleList = () => {
     const handleSave = async () => {
         try {
             const payload = {
-                roles: roles,
-                users: users.reduce((acc, user) => {
-                    acc[user.email] = user.role;
-                    return acc;
-                }, {} as { [key: string]: string }),
+                roles: roles.map(role => ({
+                    id: role.id,
+                    name: role.name,
+                    roleAccess: role.roleAccess,
+                    color: role.color
+                })),
+                users: users.map(user => ({
+                    id: user.id,
+                    name: user.name,
+                    role: user.role,
+                    email: user.email
+                })),
             };
+
             await axios.put(
                 `${apiUrl}/org/update/roles/${Cookies.get("azionAccessToken")}`,
                 payload,
@@ -76,6 +78,7 @@ const RoleList = () => {
                     },
                 }
             );
+
             setMadeChanges(false);
             alert("Roles and user roles updated successfully");
         } catch (error) {
@@ -84,33 +87,25 @@ const RoleList = () => {
         }
     };
 
-    const handleInputChange = (role: string, value: string) => {
-        setRoles((prevRoles) => ({
-            ...prevRoles,
-            [role]: value,
-        }));
-        setMadeChanges(true);
-    };
-
     const handleRoleNameChange = (oldRole: string, newRole: string) => {
-        if (roles[newRole]) {
+        if (roles.some(role => role.name === newRole)) {
             alert("This role name already exists.");
             return;
         }
 
-        // Update roles
         setRoles((prevRoles) => {
-            const updatedRoles = { ...prevRoles };
-            const level = updatedRoles[oldRole];
-            delete updatedRoles[oldRole];
-            updatedRoles[newRole] = level;
+            const updatedRoles = prevRoles.map(role => {
+                if (role.name === oldRole) {
+                    return {...role, name: newRole};
+                }
+                return role;
+            });
             return updatedRoles;
         });
 
-        // Update users with the old roleName
         setUsers((prevUsers) =>
             prevUsers.map((user) =>
-                user.role === oldRole ? { ...user, role: newRole } : user
+                user.role.name === oldRole ? {...user, role: {...user.role, name: newRole}} : user
             )
         );
 
@@ -123,25 +118,20 @@ const RoleList = () => {
         setMadeChanges(true);
     };
 
-
-    const handleUpdateRole = (role: string) => {
-        const currentPath = window.location.href;
-        window.location.href = `${currentPath}/${role}`;
-    };
-
-    const handleUserRoleChange = (userId: string, newRole: string) => {
+    const handleUserRoleChange = (userId: string | null, newRoleId: string | null) => {
         setUsers((prevUsers) => {
             return prevUsers.map((user) => {
                 if (user.id === userId) {
-                    if (user.role === "owner" && newRole !== "owner") {
+                    if (user.role.name === "owner" && newRoleId !== "owner") {
                         const confirmChange = window.confirm("Are you sure you want to change the owner role to someone else?");
                         if (!confirmChange) {
                             return user;
                         }
                     }
+                    const newRole = roles.find(role => role.id === newRoleId);
                     return {
                         ...user,
-                        role: newRole,
+                        role: newRole ? newRole : user.role,
                     };
                 }
                 return user;
@@ -151,30 +141,25 @@ const RoleList = () => {
     };
 
     const handleAddRole = () => {
-        if (newRole && !roles[newRole]) {
-            setRoles((prevRoles) => ({
+        if (newRole && !roles.some(role => role.name === newRole)) {
+            setRoles((prevRoles) => [
                 ...prevRoles,
-                [newRole]: "00000000",
-            }));
+                {id: null, name: newRole, roleAccess: null, color: "#000000"}
+            ]);
             setNewRole("");
             setNewLevel("00000000");
             setShowNewRole(false);
-            alert("New role added. Before editing privileges save changes")
-        } else {
+            alert("New role added. Before editing privileges save changes");
         }
         setMadeChanges(true);
     };
 
-    const handleRemoveRole = (role: string) => {
-        setRoles((prevRoles) => {
-            const updatedRoles = {...prevRoles};
-            delete updatedRoles[role];
-            return updatedRoles;
-        });
+    const handleRemoveRole = (roleName: string) => {
+        setRoles((prevRoles) => prevRoles.filter(role => role.name !== roleName));
         setMadeChanges(true);
     };
 
-    const editAccess =(role:string)=>{
+    const editAccess = (role: string) => {
         window.location.href = window.location.pathname + "/" + role;
     }
 
@@ -194,32 +179,32 @@ const RoleList = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {Object.entries(roles).map(([role], index) => (
+                        {roles.map((role, index) => (
                             <tr key={index} className="border-t bg-base-200 even:bg-slate-950 border-gray-700">
                                 <td className="py-4 px-6">
                                     <input
                                         type="text"
-                                        value={role}
-                                        onChange={(e) => handleRoleNameChange(role, e.target.value)}
-                                        className={`bg-gray-700 border-none focus:outline-none rounded w-full py-2 px-3 ${role === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
+                                        value={role.name}
+                                        onChange={(e) => handleRoleNameChange(role.name, e.target.value)}
+                                        className={`bg-gray-700 border-none focus:outline-none rounded w-full py-2 px-3 ${role.name === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
                                         ref={(el) => {
-                                            refs.current[role] = el;
+                                            refs.current[role.name] = el;
                                         }}
-                                        disabled={role === "owner"}
+                                        disabled={role.name === "owner"}
                                     />
                                 </td>
                                 <td className="py-4 px-6">
                                     <button
-                                        onClick={()=>editAccess(role)}
-                                        className={`bg-gray-700 border-none focus:outline-none rounded w-full py-2 px-3 ${role === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
+                                        onClick={() => editAccess(role.name)}
+                                        className={`bg-gray-700 border-none focus:outline-none rounded w-full py-2 px-3 ${role.name === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
                                     >Edit
                                     </button>
                                 </td>
                                 <td className="py-4 px-6">
                                     <button
-                                        onClick={() => handleRemoveRole(role)}
-                                        className={`font-medium ${role === "owner" ? "text-gray-500 cursor-not-allowed" : "text-red-500 hover:text-red-600"}`}
-                                        disabled={role === "owner"}
+                                        onClick={() => handleRemoveRole(role.name)}
+                                        className={`font-medium ${role.name === "owner" ? "text-gray-500 cursor-not-allowed" : "text-red-500 hover:text-red-600"}`}
+                                        disabled={role.name === "owner"}
                                     >
                                         Remove
                                     </button>
@@ -245,13 +230,7 @@ const RoleList = () => {
                             className="bg-gray-700 text-white border-none focus:outline-none rounded w-full py-2 px-3"
                         />
                         <button
-                            onClick={() => handleUpdateRole(newRole)}
-                            className={`bg-gray-700 border-none focus:outline-none rounded py-2 px-16 ${newRole === "owner" ? "cursor-not-allowed text-gray-400" : "text-white"}`}
-                        >
-                            Edit
-                        </button>
-                        <button
-                            onClick={handleAddRole}
+                            onClick={() => handleAddRole()}
                             className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 w-full sm:w-1/5 rounded transition duration-200"
                         >
                             Add Role
@@ -276,13 +255,13 @@ const RoleList = () => {
                                 <td className="py-4">{user.name} ({user.email})</td>
                                 <td className="py-4">
                                     <select
-                                        value={user.role}
+                                        value={user.role.id ?? ""}
                                         onChange={(e) => handleUserRoleChange(user.id, e.target.value)}
                                         className="bg-gray-700 text-white border-none focus:outline-none rounded w-full py-2 px-3"
                                     >
-                                        {Object.keys(roles).map((role) => (
-                                            <option key={role} value={role} className="text-black">
-                                                {role}
+                                        {roles.map((role) => (
+                                            <option key={role.id} value={role.id ?? ""} className="text-black">
+                                                {role.name}
                                             </option>
                                         ))}
                                     </select>

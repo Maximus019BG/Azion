@@ -17,7 +17,7 @@ const EditRole: React.FC<PageProps> = ({params}) => {
         if(name === "owner"){
             window.location.href = window.location.pathname.slice(0,window.location.pathname.length-6);
         }
-        UserHasRight(3);
+        UserHasRight("roles:write");
         sessionCheck();
     });
 

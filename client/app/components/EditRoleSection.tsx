@@ -12,6 +12,17 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({ RoleName }) => {
     const [accessFields, setAccessFields] = useState<boolean[]>(Array(8).fill(false));
     const [binaryString, setBinaryString] = useState<string>("00000000");
 
+    const permissions = [
+        "calendar:write",
+        "settings:write settings:read",
+        "employees:read",
+        "roles:write roles:read",
+        "tasks:write",
+        "tasks:read",
+        "cameras:write",
+        "cameras:read",
+    ];
+
     useEffect(() => {
         const fetchRoleAccess = async () => {
             try {
@@ -21,19 +32,10 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({ RoleName }) => {
                     },
                 });
 
-                let accessBinaryString: string = response.data.toString();
+                const accessBinaryString: string = response.data.toString();
+                const updatedFields = permissions.map(permission => accessBinaryString.includes(permission));
 
-                const binaryStringLength = 8;
-                const paddedBinaryString = accessBinaryString.padStart(binaryStringLength, "0").slice(0, binaryStringLength);
-
-                let updatedFields: boolean[] = Array(binaryStringLength).fill(false);
-
-                // Map the binary string to the boolean array
-                for (let i = 0; i < paddedBinaryString.length; i++) {
-                    updatedFields[i] = paddedBinaryString[i] === "1";
-                }
-
-                setBinaryString(paddedBinaryString);
+                setBinaryString(accessBinaryString);
                 setAccessFields(updatedFields);
             } catch (error) {
                 console.error("Error fetching role access:", error);
@@ -43,16 +45,13 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({ RoleName }) => {
         fetchRoleAccess();
     }, [RoleName]);
 
-
-
-
     const handleToggle = (index: number) => {
         const updatedFields = [...accessFields];
         updatedFields[index] = !updatedFields[index];
         setAccessFields(updatedFields);
 
         // Update the binary string
-        const newBinaryString = updatedFields.map((val) => (val ? "1" : "0")).join("");
+        const newBinaryString = updatedFields.map((val, idx) => (val ? permissions[idx] : "")).filter(Boolean).join(" ");
         setBinaryString(newBinaryString);
 
         // Send request to server
@@ -70,7 +69,7 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({ RoleName }) => {
     const handleReset = () => {
         // Reset all toggles to false
         setAccessFields(Array(8).fill(false));
-        setBinaryString("00000000");
+        setBinaryString("");
     };
 
     return (

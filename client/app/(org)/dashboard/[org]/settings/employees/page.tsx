@@ -6,7 +6,7 @@ import SideMenu from "@/app/components/Side-menu";
 
 const Employees = () => {
     useEffect(() => {
-        UserHasRight(2);
+        UserHasRight("employees:read");
         sessionCheck();
     });
 

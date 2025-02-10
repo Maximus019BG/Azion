@@ -4,7 +4,7 @@ export interface User {
     name: string;
     email: string;
     age: string;
-    role: string;
+    role: Role;
     orgid: string;
     projects: any;
 }
@@ -99,10 +99,17 @@ export interface UserDataType {
     name: string,
     email: string,
     age: string,
-    role: string,
-    roleAccess: string,
+    role: Role,
+    access: string,
     projects: string[],
     profilePicture: string | null,
     mfaEnabled: boolean,
     faceIdEnabled: boolean
+}
+
+export interface Role{
+    id: string|null;
+    name: string;
+    roleAccess: string|null;
+    color: string;
 }

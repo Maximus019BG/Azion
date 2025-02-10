@@ -20,7 +20,7 @@ const AccountUserCard = () => {
             setDisplayImage(response.profilePicture);
             setName(response.name);
             setEmail(response.email);
-            setRole(response.role);
+            setRole(response.role.name);
             setDateOfBirth(response.age.substring(0, 10));
         });
     }, []);

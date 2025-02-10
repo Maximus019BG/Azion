@@ -26,7 +26,7 @@ const CamListPage = () => {
     fetchOrgName();
 
     useEffect(() => {
-        UserHasRight(7);
+        UserHasRight("cameras:read");
         sessionCheck();
     });
     useEffect(() => {
