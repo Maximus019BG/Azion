@@ -481,15 +481,20 @@ public class OrgController {
             Role role;
             if (roleId == null) {
                 role = new Role();
+                role.setOrg(orgRepository.findById(user.getOrgid()).orElse(null));
+                role.setName(roleName);
+                role.setRoleAccess(roleAccess);
+                role.setColor(roleColor);
+                roleRepository.save(role);
+                savedRoles.put(role.getId(), role);
             } else {
                 role = roleRepository.findById(roleId).orElse(new Role());
+                role.setName(roleName);
+                role.setRoleAccess(roleAccess);
+                role.setColor(roleColor);
+                roleRepository.save(role);
+                savedRoles.put(role.getId(), role);
             }
-            
-            role.setName(roleName);
-            role.setRoleAccess(roleAccess);
-            role.setColor(roleColor);
-            roleRepository.save(role);
-            savedRoles.put(role.getId(), role);
         }
         
         for (Map<String, Object> userData : usersData) {
@@ -522,7 +527,6 @@ public class OrgController {
         
         orgService.ensureOwnerHasLevelOne(user.getOrgid());
         
-        log.info("Roles and users updated successfully.");
         return ResponseEntity.ok("Roles and users updated successfully.");
     }
 }
