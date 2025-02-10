@@ -4,7 +4,7 @@ export interface User {
     name: string;
     email: string;
     age: string;
-    role: string;
+    role: Role;
     orgid: string;
     projects: any;
 }
@@ -108,8 +108,8 @@ export interface UserDataType {
 }
 
 export interface Role{
-    id: string;
+    id: string|null;
     name: string;
-    roleAccess: string;
+    roleAccess: string|null;
     color: string;
 }

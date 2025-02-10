@@ -434,12 +434,31 @@ public class OrgController {
         return ResponseEntity.ok(userService.getAccessByRoleName(roleName, user.getOrgid()));
     }
     
-    // Update roles to users
+    //Update role access
+    @Transactional
+    @PutMapping("/role/update/{roleName}")
+    public ResponseEntity<?> roleAccessUpdate(@PathVariable String roleName, @RequestHeader("authorization") String accessToken, @RequestBody Map<Object, String> request) {
+        userService.userValid(accessToken);
+        User user = tokenService.getUserFromToken(accessToken);
+        if(!userService.UserHasRight(user,"roles:write")){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
+        }
+        if(Objects.equals(roleName, "owner")){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
+        }
+        if(request.get("accessFields") == null){
+            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access fields is required");
+        }
+        
+        userService.updateRoleAccess(roleName,request.get("accessFields"),user.getOrgid());
+        return ResponseEntity.ok("Access granted");
+    }
+    
+    //Update roles and users
     @Transactional
     @PutMapping("/update/roles/{accessToken}")
-    public ResponseEntity<?> updateRole(@RequestBody Map<String, Object> request, @PathVariable String accessToken) {
+    public ResponseEntity<?> updateRolesAndUsers(@RequestBody Map<String, Object> request, @PathVariable String accessToken) {
         User user = tokenService.getUserFromToken(accessToken);
-        
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
@@ -448,91 +467,60 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not have permission to update roles.");
         }
         
-        List<Map<String, Object>> roles = (List<Map<String, Object>>) request.get("roles");
-        Map<String, Map<String, Object>> users = (Map<String, Map<String, Object>>) request.get("users");
+        List<Map<String, Object>> rolesData = (List<Map<String, Object>>) request.get("roles");
+        List<Map<String, Object>> usersData = (List<Map<String, Object>>) request.get("users");
         
-        if (roles == null || users == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Roles or users not provided.");
-        }
+        Map<String, Role> savedRoles = new HashMap<>();
         
-        int ownerCount = 0;
-        for (Map<String, Object> roleData : users.values()) {
-            if ("owner".equals(roleData.get("name"))) {
-                ownerCount++;
-            }
-        }
-        
-        if (ownerCount > 1) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Can't have two owners");
-        }
-        
-        boolean isOwner = "owner".equals(user.getRole().getName());
-        boolean triedToChangeOwner = false;
-        
-        // Save roles first
-        for (Map<String, Object> roleEntry : roles) {
-            String roleId = (String) roleEntry.get("id");
-            String newRoleAccess = (String) roleEntry.get("roleAccess");
-            String newRoleName = (String) roleEntry.get("name");
-            log.info("Role ID: " + roleId);
+        for (Map<String, Object> roleData : rolesData) {
+            String roleId = (String) roleData.get("id");
+            String roleName = (String) roleData.get("name");
+            String roleAccess = (String) roleData.get("roleAccess");
+            String roleColor = (String) roleData.get("color");
+            
             Role role;
             if (roleId == null) {
                 role = new Role();
-                role.setOrg(orgRepository.findById(user.getOrgid()).orElse(null));
-                role.setRoleAccess(userService.lowestAccess());
-                role.setName(newRoleName);
-                role.setColor("#0000ff");
-                roleRepository.save(role); // Save the new role explicitly
             } else {
-                role = roleRepository.findById(roleId).orElse(null);
-                if (role == null) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Role not found.");
-                }
-                role.setRoleAccess(newRoleAccess);
-                role.setName(newRoleName);
-                roleRepository.save(role); // Save the updated role
+                role = roleRepository.findById(roleId).orElse(new Role());
             }
+            
+            role.setName(roleName);
+            role.setRoleAccess(roleAccess);
+            role.setColor(roleColor);
+            roleRepository.save(role);
+            savedRoles.put(role.getId(), role);
         }
         
-        // Update user roles
-        for (Map.Entry<String, Map<String, Object>> userEntry : users.entrySet()) {
-            String email = userEntry.getKey();
-            Map<String, Object> roleData = userEntry.getValue();
-            String roleName = (String) roleData.get("name");
-            log.info("Role name: " + roleName);
-            log.info("Email: " + email);
+        for (Map<String, Object> userData : usersData) {
+            String userId = (String) userData.get("id");
+            String userEmail = (String) userData.get("email");
+            Object roleData = userData.get("role");
             
-            User u = userRepository.findByEmail(email);
-            Role newRole = roleRepository.findByNameAndOrg(roleName, user.getOrgid()).orElse(null);
-            log.info("User: " + u);
-            log.info("New role: " + newRole.getId());
-            
-            if (u == null || newRole == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or role not found.");
+            User userToUpdate = userRepository.findById(userId).orElse(null);
+            if (userToUpdate == null) {
+                continue;
             }
             
-            if (isOwner || (!"owner".equals(newRole.getName()) && !"owner".equals(u.getRole().getName()))) {
-                log.info("Changing role for user: " + u.getEmail());
-                log.info("Old role: " + u.getRole().getId());
-                if (newRole.equals(u.getRole())) {
-                    log.info("Role is the same, skipping");
-                    continue;
+            if (roleData instanceof Map) {
+                Map<String, Object> roleMap = (Map<String, Object>) roleData;
+                String roleId = (String) roleMap.get("id");
+                Role role = savedRoles.get(roleId);
+                if (role != null) {
+                    userToUpdate.setRole(role);
                 }
-                u.setRole(newRole);
-                userRepository.save(u);
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized role change attempt.");
+            } else if (roleData instanceof String) {
+                String roleName = (String) roleData;
+                Role role = roleRepository.findByName(roleName).orElse(null);
+                if (role != null) {
+                    userToUpdate.setRole(role);
+                }
             }
+            
+            userRepository.save(userToUpdate);
         }
         
-        // Ensure the organization has at least one owner with level 1 access
-        log.info("Ensuring owner has level 1 access");
         orgService.ensureOwnerHasLevelOne(user.getOrgid());
-        log.info("Owner has level 1 access");
-        
-        if (triedToChangeOwner) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Roles and users updated. Except for the roleLevel 1.");
-        }
         
         log.info("Roles and users updated successfully.");
         return ResponseEntity.ok("Roles and users updated successfully.");

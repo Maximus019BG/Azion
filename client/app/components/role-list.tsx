@@ -1,16 +1,9 @@
-"use client";
 import React, {useEffect, useRef, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import Cookies from "js-cookie";
 import {apiUrl} from "@/app/api/config";
 import {Role} from "@/app/types/types";
-
-interface User {
-    id: string;
-    name: string;
-    role: string;
-    email: string;
-}
+import {User} from "@/app/types/types";
 
 const RoleList = () => {
     const [roles, setRoles] = useState<Role[]>([]);
@@ -62,15 +55,20 @@ const RoleList = () => {
     const handleSave = async () => {
         try {
             const payload = {
-                roles: roles,
-                users: users.reduce((acc, user) => {
-                    const userRole = roles.find(role => role.name === user.role);
-                    if (userRole) {
-                        acc[user.email] = userRole;
-                    }
-                    return acc;
-                }, {} as { [key: string]: Role }),
+                roles: roles.map(role => ({
+                    id: role.id,
+                    name: role.name,
+                    roleAccess: role.roleAccess,
+                    color: role.color
+                })),
+                users: users.map(user => ({
+                    id: user.id,
+                    name: user.name,
+                    role: user.role,
+                    email: user.email
+                })),
             };
+
             await axios.put(
                 `${apiUrl}/org/update/roles/${Cookies.get("azionAccessToken")}`,
                 payload,
@@ -80,6 +78,7 @@ const RoleList = () => {
                     },
                 }
             );
+
             setMadeChanges(false);
             alert("Roles and user roles updated successfully");
         } catch (error) {
@@ -106,7 +105,7 @@ const RoleList = () => {
 
         setUsers((prevUsers) =>
             prevUsers.map((user) =>
-                user.role === oldRole ? {...user, role: newRole} : user
+                user.role.name === oldRole ? {...user, role: {...user.role, name: newRole}} : user
             )
         );
 
@@ -119,19 +118,20 @@ const RoleList = () => {
         setMadeChanges(true);
     };
 
-    const handleUserRoleChange = (userId: string, newRole: string) => {
+    const handleUserRoleChange = (userId: string | null, newRoleId: string | null) => {
         setUsers((prevUsers) => {
             return prevUsers.map((user) => {
                 if (user.id === userId) {
-                    if (user.role === "owner" && newRole !== "owner") {
+                    if (user.role.name === "owner" && newRoleId !== "owner") {
                         const confirmChange = window.confirm("Are you sure you want to change the owner role to someone else?");
                         if (!confirmChange) {
                             return user;
                         }
                     }
+                    const newRole = roles.find(role => role.id === newRoleId);
                     return {
                         ...user,
-                        role: newRole,
+                        role: newRole ? newRole : user.role,
                     };
                 }
                 return user;
@@ -144,12 +144,12 @@ const RoleList = () => {
         if (newRole && !roles.some(role => role.name === newRole)) {
             setRoles((prevRoles) => [
                 ...prevRoles,
-                {id: `${Date.now()}`, name: newRole, roleAccess: "00000000", color: "#000000"}
+                {id: null, name: newRole, roleAccess: null, color: "#000000"}
             ]);
             setNewRole("");
             setNewLevel("00000000");
             setShowNewRole(false);
-            alert("New role added. Before editing privileges save changes")
+            alert("New role added. Before editing privileges save changes");
         }
         setMadeChanges(true);
     };
@@ -255,12 +255,12 @@ const RoleList = () => {
                                 <td className="py-4">{user.name} ({user.email})</td>
                                 <td className="py-4">
                                     <select
-                                        value={user.role}
+                                        value={user.role.id ?? ""}
                                         onChange={(e) => handleUserRoleChange(user.id, e.target.value)}
                                         className="bg-gray-700 text-white border-none focus:outline-none rounded w-full py-2 px-3"
                                     >
                                         {roles.map((role) => (
-                                            <option key={role.id} value={role.name} className="text-black">
+                                            <option key={role.id} value={role.id} className="text-black">
                                                 {role.name}
                                             </option>
                                         ))}

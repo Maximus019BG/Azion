@@ -35,7 +35,7 @@ public class User {
     @Column(nullable = true, length = 14336)
     private String faceID;
     
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(nullable = true)
     @JsonManagedReference
     private Role role;

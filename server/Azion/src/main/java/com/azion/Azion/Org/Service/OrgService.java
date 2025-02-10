@@ -154,13 +154,19 @@ public class OrgService {
     
     //!Owner remover blocker
     public void ensureOwnerHasLevelOne(String orgId) {
-        Role role =ownerRole();
+        Role role = ownerRole();
         role.setOrg(orgRepository.findById(orgId).get());
         
-        //*Final hope
-        User randomUser = userRepository.findByOrgid(orgId).get(0);
-        randomUser.setRole(role);
-        userRepository.save(randomUser);
+        if(roleRepository.findByNameAndOrg("owner", orgId).isEmpty()){
+            roleRepository.save(role);
+            //*Final hope
+            User randomUser = userRepository.findByOrgid(orgId).get(0);
+            randomUser.setRole(role);
+            userRepository.save(randomUser);
+        }
+        else{
+            return;
+        }
         
     }
     

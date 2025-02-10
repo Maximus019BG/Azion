@@ -24,7 +24,7 @@ public class Role {
     @Column(name = "color", nullable = true, columnDefinition = "CHAR(8) DEFAULT '00000")
     private String color;
     
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<User> users;
     
     @ManyToOne
