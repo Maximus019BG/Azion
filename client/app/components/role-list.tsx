@@ -260,7 +260,7 @@ const RoleList = () => {
                                         className="bg-gray-700 text-white border-none focus:outline-none rounded w-full py-2 px-3"
                                     >
                                         {roles.map((role) => (
-                                            <option key={role.id} value={role.id} className="text-black">
+                                            <option key={role.id} value={role.id ?? ""} className="text-black">
                                                 {role.name}
                                             </option>
                                         ))}
