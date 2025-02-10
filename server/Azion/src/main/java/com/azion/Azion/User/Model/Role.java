@@ -21,7 +21,7 @@ public class Role {
     @Column(name = "roleAccess", nullable = true, columnDefinition = "TEXT")
     private String roleAccess;
     
-    @Column(name = "color", nullable = true, columnDefinition = "CHAR(8) DEFAULT '00000")
+    @Column(name = "color", nullable = true, columnDefinition = "CHAR(8) DEFAULT #000000")
     private String color;
     
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
