@@ -450,7 +450,7 @@ public class OrgController {
             return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access fields is required");
         }
         
-        userService.updateRoleAccess(roleName,request.get("accessFields"),user.getOrgid());
+        userService.updateRoleAccess(request.get("color"), roleName,request.get("accessFields"),user.getOrgid());
         return ResponseEntity.ok("Access granted");
     }
     

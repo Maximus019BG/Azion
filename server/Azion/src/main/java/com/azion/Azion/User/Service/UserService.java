@@ -155,9 +155,10 @@ public class UserService {
     }
     
     //Give new access to a row
-    public void updateRoleAccess(String roleName, String roleAccess, String orgId) {
+    public void updateRoleAccess(String color, String roleName, String roleAccess, String orgId) {
         Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
         role.setRoleAccess(roleAccess);
+        role.setColor(color);
     }
     
     public String getAccessByRoleName(String roleName, String orgId) {

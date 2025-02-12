@@ -24,6 +24,7 @@ const DisplayEmployee: React.FC<Employee> = ({
     const [isAgeVisible, setIsAgeVisible] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(true);
     const [imageSrc, setImageSrc] = useState<string | StaticImageData>(Default);
+    const color = role.color;
 
     useEffect(() => {
         if (profilePicture && profilePicture !== "null") {
@@ -81,7 +82,8 @@ const DisplayEmployee: React.FC<Employee> = ({
                     onChange={handleCollapseChange}
                 />
                 <div
-                    className={`collapse-title bg-slate-800 text-white peer-checked:bg-[${role.color}] peer-checked:text-white flex flex-row sm:items-center`}
+                    className="collapse-title bg-slate-800 text-white peer-checked:text-white flex flex-row sm:items-center"
+                    style={{backgroundColor: isCollapsed ? "" : color}}
                 >
                     <div className="avatar">
                         <div className="w-10 rounded-full">
@@ -97,7 +99,8 @@ const DisplayEmployee: React.FC<Employee> = ({
                     <h1 className="mt-2 sm:mt-0 ml-3 text-center sm:text-left">{name}</h1>
                 </div>
                 <div
-                    className={`collapse-content bg-base-200 text-primary-content peer-checked:bg-[${role.color}] peer-checked:text-white flex flex-col sm:flex-row sm:justify-between sm:items-center`}
+                    className="collapse-content bg-base-200 text-primary-content peer-checked:text-white flex flex-col sm:flex-row sm:justify-between sm:items-center"
+                    style={{backgroundColor: isCollapsed ? "" : color}}
                 >
                     <div className="w-full sm:w-1/2">
                         <p>
