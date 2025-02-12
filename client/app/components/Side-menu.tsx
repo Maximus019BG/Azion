@@ -18,7 +18,6 @@ import {
 import {AiFillVideoCamera} from "react-icons/ai";
 import LogOut from "@/app/components/LogOut";
 import {UserData} from "@/app/func/funcs";
-import {getOrgName} from "@/app/func/org";
 
 // Font setup
 const azionText = Commissioner({subsets: ["latin"], weight: "800"});
@@ -26,27 +25,16 @@ const azionText = Commissioner({subsets: ["latin"], weight: "800"});
 const SideMenu = () => {
     const [isDashboardOpen, setIsDashboardOpen] = useState(false);
     const [isTasksOpen, setIsTasksOpen] = useState(false);
-    const [org, setOrg] = useState<string | null>("");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [access, setAccess] = useState<string>("")
 
     useEffect(() => {
-        const fetchOrgName = async () => {
-            const result: string = await getOrgName();
-            if (result === null) {
-                setOrg(null);
-            } else {
-                setOrg(result);
-            }
-        };
-
-        const PageAccess = async () => {
+          const PageAccess = async () => {
             const userData = await UserData();
             setAccess(userData.access);
         };
 
         PageAccess();
-        fetchOrgName();
     }, []);
 
     // Toggle dropdowns
@@ -119,7 +107,6 @@ const SideMenu = () => {
                     {/* Sidebar content */}
                     <div className="w-full flex flex-col justify-center items-start gap-4">
                         {/* Conditionally render Dashboard and Tasks sections */}
-                        {org && (
                             <>
                                 {/* Dashboard Dropdown */}
                                 <li className="text-md w-full relative">
@@ -144,7 +131,7 @@ const SideMenu = () => {
                                         <ul className="w-full">
                                             <li className="py-1 text-md w-full">
                                                 <Link
-                                                    href={`/dashboard/${org}`}
+                                                    href={`/dashboard`}
                                                     className="flex items-center w-full"
                                                 >
                                                     <FaHome className="text-lg mr-2"/>
@@ -154,7 +141,7 @@ const SideMenu = () => {
                                             {access.includes("calendar:write") && (
                                                 <li className="py-1 text-md w-full">
                                                     <Link
-                                                        href={`/dashboard/${org}/settings`}
+                                                        href={`/dashboard/settings`}
                                                         className="flex items-center w-full"
                                                     >
                                                         <FaCog className="text-lg mr-2"/>
@@ -165,7 +152,7 @@ const SideMenu = () => {
                                             {access.includes("employees:read") && (
                                                 <li className="text-md w-full">
                                                     <Link
-                                                        href={`/dashboard/${org}/settings/employees`}
+                                                        href={`/dashboard/settings/employees`}
                                                         className="flex items-center w-full"
                                                     >
                                                         <FaUsers className="text-lg mr-2"/>
@@ -175,7 +162,7 @@ const SideMenu = () => {
                                             {access.includes("roles:read") && (
                                                 <li className="text-md w-full">
                                                     <Link
-                                                        href={`/dashboard/${org}/settings/roles`}
+                                                        href={`/dashboard/settings/roles`}
                                                         className="flex items-center w-full"
                                                     >
                                                         <FaUserSecret className="text-lg mr-2"/>
@@ -204,7 +191,7 @@ const SideMenu = () => {
                                             </button>
                                         ) : (
                                             <Link
-                                                href={`/dashboard/${org}/task`}
+                                                href={`/dashboard/task`}
                                                 className="flex items-center w-full"
                                             >
                                                 <FaTasks className="text-lg mr-2"/>
@@ -217,7 +204,7 @@ const SideMenu = () => {
                                             {access.includes("tasks:read") && (
                                                 <li className="py-1 text-md w-full">
                                                     <Link
-                                                        href={`/dashboard/${org}/task`}
+                                                        href={`/dashboard/task`}
                                                         className="flex items-center w-full"
                                                     >
                                                         <FaTasks className="text-lg mr-2"/>
@@ -227,7 +214,7 @@ const SideMenu = () => {
                                             {access.includes("tasks:write") && (
                                                 <li className="text-md w-full">
                                                     <Link
-                                                        href={`/dashboard/${org}/task/create`}
+                                                        href={`/dashboard/task/create`}
                                                         className="flex items-center w-full"
                                                     >
                                                         <FaPlusCircle className="text-lg mr-2"/>
@@ -238,7 +225,6 @@ const SideMenu = () => {
                                     )}
                                 </li>
                             </>
-                        )}
 
                         {(access.includes("cameras:read") || access.includes("cameras:write")) && (
                             <>

@@ -29,7 +29,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
     
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
     
     @Column(nullable = true, length = 14336)
@@ -156,6 +156,11 @@ public class User {
     }
     
     public void setPassword(String password) {
+        //Google login
+        if(password==null){
+            this.password = null;
+            return;
+        }
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
     

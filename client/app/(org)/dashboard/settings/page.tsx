@@ -10,16 +10,10 @@ import Loading from "@/app/components/Loading";
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
-interface PageProps {
-    params: {
-        org: string;
-    };
-}
 
-const OrgSettings: FC<PageProps> = ({params}) => {
+
+const OrgSettings = () => {
     const [loading, setLoading] = useState<boolean>(true);
-    const [orgNameCheck, setOrgNameCheck] = useState<string>("");
-    const orgName: string = params.org;
 
     PartOfOrg(true);
 
@@ -39,17 +33,6 @@ const OrgSettings: FC<PageProps> = ({params}) => {
             window.location.href = "/login";
         }
     }, []);
-
-    useEffect(() => {
-        const fetchOrgName = async () => {
-            const result: string = await getOrgName();
-            setOrgNameCheck(result);
-        };
-        fetchOrgName();
-        if (orgNameCheck && orgNameCheck !== orgName) {
-            window.location.href = `/dashboard/${orgNameCheck}/settings`;
-        }
-    }, [orgNameCheck, orgName]);
 
     useEffect(() => {
         UserHasRight("settings:write");

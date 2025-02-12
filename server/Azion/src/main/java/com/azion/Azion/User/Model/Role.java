@@ -21,7 +21,7 @@ public class Role {
     @Column(name = "roleAccess", nullable = true, columnDefinition = "VARCHAR(255)")
     private String roleAccess;
 
-    @Column(name = "color", nullable = true, columnDefinition = "CHAR(8) DEFAULT '#000000'")
+    @Column(name = "color", nullable = true, columnDefinition = "CHAR(8) DEFAULT '#2563eb'")
     private String color;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -63,7 +63,6 @@ public class Role {
     public void setRoleAccess(String roleAccess) {
         this.roleAccess = roleAccess;
     }
-    
     
     public String getId() {
         return id;

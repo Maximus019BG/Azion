@@ -6,14 +6,13 @@ import {faCopy} from "@fortawesome/free-solid-svg-icons";
 
 interface ConStringProps {
     value: string;
-    name: string;
 }
 
 const headerText = Poppins({subsets: ["latin"], weight: "800"});
 
-const ConString: React.FC<ConStringProps> = ({value, name}) => {
+const ConString: React.FC<ConStringProps> = ({value}) => {
     const toDashboard = () => {
-        window.location.href = `/dashboard/${name}`;
+        window.location.href = `/dashboard`;
     };
 
     const copyToClipboard = () => {

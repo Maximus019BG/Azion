@@ -206,6 +206,7 @@ public class AuthController {
     }
     
     
+    @Transactional
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, Object> request, @RequestHeader(value = "User-Agent") String UserAgent) {
         String name = (String) request.get("name");
@@ -222,6 +223,10 @@ public class AuthController {
             }
         } catch (DateTimeParseException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date");
+        }
+        
+        if(authService.userExists(email)){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
         }
         
         

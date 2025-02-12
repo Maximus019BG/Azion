@@ -141,7 +141,7 @@ const Home = () => {
                         className="flex flex-col sm:flex-row md:justify-start md:items-start justify-center items-center gap-4 md:gap-8 w-full"
                     >
                         <div className="w-full">
-                            <Link href={org !== null ? `/dashboard/${org}` : `/register`}>
+                            <Link href={org !== null ? `/dashboard` : `/register`}>
                                 <motion.button
                                     whileHover={{scale: 1.05}}
                                     whileTap={{scale: 0.95}}

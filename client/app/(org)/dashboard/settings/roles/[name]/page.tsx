@@ -2,7 +2,7 @@
 import React, {useEffect} from 'react';
 import EditRoleSection from "@/app/components/EditRoleSection";
 import SideMenu from "@/app/components/Side-menu";
-import {sessionCheck, UserHasRight} from "@/app/func/funcs";
+import {sessionCheck, UserHasRight, roleExists} from "@/app/func/funcs";
 
 interface PageProps {
     params: {
@@ -14,9 +14,14 @@ const EditRole: React.FC<PageProps> = ({params}) => {
     const {name} = params;
 
     useEffect(() => {
+        //Basic checks
         if(name === "owner"){
             window.location.href = window.location.pathname.slice(0,window.location.pathname.length-6);
         }
+        if(!roleExists(name)){
+            window.location.href = window.location.pathname.slice(0,window.location.pathname.length-name.length);
+        }
+
         UserHasRight("roles:write");
         sessionCheck();
     });

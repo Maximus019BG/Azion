@@ -6,16 +6,8 @@ import RoleList from "@/app/components/role-list";
 import SideMenu from "@/app/components/Side-menu";
 import {getOrgName} from "@/app/func/org";
 
-interface PageProps {
-    params: {
-        org: string;
-    };
-}
-
-const RoleEdit: FC<PageProps> = ({params}) => {
+const RoleEdit= () => {
     const [loading, setLoading] = useState(true);
-    const [orgNameCheck, setOrgNameCheck] = useState("");
-    const orgName: string = params.org;
 
     useEffect(() => {
         const refreshToken = Cookies.get("azionRefreshToken");
@@ -39,19 +31,6 @@ const RoleEdit: FC<PageProps> = ({params}) => {
         sessionCheck();
     });
 
-    useEffect(() => {
-        const fetchOrgName = async () => {
-            const result: string = await getOrgName();
-            setOrgNameCheck(result);
-        };
-        fetchOrgName();
-    }, [orgName]);
-
-    useEffect(() => {
-        if (orgNameCheck && orgNameCheck !== orgName) {
-            window.location.href = `/dashboard/${orgNameCheck}/settings/roles`;
-        }
-    }, [orgNameCheck, orgName]);
 
 
     return (

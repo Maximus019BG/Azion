@@ -5,7 +5,6 @@ import axios, {AxiosResponse} from 'axios';
 import Cookies from 'js-cookie';
 import {Employee} from '@/app/types/types';
 import DisplayEmployee from './employee';
-import SideMenu from '../Side-menu';
 
 const List = () => {
     const [employees, setEmployees] = useState<Employee[]>([]);
@@ -32,7 +31,7 @@ const List = () => {
 
     return (
         <div className='flex flex-col lg:flex-row w-full'>
-            <div className='w-full flex flex-col justify-center items-center gap-5 p-4 sm:p-6 md:p-8'>
+            <div className='w-full flex flex-col items-center gap-5 p-4 sm:p-6 md:p-8'>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl my-8 text-center">Organization&apos;s Members</h1>
                 {employees.map((employee) => (
                     <DisplayEmployee

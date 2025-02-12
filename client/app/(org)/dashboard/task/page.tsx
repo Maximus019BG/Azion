@@ -17,21 +17,14 @@ import {CiSquarePlus} from "react-icons/ci";
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
-interface PageProps {
-    params: {
-        org: string;
-    };
-}
 
-const Tasks: FC<PageProps> = ({params}) => {
+const Tasks= () => {
     const [admin, setAdmin] = useState(false);
     const [tasks, setTasks] = useState<Task[] | null>(null);
-    const [orgNameCheck, setOrgNameCheck] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
     const [sortCriteria, setSortCriteria] = useState<string>("date");
     const [sortOrder, setSortOrder] = useState<string>("asc");
     const [currentUserEmail, setCurrentUserEmail] = useState<string>("");
-    const orgName = params.org;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -53,7 +46,6 @@ const Tasks: FC<PageProps> = ({params}) => {
 
                     UserHasRight("tasks:read");
                     setCurrentUserEmail(userData.email);
-                    setOrgNameCheck(orgNameResult);
                     setTasks(tasksResponse.data.message === "no projects" ? null : tasksResponse.data);
                     setLoading(false);
                 } else {
@@ -66,13 +58,7 @@ const Tasks: FC<PageProps> = ({params}) => {
         };
 
         fetchData();
-    }, [orgName]);
-
-    useEffect(() => {
-        if (orgNameCheck && orgNameCheck !== orgName) {
-            window.location.href = `/dashboard/${orgNameCheck}/task`;
-        }
-    }, [orgNameCheck, orgName]);
+    }, []);
 
     const sortedTasks = useMemo(() => {
         if (Array.isArray(tasks)) {
@@ -118,7 +104,7 @@ const Tasks: FC<PageProps> = ({params}) => {
                         {admin && (
                             <Link
                                 className="w-full max-w-xs h-60 rounded-lg flex flex-col justify-center items-center overflow-hidden shadow-lg p-6 bg-base-100 cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 relative"
-                                href={`/dashboard/${orgNameCheck}/task/create`}
+                                href={`/dashboard/task/create`}
                             >
                                 <CiSquarePlus className="text-8xl mb-2"/>
                                 <span className="text-lg font-semibold">Create Task</span>
@@ -133,7 +119,7 @@ const Tasks: FC<PageProps> = ({params}) => {
                                 data={task.date}
                                 createdBy={task.createdBy?.name}
                                 priority={task.priority}
-                                onClick={() => window.location.href = `/dashboard/${orgNameCheck}/task/view/${task.id}`}
+                                onClick={() => window.location.href = `/dashboard/task/view/${task.id}`}
                                 isCreator={task.createdBy?.email === currentUserEmail}
                                 id={task.id}
                             />

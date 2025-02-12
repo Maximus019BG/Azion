@@ -15,7 +15,9 @@ const Employees = () => {
             <div className='w-full lg:w-1/4'>
                 <SideMenu/>
             </div>
-            <List/>
+            <div className="justify-start w-full h-dvh flex flex-col items-center gap-5 p-4 sm:p-6 md:p-8" >
+                <List/>
+            </div>
         </div>
     );
 }

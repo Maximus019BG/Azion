@@ -45,7 +45,9 @@ const handleRegister = (data: any, isOwner: boolean) => {
             }
         })
         .catch(function (error: any) {
-            console.log(error.response ? error.response : error);
+            if(error.response.status === 409) {
+                alert("Email already in use");
+            }
         });
 };
 

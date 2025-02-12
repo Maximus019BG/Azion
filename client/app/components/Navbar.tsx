@@ -106,7 +106,7 @@ const Navbar = () => {
                 <div className="hidden sm:flex gap-12">
                     {isLogged ? (
                         <>
-                            <Link href={`/dashboard/${org}`}>
+                            <Link href={`/dashboard`}>
                                 <button className="btn border-none neon-text text-lg bg-transparent">
                                     Dashboard
                                 </button>
@@ -143,7 +143,7 @@ const Navbar = () => {
                 <div className="w-full flex flex-col justify-center items-center gap-4 py-4 px-6 z-20">
                     {isLogged ? (
                         <>
-                            <Link href={`/dashboard/${org}`}>
+                            <Link href={`/dashboard`}>
                                 <button className="btn border-none neon-text text-lg bg-transparent w-full text-left">
                                     Dashboard
                                 </button>

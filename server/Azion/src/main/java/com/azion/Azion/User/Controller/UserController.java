@@ -92,10 +92,10 @@ public class UserController {
             userDTO.setAge(user.getAge().toString());
             if (user.getRole() != null) {
                 userDTO.setAccess(user.getRole().getRoleAccess());
+                userDTO.setRole(convertToRoleDTO(user.getRole()));
             } else {
                 userDTO.setAccess(" ");
             }
-            userDTO.setRole(convertToRoleDTO(user.getRole()));
             userDTO.setOrgid(user.getOrgid());
             userDTO.setId(user.getId());
             userDTO.setProjects(userService.convertProjectsToDTO(user.getTasks()));

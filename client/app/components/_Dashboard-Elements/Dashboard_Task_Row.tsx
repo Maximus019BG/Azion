@@ -26,7 +26,7 @@ const Dashboard_Task_Row: React.FC<Dashboard_Task_RowProps> = ({task, orgName}) 
 
     const handleRedirect = () => {
         // Programmatic navigation
-        window.location.href = `/dashboard/${orgName}/task/view/${task.id}`;
+        window.location.href = `/dashboard/task/view/${task.id}`;
     };
 
     return (

@@ -53,7 +53,7 @@ export interface Employee {
     name: string;
     email: string;
     age: string;
-    role: string;
+    role: Role;
     orgid: string;
     roleLevel: number | undefined;
     profilePicture?: string;

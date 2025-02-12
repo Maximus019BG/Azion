@@ -21,7 +21,6 @@ const ChatPage = () => {
     const [client, setClient] = useState<Client | null>(null);
     const [userEmail, setUserEmail] = useState("");
     const [users, setUsers] = useState<User[]>([]);
-    const [orgName, setOrgName] = useState<string>("org");
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [profilePictureSrcs, setProfilePictureSrcs] = useState<{ [key: string]: string }>({});
     const defaultImageSrc = typeof DefaultPic === 'string' ? DefaultPic : DefaultPic.src;
@@ -33,15 +32,6 @@ const ChatPage = () => {
         }
         return null;
     };
-
-    useEffect(() => {
-        const fetchOrgName = async () => {
-            const result: string = await getOrgName();
-            setOrgName(result);
-        };
-
-        fetchOrgName();
-    }, [orgName]);
 
     useEffect(() => {
         sessionCheck();
@@ -154,7 +144,7 @@ const ChatPage = () => {
         <div className="flex text-white min-h-screen">
             {/* User List */}
             <div className="w-1/3 max-w-xs border-r border-gray-600 p-6">
-                <Link className="absolute right-6 top-6" href={`/dashboard/${orgName}`}>
+                <Link className="absolute right-6 top-6" href={`/dashboard`}>
                     <FontAwesomeIcon
                         className="text-4xl bg-white rounded-full text-lightAccent"
                         icon={faCircleLeft}

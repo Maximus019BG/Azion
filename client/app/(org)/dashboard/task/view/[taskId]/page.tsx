@@ -1,6 +1,6 @@
 "use client";
 import React, {FC, useEffect, useState} from "react";
-import {getOrgName, getTasks} from "@/app/func/org";
+import {getTasks} from "@/app/func/org";
 import Loading from "@/app/components/Loading";
 import SideMenu from "@/app/components/Side-menu";
 import {apiUrl} from "@/app/api/config";
@@ -12,18 +12,17 @@ import {Poppins} from "next/font/google";
 import {FaArrowAltCircleLeft, FaCompress, FaExpand} from "react-icons/fa";
 import {sessionCheck, UserData, UserHasRight} from "@/app/func/funcs";
 import Link from "next/link";
-import ProgressComponent from "../../../../../../components/ProgressComponent";
+import ProgressComponent from "@/app/components/ProgressComponent";
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
 
 interface PageProps {
     params: {
         taskId: string | null;
-        org: string;
     };
 }
 
-const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
+const TaskView: FC<PageProps> = ({params: {taskId}}) => {
     const [orgName, setOrgName] = useState<string | null>(null);
     const [task, setTask] = useState<Task | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -121,12 +120,7 @@ const TaskView: FC<PageProps> = ({params: {taskId, org}}) => {
                 setLoading(false);
             });
         }
-        if (org) {
-            getOrgName().then((orgName) => {
-                setOrgName(orgName);
-            });
-        }
-    }, [taskId, org]);
+    }, [taskId]);
 
     useEffect(() => {
         const getUser = async () => {

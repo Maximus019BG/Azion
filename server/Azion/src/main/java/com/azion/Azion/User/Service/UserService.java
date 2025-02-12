@@ -147,7 +147,7 @@ public class UserService {
     
     //Get max access
     public String highestAccess() {
-        return "task:write, task:read, roles:write, roles:read, settings:write, settings:read, employees:read, calendar:write, cameras:write, cameras:read";
+        return "calendar:write settings:write settings:read employees:read roles:write roles:read tasks:write tasks:read cameras:write cameras:read";
     }
     
     public String lowestAccess() {

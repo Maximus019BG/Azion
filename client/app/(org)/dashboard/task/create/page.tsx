@@ -19,13 +19,7 @@ interface User {
     id: string;
 }
 
-interface PageProps {
-    params: {
-        org: string;
-    };
-}
-
-const CreateTask: FC<PageProps> = ({params}) => {
+const CreateTask = () => {
     const [title, setTitle] = useState("");
     const [uEmail, setUEmail] = useState("")
     const [description, setDescription] = useState("");
@@ -46,8 +40,6 @@ const CreateTask: FC<PageProps> = ({params}) => {
     const [dueDate, setDueDate] = useState(
         `${selectedMonth}/${selectedDay}/${selectedYear}`
     );
-    const [orgNameCheck, setOrgNameCheck] = useState<string>("");
-    const orgName = params.org;
     const progress = 0;
     const status = "Due";
 
@@ -76,7 +68,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
             window.location.href = "/login";
         }
 
-        UserHasRight("task:write");
+        UserHasRight("tasks:write");
 
 
         GetUsers();
@@ -84,7 +76,7 @@ const CreateTask: FC<PageProps> = ({params}) => {
                 setUEmail(data.email)
                 setLoading(false)
         });
-    }, [orgName]);
+    }, []);
 
     const handleCheckboxChange = (email: string) => {
         setSelectedUsers((prevSelectedUsers) => {
@@ -191,20 +183,6 @@ const CreateTask: FC<PageProps> = ({params}) => {
     const userList = Array.isArray(users) ? users : [];
     const priorities = ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"];
 
-    useEffect(() => {
-        const fetchOrgName = async () => {
-            const result: string = await getOrgName();
-            setOrgNameCheck(result);
-        };
-
-        fetchOrgName();
-    }, [orgName]);
-
-    useEffect(() => {
-        if (orgNameCheck && orgNameCheck !== orgName) {
-            window.location.href = `/dashboard/${orgNameCheck}/task/create`;
-        }
-    }, [orgNameCheck, orgName]);
 
 
     return (

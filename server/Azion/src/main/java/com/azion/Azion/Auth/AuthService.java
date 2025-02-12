@@ -84,4 +84,8 @@ public class AuthService {
         userRepository.save(user);
         return resetToken;
     }
+    
+    public boolean userExists(String email) {
+        return userRepository.findByEmail(email) != null;
+    }
 }

@@ -11,16 +11,9 @@ import Calendar from "@/app/components/_Dashboard-Elements/Calendar";
 
 const headerText = Poppins({subsets: ['latin'], weight: '900'});
 
-interface PageProps {
-    params: {
-        org: string;
-    };
-}
-
-const Dashboard: FC<PageProps> = ({params}) => {
+const Dashboard = () => {
     const [displayName, setDisplayName] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
-    const orgName: string = params.org;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,17 +22,11 @@ const Dashboard: FC<PageProps> = ({params}) => {
                 const accessToken = Cookies.get('azionAccessToken');
                 if (refreshToken && accessToken) {
                     await sessionCheck();
-                    const [userData, orgNameResult] = await Promise.all([
+                    const [userData] = await Promise.all([
                         UserData(),
-                        getOrgName(),
                     ]);
-
                     setDisplayName(userData.name);
-                    if (orgNameResult && orgNameResult !== orgName) {
-                        window.location.href = `/dashboard/${orgNameResult}`;
-                    } else {
-                        setLoading(false);
-                    }
+                    setLoading(false);
                 } else {
                     window.location.href = '/login';
                 }
@@ -50,7 +37,7 @@ const Dashboard: FC<PageProps> = ({params}) => {
         };
 
         fetchData();
-    }, [orgName]);
+    }, []);
 
     return (
         <>

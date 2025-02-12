@@ -69,7 +69,7 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({ RoleName }) => {
     const handleReset = () => {
         // Reset all toggles to false
         setAccessFields(Array(8).fill(false));
-        setBinaryString("");
+        setBinaryString(" ");
     };
 
     return (

@@ -176,7 +176,7 @@ const Register_Organisation = () => {
 
                     {isSubmitted ? (
                         <div className="fixed inset-10 flex justify-center items-center z-50">
-                            <ConString value={conString} name={name}/>
+                            <ConString value={conString}/>
                         </div>
                     ) : (
                         <div className="w-full md:w-10/12 lg:w-[30vw] flex flex-col justify-center items-center gap-3">
