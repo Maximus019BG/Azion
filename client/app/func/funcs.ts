@@ -347,21 +347,22 @@ const canEditCalendar = async ():Promise<boolean|undefined>  =>{
 const roleExists = async (roleName: string) => {
     const data = {roleName: roleName};
     try {
-        const response: AxiosResponse<Role[]> = await axios.get(
-            `${apiUrl}/org/list/roles/${Cookies.get("azionAccessToken")}`,
+        const response: AxiosResponse<Role> = await axios.get(
+            `${apiUrl}/org/get/role/${roleName}`,
             {
                 headers: {
                     "Content-Type": "application/json",
+                    authorization: Cookies.get("azionAccessToken"),
                 },
             }
         );
-        if(response.data.length === 0){
+        if(response.status !== 200){
             return false;
         }
         //Check role in list
-        return response.data.some((role: Role) => role.name === roleName);
+         return response.data.name === roleName;
     } catch (error) {
-        return false;
+         return false;
     }
 }
 

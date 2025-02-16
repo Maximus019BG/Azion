@@ -132,6 +132,7 @@ public class UserService {
     /// Employees               employees:read
     ///
     /// Roles                   roles:write     roles:read
+    ///
     /// Create Tasks            tasks:write
     ///
     /// View Tasks              tasks:read
@@ -156,9 +157,15 @@ public class UserService {
     
     //Give new access to a row
     public void updateRoleAccess(String color, String roleName, String roleAccess, String orgId) {
+        if(roleName.equals("owner")) {
+            Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
+            role.setColor(color);
+            return;
+        }
         Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
-        role.setRoleAccess(roleAccess);
         role.setColor(color);
+        role.setRoleAccess(roleAccess);
+      
     }
     
     public String getAccessByRoleName(String roleName, String orgId) {

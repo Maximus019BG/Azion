@@ -444,6 +444,7 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
         if(Objects.equals(roleName, "owner")){
+            userService.updateRoleAccess(request.get("color"), roleName,userService.highestAccess(),user.getOrgid());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
         }
         if(request.get("accessFields") == null){
@@ -452,6 +453,24 @@ public class OrgController {
         
         userService.updateRoleAccess(request.get("color"), roleName,request.get("accessFields"),user.getOrgid());
         return ResponseEntity.ok("Access granted");
+    }
+    
+    @Transactional
+    @GetMapping("/get/role/{roleName}")
+    public ResponseEntity<?> getRoleByName(@PathVariable String roleName, @RequestHeader("authorization") String accessToken){
+        userService.userValid(accessToken);
+        User user = tokenService.getUserFromToken(accessToken);
+        
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        
+        Role role = roleRepository.findByNameAndOrg(roleName,user.getOrgid()).orElse(null);
+        
+        if(role == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Role not found");
+        }
+        return ResponseEntity.ok(convertToRoleDTO(role));
     }
     
     //Update roles and users

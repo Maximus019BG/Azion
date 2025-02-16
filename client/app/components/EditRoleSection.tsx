@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from "react";
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
+import ColorPicker from "@/app/components/_roles/ColorPicker";
+import {Role} from "@/app/types/types";
 
 interface EditRoleSectionProps {
     RoleName: string;
@@ -9,8 +11,8 @@ interface EditRoleSectionProps {
 
 const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
     const [accessFields, setAccessFields] = useState<boolean[]>(Array(8).fill(false));
-    const [color, setColor] = useState<string>("#2563eb");
     const [isSaveEnabled, setIsSaveEnabled] = useState<boolean>(false);
+    const [color, setColor] = useState<string>("#2563eb");
 
     const permissions = [
         "calendar:write",
@@ -26,16 +28,19 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
     useEffect(() => {
         const fetchRoleAccess = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/org/role/access/${RoleName}`, {
+                const response: AxiosResponse<Role> = await axios.get(`${apiUrl}/org/get/role/${RoleName}`, {
                     headers: {
                         authorization: Cookies.get("azionAccessToken") || "",
                     },
                 });
 
-                const accessBinaryString: string = response.data.toString();
-                const updatedFields = permissions.map(permission => accessBinaryString.includes(permission));
-
-                setAccessFields(updatedFields);
+                // @ts-ignore
+                const accessBinaryString: string = response.data.roleAccess.toString();
+                const updatedFields = permissions.map(permission => accessBinaryString?.includes(permission));
+                setColor(response.data.color);
+                if (updatedFields) {
+                    setAccessFields(updatedFields);
+                }
             } catch (error) {
                 console.error("Error fetching role access:", error);
             }
@@ -48,11 +53,6 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
         const updatedFields = [...accessFields];
         updatedFields[index] = !updatedFields[index];
         setAccessFields(updatedFields);
-        setIsSaveEnabled(true);
-    };
-
-    const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setColor(e.target.value);
         setIsSaveEnabled(true);
     };
 
@@ -76,63 +76,71 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
         setIsSaveEnabled(false);
     };
 
-    return (
-        <div className="h-fit w-full flex flex-col justify-center items-center space-y-4 p-4">
-            {[
-                {label: "Calendar"},
-                {label: "Settings"},
-                {label: "Employees"},
-                {label: "Roles"},
-                {label: "Create Tasks"},
-                {label: "View Tasks"},
-                {label: "Azion Cameras (Write)"},
-                {label: "Azion Cameras (Read)"},
-            ].map((field, index) => (
-                <div
-                    key={index}
-                    className="flex justify-between items-center w-full max-w-md p-4 bg-gray-800 rounded-md shadow-md"
-                >
-                    <h1 className="text-white text-lg">{field.label}</h1>
-                    <input
-                        className={`toggle ${accessFields[index] ? "toggle-accent" : ""}`}
-                        type="checkbox"
-                        checked={accessFields[index]}
-                        onChange={() => handleToggle(index)}
-                    />
-                </div>
-            ))}
+    const permissionFields = [
+        { label: "Add Meetings/Events", description: "Allows creating and scheduling meetings or events." },
+        { label: "Edit Organization Settings", description: "Gives access to modify organization-wide settings." },
+        { label: "View Employees Data", description: "Allows viewing details of employees in the system." },
+        { label: "Change Roles and Permissions", description: "Grants the ability to assign roles and modify access rights." },
+        { label: "Create Tasks", description: "Enables users to create and assign tasks." },
+        { label: "View Tasks", description: "Allows users to view and track assigned tasks." },
+        { label: "Add Azion Cameras", description: "Permission to integrate and add Azion security cameras." },
+        { label: "Read Logs on Azion Cameras", description: "Enables access to view and analyze security camera logs." }
+    ];
 
-            <div className="flex flex-col items-center">
-                <h2 className="text-white text-lg mb-2">Select Role Color</h2>
-                <div className="relative">
-                    <input
-                        type="color"
-                        value={color}
-                        onChange={handleColorChange}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    />
+    return (
+        <div className="h-fit w-full flex flex-row justify-center items-center space-y-4 p-4">
+            {/* Permissions Panel */}
+            <div className="h-fit border-2 border-slate-700 rounded-md w-3/4 flex flex-col justify-center items-center">
+                {permissionFields.map((field, index) => (
                     <div
-                        className="w-32 h-32 rounded-md"
-                        style={{backgroundColor: color}}
-                    />
-                </div>
+                        key={index}
+                        className={`flex flex-col w-full p-4 ${index !== permissionFields.length - 1 ? "border-b-2 border-b-slate-700" : ""}`}
+                    >
+                        {/* Toggle and Label */}
+                        <div className="flex justify-between items-center content-center">
+                            <div className="flex flex-col">
+                                <h1 className="text-white text-lg">{field.label}</h1>
+                                {/* Description */}
+                                <p className="text-gray-400 text-xs">{field.description}</p>
+                            </div>
+                            <input
+                                className={`self-center toggle ${RoleName !== "owner" ? "":"disabled cursor-not-allowed"} ${accessFields[index] ? "toggle-accent" : ""}`}
+                                type="checkbox"
+                                checked={accessFields[index]}
+                                disabled={RoleName === "owner"}
+                                onChange={() => handleToggle(index)}
+                            />
+                        </div>
+
+                    </div>
+                ))}
             </div>
 
-            <button
-                className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700"
-                onClick={handleReset}
-            >
-                Reset
-            </button>
-            {isSaveEnabled && (
-                <button
-                    className={`mt-4 px-4 py-2 rounded-md shadow-md bg-accent text-white hover:bg-lightAccent`}
-                    onClick={handleSave}
-                    disabled={!isSaveEnabled}
-                >
-                    Save
-                </button>
-            )}
+            {/* Color Picker & Action Buttons */}
+            <div className="flex flex-col space-y-6 items-center w-1/4 ml-2 h-full">
+                <div className="ml-4 w-full">
+                    <ColorPicker color={color} setColor={setColor} setIsSaveEnabled={setIsSaveEnabled} />
+                </div>
+
+                {/* Reset & Save Buttons */}
+                <div className="flex flex-row space-x-4 justify-center items-center w-full">
+                    <button
+                        className="py-2 px-4 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700 w-1/2 h-full"
+                        onClick={handleReset}
+                    >
+                        Reset
+                    </button>
+                    {isSaveEnabled && (
+                        <button
+                            className="py-2 px-4 bg-accent text-white rounded-md shadow-md hover:bg-lightAccent w-1/2 h-full"
+                            onClick={handleSave}
+                            disabled={!isSaveEnabled}
+                        >
+                            Save
+                        </button>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };
