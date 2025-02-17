@@ -91,37 +91,37 @@ const Register_Organisation = () => {
 
     const inputFields = [
         {
-            label: "Organization Name:",
+            label: "Organization Name",
             value: name,
             onChange: setName,
             type: "text",
         },
         {
-            label: "Organization Email:",
+            label: "Organization Email",
             value: email,
             onChange: setEmail,
             type: "email",
         },
         {
-            label: "Organization Address:",
+            label: "Organization Address",
             value: address,
             onChange: setAddress,
             type: "text",
         },
         {
-            label: "Organization Phone:",
+            label: "Organization Phone",
             value: phone,
             onChange: setPhone,
             type: "text",
         },
         {
-            label: "Type of Organization:",
+            label: "Type of Organization",
             value: type,
             onChange: setType,
             type: "text",
         },
         {
-            label: "Organization Description:",
+            label: "Organization Description",
             value: description,
             onChange: setDescription,
             type: "text",
