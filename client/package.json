@@ -28,6 +28,7 @@
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-navigation-menu": "^1.2.0",
     "@radix-ui/react-separator": "^1.1.0",
+    "@radix-ui/react-slot": "^1.1.2",
     "@react-three/fiber": "^8.17.7",
     "@react-three/rapier": "^1.4.0",
     "@stomp/stompjs": "^7.0.0",
