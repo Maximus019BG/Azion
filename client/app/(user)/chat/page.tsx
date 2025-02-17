@@ -1,47 +1,48 @@
-"use client";
-import React, {useEffect, useState} from "react";
-import {Client} from "@stomp/stompjs";
-import SockJS from "sockjs-client";
-import {byteArrayToBase64, sessionCheck, UserData} from "@/app/func/funcs";
-import {apiUrl, chatUrl} from "@/app/api/config";
-import {User} from "@/app/types/types";
-import axios, {AxiosResponse} from "axios";
-import DefaultPic from "@/public/user.png";
-import Cookies from "js-cookie";
-import Image from "next/image";
-import {Decrypt, Encrypt} from "@/app/func/msg";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
-import {getOrgName} from "@/app/func/org";
+"use client"
+import type React from "react"
+import {useEffect, useState} from "react"
+
+import {Client} from "@stomp/stompjs"
+import SockJS from "sockjs-client"
+import {byteArrayToBase64, sessionCheck, UserData} from "@/app/func/funcs"
+import {apiUrl, chatUrl} from "@/app/api/config"
+import type {User} from "@/app/types/types"
+import axios, {type AxiosResponse} from "axios"
+import DefaultPic from "@/public/user.png"
+import Cookies from "js-cookie"
+import Image from "next/image"
+import {Decrypt, Encrypt} from "@/app/func/msg"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {faCircleLeft, faPaperPlane} from "@fortawesome/free-solid-svg-icons"
+import Link from "next/link"
 
 const ChatPage = () => {
-    const [messages, setMessages] = useState<{ content: string; from: string, to: string }[]>([]);
-    const [input, setInput] = useState<string>("");
-    const [client, setClient] = useState<Client | null>(null);
-    const [userEmail, setUserEmail] = useState("");
-    const [users, setUsers] = useState<User[]>([]);
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
-    const [profilePictureSrcs, setProfilePictureSrcs] = useState<{ [key: string]: string }>({});
-    const defaultImageSrc = typeof DefaultPic === 'string' ? DefaultPic : DefaultPic.src;
+    const [messages, setMessages] = useState<{ content: string; from: string; to: string }[]>([])
+    const [input, setInput] = useState<string>("")
+    const [client, setClient] = useState<Client | null>(null)
+    const [userEmail, setUserEmail] = useState("")
+    const [users, setUsers] = useState<User[]>([])
+    const [selectedUser, setSelectedUser] = useState<User | null>(null)
+    const [profilePictureSrcs, setProfilePictureSrcs] = useState<{ [key: string]: string }>({})
+    const defaultImageSrc = typeof DefaultPic === "string" ? DefaultPic : DefaultPic.src
 
     const getProfilePictureSrc = async (profilePicture: string | null): Promise<string | null> => {
         if (profilePicture) {
-            const byteArray = JSON.parse(profilePicture);
-            return await byteArrayToBase64(byteArray);
+            const byteArray = JSON.parse(profilePicture)
+            return await byteArrayToBase64(byteArray)
         }
-        return null;
-    };
+        return null
+    }
 
     useEffect(() => {
-        sessionCheck();
+        sessionCheck()
         UserData().then((data) => {
-            setUserEmail(data.email);
-        });
-    }, []);
+            setUserEmail(data.email)
+        })
+    }, [])
 
     useEffect(() => {
-        if (!userEmail) return;
+        if (!userEmail) return
 
         const GetUsers = async () => {
             try {
@@ -50,113 +51,121 @@ const ChatPage = () => {
                         "Content-Type": "application/json",
                         authorization: Cookies.get("azionAccessToken"),
                     },
-                });
+                })
 
-                const filteredUsers = response.data.filter((user: User) => user.email !== userEmail);
-                setUsers(filteredUsers);
+                const filteredUsers = response.data.filter((user: User) => user.email !== userEmail)
+                setUsers(filteredUsers)
 
                 const picturePromises = filteredUsers.map(async (user: User) => {
-                    const src = await getProfilePictureSrc(user.profilePicture);
-                    return {email: user.email, src};
-                });
+                    const src = await getProfilePictureSrc(user.profilePicture)
+                    return {email: user.email, src}
+                })
 
-                const pictures = await Promise.all(picturePromises);
-                const pictureMap = pictures.reduce((acc, {email, src}) => {
-                    acc[email] = src;
-                    return acc;
-                }, {} as { [key: string]: string });
+                const pictures = await Promise.all(picturePromises)
+                const pictureMap = pictures.reduce(
+                    (acc, {email, src}) => {
+                        acc[email] = src
+                        return acc
+                    },
+                    {} as { [key: string]: string },
+                )
 
-                setProfilePictureSrcs(pictureMap);
+                setProfilePictureSrcs(pictureMap)
             } catch (error: any) {
-                console.error(error.response ? error.response : error);
+                console.error(error.response ? error.response : error)
             }
-        };
+        }
 
-        const socket = new SockJS(`${chatUrl}`);
+        const socket = new SockJS(`${chatUrl}`)
         const stompClient = new Client({
             webSocketFactory: () => socket,
             reconnectDelay: 5000,
             onConnect: () => {
                 stompClient.subscribe(`/user/${userEmail}/private`, (message) => {
                     if (message.body) {
-                        const newMessage = JSON.parse(message.body);
-                        const decryptedContent = Decrypt(newMessage.content);
+                        const newMessage = JSON.parse(message.body)
+                        const decryptedContent = Decrypt(newMessage.content)
                         setMessages((prevMessages) => {
-                            const updatedMessages = [...prevMessages, {content: decryptedContent, from: newMessage.from, to: newMessage.to}];
+                            const updatedMessages = [
+                                ...prevMessages,
+                                {content: decryptedContent, from: newMessage.from, to: newMessage.to},
+                            ]
                             if (updatedMessages.length > 100) {
-                                updatedMessages.shift();
+                                updatedMessages.shift()
                             }
-                            localStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
-                            return updatedMessages;
-                        });
+                            localStorage.setItem("chatMessages", JSON.stringify(updatedMessages))
+                            return updatedMessages
+                        })
                     }
-                });
+                })
             },
             onStompError: (frame) => {
-                console.error('Broker reported error: ' + frame.headers['message']);
-                console.error('Additional details: ' + frame.body);
-            }
-        });
+                console.error("Broker reported error: " + frame.headers["message"])
+                console.error("Additional details: " + frame.body)
+            },
+        })
 
-        stompClient.activate();
-        setClient(stompClient);
-        GetUsers();
+        stompClient.activate()
+        setClient(stompClient)
+        GetUsers()
 
         // Load messages from local storage
-        const savedMessages = localStorage.getItem("chatMessages");
+        const savedMessages = localStorage.getItem("chatMessages")
         if (savedMessages) {
-            setMessages(JSON.parse(savedMessages));
+            setMessages(JSON.parse(savedMessages))
         }
 
         return () => {
-            if (stompClient) stompClient.deactivate();
-        };
-    }, [userEmail]);
+            if (stompClient) stompClient.deactivate()
+        }
+    }, [userEmail])
 
     const sendPrivateMessage = () => {
         if (client && client.connected && selectedUser) {
-            const message = {content: Encrypt(input), from: userEmail, to: selectedUser.email};
-            client.publish({destination: "/app/privateMessage", body: JSON.stringify(message)});
+            const message = {content: Encrypt(input), from: userEmail, to: selectedUser.email}
+            client.publish({destination: "/app/privateMessage", body: JSON.stringify(message)})
             setMessages((prevMessages) => {
-                const updatedMessages = [...prevMessages, {content: input, from: userEmail, to: selectedUser.email}];
+                const updatedMessages = [...prevMessages, {content: input, from: userEmail, to: selectedUser.email}]
                 if (updatedMessages.length > 100) {
-                    updatedMessages.shift();
+                    updatedMessages.shift()
                 }
-                localStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
-                return updatedMessages;
-            });
-            setInput("");
+                localStorage.setItem("chatMessages", JSON.stringify(updatedMessages))
+                return updatedMessages
+            })
+            setInput("")
         }
-    };
+    }
 
     const openChatWindow = (user: User) => {
-        setSelectedUser(user);
-    };
+        setSelectedUser(user)
+    }
 
-    //Enter as submit
-    const onEnter = (e: any) => {
-        if (e.key == 'Enter') {
-            sendPrivateMessage();
+    const onEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            sendPrivateMessage()
         }
     }
 
     return (
-        <div className="flex text-white min-h-screen">
+        <div className="flex flex-col md:flex-row bg-base-300 text-white min-h-screen">
             {/* User List */}
-            <div className="w-1/3 max-w-xs border-r border-gray-600 p-6">
-                <Link className="absolute right-6 top-6" href={`/dashboard`}>
+            <div className="w-full md:w-1/3 lg:w-1/4 border-b md:border-r border-base-100 p-4 md:p-6 overflow-y-auto">
+                <Link className="absolute right-4 top-4 md:right-6 md:top-6" href="/dashboard">
                     <FontAwesomeIcon
-                        className="text-4xl bg-white rounded-full text-lightAccent"
+                        className="text-3xl md:text-4xl bg-accent hover:bg-lightAccent rounded-full text-white p-2 transition-colors duration-200"
                         icon={faCircleLeft}
                     />
                 </Link>
-                <h2 className="text-4xl font-bold mb-6 text-center">Direct Messages</h2>
-                <h3 className="text-lg font-medium mb-4 text-center">Users to Chat:</h3>
-                <div className="space-y-4">
+                <h2 className="text-2xl md:text-4xl font-bold py-5 mb-4 md:mb-6 text-center text-lightAccent">Messages</h2>
+
+                <div className="space-y-3 p-3 h-full border-2 border-base-100">
+                    <h3 className="text-lg font-medium mb-4 text-left text-gray-300">Users to Chat</h3>
                     {users.map((user) => (
                         <div
                             key={user.email}
-                            className="flex items-center space-x-3 cursor-pointer hover:bg-gray-700 rounded-lg p-2 transition"
+                            className={`flex items-center space-x-3 cursor-pointer hover:bg-base-200 rounded-lg p-2 transition-colors duration-200 ${
+                                selectedUser?.email === user.email ? "bg-base-100" : ""
+                            }`}
                             onClick={() => openChatWindow(user)}
                         >
                             <Image
@@ -166,11 +175,11 @@ const ChatPage = () => {
                                 height={40}
                                 className="w-10 h-10 rounded-full"
                                 onError={(e) => {
-                                    e.currentTarget.src = defaultImageSrc;
+                                    e.currentTarget.src = defaultImageSrc
                                 }}
                             />
-                            <span className="text-base hover:text-blue-400">
-                                {user.name} <span className="text-sm text-gray-400">({user.email})</span>
+                            <span className="text-sm md:text-base hover:text-blue-400 transition-colors duration-200">
+                                 {user.name}
                             </span>
                         </div>
                     ))}
@@ -178,80 +187,78 @@ const ChatPage = () => {
             </div>
 
             {/* Chat Area */}
-            <div className="flex-1 p-6">
+            <div className="flex-1 p-4 md:p-6 flex flex-col">
                 {selectedUser ? (
                     <>
-                        <div className="flex items-center mb-6">
+                        <div className="flex items-center mb-4 md:mb-6 p-3 rounded-lg">
                             <Image
                                 src={profilePictureSrcs[selectedUser.email] || defaultImageSrc}
                                 alt={`${selectedUser.name}'s profile`}
-                                width={56}
-                                height={56}
+                                width={48}
+                                height={48}
                                 className="rounded-full mr-3"
                                 onError={(e) => {
-                                    e.currentTarget.src = defaultImageSrc;
+                                    e.currentTarget.src = defaultImageSrc
                                 }}
                             />
-                            <h3 className="text-xl font-semibold text-white">{selectedUser.name}</h3>
+                            <h3 className="text-lg md:text-xl font-semibold text-slate-200">{selectedUser.name}</h3>
                         </div>
 
-                        <div className="h-[77vh] mb-4 border border-gray-600 p-4 rounded-lg bg-gray-800 overflow-y-auto">
+                        <div
+                            className="flex-grow mb-4 border-2 border-base-100 p-4 rounded-lg bg-base-300 overflow-y-auto">
                             <div className="flex flex-col space-y-3">
                                 {messages
-                                    .filter((msg) => (msg.from === selectedUser.email || msg.from === userEmail) && (msg.to === selectedUser.email || msg.to === userEmail))
+                                    .filter(
+                                        (msg) =>
+                                            (msg.from === selectedUser.email || msg.from === userEmail) &&
+                                            (msg.to === selectedUser.email || msg.to === userEmail),
+                                    )
                                     .map((msg, index) => (
-                                        <div
-                                            key={index}
-                                            className={`flex ${msg.from === userEmail ? "justify-end" : "justify-start"}`}
-                                        >
-                                            {msg.from === userEmail && (
+                                        <div key={index}
+                                             className={`flex ${msg.from === userEmail ? "justify-end" : "justify-start"}`}>
+                                            <div
+                                                className={`chat ${msg.from === userEmail ? "chat-end" : "chat-start"}`}
+                                                style={{wordBreak: "break-word", overflowWrap: "break-word"}}
+                                            >
                                                 <div
-                                                    className={`chat chat-end`}
-                                                    style={{wordBreak: "break-word", overflowWrap: "break-word"}}
+                                                    className={`chat-bubble ${
+                                                        msg.from === userEmail ? "chat-bubble-accent" : ""
+                                                    } text-white shadow-lg max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg`}
                                                 >
-                                                    <div
-                                                        className="chat-bubble chat-bubble-accent text-white shadow-lg w-36 flex justify-center items-center rounded-br-none">
-                                                        {msg.content}
-                                                    </div>
-                                                </div>)}
-                                            {msg.from !== userEmail && (
-                                                <div
-                                                    className={`chat chat-start`}
-                                                    style={{wordBreak: "break-word", overflowWrap: "break-word"}}
-                                                >
-                                                    <div
-                                                        className="chat-bubble text-white shadow-lg w-36 flex justify-center items-center rounded-br-none">
-                                                        {msg.content}
-                                                    </div>
-                                                </div>)}
+                                                    {msg.content}
+                                                </div>
+                                            </div>
                                         </div>
                                     ))}
                             </div>
                         </div>
 
-                        <div className="flex items-center border-t border-gray-600 pt-4">
+                        <div className="flex items-center border-t border-base-100 pt-4">
                             <input
-                                className="flex-grow border border-gray-500 rounded-lg p-3 text-sm bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                                className="flex-grow border-2 border-gray-600 rounded-l-lg p-3 text-sm bg-base-100 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                                 type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
-                                onKeyDown={(e) => onEnter(e)}
+                                onKeyDown={onEnter}
                                 placeholder="Type a message..."
                             />
                             <button
                                 onClick={sendPrivateMessage}
-                                className="ml-3 bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition"
+                                className="bg-blue-500 text-white px-4 py-3 rounded-r-lg hover:bg-blue-600 transition-colors duration-200"
                             >
-                                Send
+                                <FontAwesomeIcon icon={faPaperPlane}/>
                             </button>
                         </div>
                     </>
                 ) : (
-                    <div className="text-center text-gray-400 text-lg">Select a user to start chatting.</div>
+                    <div className="flex-grow flex items-center justify-center text-center text-gray-400 text-lg">
+                        Select a user to start chatting.
+                    </div>
                 )}
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default ChatPage;
+export default ChatPage
+

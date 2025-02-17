@@ -266,77 +266,78 @@ const OrgSettingsForm = () => {
                             />
                         </div>
                     </div>
-                </div>
+                    <div className="w-11/12 flex flex-col items-center gap-4 sm:gap-6 md:gap-8">
+                        {madeChange && (
+                            <button
+                                onClick={handleSave}
+                                className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out"
+                            >
+                                Save Changes
+                            </button>
+                        )}
 
-                <div className="flex flex-col items-center gap-4 sm:gap-6 md:gap-8">
-                    {madeChange && (
-                        <button
-                            onClick={handleSave}
-                            className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out"
-                        >
-                            Save Changes
-                        </button>
-                    )}
+                        <div className="w-full flex flex-col justify-center items-center gap-2">
+                            <button
+                                onClick={handleInviteChange}
+                                className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out"
+                            >
+                                Invite
+                            </button>
 
-                    <div className="w-full flex flex-col justify-center items-center gap-2">
-                        <button
-                            onClick={handleInviteChange}
-                            className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out"
-                        >
-                            Invite
-                        </button>
-
-                        <p className="flex justify-center items-center gap-2">
-                            Or join with connection code: {conString}
-                            <span onClick={copyConStr}>
+                            <p className="flex justify-center items-center gap-2">
+                                Or join with connection code: {conString}
+                                <span className="cursor-pointer" onClick={copyConStr}>
                                 <IoCopy/>
                             </span>
-                        </p>
-                    </div>
+                            </p>
+                        </div>
 
-                    {invitePopUp && (
-                        <div
-                            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 transition-opacity duration-300">
+                        {invitePopUp && (
                             <div
-                                className="bg-accent p-6 rounded-lg shadow-lg w-80 sm:w-96 relative transform transition-transform duration-300 scale-95">
-                                <button
-                                    onClick={handleInviteChange}
-                                    className="absolute top-2 right-2 text-xl font-bold text-gray-300 hover:text-gray-100 transition-colors duration-200"
-                                >
-                                    &times;
-                                </button>
+                                className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 transition-opacity duration-300">
+                                <div
+                                    className="bg-accent p-6 rounded-lg shadow-lg w-80 sm:w-96 relative transform transition-transform duration-300 scale-95">
+                                    <button
+                                        onClick={handleInviteChange}
+                                        className="absolute top-2 right-2 text-xl font-bold text-gray-300 hover:text-gray-100 transition-colors duration-200"
+                                    >
+                                        &times;
+                                    </button>
 
-                                <h3 className="text-xl font-semibold mb-4 text-white">Invite people:</h3>
-                                {Object.keys(people).length > 0 ? (
-                                    <ul className="space-y-2">
-                                        {Object.entries(people).map(([email, id]) => (
-                                            <li
-                                                key={id}
-                                                className="flex justify-between cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors duration-200"
-                                                onClick={() => inviteUser(id)}
+                                    <h3 className="text-xl font-semibold mb-4 text-white">Invite people:</h3>
+                                    {Object.keys(people).length > 0 ? (
+                                        <ul className="space-y-2">
+                                            {Object.entries(people).map(([email, id]) => (
+                                                <li
+                                                    key={id}
+                                                    className="flex justify-between cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors duration-200"
+                                                    onClick={() => inviteUser(id)}
+                                                >
+                                                    <h1 className="text-white">{email}</h1>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className="text-gray-400">Nobody to invite</p>
+                                    )}
+                                    <div className="mt-10">
+                                        <h1 className="text-white flex gap-2">
+                                            Or copy
+                                            <button
+                                                onClick={copyLink}
+                                                className="underline text-white hover:text-slate-400 transition-colors duration-200"
                                             >
-                                                <h1 className="text-white">{email}</h1>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p className="text-gray-400">Nobody to invite</p>
-                                )}
-                                <div className="mt-10">
-                                    <h1 className="text-white flex gap-2">
-                                        Or copy
-                                        <button
-                                            onClick={copyLink}
-                                            className="underline text-white hover:text-slate-400 transition-colors duration-200"
-                                        >
-                                            link
-                                        </button>
-                                    </h1>
+                                                link
+                                            </button>
+                                        </h1>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
+
+
             </div>
         </div>
     );
