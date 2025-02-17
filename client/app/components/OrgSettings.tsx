@@ -6,7 +6,7 @@ import {apiUrl, clientUrl} from "@/app/api/config";
 import {OrgConnString} from "@/app/func/org";
 import {PartOfOrg, UserData} from "@/app/func/funcs";
 import {PeopleData} from "@/app/types/types";
-import {IoCopy} from "react-icons/io5";
+import {IoBusiness, IoCall, IoCopy, IoInformationCircle, IoLocation, IoMail, IoPerson} from "react-icons/io5";
 
 const SessionCheck = () => {
     const refreshToken = Cookies.get("azionRefreshToken");
@@ -206,15 +206,21 @@ const OrgSettingsForm = () => {
                         <div
                             className="px-8 py-10 border-b-2 border-base-100 flex justify-evenly items-center gap-6 sm:gap-0">
                             <div className="w-full h-full flex flex-col justify-evenly items-start gap-10">
-                                {["orgName", "orgEmail", "orgPhone"].map((field, index) => (
+                                {[
+                                    {name: "orgName", icon: <IoPerson/>},
+                                    {name: "orgEmail", icon: <IoMail/>},
+                                    {name: "orgPhone", icon: <IoCall/>}
+                                ].map((field, index) => (
                                     <div className="w-full flex justify-evenly items-center group" key={index}>
-                                        <label className="text-base font-medium text-gray-100 capitalize">
-                                            {field.replace("org", "").replace(/([A-Z])/g, " $1")}
+                                        <label
+                                            className="text-base font-medium text-gray-100 capitalize flex items-center gap-2">
+                                            {field.icon}
+                                            {field.name.replace("org", "").replace(/([A-Z])/g, " $1")}
                                         </label>
                                         <input
-                                            name={field}
-                                            type={field === "orgEmail" ? "email" : "text"}
-                                            value={orgData[field]}
+                                            name={field.name}
+                                            type={field.name === "orgEmail" ? "email" : "text"}
+                                            value={orgData[field.name]}
                                             onChange={handleInputChange}
                                             className="text-base mx-4 w-full gap-3 font-bold text-white bg-transparent border-b border-accent focus:outline-none"
                                         />
@@ -225,15 +231,20 @@ const OrgSettingsForm = () => {
                         <div
                             className="px-8 py-10 border-b-2 border-base-100 flex justify-evenly items-center gap-6 sm:gap-0">
                             <div className="w-full h-full flex flex-col justify-evenly items-start gap-10">
-                                {["orgType", "orgAddress"].map((field, index) => (
+                                {[
+                                    {name: "orgType", icon: <IoBusiness/>},
+                                    {name: "orgAddress", icon: <IoLocation/>}
+                                ].map((field, index) => (
                                     <div className="flex items-center group w-full" key={index}>
-                                        <label className="text-base font-medium text-gray-100 capitalize">
-                                            {field.replace("org", "").replace(/([A-Z])/g, " $1")}
+                                        <label
+                                            className="text-base font-medium text-gray-100 capitalize flex items-center gap-2">
+                                            {field.icon}
+                                            {field.name.replace("org", "").replace(/([A-Z])/g, " $1")}
                                         </label>
                                         <input
-                                            name={field}
+                                            name={field.name}
                                             type="text"
-                                            value={orgData[field]}
+                                            value={orgData[field.name]}
                                             onChange={handleInputChange}
                                             className="text-base mx-4 w-full gap-3 font-bold text-white bg-transparent border-b border-accent focus:outline-none"
                                         />
@@ -242,7 +253,10 @@ const OrgSettingsForm = () => {
                             </div>
                         </div>
                         <div className="flex flex-col gap-4 p-4 bg-base-300">
-                            <label className="text-base text-gray-100 font-medium">Description</label>
+                            <label className="text-base text-gray-100 font-medium flex items-center gap-2">
+                                <IoInformationCircle/>
+                                Description
+                            </label>
                             <textarea
                                 name="orgDescription"
                                 value={orgData.orgDescription}
