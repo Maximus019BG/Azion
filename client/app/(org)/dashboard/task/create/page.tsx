@@ -1,49 +1,53 @@
-"use client";
-import React, {FC, useCallback, useEffect, useState} from "react";
-import axios, {AxiosResponse} from "axios";
-import {apiUrl} from "@/app/api/config";
-import Cookies from "js-cookie";
-import {sessionCheck, UserData, UserHasRight} from "@/app/func/funcs";
-import {Poppins} from "next/font/google";
-import SideMenu from "@/app/components/Side-menu";
-import {getOrgName} from "@/app/func/org";
-import Loading from "@/app/components/Loading";
+"use client"
 
-const HeaderText = Poppins({subsets: ["latin"], weight: "600"});
+import {type FC, useCallback, useEffect, useState} from "react"
+import axios, {type AxiosResponse} from "axios"
+import {apiUrl} from "@/app/api/config"
+import Cookies from "js-cookie"
+import {sessionCheck, UserData, UserHasRight} from "@/app/func/funcs"
+import {Poppins} from 'next/font/google'
+import SideMenu from "@/app/components/Side-menu"
+import Loading from "@/app/components/Loading"
+import {Card, CardContent} from "@/components/ui/card"
+import {Input} from "@/components/ui/input"
+import {Textarea} from "@/components/ui/textarea"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
+import {Button} from "@/components/ui/button"
+import {Checkbox} from "@/components/ui/checkbox"
+import {Label} from "@/components/ui/label"
+import {ScrollArea} from "@/components/ui/scroll-area"
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
+import {Calendar} from "@/components/ui/calendar"
+import {format} from "date-fns"
+import {CalendarIcon, CheckCircle2, Users} from 'lucide-react'
+
+const HeaderText = Poppins({subsets: ["latin"], weight: "600"})
 
 interface User {
-    name: string;
-    email: string;
-    age: number;
-    role: string;
-    id: string;
+    name: string
+    email: string
+    age: number
+    role: string
+    id: string
 }
 
-const CreateTask = () => {
-    const [title, setTitle] = useState("");
+const CreateTask: FC = () => {
+    const [title, setTitle] = useState("")
     const [uEmail, setUEmail] = useState("")
-    const [description, setDescription] = useState("");
-    const [priority, setPriority] = useState("LOW");
+    const [description, setDescription] = useState("")
+    const [priority, setPriority] = useState("LOW")
     const [loading, setLoading] = useState<boolean>(true)
-    const [source, setSource] = useState("");
-    const [users, setUsers] = useState<User[]>([]);
-    const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
-    const [selectedMonth, setSelectedMonth] = useState(
-        (new Date().getMonth() + 1).toString().padStart(2, "0")
-    );
-    const [selectedDay, setSelectedDay] = useState(
-        new Date().getDate().toString().padStart(2, "0")
-    );
-    const [selectedYear, setSelectedYear] = useState(
-        new Date().getFullYear().toString()
-    );
-    const [dueDate, setDueDate] = useState(
-        `${selectedMonth}/${selectedDay}/${selectedYear}`
-    );
-    const progress = 0;
-    const status = "Due";
+    const [source, setSource] = useState("")
+    const [users, setUsers] = useState<User[]>([])
+    const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set())
+    const [dueDate, setDueDate] = useState<Date | undefined>(new Date())
+    const progress = 0
+    const status = "Due"
+    const [error, setError] = useState<string | null>(null)
+    const [activeTab, setActiveTab] = useState("details")
 
-    const GetUsers = () => {
+    const GetUsers = useCallback(() => {
+        setError(null)
         axios
             .get(`${apiUrl}/org/list/employees`, {
                 headers: {
@@ -52,316 +56,283 @@ const CreateTask = () => {
                 },
             })
             .then((response: AxiosResponse) => {
-                setUsers(response.data);
+                setUsers(response.data)
             })
             .catch((error) => {
-                console.error(error.response ? error.response : error);
-            });
-    };
+                console.error(error.response ? error.response : error)
+                setError("Failed to fetch users. Please try again.")
+            })
+    }, [])
 
     useEffect(() => {
-        const refreshToken = Cookies.get("azionRefreshToken");
-        const accessToken = Cookies.get("azionAccessToken");
+        const refreshToken = Cookies.get("azionRefreshToken")
+        const accessToken = Cookies.get("azionAccessToken")
         if (refreshToken && accessToken) {
-            sessionCheck();
+            sessionCheck()
         } else if (!accessToken && !refreshToken) {
-            window.location.href = "/login";
+            window.location.href = "/login"
         }
 
-        UserHasRight("tasks:write");
+        UserHasRight("tasks:write")
 
-
-        GetUsers();
+        GetUsers()
         UserData().then((data) => {
-                setUEmail(data.email)
-                setLoading(false)
-        });
-    }, []);
+            setUEmail(data.email)
+            setLoading(false)
+        })
+    }, [GetUsers])
 
     const handleCheckboxChange = (email: string) => {
         setSelectedUsers((prevSelectedUsers) => {
-            const newSelectedUsers = new Set(prevSelectedUsers);
+            const newSelectedUsers = new Set(prevSelectedUsers)
             if (newSelectedUsers.has(email)) {
-                newSelectedUsers.delete(email);
+                newSelectedUsers.delete(email)
             } else {
-                newSelectedUsers.add(email);
+                newSelectedUsers.add(email)
             }
-            return newSelectedUsers;
-        });
-    };
+            return newSelectedUsers
+        })
+    }
 
     const TaskData = async () => {
-        const missingFields = [];
-        if (!title) missingFields.push("Title");
-        if (!description) missingFields.push("Description");
-        if (!source) missingFields.push("Source");
+        setError(null)
+        const missingFields = []
+        if (!title) missingFields.push("Title")
+        if (!description) missingFields.push("Description")
+        if (!source) missingFields.push("Source")
+        if (!dueDate) missingFields.push("Due Date")
 
         if (missingFields.length > 0) {
-            alert("Please fill in the following fields: " + missingFields.join(", "));
-            return;
+            setError(`Please fill in the following fields: ${missingFields.join(", ")}`)
+            return
         }
         const data = {
             accessToken: Cookies.get("azionAccessToken"),
             title,
             description,
-            dueDate,
+            dueDate: dueDate ? format(dueDate, "MM/dd/yyyy") : "",
             priority,
             status,
             progress,
             source,
             users: Array.from(selectedUsers),
-        };
-        axios
-            .post(`${apiUrl}/projects/create/new`, data, {
+        }
+        try {
+            await axios.post(`${apiUrl}/projects/create/new`, data, {
                 headers: {
                     "Content-Type": "application/json",
                 },
             })
-            .then((response: AxiosResponse) => {
-                alert("Task created");
-            })
-            .catch((error) => {
-                alert("Error creating task: " + error.response.data);
-            });
-    };
-
-    const isLeapYear = (year: number): boolean => {
-        return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-    };
-
-    const isValidDate = useCallback((day: string, month: string, year: string): boolean => {
-        const dayInt = parseInt(day);
-        const monthInt = parseInt(month);
-        const yearInt = parseInt(year);
-
-        if (monthInt === 2) {
-            if (isLeapYear(yearInt)) {
-                return dayInt <= 29;
+            alert("Task created successfully!")
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                setError(`Error creating task: ${error.response?.data || "Unknown error"}`)
             } else {
-                return dayInt <= 28;
+                setError("An unexpected error occurred")
             }
         }
+    }
 
-        const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-        return dayInt <= daysInMonth[monthInt - 1];
-    }, []);
-
-    const handleDueDateChange = useCallback(() => {
-        if (isValidDate(selectedDay, selectedMonth, selectedYear)) {
-            setDueDate(`${selectedMonth}/${selectedDay}/${selectedYear}`);
-        } else {
-            alert("Invalid date");
-        }
-    }, [selectedDay, selectedMonth, selectedYear, isValidDate]);
-
-    useEffect(() => {
-        handleDueDateChange();
-    }, [selectedDay, selectedMonth, selectedYear, handleDueDateChange]);
-
-    const months = Array.from({length: 12}, (_, i) =>
-        (i + 1).toString().padStart(2, "0")
-    ).filter(
-        (month) =>
-            parseInt(selectedYear) > new Date().getFullYear() ||
-            parseInt(month) >= new Date().getMonth() + 1
-    );
-
-    const days = Array.from({length: 31}, (_, i) =>
-        (i + 1).toString().padStart(2, "0")
-    ).filter(
-        (day) =>
-            isValidDate(day, selectedMonth, selectedYear) &&
-            (parseInt(selectedMonth) > new Date().getMonth() + 1 ||
-                parseInt(selectedYear) > new Date().getFullYear() ||
-                parseInt(day) >= new Date().getDate())
-    );
-
-    const years = Array.from({length: 11}, (_, i) =>
-        (new Date().getFullYear() + i).toString()
-    );
-
-    const userList = Array.isArray(users) ? users : [];
-    const priorities = ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"];
-
-
+    const userList = Array.isArray(users) ? users : []
+    const priorities = ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
 
     return (
-        <div
-            className="w-full h-dvh flex flex-col lg:flex-row justify-start items-start text-white overflow-hidden">
+        <div className="w-full flex flex-col lg:flex-row min-h-screen bg-base-300 text-white">
             {loading ? (
-                <div className="flex w-screen h-screen items-center justify-center">
+                <div className="flex w-full h-full items-center justify-center">
                     <Loading/>
                 </div>
             ) : (
                 <>
-                    {/* Sidebar */}
-                    <div className=" lg:w-1/4">
+                    <div className="w-full lg:w-1/4 lg:h-full">
                         <SideMenu/>
                     </div>
-
-                    {/* Main Content */}
-                    <div className="flex w-full p-6 overflow-auto">
-
-
-                        <div className="container mx-auto">
-                            <h1 className={`text-3xl md:text-5xl font-bold text-center mb-8 ${HeaderText.className}`}>
-                                Create Task
-                            </h1>
-
-                            <div className="flex flex-col lg:flex-row gap-4">
-                                {/* Users Section */}
-                                <div className="lg:w-1/2 bg-base-300 rounded-xl p-6 shadow-md">
-                                    <h2 className="text-2xl font-semibold mb-4">Select Users</h2>
-                                    <ul className="space-y-3">
-                                        {userList.map((user, index) => (
-                                            <li
-                                                key={index}
-                                                onClick={() => handleCheckboxChange(user.email)}
-                                                className={`p-3 cursor-pointer rounded-lg text-center transition-all ${
-                                                    selectedUsers.has(user.email)
-                                                        ? "bg-blue-600 text-white cursor-pointer"
-                                                        : "bg-base-200 hover:bg-base-100 cursor-pointer"
-                                                }`}
-                                            >
-                                                <label
-                                                    className="flex w-fit justify-between items-center">
-                                                    {user.email === uEmail ? (
-                                                        <>
-                                                            <span>{user.name} (You)</span>
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={selectedUsers.has(user.email)}
-                                                                onChange={() => handleCheckboxChange(user.email)}
-                                                                className="hidden"
-                                                            />
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <span>{user.name}</span>
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={selectedUsers.has(user.email)}
-                                                                onChange={() => handleCheckboxChange(user.email)}
-                                                                className="hidden"
-                                                            />
-                                                        </>
-                                                    )}
-                                                </label>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-
-                                {/* Task Form */}
-                                <div className="lg:w-1/2 bg-base-300 rounded-xl p-6 shadow-md">
-                                    <form
-                                        onSubmit={(e) => {
-                                            e.preventDefault();
-                                            TaskData();
-                                        }}
-                                        className="space-y-6"
-                                    >
-                                        <div>
-                                            <label className="block text-sm font-medium mb-2">Title</label>
-                                            <input
-                                                type="text"
-                                                name="title"
-                                                value={title}
-                                                onChange={(e) => setTitle(e.target.value)}
-                                                className="w-full bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium mb-2">Description</label>
-                                            <textarea
-                                                name="description"
-                                                value={description}
-                                                onChange={(e) => setDescription(e.target.value)}
-                                                className="w-full bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium mb-2">Due Date</label>
-                                            <div className="flex space-x-2">
-                                                <select
-                                                    value={selectedDay}
-                                                    onChange={(e) => setSelectedDay(e.target.value)}
-                                                    className="bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
-                                                >
-                                                    {days.map((day) => (
-                                                        <option key={day} value={day}>
-                                                            {day}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                <select
-                                                    value={selectedMonth}
-                                                    onChange={(e) => setSelectedMonth(e.target.value)}
-                                                    className="bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
-                                                >
-                                                    {months.map((month) => (
-                                                        <option key={month} value={month}>
-                                                            {month}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                <select
-                                                    value={selectedYear}
-                                                    onChange={(e) => setSelectedYear(e.target.value)}
-                                                    className="bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
-                                                >
-                                                    {years.map((year) => (
-                                                        <option key={year} value={year}>
-                                                            {year}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium mb-2">Priority</label>
-                                            <select
-                                                value={priority}
-                                                onChange={(e) => setPriority(e.target.value)}
-                                                className="w-full bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
-                                            >
-                                                {priorities.map((prio) => (
-                                                    <option key={prio} value={prio}>
-                                                        {prio}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium mb-2">Source</label>
-                                            <input
-                                                type="text"
-                                                name="source"
-                                                value={source}
-                                                onChange={(e) => setSource(e.target.value)}
-                                                className="w-full bg-base-100 rounded-md text-white py-2 px-3 focus:ring-2 focus:ring-blue-500"
-                                            />
-                                        </div>
-
-                                        <button
-                                            type="submit"
-                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg"
+                    <div className="w-full h-full flex-1 justify-center items-center p-4 lg:p-8 overflow-auto">
+                        <h1 className={`text-4xl font-bold text-center mb-8 ${HeaderText.className}`}>Create New
+                            Task</h1>
+                        {error && <div className=" text-white p-4 rounded-md mb-4">{error}</div>}
+                        <Card className="w-full max-w-4xl mx-auto border-accent">
+                            <CardContent className="p-6">
+                                <Tabs defaultValue="details" className="w-full" onValueChange={setActiveTab}>
+                                    <TabsList
+                                        className="w-full text-white bg-base-100">
+                                        <TabsTrigger
+                                            value="details"
+                                            className={`w-full h-full text-xs sm:text-base transition duration-200 rounded-md hover:bg-accent ${activeTab === "details" ? "bg-accent" : ""}`}
                                         >
-                                            Create Task
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                                            Task Details
+                                        </TabsTrigger>
+                                        <TabsTrigger
+                                            value="users"
+                                            className={`w-full h-full text-xs sm:text-base transition duration-200 rounded-md hover:bg-accent ${activeTab === "users" ? "bg-accent" : ""}`}
+                                        >
+                                            Assign Users
+                                        </TabsTrigger>
+                                        <TabsTrigger
+                                            value="review"
+                                            className={`w-full h-full text-xs sm:text-base transition duration-200 rounded-md hover:bg-accent ${activeTab === "review" ? "bg-accent" : ""}`}
+                                        >
+                                            Review & Create
+                                        </TabsTrigger>
+                                    </TabsList>
+                                    <TabsContent value="details" className="">
+                                        <form className="space-y-6">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="title">Title</Label>
+                                                <Input
+                                                    id="title"
+                                                    value={title}
+                                                    onChange={(e) => setTitle(e.target.value)}
+                                                    placeholder="Enter task title"
+                                                    className="border-2 border-base-100"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="description">Description</Label>
+                                                <Textarea
+                                                    id="description"
+                                                    value={description}
+                                                    onChange={(e) => setDescription(e.target.value)}
+                                                    placeholder="Enter task description"
+                                                    rows={4}
+                                                    className=" border-2 border-base-100"
+                                                />
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="priority">Priority</Label>
+                                                    <Select value={priority} onValueChange={setPriority}>
+                                                        <SelectTrigger className="border-2 border-base-100">
+                                                            <SelectValue placeholder="Select priority"/>
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-base-300 border-2 border-base-100">
+                                                            {priorities.map((prio) => (
+                                                                <SelectItem key={prio} value={prio}
+                                                                            className="cursor-pointer">
+                                                                    {prio}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="source">Source</Label>
+                                                    <Input
+                                                        id="source"
+                                                        value={source}
+                                                        onChange={(e) => setSource(e.target.value)}
+                                                        placeholder="Enter task source"
+                                                        className="border-2 border-base-100"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2 flex flex-col ">
+                                                <Label>Due Date</Label>
+                                                <div className="flex items-center">
+                                                    <Button
+                                                        variant="outline"
+                                                        className={`w-full justify-start text-left font-normal ${!dueDate && "text-muted-foreground"} border-2 border-base-100`}
+                                                        onClick={(e) => e.preventDefault()}
+                                                    >
+                                                        <CalendarIcon className="mr-2 h-4 w-4"/>
+                                                        {dueDate ? format(dueDate, "PPP") : <span>Pick a date</span>}
+                                                    </Button>
+                                                </div>
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={dueDate}
+                                                    onSelect={setDueDate}
+                                                    className="flex justify-center items-center w-fit rounded-md border-2 mt-2 border-base-100"
+                                                />
+                                            </div>
+                                        </form>
+                                    </TabsContent>
+                                    <TabsContent value="users" className="">
+                                        <div className="space-y-4">
+                                            <div className="flex items-center space-x-2">
+                                                <Users className="h-5 w-5"/>
+                                                <h3 className="text-lg font-semibold">Assign Team Members</h3>
+                                            </div>
+                                            <ScrollArea className="h-[300px] rounded-md p-4 shadow-2xl">
+                                                <div className="space-y-4">
+                                                    {userList.map((user, index) => (
+                                                        <div key={index} className="flex items-center space-x-2">
+                                                            <Checkbox
+                                                                id={`user-${user.email}`}
+                                                                checked={selectedUsers.has(user.email)}
+                                                                onCheckedChange={() => handleCheckboxChange(user.email)}
+                                                                className="border-base-100"
+                                                            />
+                                                            <Label htmlFor={`user-${user.email}`}
+                                                                   className="flex items-center space-x-2">
+                                                                <span>{user.email === uEmail ? `${user.name} (You)` : user.name}</span>
+                                                                {user.email === uEmail && (
+                                                                    <span
+                                                                        className="text-xs bg-accent px-2 py-1 rounded-full">
+                                    You
+                                  </span>
+                                                                )}
+                                                            </Label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </ScrollArea>
+                                        </div>
+                                    </TabsContent>
+                                    <TabsContent value="review" className="border-accent">
+                                        <div className="space-y-6">
+                                            <div className="space-y-2">
+                                                <h3 className="text-lg font-semibold">Task Summary</h3>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <p className="text-sm text-muted-foreground">Title</p>
+                                                        <p>{title || "Not set"}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm text-muted-foreground">Priority</p>
+                                                        <p>{priority}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm text-muted-foreground">Due Date</p>
+                                                        <p>{dueDate ? format(dueDate, "PPP") : "Not set"}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm text-muted-foreground">Source</p>
+                                                        <p>{source || "Not set"}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <h4 className="text-sm font-semibold">Description</h4>
+                                                <p className="text-sm">{description || "No description provided"}</p>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <h4 className="text-sm font-semibold">Assigned Users</h4>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {Array.from(selectedUsers).map((email) => (
+                                                        <span
+                                                            key={email}
+                                                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent"
+                                                        >
+                              {email}
+                            </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <Button onClick={TaskData} className="w-full bg-accent">
+                                                <CheckCircle2 className="mr-2 h-4 w-4"/>
+                                                Create Task
+                                            </Button>
+                                        </div>
+                                    </TabsContent>
+                                </Tabs>
+                            </CardContent>
+                        </Card>
                     </div>
                 </>
             )}
         </div>
-    );
-};
+    )
+}
 
-export default CreateTask;
+export default CreateTask
