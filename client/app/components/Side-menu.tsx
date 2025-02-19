@@ -26,10 +26,10 @@ const SideMenu = () => {
     const [isDashboardOpen, setIsDashboardOpen] = useState(false);
     const [isTasksOpen, setIsTasksOpen] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [access, setAccess] = useState<string>("")
+    const [access, setAccess] = useState<string>("");
 
     useEffect(() => {
-          const PageAccess = async () => {
+        const PageAccess = async () => {
             const userData = await UserData();
             setAccess(userData.access);
         };
@@ -106,7 +106,7 @@ const SideMenu = () => {
                 <ul className="menu bg-base-300 text-base-content min-h-full w-80 p-6 flex flex-col justify-center items-start">
                     {/* Sidebar content */}
                     <div className="w-full flex flex-col justify-center items-start gap-4">
-                        {/* Conditionally render Dashboard and Tasks sections */}
+                        {access ? (
                             <>
                                 {/* Dashboard Dropdown */}
                                 <li className="text-md w-full relative">
@@ -225,6 +225,10 @@ const SideMenu = () => {
                                     )}
                                 </li>
                             </>
+                        ) : (
+                            <>
+                            </>
+                        )}
 
                         {(access.includes("cameras:read") || access.includes("cameras:write")) && (
                             <>

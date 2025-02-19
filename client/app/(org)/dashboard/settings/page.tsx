@@ -1,15 +1,13 @@
 "use client";
-import React, {FC, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import SideMenu from "@/app/components/Side-menu";
 import {PartOfOrg, sessionCheck, UserData, UserHasRight} from "@/app/func/funcs";
 import Cookies from "js-cookie";
 import {Poppins} from "next/font/google";
 import OrgSettingsForm from "@/app/components/OrgSettings";
-import {getOrgName} from "@/app/func/org";
 import Loading from "@/app/components/Loading";
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
-
 
 
 const OrgSettings = () => {
@@ -42,15 +40,15 @@ const OrgSettings = () => {
     return (
         <>
             {loading ? (
-                <div className="w-screen h-screen flex justify-center items-end">
+                <div className="w-full h-dvh flex justify-center items-end">
                     <Loading/>
                 </div>
             ) : (
-                <div className="w-screen h-screen flex flex-col lg:flex-row overflow-y-hidden">
+                <div className="w-full h-dvh flex flex-col lg:flex-row overflow-y-hidden">
                     <div className="w-full lg:w-1/4 h-full">
                         <SideMenu/>
                     </div>
-                    <div className="w-full h-full flex justify-center items-center p-6 lg:p-10">
+                    <div className="w-full h-full flex justify-center items-center p-6 lg:p-10 overflow-auto">
                         <OrgSettingsForm/>
                     </div>
                 </div>

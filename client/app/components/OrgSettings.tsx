@@ -266,7 +266,7 @@ const OrgSettingsForm = () => {
                             />
                         </div>
                     </div>
-                    <div className="w-11/12 flex flex-col items-center gap-4 sm:gap-6 md:gap-8">
+                    <div className="w-11/12 h-fit flex flex-col items-center gap-4 sm:gap-6 md:gap-8">
                         {madeChange && (
                             <button
                                 onClick={handleSave}
