@@ -5,7 +5,7 @@ import axios, {type AxiosResponse} from "axios"
 import {apiUrl} from "@/app/api/config"
 import Cookies from "js-cookie"
 import {sessionCheck, UserData, UserHasRight} from "@/app/func/funcs"
-import {Poppins} from 'next/font/google'
+import {Poppins} from "next/font/google"
 import SideMenu from "@/app/components/Side-menu"
 import Loading from "@/app/components/Loading"
 import {Card, CardContent} from "@/components/ui/card"
@@ -19,7 +19,7 @@ import {ScrollArea} from "@/components/ui/scroll-area"
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import {Calendar} from "@/components/ui/calendar"
 import {format} from "date-fns"
-import {CalendarIcon, CheckCircle2, Users} from 'lucide-react'
+import {ArrowLeft, ArrowRight, CalendarIcon, CheckCircle2, Users} from "lucide-react"
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"})
 
@@ -136,6 +136,23 @@ const CreateTask: FC = () => {
     const userList = Array.isArray(users) ? users : []
     const priorities = ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
 
+    const tabOrder = ["details", "users", "review"]
+
+    const handleNextTab = () => {
+        const currentIndex = tabOrder.indexOf(activeTab)
+        if (currentIndex < tabOrder.length - 1) {
+            setActiveTab(tabOrder[currentIndex + 1])
+        }
+    }
+
+    const handlePreviousTab = () => {
+        const currentIndex = tabOrder.indexOf(activeTab)
+        if (currentIndex > 0) {
+            setActiveTab(tabOrder[currentIndex - 1])
+        }
+    }
+
+
     return (
         <div className="w-full flex flex-col lg:flex-row min-h-screen bg-base-300 text-white">
             {loading ? (
@@ -150,35 +167,42 @@ const CreateTask: FC = () => {
                     <div className="w-full h-full flex-1 justify-center items-center p-4 lg:p-8 overflow-auto">
                         <h1 className={`text-4xl font-bold text-center mb-8 ${HeaderText.className}`}>Create New
                             Task</h1>
-                        {error && <div className=" text-white p-4 rounded-md mb-4">{error}</div>}
+                        {error && <div className="bg-accent text-white p-4 rounded-md mb-4">{error}</div>}
                         <Card className="w-full max-w-4xl mx-auto border-accent">
                             <CardContent className="p-6">
-                                <Tabs defaultValue="details" className="w-full" onValueChange={setActiveTab}>
-                                    <TabsList
-                                        className="w-full text-white bg-base-100">
+                                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                                    <TabsList className="w-full text-white bg-base-100">
                                         <TabsTrigger
                                             value="details"
-                                            className={`w-full h-full text-xs sm:text-base transition duration-200 rounded-md hover:bg-accent ${activeTab === "details" ? "bg-accent" : ""}`}
+                                            className={`w-full h-full text-xs sm:text-base transition duration-200 rounded-md ${
+                                                activeTab === "details" ? "bg-accent text-white" : "hover:bg-accent"
+                                            }`}
                                         >
                                             Task Details
                                         </TabsTrigger>
                                         <TabsTrigger
                                             value="users"
-                                            className={`w-full h-full text-xs sm:text-base transition duration-200 rounded-md hover:bg-accent ${activeTab === "users" ? "bg-accent" : ""}`}
+                                            className={`w-full h-full text-xs sm:text-base transition duration-200 rounded-md ${
+                                                activeTab === "users" ? "bg-accent text-white" : "hover:bg-accent"
+                                            }`}
                                         >
                                             Assign Users
                                         </TabsTrigger>
                                         <TabsTrigger
                                             value="review"
-                                            className={`w-full h-full text-xs sm:text-base transition duration-200 rounded-md hover:bg-accent ${activeTab === "review" ? "bg-accent" : ""}`}
+                                            className={`w-full h-full text-xs sm:text-base transition duration-200 rounded-md ${
+                                                activeTab === "review" ? "bg-accent text-white" : "hover:bg-accent"
+                                            }`}
                                         >
                                             Review & Create
                                         </TabsTrigger>
                                     </TabsList>
-                                    <TabsContent value="details" className="">
+                                    <TabsContent value="details" className="space-y-6">
                                         <form className="space-y-6">
                                             <div className="space-y-2">
-                                                <Label htmlFor="title">Title</Label>
+                                                <Label htmlFor="title">
+                                                    Title <span className="text-red-500">*</span>
+                                                </Label>
                                                 <Input
                                                     id="title"
                                                     value={title}
@@ -188,7 +212,9 @@ const CreateTask: FC = () => {
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="description">Description</Label>
+                                                <Label htmlFor="description">
+                                                    Description <span className="text-red-500">*</span>
+                                                </Label>
                                                 <Textarea
                                                     id="description"
                                                     value={description}
@@ -216,7 +242,9 @@ const CreateTask: FC = () => {
                                                     </Select>
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label htmlFor="source">Source</Label>
+                                                    <Label htmlFor="source">
+                                                        Source <span className="text-red-500">*</span>
+                                                    </Label>
                                                     <Input
                                                         id="source"
                                                         value={source}
@@ -227,7 +255,9 @@ const CreateTask: FC = () => {
                                                 </div>
                                             </div>
                                             <div className="space-y-2 flex flex-col ">
-                                                <Label>Due Date</Label>
+                                                <Label>
+                                                    Due Date <span className="text-red-500">*</span>
+                                                </Label>
                                                 <div className="flex items-center">
                                                     <Button
                                                         variant="outline"
@@ -246,8 +276,19 @@ const CreateTask: FC = () => {
                                                 />
                                             </div>
                                         </form>
+                                        <div className="flex justify-between mt-4">
+                                            <Button onClick={handlePreviousTab} disabled={activeTab === "details"}
+                                                    className="bg-accent">
+                                                <ArrowLeft className="mr-2 h-4 w-4"/>
+                                                Back
+                                            </Button>
+                                            <Button onClick={handleNextTab} className="bg-accent">
+                                                Next
+                                                <ArrowRight className="ml-2 h-4 w-4"/>
+                                            </Button>
+                                        </div>
                                     </TabsContent>
-                                    <TabsContent value="users" className="">
+                                    <TabsContent value="users" className="space-y-4">
                                         <div className="space-y-4">
                                             <div className="flex items-center space-x-2">
                                                 <Users className="h-5 w-5"/>
@@ -268,9 +309,7 @@ const CreateTask: FC = () => {
                                                                 <span>{user.email === uEmail ? `${user.name} (You)` : user.name}</span>
                                                                 {user.email === uEmail && (
                                                                     <span
-                                                                        className="text-xs bg-accent px-2 py-1 rounded-full">
-                                    You
-                                  </span>
+                                                                        className="text-xs bg-accent px-2 py-1 rounded-full">You</span>
                                                                 )}
                                                             </Label>
                                                         </div>
@@ -278,8 +317,18 @@ const CreateTask: FC = () => {
                                                 </div>
                                             </ScrollArea>
                                         </div>
+                                        <div className="flex justify-between mt-4">
+                                            <Button onClick={handlePreviousTab} className="bg-accent">
+                                                <ArrowLeft className="mr-2 h-4 w-4"/>
+                                                Back
+                                            </Button>
+                                            <Button onClick={handleNextTab} className="bg-accent">
+                                                Next
+                                                <ArrowRight className="ml-2 h-4 w-4"/>
+                                            </Button>
+                                        </div>
                                     </TabsContent>
-                                    <TabsContent value="review" className="border-accent">
+                                    <TabsContent value="review" className="space-y-6">
                                         <div className="space-y-6">
                                             <div className="space-y-2">
                                                 <h3 className="text-lg font-semibold">Task Summary</h3>
@@ -319,10 +368,16 @@ const CreateTask: FC = () => {
                                                     ))}
                                                 </div>
                                             </div>
-                                            <Button onClick={TaskData} className="w-full bg-accent">
-                                                <CheckCircle2 className="mr-2 h-4 w-4"/>
-                                                Create Task
-                                            </Button>
+                                            <div className="flex justify-between mt-4">
+                                                <Button onClick={handlePreviousTab} className="bg-accent">
+                                                    <ArrowLeft className="mr-2 h-4 w-4"/>
+                                                    Back
+                                                </Button>
+                                                <Button onClick={TaskData} className="bg-accent">
+                                                    <CheckCircle2 className="mr-2 h-4 w-4"/>
+                                                    Create Task
+                                                </Button>
+                                            </div>
                                         </div>
                                     </TabsContent>
                                 </Tabs>
@@ -336,3 +391,4 @@ const CreateTask: FC = () => {
 }
 
 export default CreateTask
+
