@@ -194,7 +194,7 @@ const OrgSettingsForm = () => {
     return (
         <div className="w-full h-dvh">
             <div>
-                <h2 className="text-3xl sm:text-4xl font-semibold text-white p-8 md:p-16">
+                <h2 className="text-3xl sm:text-4xl font-semibold text-center w-full text-white p-8 md:p-16">
                     Organization Settings
                 </h2>
             </div>
@@ -266,7 +266,7 @@ const OrgSettingsForm = () => {
                             />
                         </div>
                     </div>
-                    <div className="w-11/12 h-fit flex flex-col items-center gap-4 sm:gap-6 md:gap-8">
+                    <div className="w-full space-y-5 max-w-3xl mx-auto">
                         {madeChange && (
                             <button
                                 onClick={handleSave}
