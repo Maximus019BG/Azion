@@ -33,6 +33,10 @@
             <id>google-api-services-beta</id>
             <url>http://google-api-client-libraries.appspot.com/mavenrepo</url>
         </repository>
+        <repository>
+            <id>flywaydb</id>
+            <url>https://repo.flywaydb.org/release</url> <!-- Example repository URL -->
+        </repository>
     </repositories>
 
     <dependencies>
@@ -90,31 +94,15 @@
             <version>6.1.6</version>
             <scope>test</scope>
         </dependency>
-        <!--         <dependency>
-            <groupId>com.google.api-client</groupId>
-            <artifactId>google-api-client-java6</artifactId>
-            <version>1.12.0-beta</version>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>10.8.1</version>
         </dependency>
         <dependency>
-            <groupId>com.google.oauth-client</groupId>
-            <artifactId>google-oauth-client-jetty</artifactId>
-            <version>1.12.0-beta</version>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.google.oauth-client</groupId>
-            <artifactId>google-oauth-client</artifactId>
-            <version>1.33.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.http-client</groupId>
-            <artifactId>google-http-client</artifactId>
-            <version>1.40.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.http-client</groupId>
-            <artifactId>google-http-client-jackson2</artifactId>
-            <version>1.40.1</version>
-        </dependency>-->
         <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>

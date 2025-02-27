@@ -78,7 +78,7 @@ public class MeetingController {
         userService.userValid(token); //Token validation
         User user = tokenService.getUserFromToken(token);
         List<MeetingDTO> meetings = meetingService.getMeetings(user);
-        log.info("Meetings: {}", meetings.toString());
+        log.debug("Meetings: {}", meetings.toString());
         return ResponseEntity.ok().body(meetings);
     }
     
