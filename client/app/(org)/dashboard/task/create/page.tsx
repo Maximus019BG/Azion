@@ -153,7 +153,7 @@ const CreateTask: FC = () => {
     }
 
     return (
-        <div className="w-full flex flex-col lg:flex-row min-h-screen bg-base-300 text-white">
+        <div className="w-full flex flex-col lg:flex-row min-h-screen text-white">
             {loading ? (
                 <div className="flex w-full h-full items-center justify-center">
                     <Loading/>
@@ -168,7 +168,7 @@ const CreateTask: FC = () => {
                         <h1 className={`text-4xl font-bold text-center mb-8 ${HeaderText.className}`}>Create New
                             Task</h1>
                         {error && <div className="bg-accent text-white p-4 rounded-md mb-4">{error}</div>}
-                        <Card className="w-full max-w-4xl mx-auto border-accent">
+                        <Card className="w-full bg-base-300 max-w-4xl mx-auto border-accent">
                             <CardContent className="p-6">
                                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                                     <TabsList className="w-full text-white bg-base-100">
