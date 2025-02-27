@@ -8,6 +8,8 @@ import java.util.zip.GZIPInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -123,12 +125,5 @@ public class UserUtility {
         return array;
     }
     
-    public static String encryptGoogleSecret(String secret) throws Exception {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key, ALGORITHM);
-        Cipher cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
-        byte[] encryptedValue = cipher.doFinal(secret.getBytes(StandardCharsets.UTF_8));
-        return Base64.getEncoder().encodeToString(encryptedValue);
-    }
     
 }

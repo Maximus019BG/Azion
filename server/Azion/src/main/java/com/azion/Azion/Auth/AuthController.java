@@ -89,6 +89,7 @@ public class AuthController {
         tokenRequest.put("redirect_uri", redirectUri);
         tokenRequest.put("grant_type", "authorization_code");
         
+        //Change auth code for token
         try {
             URL url = new URL(tokenEndpoint);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -110,10 +111,12 @@ public class AuthController {
                 os.flush();
             }
             
+            //Get response
             int responseCode = connection.getResponseCode();
             ObjectMapper objectMapper = new ObjectMapper();
             
             if (responseCode == 200) {
+                //Extract token
                 Map<String, Object> tokenResponse = objectMapper.readValue(connection.getInputStream(), Map.class);
                 
                 String accessToken = (String) tokenResponse.get("access_token");
@@ -128,19 +131,19 @@ public class AuthController {
                     
                     Map<String, Object> userInfo = objectMapper.readValue(userInfoConnection.getInputStream(), Map.class);
                     
-                    // Extract user information
+                    //Get user information
                     String email = (String) userInfo.get("email");
                     String name = (String) userInfo.get("name");
                     String pictureUrl = (String) userInfo.get("picture");
                     
-                    // Check if user already exists
+                    //Check if user already exists
                     User user = userRepository.findByEmail(email);
                     if (user == null) {
-                        // Create new user
+                        //Create new user
                         user = new User();
                         user.setEmail(email);
                         user.setName(name);
-                        user.setPassword(""); // Google users don't have a password
+                        user.setPassword(""); //Google users don't have a password
                         user.setMfaEnabled(false);
                         user.setRole(null);
                         
@@ -180,11 +183,11 @@ public class AuthController {
                         userRepository.save(user);
                     }
                     
-                    // Generate tokens
+                    //Generate tokens
                     String azionAccessToken = tokenService.generateToken(ACCESS_TOKEN, user, System.getProperty("issuerName"), UserAgent);
                     String azionRefreshToken = tokenService.generateToken(REFRESH_TOKEN, user, System.getProperty("issuerName"), UserAgent);
                     
-                    // Create response
+                    //Create response
                     Map<String, Object> response = new HashMap<>();
                     response.put("accessToken", azionAccessToken);
                     response.put("refreshToken", azionRefreshToken);
