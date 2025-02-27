@@ -155,7 +155,7 @@ const RoleList = () => {
     }
 
     return (
-        <div className="w-full max-w-4xl p-4 sm:p-6 md:p-8 space-y-8 sm:space-y-12">
+        <div className="w-full bg-base-300 border-2 border-accent max-w-4xl p-4 sm:p-6 md:p-8 space-y-8 sm:space-y-12">
             {/* Roles Section */}
             <section className="space-y-4 sm:space-y-6">
                 <h2 className="text-xl sm:text-2xl font-semibold text-white">Edit Roles</h2>
@@ -178,8 +178,7 @@ const RoleList = () => {
                             <div className="flex space-x-2">
                                 <button
                                     onClick={() => editAccess(role.name)}
-                                    className={`p-2 rounded-md ${role.name === "owner" ? "bg-gray-600 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"} transition duration-200`}
-                                    disabled={role.name === "owner"}
+                                    className="p-2 rounded-md bg-blue-600 hover:bg-blue-700 transition duration-200"
                                 >
                                     <Edit2 className="w-5 h-5 text-white"/>
                                 </button>

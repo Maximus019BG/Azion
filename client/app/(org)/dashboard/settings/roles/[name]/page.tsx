@@ -2,9 +2,11 @@
 
 import type React from "react"
 import {useEffect} from "react"
+import {roleExists, sessionCheck, UserHasRight} from "@/app/func/funcs"
 import EditRoleSection from "@/app/components/EditRoleSection"
 import SideMenu from "@/app/components/Side-menu"
-import {roleExists, sessionCheck, UserHasRight} from "@/app/func/funcs"
+import {ArrowLeft, Shield} from "lucide-react"
+import Link from "next/link"
 
 interface PageProps {
     params: {
@@ -29,26 +31,40 @@ const EditRole: React.FC<PageProps> = ({params}) => {
     }, [name])
 
     return (
-        <div className="h-full w-full flex flex-col lg:flex-row">
-            <div className="w-full lg:w-1/4 h-auto lg:h-screen">
+        <div className="w-full h-dvh text-white flex flex-col lg:flex-row">
+            <div className="w-full lg:w-1/4 h-fit lg:h-full">
                 <SideMenu/>
             </div>
-            <div className="w-full h-full lg:w-3/4 flex flex-col p-4 lg:p-8">
-                <div className="">
-                    <h1 className="text-white text-2xl lg:text-3xl mb-2">
-                        <span className="font-bold uppercase">{name}</span> permissions
-                    </h1>
-                    <p className="text-sm lg:text-base font-light text-gray-300 max-w-2xl">
-                        You can modify the permissions assigned to the <span
-                        className="font-semibold">{name}</span> role. This
-                        allows you to grant or restrict access to specific features, ensuring that users with this role
-                        have the
-                        appropriate level of control. You can enable or disable permissions such as viewing, editing,
-                        deleting, or
-                        managing settings based on your organization&apos;s needs.
+            <div className="size-full lg:w-3/4 flex flex-col p-4 lg:p-8">
+                <div className="mb-6">
+                    <Link
+                        href="/dashboard/settings/roles"
+                        className="inline-flex items-center text-gray-400 hover:text-white mb-4 transition-colors"
+                    >
+                        <ArrowLeft className="mr-2 h-4 w-4"/>
+                        Back to Roles
+                    </Link>
+
+                    <div className="flex items-center gap-3 mb-3">
+                        <Shield className="h-8 w-8 text-blue-500"/>
+                        <h1 className="text-3xl font-bold">
+                            <span className="uppercase">{name}</span> Role
+                        </h1>
+                    </div>
+
+                    <p className="text-gray-400 max-w-3xl">
+                        Customize the permissions for the <span className="font-medium text-white">{name}</span> role.
+                        Define what
+                        users with this role can access and modify within your organization.
                     </p>
                 </div>
-                <div className="w-full h-full flex flex-col">
+
+                <div className="size-full bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+                    <div className="border-b border-gray-700 p-4 bg-base-300">
+                        <h2 className="text-lg font-medium">Role Configuration</h2>
+                        <p className="text-sm text-gray-400">Manage permissions and appearance for this role</p>
+                    </div>
+
                     <EditRoleSection RoleName={name}/>
                 </div>
             </div>
