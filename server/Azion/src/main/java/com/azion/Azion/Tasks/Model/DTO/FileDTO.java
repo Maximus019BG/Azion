@@ -5,7 +5,7 @@ import com.azion.Azion.User.Model.DTO.UserDTO;
 
 
 public class FileDTO {
-    private String projectID;
+    private String taskID;
     private UserDTO user;
     private byte[] fileData;
     private String link;
@@ -14,12 +14,12 @@ public class FileDTO {
     private String contentType;
     private String date;
     
-    public String getProjectID() {
-        return projectID;
+    public String getTaskID() {
+        return taskID;
     }
     
-    public void setProjectID(String projectID) {
-        this.projectID = projectID;
+    public void setTaskID(String taskID) {
+        this.taskID = taskID;
     }
     
     public UserDTO getUser() {

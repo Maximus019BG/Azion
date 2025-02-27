@@ -58,7 +58,7 @@ public class User {
     
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
-    private Set<Task> projects;
+    private Set<Task> tasks;
     
     
     public String getOrgid() {
@@ -70,11 +70,11 @@ public class User {
     }
     
     public Set<Task> getTasks() {
-        return projects;
+        return tasks;
     }
     
     public void setTasks(Set<Task> projects) {
-        this.projects = projects;
+        this.tasks = projects;
     }
     
     
