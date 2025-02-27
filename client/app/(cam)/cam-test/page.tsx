@@ -55,7 +55,7 @@ export default function CamTest() {
                     }> = await axios.post(`${apiUrl}/cam/sec`, {payload}, {
                         headers: {
                             'Content-Type': 'application/json',
-                            'authorization': 'TEST1234' // Add authorization header here
+                            'authorization': 'TEST1234' // AuthID
                         }
                     });
                     const processedImage = `data:image/jpeg;base64,${response.data.image}`;
