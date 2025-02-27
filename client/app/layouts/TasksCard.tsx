@@ -2,10 +2,11 @@
 
 import type React from "react"
 import {MdAccessTime, MdAssignment, MdDescription, MdPerson, MdTitle} from "react-icons/md"
-import {RiDeleteBin5Fill} from "react-icons/ri"
+import {RiDeleteBin5Fill, RiDeleteBin7Fill} from "react-icons/ri"
 import axios, {type AxiosResponse} from "axios"
 import {apiUrl} from "@/app/api/config"
 import Cookies from "js-cookie"
+import {BsListTask} from "react-icons/bs";
 
 interface Task {
     title: string
@@ -74,7 +75,7 @@ const TasksCard: React.FC<Task> = ({
             <div className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center text-lg font-semibold">
-                        <MdTitle className="mr-2 text-teal-400"/>
+                        <BsListTask className="mr-2 text-teal-400"/>
                         <h3 className="truncate">{title}</h3>
                     </div>
                     <span className={`text-xs font-medium px-2 py-1 rounded ${getPriorityColor(priority)} text-white`}>
@@ -82,20 +83,16 @@ const TasksCard: React.FC<Task> = ({
           </span>
                 </div>
                 <div className="flex items-center text-sm text-gray-400">
-                    <MdPerson className="mr-2 text-purple-400"/>
                     {createdBy}
                     {isCreator && <span className="ml-1 text-xs">(you)</span>}
                 </div>
                 <div className="flex items-start text-sm text-gray-400">
-                    <MdDescription className="mr-2 mt-1 text-blue-400"/>
                     <p className="line-clamp-2">{description}</p>
                 </div>
                 <div className="flex items-center text-sm text-gray-400">
-                    <MdAssignment className="mr-2 text-amber-400"/>
                     {status}
                 </div>
                 <div className="flex items-center text-sm text-gray-400">
-                    <MdAccessTime className="mr-2 text-green-400"/>
                     {data}
                 </div>
                 <div className="flex items-center justify-end">
@@ -105,7 +102,7 @@ const TasksCard: React.FC<Task> = ({
                             className="text-red-400 hover:text-red-300 transition-colors duration-200"
                             aria-label="Delete task"
                         >
-                            <RiDeleteBin5Fill className="text-xl"/>
+                            <RiDeleteBin7Fill className="text-xl"/>
                         </button>
                     )}
                 </div>
