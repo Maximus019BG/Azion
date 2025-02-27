@@ -132,6 +132,7 @@ public class UserService {
     /// Employees               employees:read
     ///
     /// Roles                   roles:write     roles:read
+    ///
     /// Create Tasks            tasks:write
     ///
     /// View Tasks              tasks:read
@@ -147,7 +148,7 @@ public class UserService {
     
     //Get max access
     public String highestAccess() {
-        return "task:write, task:read, roles:write, roles:read, settings:write, settings:read, employees:read, calendar:write, cameras:write, cameras:read";
+        return "calendar:write settings:write settings:read employees:read roles:write roles:read tasks:write tasks:read cameras:write cameras:read";
     }
     
     public String lowestAccess() {
@@ -155,9 +156,16 @@ public class UserService {
     }
     
     //Give new access to a row
-    public void updateRoleAccess(String roleName, String roleAccess, String orgId) {
+    public void updateRoleAccess(String color, String roleName, String roleAccess, String orgId) {
+        if(roleName.equals("owner")) {
+            Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
+            role.setColor(color);
+            return;
+        }
         Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
+        role.setColor(color);
         role.setRoleAccess(roleAccess);
+      
     }
     
     public String getAccessByRoleName(String roleName, String orgId) {

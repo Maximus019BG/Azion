@@ -52,7 +52,7 @@ public class MeetingService {
     public List<MeetingDTO> getMeetings(User user) {
         List<Meeting> meetings = meetingRepo.findByOrg(orgRepository.findById(user.getOrgid()).get());
         return meetings.stream()
-                .filter(meeting -> meeting.getRoles().contains(user.getRole()))
+                .filter(meeting -> meeting.getRoles().contains(user.getRole().getName()))
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie';
 import axios, {AxiosResponse} from 'axios';
 import {apiUrl} from '../api/config';
-import {Token, UserDataType} from "@/app/types/types";
+import {Role, Token, UserDataType} from "@/app/types/types";
 
 //Checks if user has MFA
 const CheckMFA = async (onMFAPage: boolean) => {
@@ -319,9 +319,11 @@ const mfaSessionCheck = (mfaRem: boolean) => {
         });
 };
 
+//Convert byte array to base64 img
 const byteArrayToBase64 = async (byteArray: number[]): Promise<string | null> => {
     const uint8Array = new Uint8Array(byteArray);
-    const blob = new Blob([uint8Array], {type: "image/jpeg"});
+    const blob = new Blob([uint8Array], {type: "image/jpeg"}); //Convert to blob
+    //Convert to base64
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result as string);
@@ -330,6 +332,7 @@ const byteArrayToBase64 = async (byteArray: number[]): Promise<string | null> =>
     });
 };
 
+//User can edit calendar
 const canEditCalendar = async ():Promise<boolean|undefined>  =>{
     try {
         const r = await UserData();
@@ -337,6 +340,29 @@ const canEditCalendar = async ():Promise<boolean|undefined>  =>{
     } catch (error) {
         console.error("Error checking user rights:", error);
         return false;
+    }
+}
+
+//Roles settings check
+const roleExists = async (roleName: string) => {
+    const data = {roleName: roleName};
+    try {
+        const response: AxiosResponse<Role> = await axios.get(
+            `${apiUrl}/org/get/role/${roleName}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    authorization: Cookies.get("azionAccessToken"),
+                },
+            }
+        );
+        if(response.status !== 200){
+            return false;
+        }
+        //Check role in list
+         return response.data.name === roleName;
+    } catch (error) {
+         return false;
     }
 }
 
@@ -352,5 +378,6 @@ export {
     byteArrayToBase64,
     hideButton,
     UserHasRight,
-    canEditCalendar
+    canEditCalendar,
+    roleExists
 };

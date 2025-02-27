@@ -1,40 +1,38 @@
-import React from "react";
-import {FaBuilding} from "react-icons/fa";
-import {TbFileDescription} from "react-icons/tb";
-import {GrStatusWarning} from "react-icons/gr";
-import {IoTimer} from "react-icons/io5";
-import {MdOutlineDriveFileRenameOutline} from "react-icons/md";
-import axios, {AxiosResponse} from "axios";
-import {apiUrl} from "@/app/api/config";
-import Cookies from "js-cookie";
-import {RiDeleteBin5Fill} from "react-icons/ri";
+"use client"
+
+import type React from "react"
+import {MdAccessTime, MdAssignment, MdDescription, MdPerson, MdTitle} from "react-icons/md"
+import {RiDeleteBin5Fill} from "react-icons/ri"
+import axios, {type AxiosResponse} from "axios"
+import {apiUrl} from "@/app/api/config"
+import Cookies from "js-cookie"
 
 interface Task {
-    title: string;
-    description: string;
-    status: string;
-    data: string;
-    createdBy?: string;
-    priority: string;
-    onClick: () => void;
-    isCreator: boolean;
-    id: string;
+    title: string
+    description: string
+    status: string
+    data: string
+    createdBy?: string
+    priority: string
+    onClick: () => void
+    isCreator: boolean
+    id: string
 }
 
-const getPriorityIcon = (priority: string) => {
+const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
         case "very_high":
-            return <p className="text-red-500">VERY_HIGH</p>;
+            return "bg-red-500"
         case "high":
-            return <p className="text-orange-500">HIGH</p>;
+            return "bg-orange-500"
         case "medium":
-            return <p className="text-yellow-500">MEDIUM</p>;
+            return "bg-yellow-500"
         case "low":
-            return <p className="text-green-500">LOW</p>;
+            return "bg-green-500"
         default:
-            return null;
+            return "bg-gray-500"
     }
-};
+}
 
 const TasksCard: React.FC<Task> = ({
                                        title,
@@ -45,91 +43,76 @@ const TasksCard: React.FC<Task> = ({
                                        createdBy,
                                        onClick,
                                        isCreator,
-                                       id
+                                       id,
                                    }) => {
-
     const deleteTask = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.stopPropagation(); // Stop event propagation
-        axios.delete(`${apiUrl}/projects/delete/task/${id}`, {
-            headers: {
-                "Content-Type": "application/json",
-                authorization: Cookies.get("azionAccessToken"),
-            },
-        }).then((response: AxiosResponse) => {
-            alert("Task deleted successfully. Reloading...");
-            window.location.reload(); // Reload the page
-        }).catch((error: any) => {
-            alert("Error: " + error);
-        });
-    };
+        event.stopPropagation()
+        if (window.confirm("Are you sure you want to delete this task?")) {
+            axios
+                .delete(`${apiUrl}/tasks/delete/task/${id}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        authorization: Cookies.get("azionAccessToken"),
+                    },
+                })
+                .then((response: AxiosResponse) => {
+                    alert("Task deleted successfully. Reloading...")
+                    window.location.reload()
+                })
+                .catch((error: any) => {
+                    alert("Error: " + error)
+                })
+        }
+    }
 
     return (
         <div
-            className="w-full max-w-xs h-60 rounded-lg overflow-hidden shadow-lg p-6 bg-base-300 cursor-pointer transition duration-300 ease-in-out transform hover:scale-105 relative"
+            className="bg-base-300 rounded-lg shadow-lg overflow-hidden transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl cursor-pointer"
             onClick={onClick}
         >
-            <div className="absolute top-4 right-4 flex items-center group">
-                {getPriorityIcon(priority)}
-                <div
-                    className="absolute top-0 left-0 mt-6 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">
-                    Priority: {priority.toUpperCase()}
+            <div className={`h-2 ${getPriorityColor(priority)}`}/>
+            <div className="p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center text-lg font-semibold">
+                        <MdTitle className="mr-2 text-teal-400"/>
+                        <h3 className="truncate">{title}</h3>
+                    </div>
+                    <span className={`text-xs font-medium px-2 py-1 rounded ${getPriorityColor(priority)} text-white`}>
+            {priority.toUpperCase()}
+          </span>
                 </div>
-            </div>
-            <div className="min-w-96 p-2">
-                <div className="text-gray-200 text-base flex items-center mb-2 group">
-                    <FaBuilding className="mr-2 text-2xl text-blue-500"/>
-                    {title}
-                    <div
-                        className="absolute top-2 left-2 mt-0 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">
-                        Title: {title}
-                    </div>
-                </div>
-                <p className="text-gray-200 text-base flex items-center mb-2 -ml-1 group w-full">
-                    <TbFileDescription className="text-2xl text-red-500 mr-2 flex-shrink-0 w-8 h-8"/>
-                    <div className="break-all pr-6">{description}</div>
-                    <div
-                        className="absolute top-12 left-0 mt-0 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">
-                        Description: {description}
-                    </div>
-                </p>
-                <p className="text-gray-200 text-base flex items-center mb-2 group">
-                    <GrStatusWarning className="mr-2 text-2xl text-green-500"/>
-                    {status}
-                    <div
-                        className="absolute top-16 left-0 mt-6 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">
-                        Status: {status}
-                    </div>
-                </p>
-                <p className="text-gray-200 text-base flex items-center mb-2 group">
-                    <IoTimer className="mr-2 text-2xl text-yellow-500"/>
-                    {data}
-                    <div
-                        className="absolute top-28 left-0 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">
-                        Date: {data}
-                    </div>
-                </p>
-                <p className="text-gray-200 text-base flex items-center group">
-                    <MdOutlineDriveFileRenameOutline className="mr-2 text-2xl text-purple-500"/>
+                <div className="flex items-center text-sm text-gray-400">
+                    <MdPerson className="mr-2 text-purple-400"/>
                     {createdBy}
+                    {isCreator && <span className="ml-1 text-xs">(you)</span>}
+                </div>
+                <div className="flex items-start text-sm text-gray-400">
+                    <MdDescription className="mr-2 mt-1 text-blue-400"/>
+                    <p className="line-clamp-2">{description}</p>
+                </div>
+                <div className="flex items-center text-sm text-gray-400">
+                    <MdAssignment className="mr-2 text-amber-400"/>
+                    {status}
+                </div>
+                <div className="flex items-center text-sm text-gray-400">
+                    <MdAccessTime className="mr-2 text-green-400"/>
+                    {data}
+                </div>
+                <div className="flex items-center justify-end">
                     {isCreator && (
-                        <div>
-                            <div className="relative inline-flex items-center group">
-                                <span className="text-xs">&nbsp;(you)</span>
-                                <div
-                                    className="absolute -bottom-1 left-10 mt-6 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">
-                                    Creator
-                                </div>
-                            </div>
-                            <button onClick={deleteTask}
-                                    className="absolute text-xl bottom-4 right-5 bg-red-600 text-white p-2 rounded-full shadow-lg hover:bg-red-700 transition duration-300 ease-in-out transform hover:scale-105">
-                                <RiDeleteBin5Fill/>
-                            </button>
-                        </div>
+                        <button
+                            onClick={deleteTask}
+                            className="text-red-400 hover:text-red-300 transition-colors duration-200"
+                            aria-label="Delete task"
+                        >
+                            <RiDeleteBin5Fill className="text-xl"/>
+                        </button>
                     )}
-                </p>
+                </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default TasksCard;
+export default TasksCard
+

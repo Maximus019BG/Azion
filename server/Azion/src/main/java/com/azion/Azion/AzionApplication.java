@@ -32,5 +32,4 @@ public class AzionApplication {
 		
 		SpringApplication.run(AzionApplication.class, args);
 	}
-
 }

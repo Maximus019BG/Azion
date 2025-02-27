@@ -91,37 +91,37 @@ const Register_Organisation = () => {
 
     const inputFields = [
         {
-            label: "Organization Name:",
+            label: "Organization Name",
             value: name,
             onChange: setName,
             type: "text",
         },
         {
-            label: "Organization Email:",
+            label: "Organization Email",
             value: email,
             onChange: setEmail,
             type: "email",
         },
         {
-            label: "Organization Address:",
+            label: "Organization Address",
             value: address,
             onChange: setAddress,
             type: "text",
         },
         {
-            label: "Organization Phone:",
+            label: "Organization Phone",
             value: phone,
             onChange: setPhone,
             type: "text",
         },
         {
-            label: "Type of Organization:",
+            label: "Type of Organization",
             value: type,
             onChange: setType,
             type: "text",
         },
         {
-            label: "Organization Description:",
+            label: "Organization Description",
             value: description,
             onChange: setDescription,
             type: "text",
@@ -176,7 +176,7 @@ const Register_Organisation = () => {
 
                     {isSubmitted ? (
                         <div className="fixed inset-10 flex justify-center items-center z-50">
-                            <ConString value={conString} name={name}/>
+                            <ConString value={conString}/>
                         </div>
                     ) : (
                         <div className="w-full md:w-10/12 lg:w-[30vw] flex flex-col justify-center items-center gap-3">

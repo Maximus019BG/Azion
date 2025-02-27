@@ -17,7 +17,7 @@ const Dashboard_Task_Card = () => {
         // Fetch tasks
         const GetTopProject = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/projects/top/${Cookies.get("azionAccessToken")}`, {
+                const response = await axios.get(`${apiUrl}/tasks/top/${Cookies.get("azionAccessToken")}`, {
                     headers: {
                         "Content-Type": "application/json",
                     }

@@ -58,7 +58,7 @@ const TasksLayout = () => {
 
   const GetTasks = () => {
     axios
-      .get(`${apiUrl}/projects/list`, {
+      .get(`${apiUrl}/tasks/list`, {
         headers: {
           "Content-Type": "application/json",
           authorization: Cookies.get("azionAccessToken"),

@@ -160,7 +160,7 @@ public class CamController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
-        if (userService.UserHasRight(user,"cameras:read")) {
+        if (!userService.UserHasRight(user,"cameras:read")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to view logs");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);

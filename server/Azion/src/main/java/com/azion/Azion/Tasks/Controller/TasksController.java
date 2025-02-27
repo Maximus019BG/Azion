@@ -36,7 +36,7 @@ import java.util.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/projects")
+@RequestMapping("/api/tasks")
 public class TasksController extends FileSize {
     
     private final TasksRepository tasksRepository;
@@ -65,11 +65,6 @@ public class TasksController extends FileSize {
         roleDTO.setRoleAccess(role.getRoleAccess());
         roleDTO.setColor(role.getColor());
         return roleDTO;
-    }
-    
-    @GetMapping
-    public List<Task> getAllProjects() {
-        return tasksRepository.findAll();
     }
     
     
@@ -145,7 +140,7 @@ public class TasksController extends FileSize {
     
     @Transactional
     @GetMapping("/list")
-    public ResponseEntity<?> getProjects(@RequestHeader("authorization") String token) {
+    public ResponseEntity<?> getTasks(@RequestHeader("authorization") String token) {
         User user = tokenService.getUserFromToken(token);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
@@ -154,11 +149,11 @@ public class TasksController extends FileSize {
         if (org == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
         }
-        List<TasksDTO> projects = tasksService.getProjectByUser(user);
-        if (projects.isEmpty()) {
-            return ResponseEntity.ok("no projects");
+        List<TasksDTO> tasks = tasksService.getProjectByUser(user);
+        if (tasks.isEmpty()) {
+            return ResponseEntity.ok("no tasks");
         }
-        return ResponseEntity.ok(projects);
+        return ResponseEntity.ok(tasks);
     }
     
     
@@ -168,35 +163,35 @@ public class TasksController extends FileSize {
         userService.userValid(token);
         User user = tokenService.getUserFromToken(token);
         
-        Optional<Task> project = tasksRepository.findById(id);
-        TasksDTO projectDTO = new TasksDTO();
-        if (project.isPresent()) {
-            projectDTO.setId(project.get().getProjectID());
-            projectDTO.setName(project.get().getName());
-            projectDTO.setDescription(project.get().getDescription());
-            projectDTO.setDate(project.get().getDate());
-            projectDTO.setPriority(project.get().getPriority());
-            projectDTO.setStatus(project.get().getStatus());
-            projectDTO.setProgress(project.get().getProgress());
-            projectDTO.setSource(project.get().getSource());
-            projectDTO.setOrgId(project.get().getOrg().getOrgID());
+        Optional<Task> task = tasksRepository.findById(id);
+        TasksDTO taskDTO = new TasksDTO();
+        if (task.isPresent()) {
+            taskDTO.setId(task.get().getProjectID());
+            taskDTO.setName(task.get().getName());
+            taskDTO.setDescription(task.get().getDescription());
+            taskDTO.setDate(task.get().getDate());
+            taskDTO.setPriority(task.get().getPriority());
+            taskDTO.setStatus(task.get().getStatus());
+            taskDTO.setProgress(task.get().getProgress());
+            taskDTO.setSource(task.get().getSource());
+            taskDTO.setOrgId(task.get().getOrg().getOrgID());
             
-            if (project.get().getCreatedBy() != null) {
-                projectDTO.setCreatedBy(convertToUserDTO(project.get().getCreatedBy()));
+            if (task.get().getCreatedBy() != null) {
+                taskDTO.setCreatedBy(convertToUserDTO(task.get().getCreatedBy()));
             }
             
-            if (project.get().getCreatedBy().getEmail().equals(user.getEmail()) || (userService.UserHasRight(user,"tasks:write") && userService.UserHasRight(user," tasks:read"))) {
-                projectDTO.setIsCreator(true);
-                projectDTO.setUsers(tasksService.convertToUserDTOSet(project.get().getUsers()));
-                if (project.get().getFiles() != null) {
-                    projectDTO.setFiles(convertToFileDTO(project.get().getFiles()));
+            if (task.get().getCreatedBy().getEmail().equals(user.getEmail()) || (userService.UserHasRight(user,"tasks:write") && userService.UserHasRight(user," tasks:read"))) {
+                taskDTO.setIsCreator(true);
+                taskDTO.setUsers(tasksService.convertToUserDTOSet(task.get().getUsers()));
+                if (task.get().getFiles() != null) {
+                    taskDTO.setFiles(convertToFileDTO(task.get().getFiles()));
                 }
             } else {
-                projectDTO.setIsCreator(false);
-                projectDTO.setUsers(null);
+                taskDTO.setIsCreator(false);
+                taskDTO.setUsers(null);
             }
-            projectDTO.setDoneBy(tasksService.convertToUserDTOSet(project.get().getDoneBy()).stream().toList());
-            return ResponseEntity.ok(projectDTO);
+            taskDTO.setDoneBy(tasksService.convertToUserDTOSet(task.get().getDoneBy()).stream().toList());
+            return ResponseEntity.ok(taskDTO);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -224,7 +219,7 @@ public class TasksController extends FileSize {
             dto.setLink(file.getLink());
             dto.setUser(convertToUserDTO(file.getUser()));
             dto.setSubmitType(file.getSubmitType());
-            dto.setProjectID(file.getProjectID());
+            dto.setTaskID(file.getTaskID());
             dto.setFileName(file.getFileName());
             dto.setContentType(file.getContentType());
             dto.setDate(file.getDate().toString());
@@ -235,7 +230,7 @@ public class TasksController extends FileSize {
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable String id) {
+    public ResponseEntity<Void> deleteTask(@PathVariable String id) {
         tasksRepository.findById(id)
                 .ifPresent(tasksRepository::delete);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -244,7 +239,7 @@ public class TasksController extends FileSize {
     //!Task submitting
     @Transactional
     @PutMapping(value = "/submit/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> submitProject(@PathVariable String id, @RequestHeader("authorization") String token, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> submitTask(@PathVariable String id, @RequestHeader("authorization") String token, @RequestParam("file") MultipartFile file) {
         //*Basic check
         userService.userValid(token);
         
@@ -255,8 +250,8 @@ public class TasksController extends FileSize {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("TaskFiles could be harmful");
         }
         boolean typeLink = false;
-        Optional<Task> project = tasksRepository.findById(id);
-        if (project.isPresent()) {
+        Optional<Task> task = tasksRepository.findById(id);
+        if (task.isPresent()) {
             if (file.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.OK).body("Marked as done");
             }
@@ -287,29 +282,29 @@ public class TasksController extends FileSize {
                 fileObj.setDate(LocalDate.now());
                 fileRepo.save(fileObj);
                 
-                Task proj = project.get();
-                List<TaskFiles> listProj = proj.getFiles();
+                Task tsk = task.get();
+                List<TaskFiles> listProj = tsk.getFiles();
                 listProj.add(fileObj);
-                proj.setFiles(listProj);
+                tsk.setFiles(listProj);
                 
-                Set<User> doneUsers = proj.getDoneBy();
+                Set<User> doneUsers = tsk.getDoneBy();
                 doneUsers.add(user);
-                Set<User> allUsers = proj.getUsers();
-                tasksRepository.save(proj);
+                Set<User> allUsers = tsk.getUsers();
+                tasksRepository.save(tsk);
                 
                 if (doneUsers.containsAll(allUsers)) {
                     log.debug("done");
-                    proj.setProgress(100);
-                    if (Objects.equals(proj.getStatus(), "Past")) {
-                        proj.setStatus("Done Late");
+                    tsk.setProgress(100);
+                    if (Objects.equals(tsk.getStatus(), "Past")) {
+                        tsk.setStatus("Done Late");
                     } else {
-                        proj.setStatus("Done");
+                        tsk.setStatus("Done");
                     }
                 } else {
                     log.debug("not done");
-                    tasksService.progressCalc(proj);
+                    tasksService.progressCalc(tsk);
                 }
-                tasksRepository.save(proj);
+                tasksRepository.save(tsk);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -319,10 +314,10 @@ public class TasksController extends FileSize {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");
     }
     
-    //*List top projects
+    //*List top tasks
     @Transactional
     @GetMapping("/top/{accessToken}")
-    public ResponseEntity<?> topProjects(@PathVariable String accessToken) {
+    public ResponseEntity<?> topTasks(@PathVariable String accessToken) {
         if (accessToken == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
         }
@@ -330,14 +325,14 @@ public class TasksController extends FileSize {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
-        List<Task> projects = tasksRepository.findByUsers(user);
-        if (projects.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("projects not found");
+        List<Task> tasks = tasksRepository.findByUsers(user);
+        if (tasks.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("tasks not found");
         }
         
-        int numberOfTasks = Math.min(projects.size(), 3); //The number of task to be shown on the user
+        int numberOfTasks = Math.min(tasks.size(), 3); //The number of task to be shown on the user
         
-        return ResponseEntity.ok(tasksService.sortProjectsByDate(projects).subList(0,numberOfTasks));
+        return ResponseEntity.ok(tasksService.sortProjectsByDate(tasks).subList(0,numberOfTasks));
     }
     
     //!Task return

@@ -50,7 +50,7 @@ public class TaskFiles {
         this.taskFileID = uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis();
     }
     
-    public String getProjectID() {
+    public String getTaskID() {
         return taskFileID;
     }
     

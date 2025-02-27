@@ -14,16 +14,7 @@ import {sessionCheck, UserHasRight} from "@/app/func/funcs";
 const CamListPage = () => {
     const [cams, setCams] = useState<Cam[]>([]);
     const [error, setError] = useState('');
-    const [org, setOrg] = useState<string | null>(null);
     const router = useRouter();
-
-    const fetchOrgName = async () => {
-        const result: string = await getOrgName();
-        if (result !== org) {
-            setOrg(result);
-        }
-    };
-    fetchOrgName();
 
     useEffect(() => {
         UserHasRight("cameras:read");
@@ -61,7 +52,7 @@ const CamListPage = () => {
 
     return (
         <div className="w-full h-screen flex flex-col justify-center items-center text-white relative p-4">
-            <Link className="absolute top-6 left-6" href={`/dashboard/${org}`}>
+            <Link className="absolute top-6 left-6" href={`/dashboard`}>
                 <FontAwesomeIcon className="text-3xl text-lightAccent" icon={faCircleLeft}/>
             </Link>
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-center">Camera List</h1>

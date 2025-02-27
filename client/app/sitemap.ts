@@ -35,25 +35,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
             priority: 0.8,
         },
         {
-            url: `https://azion.online/dashboard/${org}`,
+            url: `https://azion.online/dashboard`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.5,
         },
         {
-            url: `https://azion.online/dashboard/${org}/projects`,
+            url: `https://azion.online/dashboard/tasks`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.5,
         },
         {
-            url: `https://azion.online/dashboard/${org}/tasks`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.5,
-        },
-        {
-            url: `https://azion.online/dashboard/${org}/employees`,
+            url: `https://azion.online/dashboard/employees`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority : 0.5,

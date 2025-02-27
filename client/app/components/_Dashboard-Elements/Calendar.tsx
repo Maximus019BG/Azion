@@ -47,7 +47,6 @@ const Calendar: React.FC = () => {
                     start: new Date(event.start).toISOString(),
                     end: new Date(event.end).toISOString(),
                 }));
-                console.log("Fetched events:", events);
                 setCurrentEvents(events);
             } catch (error) {
                 console.error("Error fetching events:", error);
@@ -73,7 +72,6 @@ const Calendar: React.FC = () => {
                 console.error("Error fetching roles:", error);
             }
         };
-
 
         fetchEvents();
         fetchRoles();
