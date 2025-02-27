@@ -163,7 +163,8 @@ const CreateTask: FC = () => {
                     <div className="w-full lg:w-1/4 lg:h-full">
                         <SideMenu/>
                     </div>
-                    <div className="w-full h-full flex-1 justify-center items-center p-4 lg:p-8 overflow-auto">
+                    <div
+                        className="w-full h-screen flex flex-col justify-center items-center p-4 lg:p-8 overflow-auto">
                         <h1 className={`text-4xl font-bold text-center mb-8 ${HeaderText.className}`}>Create New
                             Task</h1>
                         {error && <div className="bg-accent text-white p-4 rounded-md mb-4">{error}</div>}
@@ -194,33 +195,33 @@ const CreateTask: FC = () => {
                                         </TabsTrigger>
                                     </TabsList>
                                     <TabsContent value="details" className="space-y-6">
-                                        <form className="space-y-6">
-                                            <div className="space-y-2">
-                                                <Label htmlFor="title">
-                                                    Title <span className="text-red-500">*</span>
-                                                </Label>
-                                                <Input
-                                                    id="title"
-                                                    value={title}
-                                                    onChange={(e) => setTitle(e.target.value)}
-                                                    placeholder="Enter task title"
-                                                    className="border-2 border-base-100"
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="description">
-                                                    Description <span className="text-red-500">*</span>
-                                                </Label>
-                                                <Textarea
-                                                    id="description"
-                                                    value={description}
-                                                    onChange={(e) => setDescription(e.target.value)}
-                                                    placeholder="Enter task description"
-                                                    rows={4}
-                                                    className=" border-2 border-base-100"
-                                                />
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-4">
+                                        <form className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                            <div className="space-y-6">
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="title">
+                                                        Title <span className="text-red-500">*</span>
+                                                    </Label>
+                                                    <Input
+                                                        id="title"
+                                                        value={title}
+                                                        onChange={(e) => setTitle(e.target.value)}
+                                                        placeholder="Enter task title"
+                                                        className="border-2 border-base-100"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="description">
+                                                        Description <span className="text-red-500">*</span>
+                                                    </Label>
+                                                    <Textarea
+                                                        id="description"
+                                                        value={description}
+                                                        onChange={(e) => setDescription(e.target.value)}
+                                                        placeholder="Enter task description"
+                                                        rows={4}
+                                                        className="border-2 border-base-100"
+                                                    />
+                                                </div>
                                                 <div className="space-y-2">
                                                     <Label htmlFor="priority">Priority</Label>
                                                     <Select value={priority} onValueChange={setPriority}>
@@ -250,7 +251,7 @@ const CreateTask: FC = () => {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="space-y-2 flex flex-col ">
+                                            <div className="space-y-2 flex flex-col">
                                                 <Label>
                                                     Due Date <span className="text-red-500">*</span>
                                                 </Label>
@@ -268,7 +269,7 @@ const CreateTask: FC = () => {
                                                     mode="single"
                                                     selected={dueDate}
                                                     onSelect={setDueDate}
-                                                    className="flex justify-center items-center w-fit rounded-md border-2 mt-2 border-base-100"
+                                                    className="flex justify-center self-center items-center w-fit rounded-md border-2 mt-2 border-base-100"
                                                 />
                                             </div>
                                         </form>
