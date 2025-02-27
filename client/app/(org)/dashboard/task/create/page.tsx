@@ -118,7 +118,7 @@ const CreateTask: FC = () => {
             users: Array.from(selectedUsers),
         }
         try {
-            await axios.post(`${apiUrl}/projects/create/new`, data, {
+            await axios.post(`${apiUrl}/tasks/create/new`, data, {
                 headers: {
                     "Content-Type": "application/json",
                 },

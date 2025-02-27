@@ -49,7 +49,7 @@ const TasksCard: React.FC<Task> = ({
         event.stopPropagation()
         if (window.confirm("Are you sure you want to delete this task?")) {
             axios
-                .delete(`${apiUrl}/projects/delete/task/${id}`, {
+                .delete(`${apiUrl}/tasks/delete/task/${id}`, {
                     headers: {
                         "Content-Type": "application/json",
                         authorization: Cookies.get("azionAccessToken"),

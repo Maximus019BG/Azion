@@ -35,7 +35,7 @@ const Tasks: FC = () => {
                     const [userData, orgNameResult, tasksResponse] = await Promise.all([
                         UserData(),
                         getOrgName(),
-                        axios.get(`${apiUrl}/projects/list`, {
+                        axios.get(`${apiUrl}/tasks/list`, {
                             headers: {
                                 "Content-Type": "application/json",
                                 authorization: accessToken,

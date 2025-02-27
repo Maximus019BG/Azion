@@ -60,7 +60,7 @@ const TaskView: FC<PageProps> = ({params: {taskId}}) => {
         }
 
         axios
-            .put(`${apiUrl}/projects/submit/${taskId}`, formData, {
+            .put(`${apiUrl}/tasks/submit/${taskId}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     authorization: Cookies.get("azionAccessToken"),
@@ -84,7 +84,7 @@ const TaskView: FC<PageProps> = ({params: {taskId}}) => {
             email: userEmail,
         }
         axios
-            .put(`${apiUrl}/projects/return/task/${taskId}`, data, {
+            .put(`${apiUrl}/tasks/return/task/${taskId}`, data, {
                 headers: {
                     "Content-Type": "application/json",
                     authorization: Cookies.get("azionAccessToken"),
