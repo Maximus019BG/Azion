@@ -35,7 +35,7 @@
         </repository>
         <repository>
             <id>flywaydb</id>
-            <url>https://repo.flywaydb.org/release</url> <!-- Example repository URL -->
+            <url>https://repo.flywaydb.org/release</url>
         </repository>
     </repositories>
 
