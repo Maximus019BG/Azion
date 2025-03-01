@@ -266,17 +266,19 @@ const OrgSettingsForm = () => {
                             />
                         </div>
                     </div>
-                    <div className="w-11/12 h-fit flex flex-col items-center gap-4 sm:gap-6 md:gap-8">
+                    <div className="w-full h-fit flex flex-col items-center gap-4 sm:gap-6 md:gap-8">
                         {madeChange && (
-                            <button
-                                onClick={handleSave}
-                                className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out"
-                            >
-                                Save Changes
-                            </button>
+                            <div className="w-full h-full max-w-3xl mx-auto">
+                                <button
+                                    onClick={handleSave}
+                                    className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out"
+                                >
+                                    Save Changes
+                                </button>
+                            </div>
                         )}
 
-                        <div className="w-full flex flex-col justify-center items-center gap-2">
+                        <div className="w-full h-full max-w-3xl mx-auto">
                             <button
                                 onClick={handleInviteChange}
                                 className="w-full py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-200 ease-in-out"
@@ -287,16 +289,14 @@ const OrgSettingsForm = () => {
                             <p className="flex justify-center items-center gap-2">
                                 Or join with connection code: {conString}
                                 <span className="cursor-pointer" onClick={copyConStr}>
-                                <IoCopy/>
-                            </span>
+                <IoCopy/>
+            </span>
                             </p>
                         </div>
 
                         {invitePopUp && (
-                            <div
-                                className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 transition-opacity duration-300">
-                                <div
-                                    className="bg-accent p-6 rounded-lg shadow-lg w-80 sm:w-96 relative transform transition-transform duration-300 scale-95">
+                            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 transition-opacity duration-300">
+                                <div className="bg-accent p-6 rounded-lg shadow-lg w-80 sm:w-96 relative transform transition-transform duration-300 scale-95">
                                     <button
                                         onClick={handleInviteChange}
                                         className="absolute top-2 right-2 text-xl font-bold text-gray-300 hover:text-gray-100 transition-colors duration-200"

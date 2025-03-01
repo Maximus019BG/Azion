@@ -18,23 +18,33 @@ import {
 import {AiFillVideoCamera} from "react-icons/ai";
 import LogOut from "@/app/components/LogOut";
 import {UserData} from "@/app/func/funcs";
+import {getOrgName} from "@/app/func/org";
 
-// Font setup
-const azionText = Commissioner({subsets: ["latin"], weight: "800"});
 
 const SideMenu = () => {
     const [isDashboardOpen, setIsDashboardOpen] = useState(false);
     const [isTasksOpen, setIsTasksOpen] = useState(false);
+    const [org, setOrg] = useState<string | null>("");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [access, setAccess] = useState<string>("");
+    const [access, setAccess] = useState<string>("")
 
     useEffect(() => {
+        const fetchOrgName = async () => {
+            const result: string = await getOrgName();
+            if (result === null) {
+                setOrg(null);
+            } else {
+                setOrg(result);
+            }
+        };
+
         const PageAccess = async () => {
             const userData = await UserData();
             setAccess(userData.access);
         };
 
         PageAccess();
+        fetchOrgName();
     }, []);
 
     // Toggle dropdowns
@@ -106,7 +116,8 @@ const SideMenu = () => {
                 <ul className="menu bg-base-300 text-base-content min-h-full w-80 p-6 flex flex-col justify-center items-start">
                     {/* Sidebar content */}
                     <div className="w-full flex flex-col justify-center items-start gap-4">
-                        {access ? (
+                        {/* Conditionally render Dashboard and Tasks sections */}
+                        {org && (
                             <>
                                 {/* Dashboard Dropdown */}
                                 <li className="text-md w-full relative">
@@ -131,7 +142,7 @@ const SideMenu = () => {
                                         <ul className="w-full">
                                             <li className="py-1 text-md w-full">
                                                 <Link
-                                                    href={`/dashboard`}
+                                                    href={`/dashboard/`}
                                                     className="flex items-center w-full"
                                                 >
                                                     <FaHome className="text-lg mr-2"/>
@@ -224,9 +235,6 @@ const SideMenu = () => {
                                         </ul>
                                     )}
                                 </li>
-                            </>
-                        ) : (
-                            <>
                             </>
                         )}
 

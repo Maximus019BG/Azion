@@ -178,8 +178,7 @@ const RoleList = () => {
                             <div className="flex space-x-2">
                                 <button
                                     onClick={() => editAccess(role.name)}
-                                    className={`p-2 rounded-md ${role.name === "owner" ? "bg-gray-600 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"} transition duration-200`}
-                                    disabled={role.name === "owner"}
+                                    className={`p-2 rounded-md bg-blue-600 cursor-not-allowed" transition duration-200`}
                                 >
                                     <Edit2 className="w-5 h-5 text-white"/>
                                 </button>

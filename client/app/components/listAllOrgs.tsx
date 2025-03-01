@@ -4,7 +4,9 @@ import type React from "react"
 import {useEffect, useState} from "react"
 import axios, {type AxiosResponse} from "axios"
 import {apiUrl} from "../api/config"
-import {MdCategory, MdDescription, MdEmail, MdLocationOn, MdPhone, MdTitle} from "react-icons/md"
+import { MdDescription, MdEmail, MdLocationOn, MdPhone} from "react-icons/md"
+import {CgOrganisation} from "react-icons/cg"
+import {PiTagSimpleBold} from "react-icons/pi"
 
 interface Organization {
     orgName: string
@@ -78,14 +80,14 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({searchTerm}) => {
                     className="flex flex-col justify-start items-start gap-4 p-6 bg-base-200 rounded-lg w-96 shadow-lg transform transition-transform hover:scale-105 hover:shadow-2xl"
                 >
                     <h2 className="text-white text-lg md:text-xl font-semibold mb-3 flex items-center gap-3">
-                        <MdTitle className="text-teal-400 text-2xl"/>
+                        <CgOrganisation  className="text-blue-500 text-2xl"/>
                         {org.orgName}
                     </h2>
                     <p className="text-gray-300 flex justify-start items-center gap-3">
-                        <MdDescription className="text-purple-400 text-xl"/> {org.orgDescription}
+                        <MdDescription className="text-blue-400 text-xl"/> {org.orgDescription}
                     </p>
                     <p className="text-gray-300 flex justify-start items-center gap-3">
-                        <MdLocationOn className="text-blue-400 text-xl"/> {org.orgAddress}
+                        <MdLocationOn className="text-red-400 text-xl"/> {org.orgAddress}
                     </p>
                     <p className="text-gray-300 flex justify-start items-center gap-3">
                         <MdEmail className="text-amber-400 text-xl"/> {org.orgEmail}
@@ -94,7 +96,7 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({searchTerm}) => {
                         <MdPhone className="text-green-400 text-xl"/> {org.orgPhone}
                     </p>
                     <p className="text-gray-300 flex justify-start items-center gap-3">
-                        <MdCategory className="text-pink-400 text-xl"/> {org.orgType}
+                        <PiTagSimpleBold  className="text-orange-400 text-xl"/> {org.orgType}
                     </p>
                 </div>
             ))}
