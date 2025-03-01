@@ -36,7 +36,7 @@ public class User {
     private String faceID;
     
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "role_id", columnDefinition = "VARCHAR(255)", nullable = true)
+    @JoinColumn(name = "role_id", nullable = true)
     @JsonManagedReference
     private Role role;
     

@@ -11,7 +11,7 @@ const AccountUserCard = () => {
     const [displayImage, setDisplayImage] = useState<string | null>(null);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [role, setRole] = useState("");
+    const [role, setRole] = useState<string>("");
     const [dateOfBirth, setDateOfBirth] = useState("");
     const [isEditing, setIsEditing] = useState({name: false, email: false, dateOfBirth: false, profilePicture: false});
 

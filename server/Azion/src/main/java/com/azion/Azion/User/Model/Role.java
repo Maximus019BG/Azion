@@ -12,7 +12,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "roles_azion")
 public class Role {
+    
     @Id
+    @Column(nullable = false, length = 255, unique = true)
     private String id;
 
     @Column(nullable = false)
