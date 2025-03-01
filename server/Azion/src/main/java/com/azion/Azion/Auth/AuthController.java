@@ -211,10 +211,10 @@ public class AuthController {
     @Transactional
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, Object> request, @RequestHeader(value = "User-Agent") String UserAgent) {
-        String name = request.get("name").toString().trim();
-        String email = request.get("email").toString().trim();
-        String password = request.get("password").toString().trim();
-        String bornAt = request.get("age").toString().trim();
+        String name = (String) request.get("name");
+        String email = (String) request.get("email");
+        String password = (String) request.get("password");
+        String bornAt = (String) request.get("age");
         
         //Date validation
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -227,7 +227,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date");
         }
         
-        if(authService.userExists(email.trim())){
+        if(authService.userExists(email)){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
         }
         
@@ -238,7 +238,7 @@ public class AuthController {
         User user = new User();
         user.setName(name);
         user.setAge(dateFormat.parse(bornAt, pos));
-        user.setEmail(email.trim());
+        user.setEmail(email);
         user.setPassword(password);
         user.setMfaEnabled(false);
         user.setRole(null);
@@ -263,12 +263,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, Object> request, @RequestHeader(value = "User-Agent") String UserAgent) {
         log.debug("Login attempt");
-        String email = request.get("email").toString().trim();
-        String password = request.get("password").toString().trim();
-        String OTP = request.get("OTP").toString().trim();
+        String email = (String) request.get("email");
+        String password = (String) request.get("password");
+        String OTP = (String) request.get("OTP");
         
         //User validation
-        User user = userRepository.findByEmail(email.trim());
+        User user = userRepository.findByEmail(email);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not exist");
         }
