@@ -1,6 +1,6 @@
 "use client";
-import React, { FC, useEffect, useRef, useCallback } from "react";
-import { Bold, Italic, Underline } from "lucide-react";
+import React, { FC,  useRef, useEffect } from "react";
+
 
 interface AzionEditorProps {
     value: string;
@@ -14,11 +14,46 @@ const AzionEditor: FC<AzionEditorProps> = ({ value, onChange }) => {
         document.execCommand(command, false);
     };
 
-    const handleInput = useCallback(() => {
+    const saveSelection = () => {
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+            return selection.getRangeAt(0);
+        }
+        return null;
+    };
+
+    const restoreSelection = (range: Range | null) => {
+        if (range) {
+            const selection = window.getSelection();
+            if (selection) {
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        }
+    };
+
+    const handleInput = () => {
         if (contentEditableRef.current) {
             onChange(contentEditableRef.current.innerHTML);
         }
-    }, [onChange]);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.ctrlKey && e.key === 'z') {
+            e.preventDefault();
+        }
+    };
+
+    const moveCursorToEnd = () => {
+        const range = document.createRange();
+        const selection = window.getSelection();
+        if (contentEditableRef.current && selection) {
+            range.selectNodeContents(contentEditableRef.current);
+            range.collapse(false);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    };
 
     useEffect(() => {
         if (contentEditableRef.current) {
@@ -26,35 +61,50 @@ const AzionEditor: FC<AzionEditorProps> = ({ value, onChange }) => {
         }
     }, [value]);
 
+    useEffect(() => {
+        moveCursorToEnd();
+    }, [value]);
+
     return (
-        <div className="w-full h-full flex flex-col overflow-hidden bg-background text-white">
-            {/* Toolbar */}
-            <div className="flex justify-center p-3 bg-base-100 shadow-md border-b border-gray-700">
+        <div className="w-screen h-full flex flex-col overflow-hidden">
+            <div className="flex justify-center p-2 bg-gray-700 text-white">
                 <button
-                    onClick={() => applyFormatting("bold")}
-                    className="p-2 mx-1 rounded-lg hover:bg-gray-700 transition"
+                    onClick={() => {
+                        const range = saveSelection();
+                        applyFormatting("bold");
+                        restoreSelection(range);
+                    }}
+                    className="mx-2"
                 >
-                    <Bold size={18} />
+                    Bold
                 </button>
                 <button
-                    onClick={() => applyFormatting("italic")}
-                    className="p-2 mx-1 rounded-lg hover:bg-gray-700 transition"
+                    onClick={() => {
+                        const range = saveSelection();
+                        applyFormatting("italic");
+                        restoreSelection(range);
+                    }}
+                    className="mx-2"
                 >
-                    <Italic size={18} />
+                    Italic
                 </button>
                 <button
-                    onClick={() => applyFormatting("underline")}
-                    className="p-2 mx-1 rounded-lg hover:bg-gray-700 transition"
+                    onClick={() => {
+                        const range = saveSelection();
+                        applyFormatting("underline");
+                        restoreSelection(range);
+                    }}
+                    className="mx-2"
                 >
-                    <Underline size={18} />
+                    Underline
                 </button>
             </div>
-            {/* Editable Area */}
             <div
                 ref={contentEditableRef}
-                className="w-full flex-grow p-4 bg-base-300 outline-none overflow-auto text-lg"
+                className="w-full h-full p-4 bg-gray-800 text-white"
                 contentEditable
                 onInput={handleInput}
+                onKeyDown={handleKeyDown}
             />
         </div>
     );

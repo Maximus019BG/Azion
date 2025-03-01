@@ -5,7 +5,7 @@
   "engines": {
     "node": "20.x"
   },
-    "scripts": {
+  "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
