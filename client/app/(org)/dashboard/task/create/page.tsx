@@ -152,6 +152,7 @@ const CreateTask: FC = () => {
         }
     }
 
+
     return (
         <div className="w-full flex flex-col lg:flex-row min-h-screen bg-base-300 text-white">
             {loading ? (
@@ -173,22 +174,25 @@ const CreateTask: FC = () => {
                                     <TabsList className="w-full text-white bg-base-100">
                                         <TabsTrigger
                                             value="details"
-                                            className={"w-full h-full data-[state=active]:bg-accent text-xs sm:text-base hover:bg-accent transition duration-200 rounded-md"}
-                                            onClick={() => setActiveTab("details")}
+                                            className={`w-full h-full text-xs sm:text-base transition duration-200 rounded-md ${
+                                                activeTab === "details" ? "bg-accent text-white" : "hover:bg-accent"
+                                            }`}
                                         >
                                             Task Details
                                         </TabsTrigger>
                                         <TabsTrigger
                                             value="users"
-                                            className={"w-full h-full data-[state=active]:bg-accent text-xs sm:text-base hover:bg-accent transition duration-200 rounded-md"}
-                                            onClick={() => setActiveTab("users")}
+                                            className={`w-full h-full text-xs sm:text-base transition duration-200 rounded-md ${
+                                                activeTab === "users" ? "bg-accent text-white" : "hover:bg-accent"
+                                            }`}
                                         >
                                             Assign Users
                                         </TabsTrigger>
                                         <TabsTrigger
                                             value="review"
-                                            className={"w-full h-full data-[state=active]:bg-accent text-xs sm:text-base hover:bg-accent transition duration-200 rounded-md"}
-                                            onClick={() => setActiveTab("review")}
+                                            className={`w-full h-full text-xs sm:text-base transition duration-200 rounded-md ${
+                                                activeTab === "review" ? "bg-accent text-white" : "hover:bg-accent"
+                                            }`}
                                         >
                                             Review & Create
                                         </TabsTrigger>
