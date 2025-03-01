@@ -211,10 +211,10 @@ public class AuthController {
     @Transactional
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, Object> request, @RequestHeader(value = "User-Agent") String UserAgent) {
-        String name = (String) request.get("name");
-        String email = (String) request.get("email");
-        String password = (String) request.get("password");
-        String bornAt = (String) request.get("age");
+        String name = request.get("name").toString().trim();
+        String email = request.get("email").toString().trim();
+        String password = request.get("password").toString().trim();
+        String bornAt = request.get("age").toString().trim();
         
         //Date validation
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -263,9 +263,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, Object> request, @RequestHeader(value = "User-Agent") String UserAgent) {
         log.debug("Login attempt");
-        String email = (String) request.get("email");
-        String password = (String) request.get("password");
-        String OTP = (String) request.get("OTP");
+        String email = request.get("email").toString().trim();
+        String password = request.get("password").toString().trim();
+        String OTP = request.get("OTP").toString().trim();
         
         //User validation
         User user = userRepository.findByEmail(email);
