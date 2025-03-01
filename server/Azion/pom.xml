@@ -33,10 +33,6 @@
             <id>google-api-services-beta</id>
             <url>http://google-api-client-libraries.appspot.com/mavenrepo</url>
         </repository>
-        <repository>
-            <id>flywaydb</id>
-            <url>https://repo.flywaydb.org/release</url> <!-- Example repository URL -->
-        </repository>
     </repositories>
 
     <dependencies>
@@ -97,11 +93,12 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>10.8.1</version>
+            <version>11.3.4</version>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-mysql</artifactId>
+            <version>11.3.4</version>
         </dependency>
         <dependency>
             <groupId>com.google.api-client</groupId>
@@ -159,11 +156,6 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
