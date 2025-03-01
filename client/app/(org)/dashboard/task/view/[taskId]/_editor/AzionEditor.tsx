@@ -1,57 +1,22 @@
 "use client";
-import React, { FC,  useRef, useEffect } from "react";
-
+import React, {FC, useEffect, useRef} from "react";
+import {Bold, Italic, Underline} from "lucide-react";
 
 interface AzionEditorProps {
     value: string;
     onChange: (value: string) => void;
 }
 
-const AzionEditor: FC<AzionEditorProps> = ({ value, onChange }) => {
+const AzionEditor: FC<AzionEditorProps> = ({value, onChange}) => {
     const contentEditableRef = useRef<HTMLDivElement>(null);
 
     const applyFormatting = (command: string) => {
         document.execCommand(command, false);
     };
 
-    const saveSelection = () => {
-        const selection = window.getSelection();
-        if (selection && selection.rangeCount > 0) {
-            return selection.getRangeAt(0);
-        }
-        return null;
-    };
-
-    const restoreSelection = (range: Range | null) => {
-        if (range) {
-            const selection = window.getSelection();
-            if (selection) {
-                selection.removeAllRanges();
-                selection.addRange(range);
-            }
-        }
-    };
-
     const handleInput = () => {
         if (contentEditableRef.current) {
             onChange(contentEditableRef.current.innerHTML);
-        }
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (e.ctrlKey && e.key === 'z') {
-            e.preventDefault();
-        }
-    };
-
-    const moveCursorToEnd = () => {
-        const range = document.createRange();
-        const selection = window.getSelection();
-        if (contentEditableRef.current && selection) {
-            range.selectNodeContents(contentEditableRef.current);
-            range.collapse(false);
-            selection.removeAllRanges();
-            selection.addRange(range);
         }
     };
 
@@ -61,50 +26,35 @@ const AzionEditor: FC<AzionEditorProps> = ({ value, onChange }) => {
         }
     }, [value]);
 
-    useEffect(() => {
-        moveCursorToEnd();
-    }, [value]);
-
     return (
-        <div className="w-screen h-full flex flex-col overflow-hidden">
-            <div className="flex justify-center p-2 bg-gray-700 text-white">
+        <div className="w-full h-full flex flex-col overflow-hidden bg-background text-white">
+            {/* Toolbar */}
+            <div className="flex justify-center p-3 bg-base-100 shadow-md border-b border-gray-700">
                 <button
-                    onClick={() => {
-                        const range = saveSelection();
-                        applyFormatting("bold");
-                        restoreSelection(range);
-                    }}
-                    className="mx-2"
+                    onClick={() => applyFormatting("bold")}
+                    className="p-2 mx-1 rounded-lg hover:bg-gray-700 transition"
                 >
-                    Bold
+                    <Bold size={18}/>
                 </button>
                 <button
-                    onClick={() => {
-                        const range = saveSelection();
-                        applyFormatting("italic");
-                        restoreSelection(range);
-                    }}
-                    className="mx-2"
+                    onClick={() => applyFormatting("italic")}
+                    className="p-2 mx-1 rounded-lg hover:bg-gray-700 transition"
                 >
-                    Italic
+                    <Italic size={18}/>
                 </button>
                 <button
-                    onClick={() => {
-                        const range = saveSelection();
-                        applyFormatting("underline");
-                        restoreSelection(range);
-                    }}
-                    className="mx-2"
+                    onClick={() => applyFormatting("underline")}
+                    className="p-2 mx-1 rounded-lg hover:bg-gray-700 transition"
                 >
-                    Underline
+                    <Underline size={18}/>
                 </button>
             </div>
+            {/* Editable Area */}
             <div
                 ref={contentEditableRef}
-                className="w-full h-full p-4 bg-gray-800 text-white"
+                className="w-full flex-grow p-4 bg-base-300 outline-none overflow-auto text-lg"
                 contentEditable
                 onInput={handleInput}
-                onKeyDown={handleKeyDown}
             />
         </div>
     );
