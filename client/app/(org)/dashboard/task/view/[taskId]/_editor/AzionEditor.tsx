@@ -1,24 +1,24 @@
 "use client";
-import React, {FC, useEffect, useRef} from "react";
-import {Bold, Italic, Underline} from "lucide-react";
+import React, { FC, useEffect, useRef, useCallback } from "react";
+import { Bold, Italic, Underline } from "lucide-react";
 
 interface AzionEditorProps {
     value: string;
     onChange: (value: string) => void;
 }
 
-const AzionEditor: FC<AzionEditorProps> = ({value, onChange}) => {
+const AzionEditor: FC<AzionEditorProps> = ({ value, onChange }) => {
     const contentEditableRef = useRef<HTMLDivElement>(null);
 
     const applyFormatting = (command: string) => {
         document.execCommand(command, false);
     };
 
-    const handleInput = () => {
+    const handleInput = useCallback(() => {
         if (contentEditableRef.current) {
             onChange(contentEditableRef.current.innerHTML);
         }
-    };
+    }, [onChange]);
 
     useEffect(() => {
         if (contentEditableRef.current) {
@@ -34,19 +34,19 @@ const AzionEditor: FC<AzionEditorProps> = ({value, onChange}) => {
                     onClick={() => applyFormatting("bold")}
                     className="p-2 mx-1 rounded-lg hover:bg-gray-700 transition"
                 >
-                    <Bold size={18}/>
+                    <Bold size={18} />
                 </button>
                 <button
                     onClick={() => applyFormatting("italic")}
                     className="p-2 mx-1 rounded-lg hover:bg-gray-700 transition"
                 >
-                    <Italic size={18}/>
+                    <Italic size={18} />
                 </button>
                 <button
                     onClick={() => applyFormatting("underline")}
                     className="p-2 mx-1 rounded-lg hover:bg-gray-700 transition"
                 >
-                    <Underline size={18}/>
+                    <Underline size={18} />
                 </button>
             </div>
             {/* Editable Area */}
