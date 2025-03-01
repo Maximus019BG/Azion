@@ -76,7 +76,6 @@
     border-radius: 50%;
     background: conic-gradient(var(--color-primary) calc(var(--value) * 1%), transparent 0);
     mask: radial-gradient(farthest-side, transparent calc(100% - var(--thickness)), white 0);
-    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--thickness)), white 0);
 }
 
 .radial-progress::before {
