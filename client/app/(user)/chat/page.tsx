@@ -15,6 +15,7 @@ import {Decrypt, Encrypt} from "@/app/func/msg"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {faCircleLeft, faPaperPlane} from "@fortawesome/free-solid-svg-icons"
 import Link from "next/link"
+import ReturnButton from "@/app/components/ReturnButton";
 
 const ChatPage = () => {
     const [messages, setMessages] = useState<{ content: string; from: string; to: string }[]>([])
@@ -150,12 +151,8 @@ const ChatPage = () => {
         <div className="flex flex-col md:flex-row bg-base-300 text-white min-h-screen">
             {/* User List */}
             <div className="w-full md:w-1/3 lg:w-1/4 border-b md:border-r border-base-100 p-4 md:p-6 overflow-y-auto">
-                <Link className="absolute right-4 top-4 md:right-6 md:top-6" href="/dashboard">
-                    <FontAwesomeIcon
-                        className="text-3xl md:text-4xl bg-accent hover:bg-lightAccent rounded-full text-white p-2 transition-colors duration-200"
-                        icon={faCircleLeft}
-                    />
-                </Link>
+                <ReturnButton hasOrg={true}/>
+
                 <h2 className="text-2xl md:text-4xl font-bold py-5 mb-4 md:mb-6 text-center text-lightAccent">Messages</h2>
 
                 <div className="space-y-3 p-3 h-full border-2 border-base-100">

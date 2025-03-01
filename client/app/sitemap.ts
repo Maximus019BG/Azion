@@ -41,12 +41,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
             priority: 0.5,
         },
         {
-            url: `https://azion.online/dashboard/projects`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.5,
-        },
-        {
             url: `https://azion.online/dashboard/tasks`,
             lastModified: new Date(),
             changeFrequency: 'weekly',

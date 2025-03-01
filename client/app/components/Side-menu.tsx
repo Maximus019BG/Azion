@@ -238,7 +238,7 @@ const SideMenu = () => {
                             </>
                         )}
 
-                        {(access.includes("cameras:read") || access.includes("cameras:write")) && (
+                        {(access.includes("cameras:read") || access.includes("cameras:write")) && org &&(
                             <>
                                 <li className="text-md w-full">
                                     <Link href="/cam/list" className="flex items-center w-full">
@@ -255,12 +255,15 @@ const SideMenu = () => {
                                 Organizations
                             </Link>
                         </li>
-                        <li className="text-md w-full">
-                            <Link href="/chat" className="flex items-center w-full">
-                                <FaComments className="text-lg mr-2"/>
-                                Chat
-                            </Link>
-                        </li>
+                        {org && (
+                            <li className="text-md w-full">
+                                <Link href="/chat" className="flex items-center w-full">
+                                    <FaComments className="text-lg mr-2"/>
+                                    Chat
+                                </Link>
+                            </li>
+                        )}
+
                     </div>
 
                     <li className="mt-auto p-2 text-md w-full">

@@ -60,7 +60,7 @@ const TaskView: FC<PageProps> = ({params: {taskId}}) => {
         }
 
         axios
-            .put(`${apiUrl}/projects/submit/${taskId}`, formData, {
+            .put(`${apiUrl}/tasks/submit/${taskId}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     authorization: Cookies.get("azionAccessToken"),
@@ -84,7 +84,7 @@ const TaskView: FC<PageProps> = ({params: {taskId}}) => {
             email: userEmail,
         }
         axios
-            .put(`${apiUrl}/projects/return/task/${taskId}`, data, {
+            .put(`${apiUrl}/tasks/return/task/${taskId}`, data, {
                 headers: {
                     "Content-Type": "application/json",
                     authorization: Cookies.get("azionAccessToken"),
@@ -216,7 +216,7 @@ const TaskView: FC<PageProps> = ({params: {taskId}}) => {
             <div className="w-full lg:flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
                 {/* Mobile Menu Toggle - Only visible on mobile */}
                 <div className="lg:hidden mb-4">
-                    <ReturnButton/>
+                    <ReturnButton hasOrg={true}/>
                 </div>
 
                 <div className="max-w-6xl mx-auto">

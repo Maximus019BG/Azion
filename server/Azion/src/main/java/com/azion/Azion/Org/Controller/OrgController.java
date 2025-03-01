@@ -342,15 +342,15 @@ public class OrgController {
     @Transactional
     @GetMapping("/remove/{email}")
     public ResponseEntity<?> removeUserFromOrg(@PathVariable String email) {
-        
         User user = userRepository.findByEmail(email);
-        
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
-        
+        if(Objects.equals(user.getRole().getName(), "owner")){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Can not remove owner");
+        }
         user.setOrgid(null);
-        
+        user.setRole(null);
         userRepository.save(user);
         
         return ResponseEntity.ok("User with email " + email + " removed.");
@@ -445,7 +445,7 @@ public class OrgController {
         }
         if(Objects.equals(roleName, "owner")){
             userService.updateRoleAccess(request.get("color"), roleName,userService.highestAccess(),user.getOrgid());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have rights to do that");
+            return ResponseEntity.status(HttpStatus.OK).body("User doesn't have rights to do that");
         }
         if(request.get("accessFields") == null){
             return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access fields is required");

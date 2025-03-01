@@ -214,6 +214,7 @@ public class TasksService {
         }
         try {
             projectObj.setUsers(null);
+            projectObj.setOrg(null);
             projectObj.setCreatedBy(null);
             tasksRepository.save(projectObj);
             tasksRepository.delete(projectObj);

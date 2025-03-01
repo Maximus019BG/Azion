@@ -1,13 +1,16 @@
 import React from 'react';
 import {ArrowLeft} from "lucide-react";
 import Link from "next/link";
+interface Btn {
+    hasOrg:boolean,
+}
 
-const ReturnButton = () => {
+const ReturnButton: React.FC<Btn> = ({hasOrg}) => {
     return (
         <div>
-            <Link href="/dashboard" className="btn btn-outline btn-sm">
+            <Link href={`${hasOrg ? "/dashboard" : "/organizations"}`} className="btn hover:bg-lightAccent hover:border-lightAccent  btn-outline btn-sm">
                 <ArrowLeft className="mr-2 h-4 w-4"/>
-                Back to Dashboard
+                {hasOrg ? (<h1>Back to dashboard</h1>) : (<h1>Back</h1>)}
             </Link>
         </div>
     );

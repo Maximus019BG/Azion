@@ -4,11 +4,9 @@ import axios from "axios";
 import {apiUrl} from "@/app/api/config";
 import {Poppins} from "next/font/google";
 import Cookies from "js-cookie";
-import Link from "next/link";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
 import {PartOfOrg, sessionCheck} from "@/app/func/funcs";
 import ConString from "../../../components/ConString";
+import ReturnButton from "@/app/components/ReturnButton";
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
@@ -151,12 +149,7 @@ const Register_Organisation = () => {
     return (
         <div className="w-full min-h-screen flex flex-col lg:flex-row justify-center items-center">
             <div className="h-full w-full flex flex-col justify-center items-center gap-24 px-4 lg:px-0">
-                <Link className="absolute left-6 top-6" href="/">
-                    <FontAwesomeIcon
-                        className="text-4xl text-lightAccent"
-                        icon={faCircleLeft}
-                    />
-                </Link>
+               <div className={"absolute top-5 left-5"}> <ReturnButton hasOrg={false} /></div>
                 <h1
                     className={`text-lightAccent text-center text-4xl sm:text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
                 >

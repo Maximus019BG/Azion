@@ -33,7 +33,7 @@ const getOrgName = async (onHome?:boolean) => {
 
 const getTasks = async (taskId: string): Promise<Task> => {
     try {
-        const response = await axios.get(`${apiUrl}/projects/${taskId}`, {
+        const response = await axios.get(`${apiUrl}/tasks/${taskId}`, {
             headers: {
                 "Content-Type": "application/json",
                 authorization: Cookies.get("azionAccessToken")

@@ -6,7 +6,8 @@ import axios, {type AxiosResponse} from "axios"
 import {apiUrl} from "@/app/api/config"
 import Cookies from "js-cookie"
 import type {Role} from "@/app/types/types"
-import ColorPicker from "@/app/components/_roles/ColorPicker";
+import ColorPicker from "@/app/components/_roles/ColorPicker"
+import {AlertTriangle, Check, RefreshCw, Save} from "lucide-react"
 
 interface EditRoleSectionProps {
     RoleName: string
@@ -16,6 +17,7 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
     const [accessFields, setAccessFields] = useState<boolean[]>(Array(8).fill(false))
     const [isSaveEnabled, setIsSaveEnabled] = useState<boolean>(false)
     const [color, setColor] = useState<string>("#2563eb")
+    const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "success" | "error">("idle")
 
     const permissions = [
         "calendar:write",
@@ -59,103 +61,218 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
         setIsSaveEnabled(true)
     }
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        setSaveStatus("saving")
         const newBinaryString = accessFields
             .map((val, idx) => (val ? permissions[idx] : ""))
             .filter(Boolean)
             .join(" ")
+
         const data = {
             accessFields: newBinaryString,
             color,
         }
-        axios
-            .put(`${apiUrl}/org/role/update/${RoleName}`, data, {
+
+        try {
+            await axios.put(`${apiUrl}/org/role/update/${RoleName}`, data, {
                 headers: {
                     "Content-Type": "application/json",
                     authorization: Cookies.get("azionAccessToken") || "",
                 },
             })
-            .catch((error) => console.error("Error updating role access:", error))
-        setIsSaveEnabled(false)
+            setSaveStatus("success")
+            setIsSaveEnabled(false)
+
+            // Reset status after 3 seconds
+            setTimeout(() => {
+                setSaveStatus("idle")
+            }, 3000)
+        } catch (error) {
+            console.error("Error updating role access:", error)
+            setSaveStatus("error")
+
+            // Reset status after 3 seconds
+            setTimeout(() => {
+                setSaveStatus("idle")
+            }, 3000)
+        }
     }
 
     const handleReset = () => {
         setAccessFields(Array(8).fill(false))
-        setIsSaveEnabled(false)
+        setIsSaveEnabled(true)
     }
 
     const permissionFields = [
-        {label: "Add Meetings/Events", description: "Allows creating and scheduling meetings or events."},
-        {label: "Edit Organization Settings", description: "Gives access to modify organization-wide settings."},
-        {label: "View Employees Data", description: "Allows viewing details of employees in the system."},
         {
-            label: "Change Roles and Permissions",
-            description: "Grants the ability to assign roles and modify access rights.",
+            label: "Calendar Management",
+            description: "Allows creating and scheduling meetings or events.",
+            permission: "calendar:write",
+            icon: "📅",
         },
-        {label: "Create Tasks", description: "Enables users to create and assign tasks."},
-        {label: "View Tasks", description: "Allows users to view and track assigned tasks."},
-        {label: "Add Azion Cameras", description: "Permission to integrate and add Azion security cameras."},
-        {label: "Read Logs on Azion Cameras", description: "Enables access to view and analyze security camera logs."},
+        {
+            label: "Organization Settings",
+            description: "Gives access to modify organization-wide settings.",
+            permission: "settings:write settings:read",
+            icon: "⚙️",
+        },
+        {
+            label: "Employee Data Access",
+            description: "Allows viewing details of employees in the system.",
+            permission: "employees:read",
+            icon: "👥",
+        },
+        {
+            label: "Role Management",
+            description: "Grants the ability to assign roles and modify access rights.",
+            permission: "roles:write roles:read",
+            icon: "🔑",
+        },
+        {
+            label: "Task Creation",
+            description: "Enables users to create and assign tasks.",
+            permission: "tasks:write",
+            icon: "✏️",
+        },
+        {
+            label: "Task Viewing",
+            description: "Allows users to view and track assigned tasks.",
+            permission: "tasks:read",
+            icon: "👁️",
+        },
+        {
+            label: "Camera Management",
+            description: "Permission to integrate and add Azion security cameras.",
+            permission: "cameras:write",
+            icon: "📹",
+        },
+        {
+            label: "Camera Logs Access",
+            description: "Enables access to view and analyze security camera logs.",
+            permission: "cameras:read",
+            icon: "📊",
+        },
     ]
 
     return (
-        <div
-            className="w-full h-full flex flex-col lg:flex-row justify-center items-start space-y-4 lg:space-y-0 lg:space-x-4 p-4">
+        <div className="size-full bg-base-300 flex flex-col lg:flex-row ">
             {/* Permissions Panel */}
-            <div
-                className="w-full h-full lg:w-3/4 border-2 border-slate-700 rounded-md flex flex-col justify-center items-center">
-                {permissionFields.map((field, index) => (
-                    <div
-                        key={index}
-                        className={`flex flex-col w-full p-4 ${
-                            index !== permissionFields.length - 1 ? "border-b-2 border-b-slate-700" : ""
-                        }`}
-                    >
-                        {/* Toggle and Label */}
-                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                            <div className="flex flex-col mb-2 sm:mb-0">
-                                <h1 className="text-white text-base sm:text-lg">{field.label}</h1>
-                                {/* Description */}
-                                <p className="text-gray-400 text-xs sm:text-sm">{field.description}</p>
+            <div className="w-full lg:w-3/4 p-4">
+                <div className="grid gap-4">
+                    {permissionFields.map((field, index) => (
+                        <div
+                            key={index}
+                            className={`bg-gray-750 rounded-lg overflow-hidden transition-all duration-200 ${
+                                accessFields[index] ? "border-l-4 border-blue-500" : "border-l-4 border-transparent"
+                            }`}
+                        >
+                            <div className="p-4 flex items-center justify-between">
+                                <div className="flex items-start gap-3">
+                                    <div className="text-xl mt-1">{field.icon}</div>
+                                    <div>
+                                        <h3 className="font-medium text-white">{field.label}</h3>
+                                        <p className="text-sm text-gray-400 mt-1">{field.description}</p>
+                                    </div>
+                                </div>
+
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        className="sr-only peer"
+                                        checked={accessFields[index]}
+                                        disabled={RoleName === "owner"}
+                                        onChange={() => handleToggle(index)}
+                                    />
+                                    <div
+                                        className={`
+                                            w-11 h-6 bg-gray-700 rounded-full peer 
+                                            peer-checked:after:translate-x-full peer-checked:after:border-white 
+                                            after:content-[''] after:absolute after:top-0.5 after:left-[2px] 
+                                            after:bg-gray-400 after:border-gray-300 after:border after:rounded-full 
+                                            after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600
+                                            ${RoleName === "owner" ? "opacity-50 cursor-not-allowed" : ""}`}
+                                    ></div>
+                                </label>
                             </div>
-                            <input
-                                className={`self-start sm:self-center mt-2 sm:mt-0 toggle ${
-                                    RoleName !== "owner" ? "" : "disabled cursor-not-allowed"
-                                } ${accessFields[index] ? "toggle-accent" : ""}`}
-                                type="checkbox"
-                                checked={accessFields[index]}
-                                disabled={RoleName === "owner"}
-                                onChange={() => handleToggle(index)}
-                            />
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
 
             {/* Color Picker & Action Buttons */}
-            <div
-                className="bg-background h-full w-full flex flex-col space-y-6 justify-center items-center lg:w-1/4 mt-4 lg:mt-0">
-                <div className="w-full h-full flex justify-center items-center">
-                    <ColorPicker color={color} setColor={setColor} setIsSaveEnabled={setIsSaveEnabled}/>
-                </div>
+            <div className="w-full lg:w-1/4 p-4 bg-gray-750 lg:bg-transparent lg:border-l border-gray-700 overflow-y-auto">
+                <div className="sticky top-4 ">
+                    <div className="mb-6 ">
+                        <h3 className="text-lg font-medium mb-2">Role Color</h3>
+                        <p className="text-sm text-gray-400 mb-4">
+                            Choose a color to visually identify this role throughout the system
+                        </p>
 
-                {/* Reset & Save Buttons */}
-                <div className="w-full flex flex-row justify-center items-center space-x-4">
-                    <button
-                        className="py-1 px-6 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700 transition-colors duration-200"
-                        onClick={handleReset}
-                    >
-                        Reset
-                    </button>
-                    <button
-                        className={`py-1 px-6 bg-accent text-white rounded-md shadow-md hover:bg-lightAccent transition-colors duration-200 ${
-                            !isSaveEnabled && "opacity-50 cursor-not-allowed"
-                        }`}
-                        onClick={handleSave}
-                        disabled={!isSaveEnabled}
-                    >
-                        Save
-                    </button>
+                        <ColorPicker color={color} setColor={setColor} setIsSaveEnabled={setIsSaveEnabled}/>
+                    </div>
+
+                    <div className="flex flex-col gap-3 mt-8">
+                        <button
+                            className={`
+                flex items-center justify-center gap-2 py-2 px-4 rounded-md
+                ${
+                                saveStatus === "success"
+                                    ? "bg-green-600 hover:bg-green-700"
+                                    : saveStatus === "error"
+                                        ? "bg-red-600 hover:bg-red-700"
+                                        : saveStatus === "saving"
+                                            ? "bg-gray-600"
+                                            : "bg-blue-600 hover:bg-blue-700"
+                            }
+                transition-colors duration-200
+                ${!isSaveEnabled && saveStatus === "idle" ? "opacity-50 cursor-not-allowed" : ""}
+              `}
+                            onClick={handleSave}
+                            disabled={!isSaveEnabled || saveStatus === "saving"}
+                        >
+                            {saveStatus === "saving" ? (
+                                <>
+                                    <RefreshCw className="h-4 w-4 animate-spin"/>
+                                    Saving...
+                                </>
+                            ) : saveStatus === "success" ? (
+                                <>
+                                    <Check className="h-4 w-4"/>
+                                    Saved!
+                                </>
+                            ) : saveStatus === "error" ? (
+                                <>
+                                    <AlertTriangle className="h-4 w-4"/>
+                                    Error!
+                                </>
+                            ) : (
+                                <>
+                                    <Save className="h-4 w-4"/>
+                                    Save Changes
+                                </>
+                            )}
+                        </button>
+
+                        <button
+                            className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors duration-200"
+                            onClick={handleReset}
+                        >
+                            <RefreshCw className="h-4 w-4"/>
+                            Reset All
+                        </button>
+                    </div>
+
+                    {RoleName === "owner" && (
+                        <div className="mt-6 p-3 bg-yellow-900/30 border border-yellow-800/50 rounded-md">
+                            <div className="flex items-start gap-2">
+                                <AlertTriangle className="h-5 w-5 text-yellow-500 flex-shrink-0 mt-0.5"/>
+                                <p className="text-sm text-yellow-200">
+                                    The Owner role permissions cannot be modified as it has full system access by
+                                    default.
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

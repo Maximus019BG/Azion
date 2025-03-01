@@ -104,7 +104,7 @@ const DisplayEmployee: React.FC<Employee> = ({
                 >
                     <div className="w-full sm:w-1/2">
                         <p>
-                            Access level: {roleLevel}, Role: {role.name}
+                            Role: {role.name}
                         </p>
                         <h2 className="font-bold mt-4">Sensitive information</h2>
                         <div className="mt-2">

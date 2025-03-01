@@ -19,7 +19,6 @@ const Account = () => {
                 const accessToken = Cookies.get("azionAccessToken");
                 if (refreshToken && accessToken) {
                     await sessionCheck();
-                    await PartOfOrg(true);
                     setLoading(false);
                 } else {
                     window.location.href = "/login";
