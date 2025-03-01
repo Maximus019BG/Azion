@@ -1,8 +1,11 @@
 {
   "name": "azion-f",
-  "version": "0.5.3",
+  "version": "0.6.2",
   "private": true,
-  "scripts": {
+  "engines": {
+    "node": ">=14.0.0"
+  },
+    "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
