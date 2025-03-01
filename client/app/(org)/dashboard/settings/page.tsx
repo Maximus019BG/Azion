@@ -45,7 +45,7 @@ const OrgSettings = () => {
                 </div>
             ) : (
                 <div className="w-full h-dvh flex flex-col lg:flex-row overflow-y-hidden">
-                    <div className="w-full lg:w-1/4 h-full">
+                    <div className="w-full lg:w-1/4 h-fit lg:h-full">
                         <SideMenu/>
                     </div>
                     <div className="w-full h-full flex justify-center items-center p-6 lg:p-10 overflow-auto">
