@@ -5,8 +5,7 @@ import axios from "axios"
 import {apiUrl} from "@/app/api/config"
 import {Commissioner} from "next/font/google"
 import Cookies from "js-cookie"
-import Link from "next/link"
-import {ArrowLeft} from "lucide-react"
+import ReturnButton from "@/app/components/ReturnButton"
 
 const azionText = Commissioner({subsets: ["latin"], weight: "800"})
 
@@ -89,24 +88,23 @@ export default function CamTest() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-base-300 p-4 relative">
-            <Link href="/cam/list"
-                  className="absolute top-6 left-6 text-accent hover:text-lightAccent transition-colors">
-                <ArrowLeft size={28}/>
-            </Link>
-
+        <div className="min-h-screen flex flex-col items-center justify-center bg-base-300 p-4 sm:p-6 relative">
+            <div className="absolute top-4 sm:top-5 left-4 sm:left-5">
+                <ReturnButton hasOrg={false}/>
+            </div>
             {showOverlay && (
                 <div className="absolute inset-0 bg-base-100/50 backdrop-blur-sm z-50 flex items-center justify-center">
-                    <div className="animate-pulse text-lightAccent text-xl">Processing...</div>
+                    <div className="animate-pulse text-lightAccent text-lg sm:text-xl">Processing...</div>
                 </div>
             )}
 
-            <div className="w-full max-w-md flex flex-col items-center gap-8">
-                <h1 className={`text-lightAccent text-4xl md:text-5xl font-bold ${azionText.className}`}>
-                    Azion<span className="text-accent">Cam-Test</span>
+            <div className="w-full max-w-md flex flex-col items-center gap-6 sm:gap-8">
+                <h1 className={`text-slate-300 text-4xl sm:text-5xl md:text-6xl font-bold ${azionText.className} text-center`}>
+                    Azion<span className="ml-2 sm:ml-3 text-accent">Cam-Test</span>
                 </h1>
 
-                <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-accent">
+                <div
+                    className="relative w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-accent">
                     <video
                         ref={videoRef}
                         autoPlay
@@ -116,7 +114,7 @@ export default function CamTest() {
 
                 {result && (
                     <div
-                        className={`text-center p-3 rounded-lg w-full ${
+                        className={`text-center p-3 rounded-lg w-full text-sm sm:text-base ${
                             result.includes("error") || result.includes("No faces")
                                 ? "bg-red-900/20 text-red-400"
                                 : "bg-green-900/20 text-green-400"
@@ -127,7 +125,7 @@ export default function CamTest() {
                 )}
 
                 <button
-                    className="w-full bg-accent hover:bg-lightAccent text-white font-bold text-xl py-3 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-accent hover:bg-lightAccent text-white font-bold text-lg sm:text-xl py-3 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={captureAndSendFrame}
                     disabled={processing}
                 >

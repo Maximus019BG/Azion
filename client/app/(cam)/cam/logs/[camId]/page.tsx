@@ -5,9 +5,9 @@ import {usePathname} from "next/navigation"
 import axios from "axios"
 import {apiUrl} from "@/app/api/config"
 import Cookies from "js-cookie"
-import Link from "next/link"
-import {ArrowLeft, Download, RefreshCw} from "lucide-react"
+import {Download, RefreshCw} from "lucide-react"
 import {sessionCheck, UserHasRight} from "@/app/func/funcs"
+import ReturnButton from "@/app/components/ReturnButton"
 
 const CamLogsPage = () => {
     const pathname = usePathname()
@@ -74,15 +74,15 @@ const CamLogsPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-base-300 p-4 relative">
-            <Link href="/cam/list"
-                  className="absolute top-6 left-6 text-accent hover:text-lightAccent transition-colors">
-                <ArrowLeft size={28}/>
-            </Link>
+        <div className="min-h-screen bg-base-300 p-3 sm:p-4 relative">
+            <div className="absolute top-4 left-4">
+                <ReturnButton hasOrg={false}/>
+            </div>
 
-            <div className="max-w-5xl mx-auto pt-16 pb-8">
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl md:text-3xl font-bold text-lightAccent">
+            <div className="max-w-5xl mx-auto pt-14 sm:pt-16 pb-6 sm:pb-8">
+                <div
+                    className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-0">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-lightAccent">
                         Logs: <span className="text-white">{camId}</span>
                     </h1>
 
@@ -90,19 +90,22 @@ const CamLogsPage = () => {
                         <button
                             onClick={fetchLogs}
                             disabled={refreshing}
-                            className="bg-base-100 hover:bg-base-200 text-white p-2 rounded-lg transition-colors flex items-center gap-2"
+                            className="bg-base-100 hover:bg-base-200 text-white p-2 rounded-lg transition-colors flex items-center gap-2 flex-1 sm:flex-auto justify-center sm:justify-start"
                         >
-                            <RefreshCw size={18} className={refreshing ? "animate-spin text-accent" : "text-accent"}/>
-                            <span className="hidden md:inline">Refresh</span>
+                            <RefreshCw
+                                size={16}
+                                className={`${refreshing ? "animate-spin text-accent" : "text-accent"} sm:size-18`}
+                            />
+                            <span className="text-sm sm:text-base">Refresh</span>
                         </button>
 
                         <button
                             onClick={downloadLogs}
                             disabled={logs.length === 0}
-                            className="bg-accent hover:bg-lightAccent text-white p-2 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
+                            className="bg-accent hover:bg-lightAccent text-white p-2 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 flex-1 sm:flex-auto justify-center sm:justify-start"
                         >
-                            <Download size={18}/>
-                            <span className="hidden md:inline">Download</span>
+                            <Download size={16} className="sm:size-18"/>
+                            <span className="text-sm sm:text-base">Download</span>
                         </button>
                     </div>
                 </div>
@@ -114,14 +117,16 @@ const CamLogsPage = () => {
                 ) : error ? (
                     <div className="bg-red-900/20 text-red-400 p-4 rounded-lg">{error}</div>
                 ) : logs.length === 0 ? (
-                    <div className="bg-base-200 p-8 rounded-lg text-center text-gray-400">No logs available for this
-                        camera</div>
+                    <div className="bg-base-200 p-6 sm:p-8 rounded-lg text-center text-gray-400">
+                        No logs available for this camera
+                    </div>
                 ) : (
                     <div className="bg-base-100 rounded-lg overflow-hidden shadow-lg">
-                        <div className="bg-base-200 px-4 py-2 text-xs text-gray-400 border-b border-gray-700">Camera
-                            Logs
+                        <div className="bg-base-200 px-3 sm:px-4 py-2 text-xs text-gray-400 border-b border-gray-700">
+                            Camera Logs
                         </div>
-                        <pre className="p-4 overflow-auto text-gray-300 text-sm h-[70vh] whitespace-pre-wrap">
+                        <pre
+                            className="p-3 sm:p-4 overflow-auto text-gray-300 text-xs sm:text-sm h-[60vh] sm:h-[70vh] whitespace-pre-wrap">
               {logs.join("\n")}
             </pre>
                     </div>
