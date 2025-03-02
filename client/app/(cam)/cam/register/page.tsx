@@ -9,10 +9,12 @@ import Link from "next/link"
 import {Camera, Check, Loader2} from "lucide-react"
 import {sessionCheck, UserHasRight} from "@/app/func/funcs"
 import ReturnButton from "@/app/components/ReturnButton"
+import {Role} from "@/app/types/types"
 
 export default function RegisterCam() {
     const [camId, setCamId] = useState("")
-    const [roleLevel, setRoleLevel] = useState(0)
+    const [roles, setRoles] = useState<Role[]>([])
+    const [selectedRole, setSelectedRole] = useState("")
     const [submitting, setSubmitting] = useState(false)
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState("")
@@ -20,7 +22,19 @@ export default function RegisterCam() {
     useEffect(() => {
         UserHasRight("cameras:write")
         sessionCheck()
+        fetchRoles()
     }, [])
+
+    const fetchRoles = async () => {
+        const accessToken = Cookies.get("azionAccessToken")
+        try {
+            const response = await axios.get(`${apiUrl}/org/list/roles/${accessToken}`)
+            setRoles(response.data)
+        } catch (error) {
+            console.error("Error fetching roles: ", error)
+            setError("Failed to fetch roles")
+        }
+    }
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
@@ -32,7 +46,7 @@ export default function RegisterCam() {
 
         const payload = {
             camName: camId,
-            roleLevel,
+            roleId: selectedRole,
         }
 
         try {
@@ -44,7 +58,7 @@ export default function RegisterCam() {
             })
             setSuccess(true)
             setCamId("")
-            setRoleLevel(0)
+            setSelectedRole("")
         } catch (error: any) {
             console.error("Error registering camera: ", error)
             setError(error.response?.data || "Failed to register camera")
@@ -92,26 +106,26 @@ export default function RegisterCam() {
                     </div>
 
                     <div className="mb-6">
-                        <label htmlFor="roleLevel" className="block text-sm font-medium text-gray-400 mb-1">
-                            Role Level
+                        <label htmlFor="role" className="block text-sm font-medium text-gray-400 mb-1">
+                            Role
                         </label>
-                        <input
-                            id="roleLevel"
-                            type="number"
-                            placeholder="Enter role level"
-                            value={roleLevel}
-                            onChange={(e) => setRoleLevel(Number.parseInt(e.target.value) || 0)}
+                        <select
+                            id="role"
+                            value={selectedRole}
+                            onChange={(e) => setSelectedRole(e.target.value)}
                             className="w-full p-3 bg-base-100 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-accent focus:outline-none"
                             required
-                            min="0"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">Determines the access level required to view this
-                            camera</p>
+                        >
+                            <option value="" disabled>Select a role</option>
+                            {roles.map((role) => (
+                               <option key={role.id} value={role.id ?? ""}>{role.name}</option>
+                            ))}
+                        </select>
                     </div>
 
                     <button
                         type="submit"
-                        disabled={submitting || !camId}
+                        disabled={submitting || !camId || !selectedRole}
                         className="w-full bg-accent hover:bg-lightAccent text-white font-bold py-3 rounded-lg transition-all duration-300 flex items-center justify-center disabled:opacity-50"
                     >
                         {submitting ? (
@@ -134,4 +148,3 @@ export default function RegisterCam() {
         </div>
     )
 }
-
