@@ -1,6 +1,5 @@
 "use client"
-
-import type React from "react"
+import React, {use} from "react"
 import {type FC, useEffect, useState} from "react"
 import {getTasks} from "@/app/func/org"
 import Loading from "@/app/components/Loading"
@@ -20,12 +19,13 @@ import ReturnButton from "@/app/components/ReturnButton";
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"})
 
 interface PageProps {
-    params: {
+    params: Promise<{
         taskId: string | null
-    }
+    }>
 }
 
-const TaskView: FC<PageProps> = ({params: {taskId}}) => {
+const TaskView: FC<PageProps> = ({params}) => {
+    const {taskId} = use(params)
     const [task, setTask] = useState<Task | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
     const [file, setFile] = useState<File | null>(null)
