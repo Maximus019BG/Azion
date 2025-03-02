@@ -1,81 +1,119 @@
-"use client";
-import React, {useEffect, useState} from 'react';
-import {useRouter} from 'next/navigation';
-import axios from 'axios';
-import {apiUrl} from '@/app/api/config';
-import Cookies from 'js-cookie';
-import Link from 'next/link';
-import {Cam} from '@/app/types/types';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
-import {getOrgName} from "@/app/func/org";
-import {sessionCheck, UserHasRight} from "@/app/func/funcs";
+"use client"
+
+import {useEffect, useState} from "react"
+import {useRouter} from "next/navigation"
+import axios from "axios"
+import {apiUrl} from "@/app/api/config"
+import Cookies from "js-cookie"
+import Link from "next/link"
+import type {Cam} from "@/app/types/types"
+import {Camera, Plus} from "lucide-react"
+import {sessionCheck, UserHasRight} from "@/app/func/funcs"
+import ReturnButton from "@/app/components/ReturnButton";
 
 const CamListPage = () => {
-    const [cams, setCams] = useState<Cam[]>([]);
-    const [error, setError] = useState('');
-    const router = useRouter();
+    const [cams, setCams] = useState<Cam[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState("")
+    const router = useRouter()
 
     useEffect(() => {
-        UserHasRight("cameras:read");
-        sessionCheck();
-    });
+        UserHasRight("cameras:read")
+        sessionCheck()
+    }, [])
+
     useEffect(() => {
         const fetchCams = async () => {
-            const accessToken = Cookies.get('azionAccessToken');
+            const accessToken = Cookies.get("azionAccessToken")
             if (!accessToken) {
-                setError('Access Token is missing');
-                return;
+                setError("Access Token is missing")
+                setLoading(false)
+                return
             }
 
             try {
                 const response = await axios.get(`${apiUrl}/cam/all`, {
                     headers: {
-                        'Content-Type': 'application/json',
-                        'authorization': accessToken
-                    }
-                });
-                setCams(response.data);
+                        "Content-Type": "application/json",
+                        authorization: accessToken,
+                    },
+                })
+                setCams(response.data)
             } catch (err) {
-                setError('Failed to fetch cameras');
+                setError("Failed to fetch cameras")
+            } finally {
+                setLoading(false)
             }
-        };
+        }
 
-        fetchCams();
-    }, []);
+        fetchCams()
+    }, [])
 
     const handleCamClick = (camName: string) => {
-        router.push(`/cam/logs/${camName}`);
-    };
-
-    if (error) return <p className="text-red-500">{error}</p>;
+        router.push(`/cam/logs/${camName}`)
+    }
 
     return (
-        <div className="w-full h-screen flex flex-col justify-center items-center text-white relative p-4">
-            <Link className="absolute top-6 left-6" href={`/dashboard`}>
-                <FontAwesomeIcon className="text-3xl text-lightAccent" icon={faCircleLeft}/>
-            </Link>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-center">Camera List</h1>
-            <div className="bg-base-300 p-6 rounded-lg shadow-lg w-full max-w-4xl overflow-auto">
-                <ul className="list-disc space-y-2">
-                    {cams.map((cam) => (
-                        <li
-                            key={cam.camName}
-                            className="cursor-pointer text-gray-300 hover:text-white"
-                            onClick={() => handleCamClick(cam.camName)}
-                        >
-                            {cam.camName}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <Link href="/cam/register">
-                <p className="absolute bottom-4 right-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm sm:text-base md:text-lg lg:text-xl">
-                    Register Camera
-                </p>
-            </Link>
-        </div>
-    );
-};
+        <div className="min-h-screen bg-base-300 text-white p-4 relative">
+            <ReturnButton hasOrg={true}/>
+            <div className="max-w-4xl mx-auto pt-16 pb-20">
+                <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-lightAccent">Camera List</h1>
 
-export default CamListPage;
+                {loading ? (
+                    <div className="flex justify-center items-center h-64">
+                        <div className="animate-pulse text-accent">Loading cameras...</div>
+                    </div>
+                ) : error ? (
+                    <div className="bg-red-900/20 text-red-400 p-4 rounded-lg text-center">{error}</div>
+                ) : cams.length === 0 ? (
+                    <div className="bg-base-200 rounded-lg p-8 text-center">
+                        <p className="text-gray-400 mb-4">No cameras registered yet</p>
+                        <Link
+                            href="/cam/register"
+                            className="inline-flex items-center gap-2 bg-accent hover:bg-lightAccent text-white px-4 py-2 rounded-lg transition-colors"
+                        >
+                            <Plus size={18}/>
+                            Register your first camera
+                        </Link>
+                    </div>
+                ) : (
+                    <div className="grid gap-4 md:grid-cols-2">
+                        {cams.map((cam) => (
+                            <div
+                                key={cam.camName}
+                                onClick={() => handleCamClick(cam.camName)}
+                                className="bg-base-200 hover:bg-base-100 p-4 rounded-lg cursor-pointer transition-colors flex items-center gap-3"
+                            >
+                                <div className="bg-accent/20 p-2 rounded-full">
+                                    <Camera size={24} className="text-accent"/>
+                                </div>
+                                <div>
+                                    <h3 className="font-medium">{cam.camName}</h3>
+                                    <p className="text-sm text-gray-400">Click to view logs</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            <div className="fixed bottom-6 right-6 flex gap-3">
+                <Link
+                    href="/cam-test"
+                    className="bg-base-100 hover:bg-base-200 text-white p-3 rounded-full shadow-lg transition-colors"
+                >
+                    <Camera size={24} className="text-accent"/>
+                </Link>
+                <Link
+                    href="/cam/register"
+                    className="bg-accent hover:bg-lightAccent text-white p-3 rounded-full shadow-lg transition-colors"
+                >
+                    <Plus size={24}/>
+                </Link>
+            </div>
+        </div>
+    )
+}
+
+export default CamListPage
+
