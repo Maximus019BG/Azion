@@ -1,17 +1,17 @@
 'use client';
-import {useEffect, useState} from 'react';
+import { use, useEffect, useState } from 'react';
 import axios from 'axios';
-import {apiUrl} from "@/app/api/config";
+import { apiUrl } from "@/app/api/config";
 import Cookies from "js-cookie";
 
 interface OrganizationPageProps {
-    params: {
+    params: Promise<{
         conString: string;
-    };
+    }>;
 }
 
-const OrganizationPage = ({params}: OrganizationPageProps) => {
-    const {conString} = params;
+const OrganizationPage = ({ params }: OrganizationPageProps) => {
+    const { conString } = use(params);
     const [organizationData, setOrganizationData] = useState(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +32,7 @@ const OrganizationPage = ({params}: OrganizationPageProps) => {
                     },
                 });
                 setOrganizationData(response.data);
-                window.location.href = `/oragnizations`;
+                window.location.href = `/organizations`;
             } catch (error) {
                 console.error('Error fetching organization data:', error);
                 setError('Unable to fetch organization details.');
