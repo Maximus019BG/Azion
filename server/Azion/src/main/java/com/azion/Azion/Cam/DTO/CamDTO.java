@@ -1,25 +1,19 @@
 package com.azion.Azion.Cam.DTO;
 
+import com.azion.Azion.User.Model.Role;
+
 public class CamDTO {
-    private String camName;
-    private String roleLevel;
+    private String id;
     private String orgAddress;
+    private String camName;
+    private Role role;
 
-    
-    public String getCamName() {
-        return camName;
+    public String getId() {
+        return id;
     }
 
-    public void setCamName(String camName) {
-        this.camName = camName;
-    }
-
-    public String getRoleLevel() {
-        return roleLevel;
-    }
-
-    public void setRoleLevel(String roleLevel) {
-        this.roleLevel = roleLevel;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getOrgAddress() {
@@ -28,5 +22,21 @@ public class CamDTO {
 
     public void setOrgAddress(String orgAddress) {
         this.orgAddress = orgAddress;
+    }
+
+    public String getCamName() {
+        return camName;
+    }
+
+    public void setCamName(String camName) {
+        this.camName = camName;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
