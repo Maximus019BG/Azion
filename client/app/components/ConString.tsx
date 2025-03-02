@@ -1,51 +1,70 @@
 "use client";
-import React from "react";
-import {Poppins} from "next/font/google";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCopy} from "@fortawesome/free-solid-svg-icons";
+
+import React, {useState} from "react";
+import {Poppins} from 'next/font/google';
+import {Check, Copy} from 'lucide-react';
 
 interface ConStringProps {
     value: string;
 }
 
-const headerText = Poppins({subsets: ["latin"], weight: "800"});
+const poppins = Poppins({subsets: ["latin"], weight: ["400", "600", "800"]});
 
 const ConString: React.FC<ConStringProps> = ({value}) => {
+    const [copied, setCopied] = useState(false);
+
     const toDashboard = () => {
         window.location.href = `/dashboard`;
     };
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(value);
-        alert("Connection code copied to clipboard!");
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
     };
 
     return (
         <div
-            className="w-full h-2/3 md:w-11/12 flex flex-col justify-center items-center bg-base-300 rounded-xl border-2 border-accent max-w-full p-4 md:p-8 gap-5">
-            <h1 className={`text-white max-w-2xl text-md md:text-xl lg:text-3xl text-center ${headerText.className}`}>
-                <span
-                    className="font-black text-lightAccent text-2xl sm:text-3xl md:text-4xl lg:text-5xl">Congrats!!!</span>
-                <br/>
-                <br/> You have successfully created an organization!
-            </h1>
+            className="w-full max-w-xl mx-auto p-6 md:p-8 bg-base-300 rounded-xl border-2 border-accent shadow-lg flex flex-col items-center justify-center gap-6 text-center">
+            {/* Celebration Icon */}
+            <div className="text-4xl">🎉</div>
 
-            <div className="flex flex-col justify-center items-center max-w-2xl gap-4">
-                <h2 className="mt-6 text-white text-md sm:text-lg md:text-xl lg:text-2xl text-center">
-                    Your connection code is:
-                    <span className="mt-4 font-extrabold"> {value} </span>
-                    <button onClick={copyToClipboard} className="ml-2 text-lightAccent hover:text-accent">
-                        <FontAwesomeIcon icon={faCopy}/>
-                    </button>
-                </h2>
-                <p className="text-white text-xs sm:text-sm md:text-md lg:text-lg text-center">
-                    With this connection code your employees can join
+            {/* Header */}
+            <div className="space-y-2">
+                <h1 className={`text-2xl md:text-3xl font-extrabold text-lightAccent ${poppins.className}`}>
+                    Congrats!
+                </h1>
+                <p className="text-gray-400">
+                    You have successfully created an organization!
                 </p>
             </div>
 
+            {/* Connection Code */}
+            <div className="w-full space-y-2">
+                <h2 className="text-sm font-medium text-gray-400">Your connection code is:</h2>
+                <div className="flex items-center justify-center gap-2">
+                    <div className="bg-base-100 px-4 py-3 rounded-lg font-mono text-lg font-bold">
+                        {value}
+                    </div>
+                    <button
+                        onClick={copyToClipboard}
+                        className="h-10 w-10 flex items-center justify-center rounded-md bg-base-100 hover:bg-base-200 transition-colors"
+                    >
+                        {copied ?
+                            <Check className="h-5 w-5 text-green-500"/> :
+                            <Copy className="h-5 w-5 text-gray-400"/>
+                        }
+                    </button>
+                </div>
+                <p className="text-sm text-gray-500">
+                    With this connection code your employees can join your organization
+                </p>
+            </div>
+
+            {/* Dashboard Button */}
             <button
                 onClick={toDashboard}
-                className="bg-lightAccent text-slate-50 font-extrabold w-36 h-10 text-sm md:text-lg rounded-full hover:bg-accent transition-all duration-300 sm:w-40 sm:h-12 md:w-44 md:h-14 lg:w-48 lg:h-16"
+                className="px-6 py-2 bg-accent hover:bg-blue-700 text-white font-semibold rounded-full transition-colors"
             >
                 Go to dashboard
             </button>
