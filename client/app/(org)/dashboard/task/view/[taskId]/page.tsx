@@ -32,7 +32,6 @@ const TaskView: FC<PageProps> = ({params: {taskId}}) => {
     const [inputMethod, setInputMethod] = useState<string>("file")
     const [link, setLink] = useState<string>("")
     const [editorContent, setEditorContent] = useState<string>("")
-    const [showFiles, setShowFiles] = useState<boolean>(false)
     const [doneByUser, setDoneByUser] = useState<boolean>(false)
     const [admin, setAdmin] = useState<boolean>(false)
     const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
@@ -160,10 +159,9 @@ const TaskView: FC<PageProps> = ({params: {taskId}}) => {
 
             if (task?.users?.some((user) => user.email === uEmail)) {
                 setIsUser(true)
-            } else if(!task?.doneBy?.some((doneUser) => doneUser.email === uEmail)) {
+            } else if (!task?.doneBy?.some((doneUser) => doneUser.email === uEmail)) {
                 setIsUser(true)
-            }
-            else {
+            } else {
                 setIsUser(false)
             }
         }
@@ -457,31 +455,63 @@ const TaskView: FC<PageProps> = ({params: {taskId}}) => {
                             {task.files &&
                                 task.files.map((file, index) => (
                                     <div key={index} className="mb-4 p-3 sm:p-4 border border-base-300 rounded-lg">
-                                        <div
-                                            className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
-                                            <div>
+                                        {file.submitType === "LINK" ? (
+                                            <>
                                                 <div
-                                                    className="font-medium text-xs sm:text-sm flex items-center">{file.user.name}</div>
-                                                <div className="text-xs text-gray-400">{file.user.email}</div>
-                                                <div className="text-xs text-gray-500 mt-1">{file.date}</div>
-                                            </div>
-                                            <button className="btn btn-outline btn-xs"
-                                                    onClick={() => ReturnTask(taskId, file.user.email)}>
-                                                Return
-                                            </button>
-                                        </div>
-                                        <div className="divider my-2"></div>
-                                        <div className="mt-2">
-                                            <a
-                                                href={URL.createObjectURL(new Blob([atob(file.fileData || "")], {type: file.contentType}))}
-                                                download={file.fileName}
-                                                className="flex items-center text-accent hover:underline text-xs sm:text-sm"
-                                            >
-                                                <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-2"/>
-                                                {file.fileName}
-                                                <ExternalLink className="h-2 w-2 sm:h-3 sm:w-3 ml-1"/>
-                                            </a>
-                                        </div>
+                                                    className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+                                                    <div>
+                                                        <div
+                                                            className="font-medium text-xs sm:text-sm flex items-center">{file.user.name}</div>
+                                                        <div className="text-xs text-gray-400">{file.user.email}</div>
+                                                        <div className="text-xs text-gray-500 mt-1">{file.date}</div>
+                                                        <div className="text-xs text-gray-500 mt-1">{file.submitType}</div>
+                                                    </div>
+                                                    <button className="btn btn-outline btn-xs"
+                                                            onClick={() => ReturnTask(taskId, file.user.email)}>
+                                                        Return
+                                                    </button>
+                                                </div>
+                                                <div className="divider my-2"></div>
+                                                <div className="mt-2">
+                                                    <a
+                                                        href={file.link}
+                                                        className="flex items-center text-accent hover:underline text-xs sm:text-sm"
+                                                    >
+                                                        {file.link}
+                                                        <ExternalLink className="h-2 w-2 sm:h-3 sm:w-3 ml-1"/>
+                                                    </a>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div
+                                                    className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+                                                    <div>
+                                                        <div
+                                                            className="font-medium text-xs sm:text-sm flex items-center">{file.user.name}</div>
+                                                        <div className="text-xs text-gray-400">{file.user.email}</div>
+                                                        <div className="text-xs text-gray-500 mt-1">{file.date}</div>
+                                                        <div className="text-xs text-gray-500 mt-1">{file.submitType}</div>
+                                                    </div>
+                                                    <button className="btn btn-outline btn-xs"
+                                                            onClick={() => ReturnTask(taskId, file.user.email)}>
+                                                        Return
+                                                    </button>
+                                                </div>
+                                                <div className="divider my-2"></div>
+                                                <div className="mt-2">
+                                                    <a
+                                                        href={URL.createObjectURL(new Blob([atob(file.fileData || "")], {type: file.contentType}))}
+                                                        download={file.fileName}
+                                                        className="flex items-center text-accent hover:underline text-xs sm:text-sm"
+                                                    >
+                                                        <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-2"/>
+                                                        {file.fileName}
+                                                        <ExternalLink className="h-2 w-2 sm:h-3 sm:w-3 ml-1"/>
+                                                    </a>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 ))}
                         </div>

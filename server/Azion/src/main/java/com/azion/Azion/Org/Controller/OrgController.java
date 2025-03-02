@@ -286,7 +286,6 @@ public class OrgController {
         return ResponseEntity.ok(orgs);
     }
     
-    
     @Transactional
     @GetMapping("/list/employees")
     public ResponseEntity<?> listEmployees(@RequestHeader("authorization") String token) {

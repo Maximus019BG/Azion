@@ -320,7 +320,7 @@ const CreateTask: FC = () => {
                                                 </div>
                                                 <div className="space-y-2">
                                                     <Label htmlFor="source">
-                                                        Source <span className="text-red-500">*</span>
+                                                        Source
                                                     </Label>
                                                     <Input
                                                         id="source"

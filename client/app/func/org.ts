@@ -40,7 +40,6 @@ const getTasks = async (taskId: string): Promise<Task> => {
             },
         });
         const taskData: Task = response.data;
-        console.log(response.data.users);
         return taskData;
     } catch (error) {
         console.error('Failed to fetch task', error);

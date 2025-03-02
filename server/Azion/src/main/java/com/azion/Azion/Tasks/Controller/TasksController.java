@@ -92,7 +92,7 @@ public class TasksController extends FileSize {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing privileges");
         }
         
-        if (title == null || description == null || dueDate == null || priority == null || status == null || source == null || usersArr == null) {
+        if (title == null || description == null || dueDate == null || priority == null || status == null || usersArr == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing required fields");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
