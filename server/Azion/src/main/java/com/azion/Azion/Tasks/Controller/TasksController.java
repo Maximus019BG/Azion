@@ -164,6 +164,10 @@ public class TasksController extends FileSize {
         User user = tokenService.getUserFromToken(token);
         
         Optional<Task> task = tasksRepository.findById(id);
+        if(!task.get().getUsers().contains(user) || !userService.UserHasRight(user, "tasks:read")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing privileges");
+        }
+        
         TasksDTO taskDTO = new TasksDTO();
         if (task.isPresent()) {
             taskDTO.setId(task.get().getProjectID());
@@ -175,6 +179,7 @@ public class TasksController extends FileSize {
             taskDTO.setProgress(task.get().getProgress());
             taskDTO.setSource(task.get().getSource());
             taskDTO.setOrgId(task.get().getOrg().getOrgID());
+            taskDTO.setUsers(tasksService.convertToUserDTOSet(task.get().getUsers()));
             
             if (task.get().getCreatedBy() != null) {
                 taskDTO.setCreatedBy(convertToUserDTO(task.get().getCreatedBy()));

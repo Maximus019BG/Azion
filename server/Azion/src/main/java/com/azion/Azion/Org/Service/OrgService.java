@@ -125,11 +125,16 @@ public class OrgService {
             throw new RuntimeException("");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+        Role role = user.getRole();
         List<User> employees = new ArrayList<>(org.getUsers());
         employees.remove(user);
         user.setOrgid(null);
+        user.setRole(null);
         orgRepository.save(org);
         userRepository.save(user);
+        List<User> usersList = role.getUsers().stream().toList();
+        usersList.remove(user);
+        role.setUsers(new HashSet<>(usersList));
     }
     
     public Set<RoleDTO> getOrgRoles(Org org) {

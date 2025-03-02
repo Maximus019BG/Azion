@@ -349,6 +349,10 @@ public class OrgController {
         if(Objects.equals(user.getRole().getName(), "owner")){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Can not remove owner");
         }
+        Role role = user.getRole();
+        role.setUsers(role.getUsers().stream().filter(u -> !u.getId().equals(user.getId())).collect(Collectors.toSet()));
+        roleRepository.save(role);
+        
         user.setOrgid(null);
         user.setRole(null);
         userRepository.save(user);
@@ -395,6 +399,11 @@ public class OrgController {
         if (employee == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee not found.");
         }
+        
+        if(employee.getRole().getName().trim().equals("owner")){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Can not remove owner");
+        }
+        
         orgService.removeEmployee(employee);
         return ResponseEntity.ok("Employee removed.");
     }

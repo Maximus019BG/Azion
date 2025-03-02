@@ -44,6 +44,7 @@ const getTasks = async (taskId: string): Promise<Task> => {
         return taskData;
     } catch (error) {
         console.error('Failed to fetch task', error);
+        window.location.href = '/404';
         throw new Error('Failed to fetch task');
     }
 };

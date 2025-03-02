@@ -26,7 +26,6 @@ interface PageProps {
 }
 
 const TaskView: FC<PageProps> = ({params: {taskId}}) => {
-    const [orgName, setOrgName] = useState<string | null>(null)
     const [task, setTask] = useState<Task | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
     const [file, setFile] = useState<File | null>(null)
@@ -161,7 +160,10 @@ const TaskView: FC<PageProps> = ({params: {taskId}}) => {
 
             if (task?.users?.some((user) => user.email === uEmail)) {
                 setIsUser(true)
-            } else {
+            } else if(!task?.doneBy?.some((doneUser) => doneUser.email === uEmail)) {
+                setIsUser(true)
+            }
+            else {
                 setIsUser(false)
             }
         }
@@ -230,8 +232,8 @@ const TaskView: FC<PageProps> = ({params: {taskId}}) => {
                                 <div className="flex flex-wrap items-center gap-2 mt-2">
                                     <div className={`badge ${getStatusColor(task.status)}`}>{task.status}</div>
                                     <span className="text-xs sm:text-sm text-gray-400">
-                    Created by {task.createdBy?.name || "Unknown"}
-                  </span>
+                                        Created by {task.createdBy?.name || "Unknown"}
+                                    </span>
                                 </div>
                             </div>
 
