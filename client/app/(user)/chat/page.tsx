@@ -13,8 +13,7 @@ import Cookies from "js-cookie"
 import Image from "next/image"
 import {Decrypt, Encrypt} from "@/app/func/msg"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {faCircleLeft, faPaperPlane} from "@fortawesome/free-solid-svg-icons"
-import Link from "next/link"
+import {faPaperPlane} from "@fortawesome/free-solid-svg-icons"
 import ReturnButton from "@/app/components/ReturnButton";
 
 const ChatPage = () => {
@@ -232,7 +231,7 @@ const ChatPage = () => {
 
                         <div className="flex items-center border-t border-base-100 pt-4">
                             <input
-                                className="flex-grow border-2 border-gray-600 rounded-l-lg p-3 text-sm bg-base-100 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                                className="flex-grow rounded-l-lg p-3 text-sm bg-base-100 border-2 border-gray-600 focus:border-none text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                                 type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
