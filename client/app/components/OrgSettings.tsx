@@ -286,17 +286,19 @@ const OrgSettingsForm = () => {
                                 Invite
                             </button>
 
-                            <p className="flex justify-center items-center gap-2">
+                            <p className="flex justify-center items-center mt-4 gap-2">
                                 Or join with connection code: {conString}
                                 <span className="cursor-pointer" onClick={copyConStr}>
-                <IoCopy/>
-            </span>
+                                    <IoCopy/>
+                                </span>
                             </p>
                         </div>
 
                         {invitePopUp && (
-                            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 transition-opacity duration-300">
-                                <div className="bg-accent p-6 rounded-lg shadow-lg w-80 sm:w-96 relative transform transition-transform duration-300 scale-95">
+                            <div
+                                className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 transition-opacity duration-300">
+                                <div
+                                    className="bg-accent p-6 rounded-lg shadow-lg w-80 sm:w-96 relative transform transition-transform duration-300 scale-95">
                                     <button
                                         onClick={handleInviteChange}
                                         className="absolute top-2 right-2 text-xl font-bold text-gray-300 hover:text-gray-100 transition-colors duration-200"
@@ -336,8 +338,6 @@ const OrgSettingsForm = () => {
                         )}
                     </div>
                 </div>
-
-
             </div>
         </div>
     );
