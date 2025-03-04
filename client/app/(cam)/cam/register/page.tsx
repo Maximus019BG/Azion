@@ -69,9 +69,9 @@ export default function RegisterCam() {
 
     return (
         <div className="min-h-screen bg-base-300 flex flex-col items-center justify-center p-4 relative">
-
-            <ReturnButton hasOrg={true}/>
-
+            <div className="absolute top-4 sm:top-5 left-4 sm:left-5">
+                <ReturnButton hasOrg={false}/>
+            </div>
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
                     <div className="inline-flex justify-center items-center w-16 h-16 bg-accent/20 rounded-full mb-4">
@@ -118,7 +118,7 @@ export default function RegisterCam() {
                         >
                             <option value="" disabled>Select a role</option>
                             {roles.map((role) => (
-                               <option key={role.id} value={role.id ?? ""}>{role.name}</option>
+                                <option key={role.id} value={role.id ?? ""}>{role.name}</option>
                             ))}
                         </select>
                     </div>
