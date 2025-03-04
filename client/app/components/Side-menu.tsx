@@ -1,6 +1,5 @@
 "use client";
 import React, {useEffect, useState} from "react";
-import {Commissioner} from "next/font/google";
 import Link from "next/link";
 import {
     FaBuilding,
@@ -61,7 +60,7 @@ const SideMenu = () => {
     };
 
     return (
-        <div className="w-fit h-fit drawer lg:drawer-open z-40">
+        <div className="w-fit drawer lg:drawer-open z-40">
             <input
                 id="my-drawer-2"
                 type="checkbox"
@@ -238,7 +237,7 @@ const SideMenu = () => {
                             </>
                         )}
 
-                        {(access.includes("cameras:read") || access.includes("cameras:write")) && org &&(
+                        {(access.includes("cameras:read") || access.includes("cameras:write")) && org && (
                             <>
                                 <li className="text-md w-full">
                                     <Link href="/cam/list" className="flex items-center w-full">

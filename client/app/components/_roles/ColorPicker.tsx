@@ -131,11 +131,11 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, setColor, setIsSaveEnab
                                 <button
                                     key={colorIndex}
                                     className={`
-              w-full aspect-square rounded-lg relative
-              hover:scale-105 transition-transform duration-150
-              ${selectedColor === colorObj.value ? "ring-2 ring-white ring-offset-2 ring-offset-gray-800" : ""}
-              shadow-md
-            `}
+                                      w-full aspect-square rounded-lg relative
+                                      hover:scale-105 transition-transform duration-150
+                                      ${selectedColor === colorObj.value ? "ring-2 ring-white ring-offset-2 ring-offset-gray-800" : ""}
+                                      shadow-md
+                                    `}
                                     style={{backgroundColor: colorObj.value}}
                                     onClick={() => handleColorSelect(colorObj.value)}
                                     title={`${colorObj.name}: ${colorObj.value}`}
@@ -143,9 +143,9 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, setColor, setIsSaveEnab
                                     {selectedColor === colorObj.value && (
                                         <Check
                                             className={`
-                  absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-4 w-4
-                  ${colorIndex < 5 ? "text-gray-900" : "text-white"}
-                `}
+                                              absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-4 w-4
+                                              ${colorIndex < 5 ? "text-gray-900" : "text-white"}
+                                            `}
                                         />
                                     )}
                                 </button>
@@ -158,18 +158,18 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, setColor, setIsSaveEnab
             {/* Custom color input */}
             <div className="mt-4">
                 <label className="text-xs text-gray-400 block mb-1">Custom Color</label>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-center gap-2">
                     <input
                         type="color"
                         value={selectedColor}
                         onChange={(e) => handleColorSelect(e.target.value)}
-                        className="w-8 h-8 rounded cursor-pointer bg-transparent"
+                        className="w-full sm:w-8 h-8 rounded cursor-pointer bg-transparent"
                     />
                     <input
                         type="text"
                         value={selectedColor}
                         onChange={(e) => handleColorSelect(e.target.value)}
-                        className="flex-1 bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm"
+                        className="w-full sm:flex-1 bg-base-100 border border-gray-700 rounded px-2 py-1 text-sm"
                         placeholder="#RRGGBB"
                     />
                 </div>
@@ -179,4 +179,3 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, setColor, setIsSaveEnab
 }
 
 export default ColorPicker
-

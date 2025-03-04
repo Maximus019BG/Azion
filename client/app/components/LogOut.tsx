@@ -1,8 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
-import { apiUrl } from "../api/config";
-import { Poppins } from "next/font/google";
+import React, {useEffect} from "react";
+import axios, {AxiosResponse} from "axios";
+import {apiUrl} from "../api/config";
+import {Poppins} from "next/font/google";
 import Cookies from "js-cookie";
 import {FaSignOutAlt} from "react-icons/fa";
 
@@ -20,7 +20,7 @@ interface InputField<T> {
     combinedWith?: string;
 }
 
-const headerText = Poppins({ subsets: ["latin"], weight: "900" });
+const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
 
 const LogOutAxios = () => {
@@ -105,7 +105,10 @@ const LogOut = () => {
 
     return (
         <>
-            <button onClick={LogOutAxios} > <FaSignOutAlt className={"text-xl"} /> Log out</button>
+            <button className={"flex items-center gap-2 w-full p-2 hover:bg-base-200 rounded-md transition-colors"}
+                    onClick={LogOutAxios}>
+                <FaSignOutAlt className={"text-xl"}/> Log out
+            </button>
         </>
     );
 };
