@@ -11,7 +11,7 @@ const AccountUserCard = () => {
     const [displayImage, setDisplayImage] = useState<string | null>(null);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [role, setRole] = useState("");
+    const [role, setRole] = useState({name: "", color: ""});
     const [dateOfBirth, setDateOfBirth] = useState("");
     const [isEditing, setIsEditing] = useState({name: false, email: false, dateOfBirth: false, profilePicture: false});
 
@@ -20,7 +20,7 @@ const AccountUserCard = () => {
             setDisplayImage(response.profilePicture);
             setName(response.name);
             setEmail(response.email);
-            setRole(response.role.name);
+            setRole(response.role);
             setDateOfBirth(response.age.substring(0, 10));
         });
     }, []);
@@ -78,7 +78,8 @@ const AccountUserCard = () => {
                                     className="text-base text-white cursor-pointer opacity-40 group-hover:opacity-100 transition-opacity duration-300"
                                     onClick={() => setIsEditing({...isEditing, name: !isEditing.name})}
                                 />
-                                <span className="bg-accent text-sm rounded-full p-[6px]">{role}</span>
+                                <span className="text-sm rounded-full py-1 px-6"
+                                      style={{backgroundColor: role.color}}>{role.name}</span>
                             </h1>
                         )}
                     </div>
