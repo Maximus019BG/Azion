@@ -1,11 +1,13 @@
 package com.azion.Azion.Cam;
 
 import com.azion.Azion.Cam.DTO.CamDTO;
+import com.azion.Azion.User.Model.Role;
 import com.azion.Azion.MFA.Service.MFAService;
 import com.azion.Azion.Org.Model.Org;
 import com.azion.Azion.Org.Repository.OrgRepository;
 import com.azion.Azion.Token.TokenService;
 import com.azion.Azion.User.Model.User;
+import com.azion.Azion.User.Repository.RoleRepository;
 import com.azion.Azion.User.Repository.UserRepository;
 import com.azion.Azion.User.Service.EmailService;
 import com.azion.Azion.User.Service.UserService;
@@ -34,9 +36,10 @@ public class CamController {
     private final OrgRepository orgRepository;
     private final UserService userService;
     private final CamLogRepository camLogRepository;
+    private final RoleRepository roleRepository;
     
     @Autowired
-    public CamController(EmailService emailService, TokenService tokenService, UserRepository userRepository, MFAService mfaService, CamService camService, CamRepository camRepository, OrgRepository orgRepository, UserService userService, CamLogRepository camLogRepository) {
+    public CamController(EmailService emailService, TokenService tokenService, UserRepository userRepository, MFAService mfaService, CamService camService, CamRepository camRepository, OrgRepository orgRepository, UserService userService, CamLogRepository camLogRepository, RoleRepository roleRepository) {
         this.emailService = emailService;
         this.tokenService = tokenService;
         this.userRepository = userRepository;
@@ -46,6 +49,7 @@ public class CamController {
         this.orgRepository = orgRepository;
         this.userService = userService;
         this.camLogRepository = camLogRepository;
+        this.roleRepository = roleRepository;
     }
     
     //Route for the camera
@@ -80,7 +84,7 @@ public class CamController {
         
         try {
             //Get what people can go in and what not
-            if(Objects.equals(user.getRole().getRoleAccess(), camRepository.findByCamName(auth).get().getRoleLevel()) || Objects.equals(user.getRole().getRoleAccess(), userService.highestAccess())) {
+            if(Objects.equals(user.getRole().getRoleAccess(), camRepository.findByCamName(auth).get().getRole()) || Objects.equals(user.getRole().getRoleAccess(), userService.highestAccess())) {
                 camService.addLog(auth, "User " + user.getName() + " got in");
                 emailService.sendLoginEmail(user.getEmail(), "faceID login method", user.getName());
             } else {
@@ -97,7 +101,7 @@ public class CamController {
     @PostMapping("/add")
     public ResponseEntity<?> addLog(@RequestBody Map<String, Object> requestBody, @RequestHeader("authorization") String auth) {
         String camName = (String) requestBody.get("camName");
-        String roleLevel = (String) requestBody.get("roleLevel");
+        String roleId = (String) requestBody.get("roleId");
         User user = tokenService.getUserFromToken(auth);
         
         if(user == null) {
@@ -116,7 +120,7 @@ public class CamController {
             //Camera
             Cam cam = new Cam();
             cam.setCamName(camName);
-            cam.setRoleLevel(roleLevel);
+            cam.setRole(roleRepository.findById(roleId).get());
             cam.setOrgAddress(orgRepository.findById(user.getOrgid()).get().getOrgAddress());
             camRepository.save(cam);
             //Logs
@@ -171,8 +175,9 @@ public class CamController {
             .map(cam -> {
                 CamDTO dto = new CamDTO();
                 dto.setCamName(cam.getCamName());
-                dto.setRoleLevel(cam.getRoleLevel());
+                dto.setRole(cam.getRole());
                 dto.setOrgAddress(cam.getOrgAddress());
+                dto.setId(cam.getId());
                 return dto;
             })
             .collect(Collectors.toList());

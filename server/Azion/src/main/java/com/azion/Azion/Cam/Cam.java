@@ -1,7 +1,10 @@
 package com.azion.Azion.Cam;
 
+import com.azion.Azion.User.Model.Role;
+
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -20,8 +23,9 @@ public class Cam {
     @OneToOne
     private CamLog log;
     
-    @Column
-    private String roleLevel;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
     
     @PrePersist
     public void prePersist() {
@@ -69,11 +73,11 @@ public class Cam {
         this.log = log;
     }
     
-    public String getRoleLevel() {
-        return roleLevel;
+    public Role getRole() {
+        return this.role;
     }
     
-    public void setRoleLevel(String roleLevel) {
-        this.roleLevel = roleLevel;
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
