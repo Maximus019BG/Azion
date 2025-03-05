@@ -109,7 +109,6 @@ const CreateTask: FC = () => {
         const missingFields = []
         if (!title.trim()) missingFields.push("Title")
         if (!description.trim()) missingFields.push("Description")
-        if (!source.trim()) missingFields.push("Source")
         if (!dueDate) missingFields.push("Due Date")
         if (selectedUsers.size === 0) missingFields.push("Assigned Users")
 
@@ -158,7 +157,6 @@ const CreateTask: FC = () => {
             // Reset form
             setTitle("")
             setDescription("")
-            setSource("")
             setPriority("LOW")
             setDueDate(new Date())
             setSelectedUsers(new Set([uEmail]))
@@ -185,7 +183,6 @@ const CreateTask: FC = () => {
             const detailsFields = []
             if (!title.trim()) detailsFields.push("Title")
             if (!description.trim()) detailsFields.push("Description")
-            if (!source.trim()) detailsFields.push("Source")
             if (!dueDate) detailsFields.push("Due Date")
 
             if (detailsFields.length > 0) {
