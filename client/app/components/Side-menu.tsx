@@ -148,6 +148,26 @@ const SideMenu = () => {
                                                     Home
                                                 </Link>
                                             </li>
+                                            {access.includes("roles:read") && (
+                                                <li className="text-md w-full">
+                                                    <Link
+                                                        href={`/dashboard/settings/roles`}
+                                                        className="flex items-center w-full"
+                                                    >
+                                                        <FaUserSecret className="text-lg mr-2"/>
+                                                        Roles
+                                                    </Link>
+                                                </li>)}
+                                            {access.includes("employees:read") && (
+                                                <li className="text-md w-full">
+                                                    <Link
+                                                        href={`/dashboard/settings/employees`}
+                                                        className="flex items-center w-full"
+                                                    >
+                                                        <FaUsers className="text-lg mr-2"/>
+                                                        Employees
+                                                    </Link>
+                                                </li>)}
                                             {access.includes("calendar:write") && (
                                                 <li className="py-1 text-md w-full">
                                                     <Link
@@ -159,26 +179,6 @@ const SideMenu = () => {
                                                     </Link>
                                                 </li>
                                             )}
-                                            {access.includes("employees:read") && (
-                                                <li className="text-md w-full">
-                                                    <Link
-                                                        href={`/dashboard/settings/employees`}
-                                                        className="flex items-center w-full"
-                                                    >
-                                                        <FaUsers className="text-lg mr-2"/>
-                                                        Employees
-                                                    </Link>
-                                                </li>)}
-                                            {access.includes("roles:read") && (
-                                                <li className="text-md w-full">
-                                                    <Link
-                                                        href={`/dashboard/settings/roles`}
-                                                        className="flex items-center w-full"
-                                                    >
-                                                        <FaUserSecret className="text-lg mr-2"/>
-                                                        Roles
-                                                    </Link>
-                                                </li>)}
                                         </ul>
                                     )}
                                 </li>
@@ -248,12 +248,6 @@ const SideMenu = () => {
                             </>
                         )}
 
-                        <li className="text-md w-full">
-                            <Link href="/organizations" className="flex items-center w-full">
-                                <FaBuilding className="text-lg mr-2"/>
-                                Organizations
-                            </Link>
-                        </li>
                         {org && (
                             <li className="text-md w-full">
                                 <Link href="/chat" className="flex items-center w-full">
@@ -262,6 +256,12 @@ const SideMenu = () => {
                                 </Link>
                             </li>
                         )}
+                        <li className="text-md w-full">
+                            <Link href="/organizations" className="flex items-center w-full">
+                                <FaBuilding className="text-lg mr-2"/>
+                                Organizations
+                            </Link>
+                        </li>
 
                     </div>
 
