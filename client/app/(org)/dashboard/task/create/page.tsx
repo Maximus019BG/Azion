@@ -351,7 +351,7 @@ const CreateTask: FC = () => {
                                                 />
                                             </div>
                                         </form>
-                                        <div className="flex justify-between mt-4">
+                                        <div className="flex justify-between mt-5">
                                             <Button
                                                 onClick={handlePreviousTab}
                                                 disabled={activeTab === "details"}
