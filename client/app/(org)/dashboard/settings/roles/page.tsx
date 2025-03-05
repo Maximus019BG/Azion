@@ -39,7 +39,7 @@ const RoleEdit = () => {
             </div>
             <div className="w-full flex justify-center items-center p-4 sm:p-6 md:p-8">
                 <div className="absolute top-4 sm:top-5 left-4 sm:left-5">
-                    <ReturnButton hasOrg={false}/>
+                    <ReturnButton to={"/dashboard"}/>
                 </div>
                 <RoleList/>
             </div>

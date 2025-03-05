@@ -150,7 +150,7 @@ const ChatPage = () => {
         <div className="flex flex-col md:flex-row bg-base-300 text-white min-h-screen">
             {/* User List */}
             <div className="w-full md:w-1/3 lg:w-1/4 border-b md:border-r border-base-100 p-4 md:p-6 overflow-y-auto">
-                <ReturnButton hasOrg={true}/>
+                <ReturnButton to={"/dashboard"}/>
 
                 <h2 className="text-2xl md:text-4xl font-bold py-5 mb-4 md:mb-6 text-center text-lightAccent">Messages</h2>
 

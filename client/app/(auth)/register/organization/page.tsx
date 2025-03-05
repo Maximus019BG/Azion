@@ -149,7 +149,7 @@ const Register_Organisation = () => {
     return (
         <div className="w-full min-h-screen flex flex-col lg:flex-row justify-center items-center">
             <div className="h-full w-full flex flex-col justify-center items-center gap-24 px-4 lg:px-0">
-               <div className={"absolute top-5 left-5"}> <ReturnButton hasOrg={false} /></div>
+                <div className={"absolute top-5 left-5"}><ReturnButton to={"/login"}/></div>
                 <h1
                     className={`text-lightAccent text-center text-4xl sm:text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}
                 >

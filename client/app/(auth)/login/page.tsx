@@ -6,10 +6,9 @@ import {Poppins} from "next/font/google";
 import OTP from "../../components/OTP";
 import Cookies from "js-cookie";
 import Link from "next/link";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
 import {authSessionCheck} from "@/app/func/funcs";
 import GoogleLoginButton from "@/app/components/_auth/googleSSO";
+import ReturnButton from "@/app/components/ReturnButton";
 
 interface Token {
     refreshToken: string;
@@ -143,9 +142,9 @@ const Login = () => {
 
     return (
         <div className="flex flex-col w-screen h-screen text-white justify-center items-center gap-10 p-4">
-            <Link className="absolute top-6 left-6" href="/">
-                <FontAwesomeIcon className="text-3xl text-lightAccent" icon={faCircleLeft}/>
-            </Link>
+            <div className="absolute top-4 left-4">
+                <ReturnButton to={"/"}/>
+            </div>
             <h1 className={`text-lightAccent text-6xl font-extrabold text-center mb-6 ${headerText.className}`}>
                 Login
             </h1>

@@ -5,9 +5,7 @@ import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
 import {Commissioner} from "next/font/google";
 import {authSessionCheck} from "@/app/func/funcs";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleLeft} from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
+import ReturnButton from "@/app/components/ReturnButton";
 
 const azionText = Commissioner({subsets: ["latin"], weight: "800"});
 
@@ -52,7 +50,7 @@ export default function FastLogIn() {
                 context.drawImage(current, 0, 0, canvas.width, canvas.height);
                 const imageData = canvas.toDataURL("image/jpeg");
                 const base64Image = imageData.split(",")[1];
-                const payload = { image: base64Image };
+                const payload = {image: base64Image};
 
                 try {
                     const response: AxiosResponse<{
@@ -60,7 +58,7 @@ export default function FastLogIn() {
                         refreshToken: string;
                     }> = await axios.post(
                         `${apiUrl}/auth/fast-login`,
-                        { payload },
+                        {payload},
                         {
                             headers: {
                                 "Content-Type": "application/json",
@@ -96,12 +94,9 @@ export default function FastLogIn() {
 
     return (
         <div className="w-screen h-screen flex flex-col justify-center items-center gap-16 bg-background relative">
-            <Link className="absolute top-4 left-4" href="/login">
-                <FontAwesomeIcon
-                    className="text-3xl md:text-4xl text-lightAccent"
-                    icon={faCircleLeft}
-                />
-            </Link>
+            <div className="absolute top-4 left-4">
+                <ReturnButton to={"/"}/>
+            </div>
             {showOverlay && <div className="absolute inset-0 bg-white z-50"></div>}
             <video
                 className="rounded-full custom-oval transform scale-x-[-1]"

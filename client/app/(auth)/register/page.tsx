@@ -6,9 +6,10 @@ import {Poppins} from "next/font/google";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleLeft, faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
+import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 import {authSessionCheck} from "@/app/func/funcs";
 import GoogleLoginButton from "@/app/components/_auth/googleSSO";
+import ReturnButton from "@/app/components/ReturnButton";
 
 interface InputField<T> {
     label: string;
@@ -45,7 +46,7 @@ const handleRegister = (data: any, isOwner: boolean) => {
             }
         })
         .catch(function (error: any) {
-            if(error.response.status === 409) {
+            if (error.response.status === 409) {
                 alert("Email already in use");
             }
         });
@@ -316,12 +317,9 @@ const Register = () => {
             <div className="max-w-4xl h-full flex flex-col justify-center items-center gap-24">
 
                 {/* Back Button */}
-                <Link className="absolute top-4 left-4" href="/">
-                    <FontAwesomeIcon
-                        className="text-3xl md:text-4xl text-lightAccent"
-                        icon={faCircleLeft}
-                    />
-                </Link>
+                <div className="absolute top-4 left-4">
+                    <ReturnButton to={"/"}/>
+                </div>
 
                 {/* Header */}
                 <h1 className={`text-lightAccent text-4xl sm:text-5xl md:text-6xl lg:text-7xl ${headerText.className}`}>

@@ -56,7 +56,7 @@ const CamListPage = () => {
     return (
         <div className="min-h-screen bg-base-300 text-white p-3 sm:p-4 relative">
             <div className="absolute top-4 left-4">
-                <ReturnButton hasOrg={true}/>
+                <ReturnButton to={"/dashboard"}/>
             </div>
             <div className="max-w-4xl mx-auto pt-14 sm:pt-16 pb-20">
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-center text-lightAccent">

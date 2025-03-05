@@ -1,6 +1,6 @@
 "use client"
 
-import {useEffect, useRef, useState} from "react"
+import React, {useEffect, useRef, useState} from "react"
 import axios from "axios"
 import {apiUrl} from "@/app/api/config"
 import {Commissioner} from "next/font/google"
@@ -90,7 +90,7 @@ export default function CamTest() {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-base-300 p-4 sm:p-6 relative">
             <div className="absolute top-4 sm:top-5 left-4 sm:left-5">
-                <ReturnButton hasOrg={false}/>
+                <ReturnButton to={"/cam/list"}/>
             </div>
             {showOverlay && (
                 <div className="absolute inset-0 bg-base-100/50 backdrop-blur-sm z-50 flex items-center justify-center">

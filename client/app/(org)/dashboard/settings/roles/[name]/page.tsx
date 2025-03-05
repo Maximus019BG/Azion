@@ -34,7 +34,7 @@ const EditRole: React.FC<PageProps> = ({params}) => {
                 <SideMenu/>
             </div>
             <div className="absolute top-4 sm:top-5 right-4 sm:right-5">
-                <ReturnButton hasOrg={false}/>
+                <ReturnButton to={"/dashboard/settings/roles"}/>
             </div>
             <div className="w-full h-full lg:w-3/4 lg:self-end flex flex-col p-4 lg:p-8 overflow-y-auto">
                 <div className="">

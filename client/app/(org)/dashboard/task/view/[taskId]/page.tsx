@@ -1,6 +1,5 @@
 "use client"
-import React, {use} from "react"
-import {type FC, useEffect, useState} from "react"
+import React, {type FC, use, useEffect, useState} from "react"
 import {getTasks} from "@/app/func/org"
 import Loading from "@/app/components/Loading"
 import SideMenu from "@/app/components/Side-menu"
@@ -215,8 +214,8 @@ const TaskView: FC<PageProps> = ({params}) => {
             {/* Main Content */}
             <div className="w-full lg:flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
                 {/* Mobile Menu Toggle - Only visible on mobile */}
-                <div className="lg:hidden mb-4">
-                    <ReturnButton hasOrg={true}/>
+                <div className="absolute right-6">
+                    <ReturnButton to={"/dashboard/task"}/>
                 </div>
 
                 <div className="max-w-6xl mx-auto">
@@ -464,7 +463,8 @@ const TaskView: FC<PageProps> = ({params}) => {
                                                             className="font-medium text-xs sm:text-sm flex items-center">{file.user.name}</div>
                                                         <div className="text-xs text-gray-400">{file.user.email}</div>
                                                         <div className="text-xs text-gray-500 mt-1">{file.date}</div>
-                                                        <div className="text-xs text-gray-500 mt-1">{file.submitType}</div>
+                                                        <div
+                                                            className="text-xs text-gray-500 mt-1">{file.submitType}</div>
                                                     </div>
                                                     <button className="btn btn-outline btn-xs"
                                                             onClick={() => ReturnTask(taskId, file.user.email)}>
@@ -491,7 +491,8 @@ const TaskView: FC<PageProps> = ({params}) => {
                                                             className="font-medium text-xs sm:text-sm flex items-center">{file.user.name}</div>
                                                         <div className="text-xs text-gray-400">{file.user.email}</div>
                                                         <div className="text-xs text-gray-500 mt-1">{file.date}</div>
-                                                        <div className="text-xs text-gray-500 mt-1">{file.submitType}</div>
+                                                        <div
+                                                            className="text-xs text-gray-500 mt-1">{file.submitType}</div>
                                                     </div>
                                                     <button className="btn btn-outline btn-xs"
                                                             onClick={() => ReturnTask(taskId, file.user.email)}>
