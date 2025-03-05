@@ -9,7 +9,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/app/components/dialog";
 import {apiUrl} from "@/app/api/config";
 import Cookies from "js-cookie";
-import {canEditCalendar, UserData} from "@/app/func/funcs";
+import {canEditCalendar} from "@/app/func/funcs";
 import {EventData} from "@/app/types/types";
 import {Trash2Icon} from "lucide-react";
 
@@ -189,7 +189,7 @@ const Calendar: React.FC = () => {
                         "authorization": Cookies.get("azionAccessToken"),
                     },
                 });
-                calendarApi.addEvent(newEvent);
+                setCurrentEvents(prevEvents => [...prevEvents, newEvent]);
                 handleCloseDialog();
             } catch (error) {
                 console.error("Error adding event:", error);
@@ -288,7 +288,7 @@ const Calendar: React.FC = () => {
                         <div>
                             <input
                                 type="text"
-                                placeholder="Meeting Link"
+                                placeholder="Room"
                                 value={newMeetingRoomLink}
                                 onChange={(e) => setNewMeetingRoomLink(e.target.value)}
                                 className="w-full p-2 lg:p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
