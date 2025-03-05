@@ -50,7 +50,7 @@ const Organizations = () => {
                     </div>
                     <div className="w-full flex flex-col justify-start items-center py-8 overflow-y-auto">
                         <div className="w-full flex flex-col items-center gap-6">
-                            <label className="input w-3/6 input-bordered flex items-center gap-2">
+                            <label className="input w-3/6 h-full py-2 input-bordered flex items-center gap-2">
                                 <input
                                     type="text"
                                     className="grow"
