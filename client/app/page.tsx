@@ -89,7 +89,7 @@ const Home = () => {
     ];
 
     return (
-        <div className="w-screen h-full bg-[#060610]">
+        <div className="w-full h-full bg-[#060610]">
             <div className="z-10 p-6">
                 <Navbar/>
             </div>
