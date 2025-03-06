@@ -76,7 +76,7 @@ const CamLogsPage = () => {
     return (
         <div className="min-h-screen bg-base-300 p-3 sm:p-4 relative">
             <div className="absolute top-4 left-4">
-                <ReturnButton hasOrg={false}/>
+                <ReturnButton to={"/cam/list"}/>
             </div>
 
             <div className="max-w-5xl mx-auto pt-14 sm:pt-16 pb-6 sm:pb-8">
