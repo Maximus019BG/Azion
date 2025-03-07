@@ -1,6 +1,6 @@
 "use client";
 import React, {useEffect, useState} from "react";
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 import {DateSelectArg, EventClickArg} from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 import {canEditCalendar} from "@/app/func/funcs";
 import {EventData} from "@/app/types/types";
 import {Trash2Icon} from "lucide-react";
+import Link from "next/link";
 
 const Calendar: React.FC = () => {
     const [currentEvents, setCurrentEvents] = useState<EventData[]>([]);
@@ -28,7 +29,6 @@ const Calendar: React.FC = () => {
         canEditCalendar().then((r) => {
             if (r) {
                 setAdmin(true);
-                console.log("Admin")
             }
         })
     });
@@ -136,6 +136,8 @@ const Calendar: React.FC = () => {
                     setIsDeleteDialogOpen(false);
                 })
                 .catch(error => console.error("Error deleting event:", error));
+        } else {
+            console.error("Event ID is missing");
         }
     };
 
@@ -183,13 +185,24 @@ const Calendar: React.FC = () => {
             };
 
             try {
-                await axios.post(`${apiUrl}/schedule/create/meeting`, newEvent, {
+                const response = await axios.post(`${apiUrl}/schedule/create/meeting`, newEvent, {
                     headers: {
                         "Content-Type": "application/json",
                         "authorization": Cookies.get("azionAccessToken"),
                     },
                 });
-                setCurrentEvents(prevEvents => [...prevEvents, newEvent]);
+
+                const eventToAdd: EventData = {
+                    id: response.data,
+                    title: newEventTitle,
+                    start: selectedDate.start.toISOString(),
+                    end: selectedDate.end?.toISOString() || selectedDate.start.toISOString(),
+                    allDay: selectedDate.allDay,
+                    link: newMeetingRoomLink,
+                    roles: selectedRoles
+                };
+
+                setCurrentEvents(prevEvents => [...prevEvents, eventToAdd]);
                 handleCloseDialog();
             } catch (error) {
                 console.error("Error adding event:", error);
@@ -212,13 +225,25 @@ const Calendar: React.FC = () => {
                     {currentEvents.length > 0 &&
                         currentEvents.map((event: EventData) => (
                             <li key={event.id} className="bg-accent w-full rounded-btn p-2 break-words relative">
-                                {event.title}
-                                <button
-                                    onClick={() => handleDelete(event.id)}
-                                    className="absolute bottom-1 right-1 bg-red-500 rounded-lg p-1 shadow-md hover:bg-red-400 hover:text-white"
-                                >
-                                    <Trash2Icon className="h-4 w-4"/>
-                                </button>
+                                <p>{event.title}</p>
+                                {event.link.includes("http") ? (
+                                    <Link href={event.link}>
+                                        <button className="bg-gray-800 text-sm text-white py-1 px-2 rounded-md hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105">
+                                            Join Meeting
+                                        </button>
+                                    </Link>
+                                ) : (
+                                    <p className="text-grey-100">{event.link}</p>
+                                )}
+                                {admin && (
+                                    <button
+                                        onClick={() => handleDelete(event.id)}
+                                        className="absolute bottom-2 right-2 bg-red-500 rounded-lg p-1 shadow-md hover:bg-red-400 hover:text-white"
+                                    >
+                                        <Trash2Icon className="h-4 w-4"/>
+                                    </button>
+                                )}
+
                             </li>
                         ))}
                     <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
@@ -288,7 +313,7 @@ const Calendar: React.FC = () => {
                         <div>
                             <input
                                 type="text"
-                                placeholder="Room"
+                                placeholder="Event Room/Meeting Link"
                                 value={newMeetingRoomLink}
                                 onChange={(e) => setNewMeetingRoomLink(e.target.value)}
                                 className="w-full p-2 lg:p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

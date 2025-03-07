@@ -28,7 +28,7 @@ public class MeetingService {
     }
     
     //!Meeting Creation
-    public void createMeeting(String title, boolean allDay, Date start, Date end, List<String> roles, String link, User user) {
+    public String createMeeting(String title, boolean allDay, Date start, Date end, List<String> roles, String link, User user) {
         
         //Save the meeting
         try {
@@ -42,6 +42,7 @@ public class MeetingService {
             meeting.setOrg(orgRepository.findById(user.getOrgid()).get());
             
             meetingRepo.save(meeting);
+            return meeting.getId();
         } catch (Exception e) {
             throw new RuntimeException("Error creating meeting", e);
         }

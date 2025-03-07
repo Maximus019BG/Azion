@@ -168,7 +168,7 @@ const SideMenu = () => {
                                                         Employees
                                                     </Link>
                                                 </li>)}
-                                            {access.includes("calendar:write") && (
+                                            {access.includes("settings:write") && (
                                                 <li className="py-1 text-md w-full">
                                                     <Link
                                                         href={`/dashboard/settings`}
