@@ -1,12 +1,13 @@
 package com.azion.Azion.Cam.DTO;
 
+import com.azion.Azion.User.Model.DTO.RoleDTO;
 import com.azion.Azion.User.Model.Role;
 
 public class CamDTO {
     private String id;
     private String orgAddress;
     private String camName;
-    private Role role;
+    private RoleDTO role;
 
     public String getId() {
         return id;
@@ -32,11 +33,11 @@ public class CamDTO {
         this.camName = camName;
     }
 
-    public Role getRole() {
+    public RoleDTO getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(RoleDTO role) {
         this.role = role;
     }
 }

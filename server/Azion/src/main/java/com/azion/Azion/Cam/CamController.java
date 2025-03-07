@@ -1,6 +1,7 @@
 package com.azion.Azion.Cam;
 
 import com.azion.Azion.Cam.DTO.CamDTO;
+import com.azion.Azion.User.Model.DTO.RoleDTO;
 import com.azion.Azion.User.Model.Role;
 import com.azion.Azion.MFA.Service.MFAService;
 import com.azion.Azion.Org.Model.Org;
@@ -50,6 +51,15 @@ public class CamController {
         this.userService = userService;
         this.camLogRepository = camLogRepository;
         this.roleRepository = roleRepository;
+    }
+    
+    private RoleDTO convertToRoleDTO(Role role) {
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setId(role.getId());
+        roleDTO.setName(role.getName());
+        roleDTO.setRoleAccess(role.getRoleAccess());
+        roleDTO.setColor(role.getColor());
+        return roleDTO;
     }
     
     //Route for the camera
@@ -175,7 +185,7 @@ public class CamController {
             .map(cam -> {
                 CamDTO dto = new CamDTO();
                 dto.setCamName(cam.getCamName());
-                dto.setRole(cam.getRole());
+                dto.setRole(convertToRoleDTO(cam.getRole()));
                 dto.setOrgAddress(cam.getOrgAddress());
                 dto.setId(cam.getId());
                 return dto;

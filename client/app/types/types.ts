@@ -84,8 +84,9 @@ export interface EventData {
 
 //Camera type
 export interface Cam {
+    id: string;
     camName: string;
-    roleLevel: number;
+    role: Role;
     orgAddress: string;
 }
 
