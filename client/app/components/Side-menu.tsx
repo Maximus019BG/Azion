@@ -265,9 +265,10 @@ const SideMenu = () => {
 
                     </div>
 
+
                     <li className="mt-auto p-2 text-md w-full">
                         <Link href="/account" className="flex items-center w-full">
-                            <FaUserCircle className="text-lg mr-2"/>
+                            <FaUserCircle className="text-lg -ml-2"/>
                             Account
                         </Link>
                     </li>
