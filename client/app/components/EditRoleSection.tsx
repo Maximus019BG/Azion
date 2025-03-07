@@ -157,12 +157,12 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
     return (
         <div className="size-full bg-base-300 flex flex-col lg:flex-row ">
             {/* Permissions Panel */}
-            <div className="w-full lg:w-3/4 p-4">
-                <div className="grid gap-4">
+            <div className="w-full lg:w-3/4 px-4">
+                <div className="w-full h-full flex flex-col justify-evenly items-center">
                     {permissionFields.map((field, index) => (
                         <div
                             key={index}
-                            className={`bg-gray-750 rounded-lg overflow-hidden transition-all duration-200 ${
+                            className={`w-full bg-gray-750 rounded-lg overflow-hidden transition-all duration-200 ${
                                 accessFields[index] ? "border-l-4 border-blue-500" : "border-l-4 border-transparent"
                             }`}
                         >
@@ -200,7 +200,8 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
             </div>
 
             {/* Color Picker & Action Buttons */}
-            <div className="w-full lg:w-1/4 p-4 bg-gray-750 lg:bg-transparent lg:border-l border-gray-700 overflow-y-auto">
+            <div
+                className="w-full lg:w-1/4 p-4 bg-gray-750 lg:bg-transparent lg:border-l border-gray-700 overflow-y-auto">
                 <div className="sticky top-4 ">
                     <div className="mb-6 ">
                         <h3 className="text-lg font-medium mb-2">Role Color</h3>
