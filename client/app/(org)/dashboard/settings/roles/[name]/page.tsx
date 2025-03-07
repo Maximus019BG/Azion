@@ -29,8 +29,8 @@ const EditRole: React.FC<PageProps> = ({params}) => {
     }, [name])
 
     return (
-        <div className="w-full h-full flex flex-col lg:flex-row lg:justify-end overflow-y-hidden">
-            <div className="fixed h-screen top-0 left-0 w-full lg:w-1/4">
+        <div className="w-full h-dvh flex flex-col lg:flex-row lg:justify-end overflow-y-hidden">
+            <div className="lg:fixed lg:h-screen lg:top-0 lg:left-0 h-fit w-full lg:w-1/4">
                 <SideMenu/>
             </div>
             <div className="absolute top-4 sm:top-5 right-4 sm:right-5">
