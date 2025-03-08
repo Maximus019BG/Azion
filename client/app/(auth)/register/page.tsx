@@ -80,12 +80,6 @@ const isValidDate = (day: string, month: string, year: string): boolean => {
     return dayInt <= daysInMonth[monthInt - 1];
 };
 
-const isValidEmailDomain = (email: string): boolean => {
-    const domain = email.split('@')[1];
-    const validDomains = ["gmail.com", "yahoo.com", "outlook.com"]; // Add more valid domains as needed
-    return validDomains.includes(domain);
-};
-
 const Register = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -169,9 +163,6 @@ const Register = () => {
         if (!email) {
             setEmailError("Email is required");
             valid = false;
-        } else if (!isValidEmailDomain(email)) {
-            setEmailError("Invalid email domain");
-            valid = false;
         } else {
             setEmailError("");
         }
@@ -213,9 +204,6 @@ const Register = () => {
 
             if (!email) {
                 setEmailError("Email is required");
-                valid = false;
-            } else if (!isValidEmailDomain(email)) {
-                setEmailError("Invalid email domain");
                 valid = false;
             } else {
                 setEmailError("");
