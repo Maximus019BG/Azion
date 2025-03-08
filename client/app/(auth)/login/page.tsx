@@ -17,11 +17,6 @@ interface Token {
 
 const headerText = Poppins({subsets: ["latin"], weight: "900"});
 
-const isValidEmailDomain = (email: string): boolean => {
-    const domain = email.split('@')[1];
-    const validDomains = ["gmail.com", "yahoo.com", "outlook.com"]; // Add more valid domains as needed
-    return validDomains.includes(domain);
-};
 
 const Login = () => {
     const [email, setEmail] = useState<string>("");
@@ -76,9 +71,6 @@ const Login = () => {
         if (!email) {
             setEmailError("Email is required");
             valid = false;
-        } else if (!isValidEmailDomain(email)) {
-            setEmailError("Invalid email domain");
-            valid = false;
         } else {
             setEmailError("");
         }
@@ -104,9 +96,6 @@ const Login = () => {
         let valid = true;
         if (!email) {
             setEmailError("Email is required");
-            valid = false;
-        } else if (!isValidEmailDomain(email)) {
-            setEmailError("Invalid email domain");
             valid = false;
         } else {
             setEmailError("");
