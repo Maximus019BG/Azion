@@ -70,6 +70,7 @@ const AccountMfaCard = () => {
             <div className="bg-base-300">
                 <div className="w-full flex justify-center items-center gap-6 p-4">
                     <MfaButtons isMfaEnabled={isMfaEnabled}/>
+                        {isFaceIdEnabled ? (
                         <div className="w-full">
                             <button
                                 onClick={handleDisableFaceId} // Handle FaceID disable click
@@ -78,6 +79,15 @@ const AccountMfaCard = () => {
                                 Disable FaceID
                             </button>
                         </div>
+                    ) : (
+                        <Link href="/mfa/face" className="w-full">
+                            <button
+                                className="bg-gray-800 w-full text-white transition duration-200 ease-in-out hover:bg-gray-700 font-bold py-2 px-4 rounded"
+                            >
+                                Enable FaceID
+                            </button>
+                        </Link>
+                    )}
                     <Link href="/account/sessions" className="w-full">
                         <button
                             className="bg-accent w-full text-white transition duration-200 ease-in-out hover:bg-blue-500 font-bold py-2 px-4 rounded"
