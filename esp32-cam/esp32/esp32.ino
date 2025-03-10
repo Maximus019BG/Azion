@@ -44,7 +44,7 @@ void startCamera() {
 }
 
 
-// Function to capture and send image via POST request
+//Capture send image  POST request
 void sendImageToAPI() {
     camera_fb_t *fb = esp_camera_fb_get();
     if (!fb) {
@@ -99,5 +99,5 @@ void setup() {
 }
 
 void loop() {
-    // Do nothing in loop as image capture and sending are done at startup
+    // Do nothing 
 }

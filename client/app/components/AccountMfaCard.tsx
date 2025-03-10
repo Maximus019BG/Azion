@@ -34,7 +34,7 @@ const AccountMfaCard = () => {
         setShowConfirmModal(true);
     };
 
-    const RemFaceID =()=>{
+    const RemFaceID = () => {
         const data = {
             accessToken: Cookies.get("azionAccessToken")
         }
@@ -70,7 +70,7 @@ const AccountMfaCard = () => {
             <div className="bg-base-300">
                 <div className="w-full flex justify-center items-center gap-6 p-4">
                     <MfaButtons isMfaEnabled={isMfaEnabled}/>
-                        {isFaceIdEnabled ? (
+                    {isFaceIdEnabled ? (
                         <div className="w-full">
                             <button
                                 onClick={handleDisableFaceId} // Handle FaceID disable click

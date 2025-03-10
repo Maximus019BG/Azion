@@ -1,13 +1,12 @@
 "use client";
-import React, {FC, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Poppins} from 'next/font/google';
 import Cookies from 'js-cookie';
 import SideMenu from '@/app/components/Side-menu';
 import {sessionCheck, UserData} from '@/app/func/funcs';
-import {getOrgName} from '@/app/func/org';
 import Loading from '@/app/components/Loading';
 import DashboardRow1 from "@/app/components/_Dashboard-Elements/Dashboard_Row_1";
-import Calendar from "@/app/components/_Dashboard-Elements/Calendar";
+import Calendar from "@/app/components/New-Calendar/calendar";
 
 const headerText = Poppins({subsets: ['latin'], weight: '900'});
 

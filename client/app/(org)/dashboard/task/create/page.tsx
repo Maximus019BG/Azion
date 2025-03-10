@@ -464,7 +464,7 @@ const CreateTask: FC = () => {
                                                     </div>
                                                     <div>
                                                         <p className="text-sm text-muted-foreground">Source</p>
-                                                        <p className="font-medium">{source || "Not set"}</p>
+                                                        <p className="font-medium truncate">{source || "Not set"}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -481,11 +481,10 @@ const CreateTask: FC = () => {
                                                         return (
                                                             <span
                                                                 key={email}
-                                                                className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-accent"
-                                                            >
-                                {user ? user.name : email}
+                                                                className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-accent">
+                                                                {user ? user.name : email}
                                                                 {email === uEmail && " (You)"}
-                              </span>
+                                                           </span>
                                                         )
                                                     })}
                                                 </div>
