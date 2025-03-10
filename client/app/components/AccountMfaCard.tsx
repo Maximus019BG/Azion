@@ -49,13 +49,12 @@ const AccountMfaCard = () => {
                     secure: true,
                     sameSite: "Strict",
                 });
-                setIsFaceIdEnabled(false); // Update state to disable FaceID
+                window.location.href = "/account";
             })
             .catch(function (error: any) {
                 console.log(error.response ? error.response : error);
             });
     }
-
     return (
         <div
             className="w-full max-w-3xl mx-auto border-2 border-base-100 bg-base-300 rounded-lg shadow-md overflow-hidden">
@@ -71,14 +70,24 @@ const AccountMfaCard = () => {
             <div className="bg-base-300">
                 <div className="w-full flex justify-center items-center gap-6 p-4">
                     <MfaButtons isMfaEnabled={isMfaEnabled}/>
-                    <div className="w-full">
-                        <button
-                            onClick={handleDisableFaceId} // Handle FaceID disable click
-                            className="bg-gray-800 w-full text-white transition duration-200 ease-in-out hover:bg-gray-700 font-bold py-2 px-4 rounded"
-                        >
-                            Disable FaceID
-                        </button>
-                    </div>
+                    {isFaceIdEnabled ? (
+                        <div className="w-full">
+                            <button
+                                onClick={handleDisableFaceId} // Handle FaceID disable click
+                                className="bg-gray-800 w-full text-white transition duration-200 ease-in-out hover:bg-gray-700 font-bold py-2 px-4 rounded"
+                            >
+                                Disable FaceID
+                            </button>
+                        </div>
+                    ) : (
+                        <Link href="/mfa/face" className="w-full">
+                            <button
+                                className="bg-gray-800 w-full text-white transition duration-200 ease-in-out hover:bg-gray-700 font-bold py-2 px-4 rounded"
+                            >
+                                Enable FaceID
+                            </button>
+                        </Link>
+                    )}
                     <Link href="/account/sessions" className="w-full">
                         <button
                             className="bg-accent w-full text-white transition duration-200 ease-in-out hover:bg-blue-500 font-bold py-2 px-4 rounded"
@@ -104,10 +113,12 @@ const AccountMfaCard = () => {
                             </button>
                             <button
                                 onClick={() => {
-                                    RemFaceID();
-                                    setShowConfirmModal(false); // Close modal after action
+                                    // Logic for disabling FaceID
+                                    console.log("FaceID Disabled");
+                                    handleOtpComplete(otpValue);
                                 }}
                                 className="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+                                disabled={!otpValue}
                             >
                                 Confirm
                             </button>
@@ -133,6 +144,7 @@ const AccountMfaCard = () => {
                             </button>
                             <button
                                 onClick={() => {
+                                    // Logic for disabling FaceID
                                     RemFaceID();
                                     setShowConfirmModal(false); // Close modal after action
                                 }}
