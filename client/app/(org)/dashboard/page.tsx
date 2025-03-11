@@ -6,7 +6,8 @@ import SideMenu from '@/app/components/Side-menu';
 import {sessionCheck, UserData} from '@/app/func/funcs';
 import Loading from '@/app/components/Loading';
 import DashboardRow1 from "@/app/components/_Dashboard-Elements/Dashboard_Row_1";
-import Calendar from "@/app/components/New-Calendar/calendar";
+import Calendar from "@/app/components/_Dashboard-Elements/Calendar";
+// import Calendar from "@/app/components/New-Calendar/calendar";
 
 const headerText = Poppins({subsets: ['latin'], weight: '900'});
 

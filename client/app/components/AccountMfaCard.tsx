@@ -49,7 +49,7 @@ const AccountMfaCard = () => {
                     secure: true,
                     sameSite: "Strict",
                 });
-                window.location.href = "/account";
+                setIsFaceIdEnabled(false);
             })
             .catch(function (error: any) {
                 console.log(error.response ? error.response : error);
