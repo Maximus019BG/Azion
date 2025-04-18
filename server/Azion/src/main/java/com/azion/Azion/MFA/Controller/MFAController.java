@@ -116,7 +116,6 @@ public class MFAController {
         }
     }
     
-    
     @Transactional
     @PostMapping("/face-scan")
     public ResponseEntity<?> handleFaceRecognition(@RequestBody Map<String, Object> requestBody) {
