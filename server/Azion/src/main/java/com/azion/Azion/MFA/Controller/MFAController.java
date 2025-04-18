@@ -78,7 +78,6 @@ public class MFAController {
         }
     }
     
-    
     @Transactional
     @PostMapping("/verify-qr")
     public ResponseEntity<?> verifyQrCode(@RequestBody Map<String, Object> request) {
