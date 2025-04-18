@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -145,7 +144,7 @@ public class MFAController {
     @PutMapping("/check/mfa")
     public ResponseEntity<?> checkMFAEnabled(@RequestBody Map<Object,String> requestBody) {
         log.debug("PUT /api/mfa/check/mfa");
-        String accessToken = (String) requestBody.get("accessToken");
+        String accessToken = requestBody.get("accessToken");
         if (accessToken == null) {
             String errorResponse = "Access token is required";
             return ResponseEntity.badRequest().body(errorResponse);
@@ -163,8 +162,8 @@ public class MFAController {
     @Transactional
     @PutMapping("/rem")
     public ResponseEntity<?> removeMFA(@RequestBody Map<Object,String> requestBody) {
-        String accessToken = (String) requestBody.get("accessToken");
-        String OTP = (String) requestBody.get("OTP");
+        String accessToken = requestBody.get("accessToken");
+        String OTP = requestBody.get("OTP");
         
         if (accessToken == null) {
             String errorResponse = "Access token is required";
@@ -192,7 +191,7 @@ public class MFAController {
     @Transactional
     @PutMapping("/rem/face")
     public ResponseEntity<?> removeFaceID(@RequestBody Map<Object,String> requestBody) {
-        String accessToken = (String) requestBody.get("accessToken");
+        String accessToken = requestBody.get("accessToken");
         if (accessToken == null) {
             String errorResponse = "Access token is required";
             return ResponseEntity.badRequest().body(errorResponse);
@@ -209,3 +208,4 @@ public class MFAController {
         }
     }
 }
+
