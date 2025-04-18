@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24.0)
 task(esp32cam)
-set(IDF_TARGET "esp32")
+set(IDF_TARGET "cam")
 include($ENV{IDF_PATH}/tools/cmake/task.cmake)
 
 task(esp32_cam_project)

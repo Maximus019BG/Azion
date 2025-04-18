@@ -1,13 +1,15 @@
 #include "esp_camera.h"
 #include <WiFi.h>
-#include <HTTPClient.h>
+#include <WebSocketsClient.h>
 
-//Unique camera ID
-#define CAMERA_ID "CAM-eV85kBL6dHmd9iBFKtCAG0LrquG5URaF"  //CAMERA_ID for each camera EXAMPLE!!!
-
-//Network credentials
+// Network credentials
 const char *ssid = "WIFI_NAME"; // Replace with real!!!
 const char *password = "WIFI_PASS"; // Replace with real!!!
+
+const char *webSocketServerIP = "RECEIVER_IP"; // IP address of the second Arduino (WebSocket server)
+const int webSocketServerPort = 81;  // Port to communicate with the second Arduino (WebSocket server)
+
+WebSocketsClient webSocket;
 
 void startCamera() {
     camera_config_t config;
@@ -43,37 +45,22 @@ void startCamera() {
     }
 }
 
-
-//Capture send image  POST request
-void sendImageToAPI() {
+void sendImageToWebSocket() {
     camera_fb_t *fb = esp_camera_fb_get();
     if (!fb) {
         Serial.println("Camera capture failed");
         return;
     }
 
-    // Initialize HTTP client
-    HTTPClient http;
-    http.begin("https://api.azion.online/cam/sec");
-    http.addHeader("Content-Type", "image/jpeg");
-    http.addHeader("Origin", "AzionCam");
-    http.addHeader("authorization", CAMERA_ID);
-
-    // Send POST request
-    int httpResponseCode = http.POST((uint8_t *)fb->buf, fb->len);
-
-    // Check response
-    if (httpResponseCode > 0) {
-        Serial.printf("Image sent, response code: %d\n", httpResponseCode);
-        String response = http.getString();
-        Serial.println("Server response: " + response);
-        //TODO: Add logic to handle server response
+    if (webSocket.connected()) {
+        // Send image size first
+        webSocket.sendBIN(fb->buf, fb->len);
+        Serial.println("Image sent to receiver over WebSocket");
     } else {
-        Serial.printf("Failed to send image, error: %s\n", http.errorToString(httpResponseCode).c_str());
+        Serial.println("WebSocket not connected");
     }
 
-    // End HTTP connection and release the frame buffer
-    http.end();
+    // Clean up
     esp_camera_fb_return(fb);
 }
 
@@ -91,13 +78,15 @@ void setup() {
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
 
+    // Set up WebSocket client
+    webSocket.begin(webSocketServerIP, webSocketServerPort, "/");
+
     // Start the camera
     startCamera();
-
-    // Capture and send image
-    sendImageToAPI();
 }
 
 void loop() {
-    // Do nothing 
+    webSocket.loop(); // Keep the WebSocket connection alive
+    sendImageToWebSocket();
+    delay(5000); // Delay between captures
 }

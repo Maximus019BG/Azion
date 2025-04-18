@@ -56,6 +56,7 @@ public class MFAController {
             return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
+    
     @Transactional
     @GetMapping("/mfa-code")
     public ResponseEntity<?> getMfaCode(@RequestParam("accessToken") String accessToken) {
