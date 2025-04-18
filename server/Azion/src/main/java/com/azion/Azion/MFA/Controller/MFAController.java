@@ -33,8 +33,7 @@ public class MFAController {
         this.userService = userService;
         this.userRepository = userRepository;
     }
-   
-
+    
     @Transactional
     @GetMapping("/qr-code")
     public ResponseEntity<?> getQrCodeUri(@RequestParam("accessToken") String accessToken) {
