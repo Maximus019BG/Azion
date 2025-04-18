@@ -13,7 +13,6 @@ import {sessionCheck, UserData, UserHasRight} from "@/app/func/funcs"
 import Link from "next/link"
 import ProgressComponent from "@/app/components/ProgressComponent"
 import {Calendar, CheckCircle2, ExternalLink, FileText, Info, LinkIcon, Maximize, Minimize, Upload,} from "lucide-react"
-import ReturnButton from "@/app/components/ReturnButton";
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"})
 
@@ -213,11 +212,6 @@ const TaskView: FC<PageProps> = ({params}) => {
 
             {/* Main Content */}
             <div className="w-full lg:flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
-                {/* Mobile Menu Toggle - Only visible on mobile */}
-                <div className="absolute right-6">
-                    <ReturnButton to={"/dashboard/task"}/>
-                </div>
-
                 <div className="max-w-6xl mx-auto">
                     <div className="flex flex-col gap-6">
                         {/* Task Header */}
@@ -236,10 +230,12 @@ const TaskView: FC<PageProps> = ({params}) => {
 
                             {/* Admin File View Button */}
                             {admin && task.files && task.files.length > 0 && (
-                                <button className="btn btn-outline btn-sm mt-2 sm:mt-0"
-                                        onClick={() => setShowSubmissionsModal(true)}>
+                                <button
+                                    className="btn btn-outline btn-sm mt-2 sm:mt-0 sm:absolute sm:right-4"
+                                    onClick={() => setShowSubmissionsModal(true)}>
                                     <FileText className="mr-2 h-4 w-4"/>
-                                    View Submissions ({task.files.length})
+                                    <span className="hidden sm:inline">View Submissions ({task.files.length})</span>
+                                    <span className="inline sm:hidden">Submissions ({task.files.length})</span>
                                 </button>
                             )}
                         </div>
