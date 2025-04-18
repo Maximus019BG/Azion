@@ -143,7 +143,6 @@ public class MFAController {
         }
     }
     
-    
     @Transactional
     @PutMapping("/check/mfa")
     public ResponseEntity<?> checkMFAEnabled(@RequestBody Map<Object,String> requestBody) {
