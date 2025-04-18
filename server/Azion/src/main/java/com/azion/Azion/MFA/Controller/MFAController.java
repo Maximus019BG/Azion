@@ -193,7 +193,6 @@ public class MFAController {
     @PutMapping("/rem/face")
     public ResponseEntity<?> removeFaceID(@RequestBody Map<Object,String> requestBody) {
         String accessToken = (String) requestBody.get("accessToken");
-        
         if (accessToken == null) {
             String errorResponse = "Access token is required";
             return ResponseEntity.badRequest().body(errorResponse);
