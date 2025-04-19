@@ -1,4 +1,4 @@
-package com.azion.Azion.User.Model.DTO;
+package com.azion.Azion.Models.DTO;
 
 public class RoleDTO {
     private String id;
