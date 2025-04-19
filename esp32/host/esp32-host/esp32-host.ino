@@ -1,29 +1,27 @@
-#include <Arduino.h>
-
 #include <WiFi.h>
-#include <WiFiMulti.h>
-#include <WiFiClientSecure.h>
-
-#include <WebSocketsClient.h>
 #include <HTTPClient.h>
+#include <ArduinoWebsockets.h>
 
-const char *ssid = "WIFI_NAME";     // Replace with your Wi-Fi SSID
-const char *password = "WIFI_PASS"; // Replace with your Wi-Fi Password
-const char *apiEndpoint = "https://api.azion.online/cam/sec"; // Replace with your API endpoint
+using namespace websockets;
 
-WebSocketsClient webSocket; // Create WebSocket client instance
+const char *ssid = "A1_52AA";
+const char *password = "48575443B02A32A4";
+const char *apiEndpoint = "https://api.azion.online/cam/sec";
+
+// Use a reliable public IP echo service
+const char *publicIPService = "http://api.ipify.org"; // returns plain text IP
+
+WebsocketsClient client;
 
 void sendImageToAPI(uint8_t *image_data, size_t length) {
     HTTPClient http;
     http.begin(apiEndpoint);
     http.addHeader("Content-Type", "image/jpeg");
     http.addHeader("Origin", "AzionCam");
-    http.addHeader("authorization", "CAM-eV85kBL6dHmd9iBFKtCAG0LrquG5URaF");  // CAMERA_ID
+    http.addHeader("authorization", "CAM-eV85kBL6dHmd9iBFKtCAG0LrquG5URaF");
 
-    // Send POST request
     int httpResponseCode = http.POST(image_data, length);
 
-    // Check response
     if (httpResponseCode > 0) {
         Serial.printf("Image sent to API, response code: %d\n", httpResponseCode);
         String response = http.getString();
@@ -32,22 +30,21 @@ void sendImageToAPI(uint8_t *image_data, size_t length) {
         Serial.printf("Failed to send image, error: %s\n", http.errorToString(httpResponseCode).c_str());
     }
 
-    // End HTTP connection
     http.end();
 }
 
-// Handle WebSocket events (Receiving image data)
-void onWebSocketEvent(WStype_t type, uint8_t *payload, size_t length) {
-    switch (type) {
-        case WStype_TEXT:
-            break;
-        case WStype_BIN:
-            Serial.println("Image received via WebSocket");
-            // Forward the image to the API
-            sendImageToAPI(payload, length);
-            break;
-        default:
-            break;
+String getPublicIP() {
+    HTTPClient http;
+    http.begin(publicIPService);
+    int httpCode = http.GET();
+
+    if (httpCode == 200) {
+        String ip = http.getString();
+        http.end();
+        return ip;
+    } else {
+        http.end();
+        return "Failed to get public IP";
     }
 }
 
@@ -60,20 +57,42 @@ void setup() {
         delay(500);
         Serial.print(".");
     }
-    Serial.println("");
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
+
+    Serial.println("\nWiFi connected.");
+    Serial.print("Local IP: ");
     Serial.println(WiFi.localIP());
 
-    // Set WebSocket event handler
-    webSocket.begin("your.server.com", 81, "/"); // Replace with your WebSocket server URL and port
-    webSocket.onEvent(onWebSocketEvent);
+    // Fetch and print public IP
+    String publicIP = getPublicIP();
+    Serial.print("Public IP: ");
+    Serial.println(publicIP);
 
-    // Start WebSocket
-    Serial.println("WebSocket connected.");
+    // WebSocket message handler
+    client.onMessage([](WebsocketsMessage message) {
+        Serial.println("Received binary message via WebSocket.");
+        if (message.isBinary()) {
+            sendImageToAPI((uint8_t *)message.data().c_str(), message.length());
+        }
+    });
+
+    client.onEvent([](WebsocketsEvent event, String data) {
+        if (event == WebsocketsEvent::ConnectionOpened) {
+            Serial.println("WebSocket connection opened.");
+        } else if (event == WebsocketsEvent::ConnectionClosed) {
+            Serial.println("WebSocket connection closed.");
+        } else if (event == WebsocketsEvent::GotPing) {
+            Serial.println("Got a ping!");
+        }
+    });
+
+    // Connect to your WebSocket server
+    bool connected = client.connect("ws://your.server.ip:81/"); // Replace with actual server
+
+    if (!connected) {
+        Serial.println("WebSocket connection failed!");
+    }
 }
 
 void loop() {
-    // Maintain WebSocket connection
-    webSocket.loop();
+    client.poll();
 }
