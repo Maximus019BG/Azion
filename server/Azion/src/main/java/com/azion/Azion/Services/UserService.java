@@ -1,27 +1,23 @@
-package com.azion.Azion.User.Service;
+package com.azion.Azion.Services;
 
 
-import com.azion.Azion.MFA.Service.MFAService;
-import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
-import com.azion.Azion.Tasks.Model.Task;
-import com.azion.Azion.Tasks.Repository.TasksRepository;
-import com.azion.Azion.Token.Token;
-import com.azion.Azion.Token.TokenRepo;
-import com.azion.Azion.Token.TokenService;
-import com.azion.Azion.Token.TokenType;
-import com.azion.Azion.User.Model.DTO.RoleDTO;
-import com.azion.Azion.User.Model.DTO.UserDTO;
-import com.azion.Azion.User.Model.Role;
-import com.azion.Azion.User.Model.User;
-import com.azion.Azion.User.Repository.RoleRepository;
-import com.azion.Azion.User.Repository.UserRepository;
+import com.azion.Azion.Enums.TokenType;
+import com.azion.Azion.Models.DTO.RoleDTO;
+import com.azion.Azion.Models.DTO.TasksDTO;
+import com.azion.Azion.Models.DTO.UserDTO;
+import com.azion.Azion.Models.Role;
+import com.azion.Azion.Models.Task;
+import com.azion.Azion.Models.Token;
+import com.azion.Azion.Models.User;
+import com.azion.Azion.Repositories.RoleRepository;
+import com.azion.Azion.Repositories.TasksRepository;
+import com.azion.Azion.Repositories.TokenRepo;
+import com.azion.Azion.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;

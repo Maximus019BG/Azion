@@ -1,7 +1,6 @@
-package com.azion.Azion.User.Model;
+package com.azion.Azion.Models;
 
-import com.azion.Azion.Tasks.Model.Task;
-import com.azion.Azion.User.Util.UserUtility;
+import com.azion.Azion.Utils.UserUtility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dev.samstevens.totp.secret.DefaultSecretGenerator;

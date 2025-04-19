@@ -1,7 +1,4 @@
-package com.azion.Azion.User.Model.DTO;
-
-import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
-import com.azion.Azion.User.Model.Role;
+package com.azion.Azion.Models.DTO;
 
 import java.util.Set;
 

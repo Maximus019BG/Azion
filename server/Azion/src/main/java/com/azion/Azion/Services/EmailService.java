@@ -1,7 +1,7 @@
-package com.azion.Azion.User.Service;
+package com.azion.Azion.Services;
 
-import com.azion.Azion.Org.Model.Org;
-import com.azion.Azion.Org.Repository.OrgRepository;
+import com.azion.Azion.Models.Org;
+import com.azion.Azion.Repositories.OrgRepository;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;

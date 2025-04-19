@@ -1,20 +1,18 @@
-package com.azion.Azion.User.Util;
+package com.azion.Azion.Utils;
 
-import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.codec.binary.Base32;
-import java.io.IOException;
-import java.util.zip.GZIPOutputStream;
-import java.util.zip.GZIPInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
+import org.apache.commons.validator.routines.EmailValidator;
+
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
-import org.apache.commons.codec.binary.Base32;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class UserUtility {
 
@@ -111,7 +109,7 @@ public class UserUtility {
     public static String doubleArrayToString(double[] array) {
         StringBuilder sb = new StringBuilder();
         for (double d : array) {
-            sb.append(Double.toString(d)).append(",");
+            sb.append(d).append(",");
         }
         return sb.toString();
     }
