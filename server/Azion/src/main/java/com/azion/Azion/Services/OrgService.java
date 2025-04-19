@@ -1,15 +1,13 @@
-package com.azion.Azion.Org.Service;
+package com.azion.Azion.Services;
 
-import com.azion.Azion.Org.Model.Org;
-import com.azion.Azion.Org.Repository.OrgRepository;
-import com.azion.Azion.Org.Util.OrgUtility;
-import com.azion.Azion.User.Model.DTO.RoleDTO;
-import com.azion.Azion.User.Model.Role;
-import com.azion.Azion.User.Model.User;
-import com.azion.Azion.User.Repository.RoleRepository;
-import com.azion.Azion.User.Repository.UserRepository;
-import com.azion.Azion.User.Service.EmailService;
-import com.azion.Azion.User.Service.UserService;
+import com.azion.Azion.Models.DTO.RoleDTO;
+import com.azion.Azion.Models.Org;
+import com.azion.Azion.Models.Role;
+import com.azion.Azion.Models.User;
+import com.azion.Azion.Repositories.OrgRepository;
+import com.azion.Azion.Repositories.RoleRepository;
+import com.azion.Azion.Repositories.UserRepository;
+import com.azion.Azion.Utils.OrgUtility;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class OrgService {
@@ -170,7 +167,6 @@ public class OrgService {
             userRepository.save(randomUser);
         }
         else{
-            return;
         }
         
     }

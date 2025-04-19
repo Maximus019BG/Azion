@@ -1,20 +1,20 @@
-package com.azion.Azion.Org.Controller;
+package com.azion.Azion.Controllers;
 
-import com.azion.Azion.Org.Model.DTO.OrgDTO;
-import com.azion.Azion.Org.Model.Org;
-import com.azion.Azion.Org.Repository.OrgRepository;
-import com.azion.Azion.Org.Service.OrgService;
-import com.azion.Azion.Org.Util.OrgUtility;
-import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
-import com.azion.Azion.Tasks.Model.Task;
-import com.azion.Azion.Token.TokenService;
-import com.azion.Azion.User.Model.DTO.RoleDTO;
-import com.azion.Azion.User.Model.DTO.UserDTO;
-import com.azion.Azion.User.Model.Role;
-import com.azion.Azion.User.Model.User;
-import com.azion.Azion.User.Repository.RoleRepository;
-import com.azion.Azion.User.Repository.UserRepository;
-import com.azion.Azion.User.Service.UserService;
+import com.azion.Azion.Models.DTO.OrgDTO;
+import com.azion.Azion.Models.DTO.RoleDTO;
+import com.azion.Azion.Models.DTO.TasksDTO;
+import com.azion.Azion.Models.DTO.UserDTO;
+import com.azion.Azion.Models.Org;
+import com.azion.Azion.Models.Role;
+import com.azion.Azion.Models.Task;
+import com.azion.Azion.Models.User;
+import com.azion.Azion.Repositories.OrgRepository;
+import com.azion.Azion.Repositories.RoleRepository;
+import com.azion.Azion.Repositories.UserRepository;
+import com.azion.Azion.Services.OrgService;
+import com.azion.Azion.Services.TokenService;
+import com.azion.Azion.Services.UserService;
+import com.azion.Azion.Utils.OrgUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,7 +165,7 @@ public class OrgController {
     @Transactional
     @GetMapping("/get/invites")
     public ResponseEntity<?> getInvites(@RequestHeader Map<String, String> headers) {
-        String accessToken = (String) headers.get("authorization");
+        String accessToken = headers.get("authorization");
         User user = tokenService.getUserFromToken(accessToken);
         //Validation
         if (!tokenService.validateToken(accessToken)) {
@@ -541,8 +541,7 @@ public class OrgController {
                 if (role != null) {
                     userToUpdate.setRole(role);
                 }
-            } else if (roleData instanceof String) {
-                String roleName = (String) roleData;
+            } else if (roleData instanceof String roleName) {
                 Role role = roleRepository.findByName(roleName).orElse(null);
                 if (role != null) {
                     userToUpdate.setRole(role);

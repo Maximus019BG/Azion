@@ -1,13 +1,9 @@
-package com.azion.Azion.Org.Model;
+package com.azion.Azion.Models;
 
 
-import com.azion.Azion.Org.Util.OrgUtility;
-import com.azion.Azion.User.Model.User;
-import com.azion.Azion.User.Util.UserUtility;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.azion.Azion.Utils.OrgUtility;
+import com.azion.Azion.Utils.UserUtility;
 import jakarta.persistence.*;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Set;
 import java.util.UUID;

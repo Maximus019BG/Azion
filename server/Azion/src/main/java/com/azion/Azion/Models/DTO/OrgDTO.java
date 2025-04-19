@@ -1,4 +1,4 @@
-package com.azion.Azion.Org.Model.DTO;
+package com.azion.Azion.Models.DTO;
 
 public interface OrgDTO {
     String getOrgName();

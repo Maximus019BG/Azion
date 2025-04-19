@@ -1,4 +1,4 @@
-package com.azion.Azion.Org.Util;
+package com.azion.Azion.Utils;
 
 import org.apache.commons.validator.routines.EmailValidator;
 

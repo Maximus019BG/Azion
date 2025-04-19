@@ -1,7 +1,7 @@
-package com.azion.Azion.Org.Repository;
+package com.azion.Azion.Repositories;
 
-import com.azion.Azion.Org.Model.Org;
-import com.azion.Azion.Org.Model.DTO.OrgDTO;
+import com.azion.Azion.Models.DTO.OrgDTO;
+import com.azion.Azion.Models.Org;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
