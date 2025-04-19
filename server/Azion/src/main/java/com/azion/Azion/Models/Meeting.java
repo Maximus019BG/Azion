@@ -1,6 +1,5 @@
-package com.azion.Azion.Meetings.Model;
+package com.azion.Azion.Models;
 
-import com.azion.Azion.Org.Model.Org;
 import jakarta.persistence.*;
 
 import java.util.Date;

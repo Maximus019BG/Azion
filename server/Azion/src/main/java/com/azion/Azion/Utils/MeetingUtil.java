@@ -1,6 +1,6 @@
-package com.azion.Azion.Meetings.Util;
+package com.azion.Azion.Utils;
 
-import com.azion.Azion.Meetings.Enum.EnumDays;
+import com.azion.Azion.Enums.EnumDays;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

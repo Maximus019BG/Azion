@@ -1,11 +1,11 @@
-package com.azion.Azion.Meetings.Service;
+package com.azion.Azion.Services;
 
-import com.azion.Azion.Meetings.Model.Meeting;
-import com.azion.Azion.Meetings.Model.MeetingDTO;
-import com.azion.Azion.Meetings.Repository.MeetingRepo;
-import com.azion.Azion.Org.Repository.OrgRepository;
-import com.azion.Azion.User.Model.User;
-import com.azion.Azion.User.Repository.UserRepository;
+import com.azion.Azion.Models.DTO.MeetingDTO;
+import com.azion.Azion.Models.Meeting;
+import com.azion.Azion.Models.User;
+import com.azion.Azion.Repositories.MeetingRepo;
+import com.azion.Azion.Repositories.OrgRepository;
+import com.azion.Azion.Repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

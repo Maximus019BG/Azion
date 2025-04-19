@@ -1,7 +1,7 @@
-package com.azion.Azion.Meetings.Repository;
+package com.azion.Azion.Repositories;
 
-import com.azion.Azion.Meetings.Model.Meeting;
-import com.azion.Azion.Org.Model.Org;
+import com.azion.Azion.Models.Meeting;
+import com.azion.Azion.Models.Org;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

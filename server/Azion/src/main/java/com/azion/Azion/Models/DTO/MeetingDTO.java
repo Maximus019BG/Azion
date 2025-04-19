@@ -1,4 +1,4 @@
-package com.azion.Azion.Meetings.Model;
+package com.azion.Azion.Models.DTO;
 
 
 import java.util.Date;

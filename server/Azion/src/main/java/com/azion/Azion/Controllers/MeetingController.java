@@ -1,15 +1,14 @@
-package com.azion.Azion.Meetings.Controller;
+package com.azion.Azion.Controllers;
 
 
-import com.azion.Azion.Meetings.Model.MeetingDTO;
-import com.azion.Azion.Meetings.Service.MeetingService;
-import com.azion.Azion.Org.Model.DTO.OrgDTO;
-import com.azion.Azion.Org.Model.Org;
-import com.azion.Azion.Org.Repository.OrgRepository;
-import com.azion.Azion.Org.Service.OrgService;
-import com.azion.Azion.Token.TokenService;
-import com.azion.Azion.User.Model.User;
-import com.azion.Azion.User.Service.UserService;
+import com.azion.Azion.Models.DTO.MeetingDTO;
+import com.azion.Azion.Models.Org;
+import com.azion.Azion.Models.User;
+import com.azion.Azion.Repositories.OrgRepository;
+import com.azion.Azion.Services.MeetingService;
+import com.azion.Azion.Services.OrgService;
+import com.azion.Azion.Services.TokenService;
+import com.azion.Azion.Services.UserService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
