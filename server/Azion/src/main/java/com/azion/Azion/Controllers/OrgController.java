@@ -139,6 +139,16 @@ public class OrgController {
         return ResponseEntity.ok("User added to organization.");
     }
     
+    @GetMapping("/get/{orgId}")
+    public ResponseEntity<?> getOrg(@PathVariable String orgId) {
+        OrgDTO org = orgService.findOrgById(orgId);
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Org not found.");
+        }
+        
+        return ResponseEntity.ok(org);
+    }
+    
     @Transactional
     @PutMapping("/con/str/{conStr}")
     public ResponseEntity<?> addUserToOrg(@PathVariable String conStr, @RequestBody Map<String, Object> request) {

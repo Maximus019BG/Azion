@@ -1,22 +1,14 @@
 "use client"
-
 import type React from "react"
 import {useEffect, useState} from "react"
 import axios, {type AxiosResponse} from "axios"
 import {apiUrl} from "../api/config"
-import { MdDescription, MdEmail, MdLocationOn, MdPhone} from "react-icons/md"
+import {MdDescription, MdEmail, MdLocationOn, MdPhone} from "react-icons/md"
 import {CgOrganisation} from "react-icons/cg"
 import {PiTagSimpleBold} from "react-icons/pi"
+import {Organization} from "../types/types"
 
-interface Organization {
-    orgName: string
-    orgDescription: string
-    orgAddress: string
-    orgEmail: string
-    orgPhone: string
-    orgType: string
-}
-
+//TODO: add invoice logic
 interface ListAllOrgsProps {
     searchTerm: string
 }
@@ -36,21 +28,15 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({searchTerm}) => {
                 console.error(error.response ? error.response : error)
                 setOrgs([
                     {
-                        orgName: "Org1",
-                        orgDescription: "Description1",
-                        orgAddress: "Address1",
-                        orgEmail: "email1@example.com",
-                        orgPhone: "123-456-7890",
-                        orgType: "Type1",
-                    },
-                    {
-                        orgName: "Org2",
-                        orgDescription: "Description2",
-                        orgAddress: "Address2",
-                        orgEmail: "email2@example.com",
-                        orgPhone: "987-654-3210",
-                        orgType: "Type2",
-                    },
+                        orgID: undefined,
+                        orgName: "No organization data available",
+                        orgDescription: "We couldn't fetch the organization details. Please check your network connection or try again later.",
+                        orgAddress: "Unavailable",
+                        orgEmail: "Not Found",
+                        orgPhone: "N/A",
+                        orgType: "Unknown"
+                    }
+
                 ])
                 setLoading(false)
             })
@@ -77,6 +63,7 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({searchTerm}) => {
             {filteredOrgs.map((org, index) => (
                 <div
                     key={index}
+                    onClick={() => window.location.href = `/organizations/view/${org.orgID}`}
                     className="flex flex-col justify-start items-start gap-4 p-6 bg-base-200 rounded-lg w-96 shadow-lg transform transition-transform hover:scale-105 hover:shadow-2xl"
                 >
                     <h2 className="text-white text-lg md:text-xl font-semibold mb-3 flex items-center gap-3">

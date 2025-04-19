@@ -114,3 +114,13 @@ export interface Role{
     roleAccess: string|null;
     color: string;
 }
+
+export interface Organization {
+    orgID: string | undefined;
+    orgName: string
+    orgDescription: string
+    orgAddress: string
+    orgEmail: string
+    orgPhone: string
+    orgType: string
+}

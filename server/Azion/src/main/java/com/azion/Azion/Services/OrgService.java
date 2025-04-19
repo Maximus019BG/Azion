@@ -1,5 +1,6 @@
 package com.azion.Azion.Services;
 
+import com.azion.Azion.Models.DTO.OrgDTO;
 import com.azion.Azion.Models.DTO.RoleDTO;
 import com.azion.Azion.Models.Org;
 import com.azion.Azion.Models.Role;
@@ -22,9 +23,9 @@ import java.util.*;
 @Service
 public class OrgService {
     
-    
     private static final Logger log = LoggerFactory.getLogger(OrgService.class);
-    //Email domains to exclude
+    
+    //Email domains to exclude for same email invitation list
     private static final String[] exclEmailDomains = {
             "gmail.com",
             "yahoo.com",
@@ -79,6 +80,11 @@ public class OrgService {
         roleDTO.setRoleAccess(role.getRoleAccess());
         roleDTO.setColor(role.getColor());
         return roleDTO;
+    }
+    
+    public OrgDTO findOrgById(String orgId) {
+        OrgDTO org = orgRepository.findOrgByOrgID(orgId).orElse(null);
+        return org;
     }
     
     public void addUserToOrg(Org org, User user) {

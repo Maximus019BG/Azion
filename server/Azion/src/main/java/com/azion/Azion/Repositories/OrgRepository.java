@@ -16,6 +16,8 @@ public interface OrgRepository extends JpaRepository<Org, String> {
     Optional<Org> findOrgByOrgName(String orgName);
     Optional<Org> findOrgByOrgAddress(String orgAddress);
     Optional<OrgDTO>findByOrgAddress(String orgAddress);
+    
+    Optional<OrgDTO> findOrgByOrgID(String orgId);
  
     @Query("SELECT o FROM Org o")
     List<OrgDTO> findAllOrgs();
