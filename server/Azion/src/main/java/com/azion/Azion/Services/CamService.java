@@ -1,5 +1,8 @@
-package com.azion.Azion.Cam;
+package com.azion.Azion.Services;
 
+import com.azion.Azion.Models.Cam;
+import com.azion.Azion.Models.CamLog;
+import com.azion.Azion.Repositories.CamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

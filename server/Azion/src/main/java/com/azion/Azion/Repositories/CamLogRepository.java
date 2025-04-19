@@ -1,5 +1,6 @@
-package com.azion.Azion.Cam;
+package com.azion.Azion.Repositories;
 
+import com.azion.Azion.Models.CamLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

@@ -1,7 +1,4 @@
-package com.azion.Azion.Cam.DTO;
-
-import com.azion.Azion.User.Model.DTO.RoleDTO;
-import com.azion.Azion.User.Model.Role;
+package com.azion.Azion.Models.DTO;
 
 public class CamDTO {
     private String id;

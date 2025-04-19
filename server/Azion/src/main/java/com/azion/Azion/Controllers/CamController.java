@@ -1,17 +1,10 @@
-package com.azion.Azion.Cam;
+package com.azion.Azion.Controllers;
 
-import com.azion.Azion.Cam.DTO.CamDTO;
-import com.azion.Azion.User.Model.DTO.RoleDTO;
-import com.azion.Azion.User.Model.Role;
-import com.azion.Azion.MFA.Service.MFAService;
-import com.azion.Azion.Org.Model.Org;
-import com.azion.Azion.Org.Repository.OrgRepository;
-import com.azion.Azion.Token.TokenService;
-import com.azion.Azion.User.Model.User;
-import com.azion.Azion.User.Repository.RoleRepository;
-import com.azion.Azion.User.Repository.UserRepository;
-import com.azion.Azion.User.Service.EmailService;
-import com.azion.Azion.User.Service.UserService;
+import com.azion.Azion.Models.*;
+import com.azion.Azion.Models.DTO.CamDTO;
+import com.azion.Azion.Models.DTO.RoleDTO;
+import com.azion.Azion.Repositories.*;
+import com.azion.Azion.Services.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

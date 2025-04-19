@@ -1,4 +1,4 @@
-package com.azion.Azion.Cam;
+package com.azion.Azion.Models;
 
 import jakarta.persistence.*;
 

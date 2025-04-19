@@ -1,10 +1,7 @@
-package com.azion.Azion.Cam;
-
-import com.azion.Azion.User.Model.Role;
+package com.azion.Azion.Models;
 
 import jakarta.persistence.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Entity
