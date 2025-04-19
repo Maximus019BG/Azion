@@ -2,8 +2,8 @@ services:
   aziondb:
     image: mysql:8.0.28
     environment:
-      MYSQL_DATABASE: '${DB_NAME}'
-      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3307:3306"
     networks:
@@ -24,18 +24,18 @@ services:
     networks:
       - app-network
     environment:
-      DB_URL: '${DB_URL}'
-      DB_USERNAME: '${DB_USERNAME}'
-      DB_PASSWORD: '${DB_PASSWORD}'
-      SECRET_JWT: '${SECRET_JWT}'
-      ISSUER_NAME: '${ISSUER_NAME}'
-      SECRET_MFA: '${SECRET_MFA}'
-      OS: '${OS}'
-      VIRUS_TOTAL_API_KEY: '${VIRUS_TOTAL_API_KEY}'
-      GOOGLE_CLIENT_ID: '${GOOGLE_CLIENT_ID}'
-      GOOGLE_CLIENT_SECRET: '${GOOGLE_CLIENT_SECRET}'
-      GOOGLE_REDIRECT_URI: '${GOOGLE_REDIRECT_URI}'
-      SECRET_GOOGLE: '${SECRET_GOOGLE}'
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SECRET_JWT: ${SECRET_JWT}
+      ISSUER_NAME: ${ISSUER_NAME}
+      SECRET_MFA: ${SECRET_MFA}
+      OS: ${OS}
+      VIRUS_TOTAL_API_KEY: ${VIRUS_TOTAL_API_KEY}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+      SECRET_GOOGLE: ${SECRET_GOOGLE}
     restart: always
 
 #Prod only
