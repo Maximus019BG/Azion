@@ -1,20 +1,17 @@
-package com.azion.Azion.Auth;
+package com.azion.Azion.Controllers;
 
-import com.azion.Azion.MFA.Service.MFAService;
-import com.azion.Azion.Tasks.Service.TasksService;
-import com.azion.Azion.Token.TokenRepo;
-import com.azion.Azion.Token.TokenService;
-import com.azion.Azion.User.Model.User;
-import com.azion.Azion.User.Repository.UserRepository;
-import com.azion.Azion.User.Service.EmailService;
-import com.azion.Azion.User.Service.UserService;
+import com.azion.Azion.Models.User;
+import com.azion.Azion.Repositories.TokenRepo;
+import com.azion.Azion.Repositories.UserRepository;
+import com.azion.Azion.Services.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
@@ -33,8 +30,8 @@ import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.azion.Azion.Token.TokenType.ACCESS_TOKEN;
-import static com.azion.Azion.Token.TokenType.REFRESH_TOKEN;
+import static com.azion.Azion.Enums.TokenType.ACCESS_TOKEN;
+import static com.azion.Azion.Enums.TokenType.REFRESH_TOKEN;
 
 @Slf4j
 @RestController

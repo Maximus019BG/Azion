@@ -1,23 +1,17 @@
-package com.azion.Azion.Auth;
+package com.azion.Azion.Services;
 
-import com.azion.Azion.MFA.Service.MFAService;
-import com.azion.Azion.User.Model.User;
-import com.azion.Azion.User.Repository.UserRepository;
-import com.azion.Azion.User.Service.EmailService;
+import com.azion.Azion.Models.User;
+import com.azion.Azion.Repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.azion.Azion.Token.TokenService;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.azion.Azion.Token.TokenType.ACCESS_TOKEN;
-import static com.azion.Azion.Token.TokenType.REFRESH_TOKEN;
+import static com.azion.Azion.Enums.TokenType.ACCESS_TOKEN;
+import static com.azion.Azion.Enums.TokenType.REFRESH_TOKEN;
 
 @Service
 @Slf4j
@@ -39,12 +33,7 @@ public class AuthService {
     
     public boolean checkFaceIdEnabled(String email) {
         User user = userRepository.findByEmail(email);
-        if(user != null && user.getFaceID() != null){
-           return true;
-        }
-        else {
-            return false;
-        }
+        return user != null && user.getFaceID() != null;
     }
     
     public Map<String, String> loginTokenCreation( User user, String OTP, String UserAgent) {
