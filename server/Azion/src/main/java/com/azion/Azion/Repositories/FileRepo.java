@@ -1,6 +1,6 @@
-package com.azion.Azion.Tasks.Repository;
+package com.azion.Azion.Repositories;
 
-import com.azion.Azion.Tasks.Model.TaskFiles;
+import com.azion.Azion.Models.TaskFiles;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

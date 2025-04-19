@@ -1,4 +1,4 @@
-package com.azion.Azion.Exception;
+package com.azion.Azion.Exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

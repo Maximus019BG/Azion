@@ -1,7 +1,6 @@
-package com.azion.Azion.Tasks.Model.DTO;
+package com.azion.Azion.Models.DTO;
 
-import com.azion.Azion.Tasks.Enum.SubmitType;
-import com.azion.Azion.User.Model.DTO.UserDTO;
+import com.azion.Azion.Enums.SubmitType;
 
 
 public class FileDTO {
