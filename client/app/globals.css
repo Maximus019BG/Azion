@@ -2,30 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-    :root {
-        --foreground: 242, 242, 242;
-        --background: linear-gradient(to bottom, rgba(13, 14, 13, 0.9), rgba(7, 9, 10, 0.9));
-        --muted: 115, 115, 115;
-        --accent: 37, 99, 235;
-        --lightAccent: 14, 165, 233;
-        --neonAccent: 102, 252, 242;
-    }
+:root {
+    --foreground: 242, 242, 242;
+    --background: linear-gradient(to bottom, rgba(13, 14, 13, 0.9), rgba(7, 9, 10, 0.9));
+    --muted: 115, 115, 115;
+    --accent: 37, 99, 235;
+    --lightAccent: 14, 165, 233;
+    --neonAccent: 102, 252, 242;
 
+    /* New additions */
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 10, 10, 20;
+}
+
+body {
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(to bottom, rgb(var(--background-start-rgb)), rgb(var(--background-end-rgb))) fixed;
+    /* fallback if you use var(--background) elsewhere */
+    background: var(--background);
+    color: rgb(var(--foreground));
+}
+
+@layer base {
     body {
         background: var(--background);
         color: rgb(var(--foreground));
     }
 }
 
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(15, 15, 25, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.5);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.7);
+}
+
+/* Gradient text */
 .gradient-text {
     background: linear-gradient(to top, rgba(14, 165, 233, 0.8), rgba(37, 99, 235, 0.7));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    display: inline-block; /* ensures it stays on the same line */
-    white-space: nowrap; /* prevents wrapping */
+    display: inline-block;
+    white-space: nowrap;
 }
 
+/* Gradient animation */
 @keyframes gradientAnimation {
     0% {
         background-position: 0% 50%;
@@ -38,19 +77,22 @@
     }
 }
 
+/* Gradient form background */
 .gradient-form {
     background: linear-gradient(to right, rgba(10, 56, 87, 0.7), rgba(33, 198, 231, 0.7));
     width: 40%;
     height: 100%;
 }
 
+/* Custom circle class */
 .custom-circle {
-    width: 100px; /* Set a specific width */
-    height: 100px; /* Set the height to the same value */
-    border-radius: 50%; /* This makes it a perfect circle */
-    object-fit: cover; /* Ensures that any image inside fits well */
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
+/* Neon text effect */
 .neon-text {
     color: rgba(255, 255, 255, 0.9);
     text-shadow: 0 0 1px rgba(215, 215, 216, 0.8),
@@ -63,6 +105,7 @@
     0 0 8px rgba(197, 198, 199, 0.1);
 }
 
+/* Radial progress component */
 .radial-progress {
     --size: 10rem;
     --thickness: 1rem;
@@ -97,7 +140,7 @@
     height: 100%;
 }
 
-
+/* Tooltip */
 #tooltip {
     position: absolute;
     z-index: 1000;
