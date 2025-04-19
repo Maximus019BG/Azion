@@ -2,8 +2,10 @@
 import {motion} from "framer-motion"
 import type React from "react"
 import Link from "next/link"
-import {ArrowUp, Github, Instagram, Linkedin, Mail, Phone, Twitter} from "lucide-react"
+import {ArrowUp, Github, Instagram, Mail, Phone, Twitter} from "lucide-react"
 import {Space_Grotesk} from "next/font/google"
+import logo from "@/public/white-logo-small.png";
+import Image from "next/image";
 
 const spaceGrotesk = Space_Grotesk({subsets: ["latin"], display: "swap"})
 
@@ -21,7 +23,7 @@ export default function Footer() {
         <footer
             className="relative bg-black/40 backdrop-blur-sm border-t border-gray-800/30 text-white pt-12 pb-6 overflow-hidden">
             {/* Scroll to top button - simplified */}
-            <div className="absolute right-6 -top-4">
+            <div className="absolute right-6 top-4">
                 <motion.button
                     onClick={scrollToTop}
                     whileHover={{y: -2}}
@@ -47,11 +49,8 @@ export default function Footer() {
                             <div className="flex items-center">
                                 <div className="w-8 h-8 relative mr-2 overflow-hidden">
                                     <div
-                                        className="absolute inset-0 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-md opacity-80 group-hover:opacity-100 transition-opacity"></div>
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <span
-                                            className={`text-white font-bold text-lg ${spaceGrotesk.className}`}>A</span>
-                                    </div>
+                                        className="absolute inset-0 bg-gradient-to-br -z-20 from-cyan-400 to-blue-600 rounded-md opacity-80 group-hover:opacity-100 transition-opacity"></div>
+                                    <Image src={logo.src} alt={"Azion Logo"} width={50} height={50}/>
                                 </div>
                                 <span
                                     className={`text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent group-hover:from-cyan-300 group-hover:to-blue-400 transition-all duration-300 ${spaceGrotesk.className}`}
@@ -70,8 +69,8 @@ export default function Footer() {
                         <div className="flex space-x-3">
                             <SocialIcon href="https://twitter.com/AzionOnline" icon={<Twitter size={16}/>}/>
                             <SocialIcon href="https://www.instagram.com/aziononlineteam" icon={<Instagram size={16}/>}/>
-                            <SocialIcon href="https://github.com/azion" icon={<Github size={16}/>}/>
-                            <SocialIcon href="https://linkedin.com/company/azion" icon={<Linkedin size={16}/>}/>
+                            <SocialIcon href="https://github.com/Maximus019BG/Azion/tree/master"
+                                        icon={<Github size={16}/>}/>
                         </div>
                     </motion.div>
 
@@ -89,8 +88,6 @@ export default function Footer() {
                             <FooterLink href="#security">Security</FooterLink>
                             <FooterLink href="#testimonials">Testimonials</FooterLink>
                             <FooterLink href="#pricing">Pricing</FooterLink>
-                            <FooterLink href="/about">About Us</FooterLink>
-                            <FooterLink href="/contact">Contact</FooterLink>
                         </ul>
                     </motion.div>
 
