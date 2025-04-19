@@ -1,0 +1,11 @@
+services:
+  server:
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_GOOGLE_REDIRECT: ${NEXT_PUBLIC_GOOGLE_REDIRECT}
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+      CHAT_MSG_KEY: ${CHAT_MSG_KEY}
+    ports:
+      - 3000:3000
