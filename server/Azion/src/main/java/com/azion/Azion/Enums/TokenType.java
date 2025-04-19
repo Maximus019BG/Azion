@@ -1,4 +1,4 @@
-package com.azion.Azion.Token;
+package com.azion.Azion.Enums;
 
 public enum TokenType {
     ACCESS_TOKEN,

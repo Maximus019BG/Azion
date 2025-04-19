@@ -1,4 +1,4 @@
-package com.azion.Azion.Meetings.Enum;
+package com.azion.Azion.Enums;
 
 public enum EnumDays {
     MONDAY,
