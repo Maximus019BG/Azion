@@ -1,6 +1,6 @@
-package com.azion.Azion.Chat.Controller;
+package com.azion.Azion.Controllers;
 
-import com.azion.Azion.Chat.Model.Message;
+import com.azion.Azion.Models.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

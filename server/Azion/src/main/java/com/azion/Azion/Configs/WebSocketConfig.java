@@ -1,4 +1,4 @@
-package com.azion.Azion.Config;
+package com.azion.Azion.Configs;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
