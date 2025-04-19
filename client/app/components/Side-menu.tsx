@@ -1,19 +1,7 @@
 "use client";
 import React, {useEffect, useState} from "react";
 import Link from "next/link";
-import {
-    FaBuilding,
-    FaChevronDown,
-    FaClipboard,
-    FaCog,
-    FaComments,
-    FaHome,
-    FaPlusCircle,
-    FaTasks,
-    FaUserCircle,
-    FaUsers,
-    FaUserSecret
-} from "react-icons/fa";
+import {FaBuilding, FaChevronDown, FaClipboard, FaCog, FaComments, FaHome, FaPlusCircle, FaTasks, FaUserCircle, FaUsers, FaUserSecret} from "react-icons/fa";
 import {AiFillVideoCamera} from "react-icons/ai";
 import LogOut from "@/app/components/LogOut";
 import {UserData} from "@/app/func/funcs";
@@ -26,6 +14,7 @@ const SideMenu = () => {
     const [org, setOrg] = useState<string | null>("");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [access, setAccess] = useState<string>("")
+    const [userType, setUserType] = useState<string | null>("")
 
     useEffect(() => {
         const fetchOrgName = async () => {
@@ -39,12 +28,18 @@ const SideMenu = () => {
 
         const PageAccess = async () => {
             const userData = await UserData();
-            setAccess(userData.access);
-        };
+            setUserType(userData.userType);
+            if (userType !== "CLIENT") {
+                setAccess(userData.access);
+            } else {
+                setAccess("");
+            }
+
+        }
 
         PageAccess();
         fetchOrgName();
-    }, []);
+    }, [])
 
     // Toggle dropdowns
     const toggleDashboardDropdown = () => {
@@ -259,7 +254,7 @@ const SideMenu = () => {
                         <li className="text-md w-full">
                             <Link href="/organizations" className="flex items-center w-full">
                                 <FaBuilding className="text-lg mr-2"/>
-                                Organizations
+                                {userType !== "CLIENT" ? "Organizations" : "Businesses"}
                             </Link>
                         </li>
 

@@ -4,7 +4,7 @@ import ListAllOrgs from "../../components/listAllOrgs";
 import Cookies from "js-cookie";
 import SideMenu from "../../components/Side-menu";
 import Join_Organization from "../../components/JoinOrg";
-import {hideButton, orgSessionCheck, PartOfOrg} from "../../func/funcs";
+import {hideButton, orgSessionCheck, PartOfOrg, UserData} from "../../func/funcs";
 import Loading from "../../components/Loading";
 
 
@@ -13,6 +13,7 @@ const Organizations = () => {
     const [showJoinOrg, setShowJoinOrg] = useState(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [inOrg, setInOrg] = useState<boolean>(false);
+    const [userType, setUserType] = useState<string | null>(null);
 
     useEffect(() => {
         const CheckSessionAndOrg = async () => {
@@ -27,11 +28,19 @@ const Organizations = () => {
             }
         };
 
+        const JoinBtnLoad = async () => {
+            const userData = await UserData();
+            setUserType(userData.userType);
+        }
+
+
         const refreshToken = Cookies.get("azionRefreshToken");
         const accessToken = Cookies.get("azionAccessToken");
 
         if (refreshToken && accessToken) {
-            CheckSessionAndOrg().then();
+            CheckSessionAndOrg().then(() => {
+                JoinBtnLoad();
+            });
         } else if (!accessToken && !refreshToken) {
             window.location.href = "/login";
         }
@@ -75,7 +84,7 @@ const Organizations = () => {
                         </div>
 
                         {/* Toggle Button */}
-                        {!inOrg && (
+                        {!inOrg && userType === "WORKER" && (
                             <button
                                 className="fixed bottom-5 right-5 bg-accent text-white p-4 rounded-btn hover:bg-blue-900"
                                 onClick={() => setShowJoinOrg(!showJoinOrg)}
@@ -85,7 +94,7 @@ const Organizations = () => {
                         )}
 
                         {/* Conditional Rendering of Join Organization */}
-                        {showJoinOrg && !inOrg && (
+                        {showJoinOrg && userType === "WORKER" && !inOrg && (
                             <div className=" fixed inset-0 flex justify-center items-center z-50">
                                 <Join_Organization onClose={() => setShowJoinOrg(false)}/>
                             </div>

@@ -1,5 +1,6 @@
 package com.azion.Azion.Models;
 
+import com.azion.Azion.Enums.UserType;
 import com.azion.Azion.Utils.UserUtility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -55,10 +56,12 @@ public class User {
     @Column(nullable = true, columnDefinition = "TEXT")
     private String resetToken;
     
+    @Column(nullable = false)
+    private UserType userType;
+    
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
     private Set<Task> tasks;
-    
     
     public String getOrgid() {
         return orgid;
@@ -203,6 +206,14 @@ public class User {
     
     public void setResetToken(String resetToken) {
         this.resetToken = resetToken;
+    }
+    
+    public UserType getUserType() {
+        return userType;
+    }
+    
+    public void setUserType(UserType userType) {
+        this.userType = userType;
     }
     
     

@@ -106,6 +106,7 @@ export interface UserDataType {
     profilePicture: string | null,
     mfaEnabled: boolean,
     faceIdEnabled: boolean
+    userType: string | null,
 }
 
 export interface Role{

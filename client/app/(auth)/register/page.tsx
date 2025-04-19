@@ -101,6 +101,7 @@ const Register = () => {
     const [password2Error, setPassword2Error] = useState<string>("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [showPassword2, setShowPassword2] = useState<boolean>(false);
+    const [isWorker, setIsWorker] = useState<boolean>(false);
 
     useEffect(() => {
         if (Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
@@ -186,7 +187,9 @@ const Register = () => {
                 name,
                 email,
                 age: `${age.year}-${age.month.padStart(2, "0")}-${age.day.padStart(2, "0")}`,
+                isOrgOwner,
                 password,
+                isWorker,
             };
             handleRegister(userData, isOrgOwner);
         }
@@ -285,6 +288,12 @@ const Register = () => {
             onChange: setIsOrgOwner,
             type: "checkbox",
         },
+        {
+            label: "I'm a worker",
+            value: isWorker,
+            onChange: setIsWorker,
+            type: "checkbox",
+        },
     ];
 
     const getCurrentFields = () => {
@@ -334,17 +343,21 @@ const Register = () => {
                             {getCurrentFields().map((field, index) => (
                                 <div key={index} className="w-full flex flex-col justify-center items-center">
                                     {field.type === "checkbox" ? (
-                                        <label className="flex items-center text-white">
-                                            <input
-                                                type="checkbox"
-                                                checked={field.value as boolean}
-                                                onChange={(e) =>
-                                                    setIsOrgOwner(e.target.checked)
-                                                }
-                                                className="mr-2 h-5 w-5 rounded"
-                                            />
-                                            {field.label}
-                                        </label>
+                                        <div className="flex flex-col gap-2">
+                                            {inputFields
+                                                .filter((field) => field.type === "checkbox")
+                                                .map((field, index) => (
+                                                    <label key={index} className="flex items-center text-white">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={field.value as boolean}
+                                                            onChange={(e) => field.onChange(e.target.checked)}
+                                                            className="mr-2 h-5 w-5 rounded"
+                                                        />
+                                                        {field.label}
+                                                    </label>
+                                                ))}
+                                        </div>
                                     ) : field.type === "date" ? (
                                         <div className="w-full flex gap-4">
                                             {/* Day */}

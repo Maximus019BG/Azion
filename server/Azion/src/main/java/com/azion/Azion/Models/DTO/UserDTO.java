@@ -1,5 +1,7 @@
 package com.azion.Azion.Models.DTO;
 
+import com.azion.Azion.Enums.UserType;
+
 import java.util.Set;
 
 public class UserDTO {
@@ -14,7 +16,7 @@ public class UserDTO {
     private String profilePicture;
     private boolean mfaEnabled;
     private boolean faceIdEnabled;
-    
+    private UserType userType;
     
     public String getId() {
         return id;
@@ -100,6 +102,14 @@ public class UserDTO {
     
     public void setAccess(String access) {
         this.access = access;
+    }
+    
+    public UserType getUserType() {
+        return userType;
+    }
+    
+    public void setUserType(UserType userType) {
+        this.userType = userType;
     }
     
 }

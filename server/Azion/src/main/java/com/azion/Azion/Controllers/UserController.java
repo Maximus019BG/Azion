@@ -101,6 +101,7 @@ public class UserController {
             userDTO.setProjects(userService.convertProjectsToDTO(user.getTasks()));
             userDTO.setMfaEnabled(user.isMfaEnabled());
             userDTO.setFaceIdEnabled(user.getFaceID() != null);
+            userDTO.setUserType(user.getUserType());
             
             if (user.getProfilePicture() != null) {
                 userDTO.setProfilePicture(Base64.getEncoder().encodeToString(user.getProfilePicture()));

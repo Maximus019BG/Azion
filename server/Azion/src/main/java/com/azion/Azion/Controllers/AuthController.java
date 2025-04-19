@@ -1,5 +1,6 @@
 package com.azion.Azion.Controllers;
 
+import com.azion.Azion.Enums.UserType;
 import com.azion.Azion.Models.User;
 import com.azion.Azion.Repositories.TokenRepo;
 import com.azion.Azion.Repositories.UserRepository;
@@ -143,6 +144,7 @@ public class AuthController {
                         user.setPassword(""); //Google users don't have a password
                         user.setMfaEnabled(false);
                         user.setRole(null);
+                        user.setUserType(Enum.valueOf(UserType.class, "WORKER"));
                         
                         byte[] profilePicture = null;
                         if (pictureUrl != null) {
@@ -212,6 +214,12 @@ public class AuthController {
         String email = (String) request.get("email");
         String password = (String) request.get("password");
         String bornAt = (String) request.get("age");
+        boolean isWorker = (boolean) request.get("isWorker");
+        boolean isOrgOwner = (boolean) request.get("isOrgOwner"); // Used to check if the user is just client
+        
+        if (isOrgOwner) {
+            isWorker = true;
+        }
         
         //Date validation
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -224,7 +232,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format or non-existent date");
         }
         
-        if(authService.userExists(email)){
+        if (authService.userExists(email)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
         }
         
@@ -239,6 +247,7 @@ public class AuthController {
         user.setPassword(password);
         user.setMfaEnabled(false);
         user.setRole(null);
+        user.setUserType(Enum.valueOf(UserType.class, isWorker ? "WORKER" : "CLIENT"));
         
         userRepository.save(user);
         

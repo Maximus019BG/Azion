@@ -207,6 +207,7 @@ public class TasksController extends FileSize {
         dto.setAge(user.getAge().toString());
         dto.setRole(convertToRoleDTO(user.getRole()));
         dto.setOrgid(user.getOrgid());
+        dto.setId(user.getId());
         
         return dto;
     }

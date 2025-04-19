@@ -21,7 +21,6 @@ const Register_Organisation = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [conString, setConString] = useState("");
 
-
     useEffect(() => {
         const refreshToken = Cookies.get("azionRefreshToken");
         const accessToken = Cookies.get("azionAccessToken");
