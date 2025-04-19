@@ -1,6 +1,8 @@
-package com.azion.Azion.Token;
+package com.azion.Azion.Repositories;
 
-import com.azion.Azion.User.Model.User;
+import com.azion.Azion.Enums.TokenType;
+import com.azion.Azion.Models.Token;
+import com.azion.Azion.Models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

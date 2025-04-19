@@ -1,4 +1,4 @@
-package com.azion.Azion.Token;
+package com.azion.Azion.Models.DTO;
 
 public class TokenDTO {
     private String token;

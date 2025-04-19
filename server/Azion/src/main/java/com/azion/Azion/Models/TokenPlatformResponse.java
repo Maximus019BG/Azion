@@ -1,4 +1,6 @@
-package com.azion.Azion.Token;
+package com.azion.Azion.Models;
+
+import com.azion.Azion.Models.DTO.TokenDTO;
 
 public class TokenPlatformResponse {
     private TokenDTO tokenDTO;

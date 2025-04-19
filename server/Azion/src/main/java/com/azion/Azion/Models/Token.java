@@ -1,6 +1,6 @@
-package com.azion.Azion.Token;
+package com.azion.Azion.Models;
 
-import com.azion.Azion.User.Model.User;
+import com.azion.Azion.Enums.TokenType;
 import jakarta.persistence.*;
 
 import java.util.Date;
