@@ -1,9 +1,9 @@
-package com.azion.Azion.MFA.Service;
+package com.azion.Azion.Services;
 
-import com.azion.Azion.Token.TokenRepo;
-import com.azion.Azion.User.Model.User;
-import com.azion.Azion.User.Repository.UserRepository;
-import com.azion.Azion.User.Util.UserUtility;
+import com.azion.Azion.Models.User;
+import com.azion.Azion.Repositories.TokenRepo;
+import com.azion.Azion.Repositories.UserRepository;
+import com.azion.Azion.Utils.UserUtility;
 import dev.samstevens.totp.code.*;
 import dev.samstevens.totp.qr.QrData;
 import dev.samstevens.totp.qr.QrGenerator;
@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 

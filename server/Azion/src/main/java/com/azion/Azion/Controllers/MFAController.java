@@ -1,10 +1,10 @@
-package com.azion.Azion.MFA.Controller;
+package com.azion.Azion.Controllers;
 
-import com.azion.Azion.MFA.Service.MFAService;
-import com.azion.Azion.Token.TokenService;
-import com.azion.Azion.User.Model.User;
-import com.azion.Azion.User.Repository.UserRepository;
-import com.azion.Azion.User.Service.UserService;
+import com.azion.Azion.Models.User;
+import com.azion.Azion.Repositories.UserRepository;
+import com.azion.Azion.Services.MFAService;
+import com.azion.Azion.Services.TokenService;
+import com.azion.Azion.Services.UserService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

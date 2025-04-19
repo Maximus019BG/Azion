@@ -1,4 +1,4 @@
-package com.azion.Azion.Chat.Model;
+package com.azion.Azion.Models;
 
 public class Message {
     private String from;
