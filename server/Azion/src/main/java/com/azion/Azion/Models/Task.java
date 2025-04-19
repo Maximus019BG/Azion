@@ -1,7 +1,5 @@
-package com.azion.Azion.Tasks.Model;
+package com.azion.Azion.Models;
 
-import com.azion.Azion.Org.Model.Org;
-import com.azion.Azion.User.Model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 

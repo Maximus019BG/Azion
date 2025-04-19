@@ -1,7 +1,7 @@
-package com.azion.Azion.Tasks.Repository;
+package com.azion.Azion.Repositories;
 
-import com.azion.Azion.Tasks.Model.Task;
-import com.azion.Azion.User.Model.User;
+import com.azion.Azion.Models.Task;
+import com.azion.Azion.Models.User;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

@@ -1,14 +1,14 @@
-package com.azion.Azion.Tasks.Service;
+package com.azion.Azion.Services;
 
-import com.azion.Azion.Tasks.Model.DTO.TasksDTO;
-import com.azion.Azion.Tasks.Model.Task;
-import com.azion.Azion.Tasks.Model.TaskFiles;
-import com.azion.Azion.Tasks.Repository.FileRepo;
-import com.azion.Azion.Tasks.Repository.TasksRepository;
-import com.azion.Azion.User.Model.DTO.RoleDTO;
-import com.azion.Azion.User.Model.DTO.UserDTO;
-import com.azion.Azion.User.Model.Role;
-import com.azion.Azion.User.Model.User;
+import com.azion.Azion.Models.DTO.RoleDTO;
+import com.azion.Azion.Models.DTO.TasksDTO;
+import com.azion.Azion.Models.DTO.UserDTO;
+import com.azion.Azion.Models.Role;
+import com.azion.Azion.Models.Task;
+import com.azion.Azion.Models.TaskFiles;
+import com.azion.Azion.Models.User;
+import com.azion.Azion.Repositories.FileRepo;
+import com.azion.Azion.Repositories.TasksRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -191,9 +191,7 @@ public class TasksService {
         
         //Remove duplicates
         for(Task task : projectsAssigned) {
-            if(projectsCreatedBy.contains(task)) {
-                projectsCreatedBy.remove(task);
-            }
+            projectsCreatedBy.remove(task);
         }
         
         //Join and return

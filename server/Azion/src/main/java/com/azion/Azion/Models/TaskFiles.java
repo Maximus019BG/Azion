@@ -1,7 +1,6 @@
-package com.azion.Azion.Tasks.Model;
+package com.azion.Azion.Models;
 
-import com.azion.Azion.Tasks.Enum.SubmitType;
-import com.azion.Azion.User.Model.User;
+import com.azion.Azion.Enums.SubmitType;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;

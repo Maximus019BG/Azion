@@ -1,6 +1,5 @@
-package com.azion.Azion.Tasks.Model.DTO;
+package com.azion.Azion.Models.DTO;
 
-import com.azion.Azion.User.Model.DTO.UserDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDate;
