@@ -8,13 +8,13 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                background: 'rgb(var(--background))',
                 foreground: 'rgb(var(--foreground))',
+                background: 'rgb(var(--background-start-rgb))',
                 muted: 'rgb(var(--muted))',
                 accent: 'rgb(var(--accent))',
                 lightAccent: 'rgb(var(--lightAccent))',
                 neonAccent: 'rgb(var(--neonAccent))',
-                border: 'rgb(var(--border))', // ✅ This is the missing key!
+                border: 'rgb(var(--border))',
             },
         },
     },
