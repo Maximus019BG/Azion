@@ -6,6 +6,7 @@ import com.azion.Azion.Repositories.MessageRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -22,12 +23,18 @@ public class MessageService {
         List<Message> messages2 = messageRepository.findMessageByToUserAndFromUser(from, to);
         messages.addAll(messages2);
         
+        // Sort messages by time
+        messages.sort(Comparator.comparing(Message::getTime));
+        
         List<MessageDTO> messageDTOs = new ArrayList<>();
         
         for (Message message : messages) {
             MessageDTO messageDTO = new MessageDTO();
             messageDTO.setFrom(message.getFromUser());
             messageDTO.setTo(message.getToUser());
+            messageDTO.setTime(message.getTime());
+            messageDTO.setId(message.getId());
+            messageDTO.setEdited(message.isEdited());
             try {
                 messageDTO.setContent(message.getContent());
             } catch (Exception e) {

@@ -8,11 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -33,9 +31,15 @@ public class ChatController {
     
     @MessageMapping("/privateMessage")
     public void sendPrivateMessage(MessageDTO messageDTO) {
+        // Set the current time if not provided in the WebSocket message
+        if (messageDTO.getTime() == null) {
+            messageDTO.setTime(LocalDateTime.now());
+        }
+        
         Message message = new Message();
         message.setFromUser(messageDTO.getFrom());
         message.setToUser(messageDTO.getTo());
+        message.setTime(messageDTO.getTime());
         
         try {
             message.setContent(messageDTO.getContent());
@@ -49,6 +53,24 @@ public class ChatController {
     @GetMapping("/api/getOldMessages/{user1}/{user2}")
     public List<MessageDTO> getOldMessages(@PathVariable String user1, @PathVariable String user2) {
         return messageService.getOldMessagesForUser(user1, user2);
+    }
+    
+    @DeleteMapping("/api/deleteMessage/{id}")
+    public void deleteMessage(@PathVariable String id) {
+        Message message = messageRepository.findById(id).orElse(null);
+        if (message != null) {
+            messageRepository.delete(message);
+        }
+    }
+    
+    @PutMapping("/api/updateMessage/{id}")
+    public void updateMessage(@PathVariable String id, @RequestBody MessageDTO messageDTO) throws Exception {
+        Message message = messageRepository.findById(id).orElse(null);
+        if (message != null) {
+            message.setContent(messageDTO.getContent());
+            message.setEdited(true);
+            messageRepository.save(message);
+        }
     }
     
 }

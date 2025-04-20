@@ -1,29 +1,30 @@
 "use client"
 import type React from "react"
 import {useEffect, useState} from "react"
-
 import {Client} from "@stomp/stompjs"
 import SockJS from "sockjs-client"
 import {byteArrayToBase64, sessionCheck, UserData} from "@/app/func/funcs"
 import {apiUrl, chatUrl} from "@/app/api/config"
-import type {User} from "@/app/types/types"
+import type {Message, User} from "@/app/types/types"
 import axios, {type AxiosResponse} from "axios"
 import DefaultPic from "@/public/user.png"
 import Cookies from "js-cookie"
 import Image from "next/image"
 import {Decrypt, Encrypt} from "@/app/func/msg"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {faPaperPlane} from "@fortawesome/free-solid-svg-icons"
+import {faPaperPlane, faPen} from "@fortawesome/free-solid-svg-icons"
 import ReturnButton from "@/app/components/ReturnButton";
 
 const ChatPage = () => {
-    const [messages, setMessages] = useState<{ content: string; from: string; to: string }[]>([])
+    const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState<string>("")
     const [client, setClient] = useState<Client | null>(null)
     const [userEmail, setUserEmail] = useState("")
     const [users, setUsers] = useState<User[]>([])
     const [selectedUser, setSelectedUser] = useState<User | null>(null)
     const [profilePictureSrcs, setProfilePictureSrcs] = useState<{ [key: string]: string }>({})
+    const [editingMessage, setEditingMessage] = useState<{ id: string; content: string } | null>(null)
+    const [contextMenu, setContextMenu] = useState<{ x: number; y: number; message: { id?: string; content: string } | null } | null>(null)
     const defaultImageSrc = typeof DefaultPic === "string" ? DefaultPic : DefaultPic.src
 
     const getProfilePictureSrc = async (profilePicture: string | null): Promise<string | null> => {
@@ -88,7 +89,7 @@ const ChatPage = () => {
                         setMessages((prevMessages) => {
                             const updatedMessages = [
                                 ...prevMessages,
-                                {content: decryptedContent, from: newMessage.from, to: newMessage.to},
+                                {id: newMessage.id, content: decryptedContent, from: newMessage.from, to: newMessage.to, edited: newMessage.edited},
                             ]
                             if (updatedMessages.length > 100) {
                                 updatedMessages.shift()
@@ -145,7 +146,7 @@ const ChatPage = () => {
                 },
             });
 
-            const oldMessages = response.data.map((msg: { content: string; from: string; to: string }) => ({
+            const oldMessages = response.data.map((msg: { id: string; content: string; from: string; to: string; edited: boolean }) => ({
                 ...msg,
                 content: Decrypt(msg.content),
             }));
@@ -164,12 +165,74 @@ const ChatPage = () => {
 
     const onEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
-            sendPrivateMessage()
+            if (editingMessage) {
+                updateMessage(editingMessage.id, input)
+            } else {
+                sendPrivateMessage()
+            }
         }
     }
 
+    const deleteMessage = async (id: string) => {
+        try {
+            await axios.delete(`${apiUrl}/deleteMessage/${id}`, {
+                headers: {
+                    authorization: Cookies.get("azionAccessToken"),
+                },
+            })
+            setMessages((prevMessages) => prevMessages.filter((msg) => msg.id !== id))
+        } catch (error: any) {
+            console.error(error.response ? error.response : error)
+        }
+    }
+
+    const updateMessage = async (id: string, content: string) => {
+        try {
+            await axios.put(
+                `${apiUrl}/updateMessage/${id}`,
+                {content: Encrypt(content)},
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        authorization: Cookies.get("azionAccessToken"),
+                    },
+                },
+            )
+            setMessages((prevMessages) =>
+                prevMessages.map((msg) =>
+                    msg.id === id ? {...msg, content, edited: true} : msg,
+                ),
+            )
+            setEditingMessage(null)
+            setInput("")
+        } catch (error: any) {
+            console.error(error.response ? error.response : error)
+        }
+    }
+
+    const handleRightClick = (e: React.MouseEvent, msg: { id?: string; content: string }) => {
+        e.preventDefault()
+        setContextMenu({x: e.clientX, y: e.clientY, message: msg})
+    }
+
+    const handleHoverButtonClick = (msg: { id?: string; content: string }) => {
+        setContextMenu({x: 0, y: 0, message: msg})
+    }
+
+    const handleContextMenuAction = (action: "edit" | "delete") => {
+        if (contextMenu?.message?.id) {
+            if (action === "edit") {
+                setEditingMessage({id: contextMenu.message.id, content: contextMenu.message.content})
+                setInput(contextMenu.message.content)
+            } else if (action === "delete") {
+                deleteMessage(contextMenu.message.id)
+            }
+        }
+        setContextMenu(null)
+    }
+
     return (
-        <div className="flex flex-col md:flex-row bg-base-300 text-white min-h-screen">
+        <div className="flex flex-col md:flex-row bg-base-300 text-white min-h-screen" onClick={() => setContextMenu(null)}>
             {/* User List */}
             <div className="w-full md:w-1/3 lg:w-1/4 border-b md:border-r border-base-100 p-4 md:p-6 overflow-y-auto">
                 <ReturnButton to={"/dashboard"}/>
@@ -197,8 +260,8 @@ const ChatPage = () => {
                                 }}
                             />
                             <span className="text-sm md:text-base hover:text-blue-400 transition-colors duration-200">
-                                 {user.name}
-                            </span>
+                                     {user.name}
+                                </span>
                         </div>
                     ))}
                 </div>
@@ -232,11 +295,14 @@ const ChatPage = () => {
                                             (msg.to === selectedUser.email || msg.to === userEmail),
                                     )
                                     .map((msg, index) => (
-                                        <div key={index}
-                                             className={`flex ${msg.from === userEmail ? "justify-end" : "justify-start"}`}>
+                                        <div
+                                            key={index}
+                                            className={`flex ${msg.from === userEmail ? "justify-end" : "justify-start"}`}
+                                            onContextMenu={(e) => handleRightClick(e, msg)}
+                                        >
                                             <div
                                                 className={`chat ${msg.from === userEmail ? "chat-end" : "chat-start"}`}
-                                                style={{wordBreak: "break-word", overflowWrap: "break-word"}}
+                                                style={{wordBreak: "break-word", overflowWrap: "break-word", position: "relative"}}
                                             >
                                                 <div
                                                     className={`chat-bubble ${
@@ -244,7 +310,19 @@ const ChatPage = () => {
                                                     } text-white shadow-lg max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg`}
                                                 >
                                                     {msg.content}
+                                                    {msg.edited && (
+                                                        <FontAwesomeIcon
+                                                            icon={faPen}
+                                                            className="ml-2 text-gray-400"
+                                                        />
+                                                    )}
                                                 </div>
+                                                <button
+                                                    className="absolute top-0 right-0 bg-gray-700 text-white p-1 rounded-full opacity-0 hover:opacity-100 transition-opacity"
+                                                    onClick={() => handleHoverButtonClick(msg)}
+                                                >
+                                                    ...
+                                                </button>
                                             </div>
                                         </div>
                                     ))}
@@ -258,10 +336,10 @@ const ChatPage = () => {
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={onEnter}
-                                placeholder="Type a messageDTO..."
+                                placeholder="Type a message..."
                             />
                             <button
-                                onClick={sendPrivateMessage}
+                                onClick={editingMessage ? () => updateMessage(editingMessage.id, input) : sendPrivateMessage}
                                 className="bg-blue-500 text-white px-4 py-3 rounded-r-lg hover:bg-blue-600 transition-colors duration-200"
                             >
                                 <FontAwesomeIcon icon={faPaperPlane}/>
@@ -274,9 +352,29 @@ const ChatPage = () => {
                     </div>
                 )}
             </div>
+
+            {/* Context Menu */}
+            {contextMenu && (
+                <div
+                    className="absolute bg-gray-800 text-white rounded shadow-lg p-2"
+                    style={{top: contextMenu.y, left: contextMenu.x}}
+                >
+                    <button
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-700"
+                        onClick={() => handleContextMenuAction("edit")}
+                    >
+                        Edit
+                    </button>
+                    <button
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-700"
+                        onClick={() => handleContextMenuAction("delete")}
+                    >
+                        Delete
+                    </button>
+                </div>
+            )}
         </div>
     )
 }
 
-export default ChatPage
-
+export default ChatPage;

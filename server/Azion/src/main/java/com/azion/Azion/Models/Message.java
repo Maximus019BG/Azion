@@ -3,6 +3,7 @@ package com.azion.Azion.Models;
 import com.azion.Azion.Utils.MessageUtil;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -20,6 +21,12 @@ public class Message {
     
     @Column(nullable = false)
     private String content;
+    
+    @Column(nullable = false)
+    private LocalDateTime time;
+    
+    @Column(nullable = false)
+    private boolean edited;
     
     private void generateId() {
         String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -61,5 +68,21 @@ public class Message {
     
     public void setContent(String content) throws Exception {
         this.content = MessageUtil.encrypt(content);
+    }
+    
+    public LocalDateTime getTime() {
+        return time;
+    }
+    
+    public void setTime(LocalDateTime time) {
+        this.time = time;
+    }
+    
+    public boolean isEdited() {
+        return edited;
+    }
+    
+    public void setEdited(boolean edited) {
+        this.edited = edited;
     }
 }

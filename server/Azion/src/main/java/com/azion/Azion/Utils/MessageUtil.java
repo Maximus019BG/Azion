@@ -1,7 +1,6 @@
 package com.azion.Azion.Utils;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
@@ -9,15 +8,8 @@ import java.util.Base64;
 public class MessageUtil {
     
     private static final String ALGORITHM = "AES";
-    private static final String SECRET_KEY;
+    private static final String SECRET_KEY = System.getProperty("chatEncryptionKey");
     
-    static {
-        try {
-            SECRET_KEY = generateKey();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
     
     // Encrypts a plain text using AES
     public static String encrypt(String plainText) throws Exception {
@@ -38,11 +30,4 @@ public class MessageUtil {
         return new String(decryptedBytes);
     }
     
-    // Generates a random AES key (optional utility)
-    public static String generateKey() throws Exception {
-        KeyGenerator keyGen = KeyGenerator.getInstance(ALGORITHM);
-        keyGen.init(128); // AES key size
-        SecretKey secretKey = keyGen.generateKey();
-        return Base64.getEncoder().encodeToString(secretKey.getEncoded());
-    }
 }
