@@ -50,7 +50,7 @@ export function AppSidebar() {
                     </div>
                 </div>
             </SidebarHeader>
-            <SidebarContent>
+            <SidebarContent className="p-2">
                 <SidebarMenu>
                     {loadingOrg ? (
                         <Skeleton className="h-96 w-60 mb-2"/>
