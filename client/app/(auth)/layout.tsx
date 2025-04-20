@@ -4,10 +4,7 @@ import "../globals.css";
 import logo from "@/public/white-logo.png";
 import logoSEO from "@/public/logo.png";
 import openGraphImage from "@/public/opengraphThin.png";
-import {MeetingProvider} from "../context/MeetingContext";
 import {AlertProvider} from "@/app/context/AlertContext";
-import {SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
-import {AppSidebar} from "@/components/app-sidebar";
 import React from "react";
 
 
@@ -71,17 +68,11 @@ export default function RootLayout({
             <link rel="icon" href={logo.src}/>
         </head>
         <body className={`${inter.className} bg-background text-white overflow-x-hidden`}>
-        <SidebarProvider>
             <AlertProvider>
-                <MeetingProvider>
-                    <AppSidebar/>
                     <div className={"p-4"}>
-                        <SidebarTrigger/>
                     </div>
                     {children}
-                </MeetingProvider>
             </AlertProvider>
-        </SidebarProvider>
         </body>
         </html>
     );
