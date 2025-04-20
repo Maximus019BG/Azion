@@ -105,7 +105,7 @@ const LogOut = () => {
 
     return (
         <>
-            <button className={"flex items-center gap-2 w-full p-2 hover:bg-base-200 rounded-md transition-colors"}
+            <button className={"flex items-center gap-2 w-full p-2 rounded-md transition-colors"}
                     onClick={LogOutAxios}>
                 <FaSignOutAlt className={"text-xl"}/> Log out
             </button>

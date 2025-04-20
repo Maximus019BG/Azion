@@ -14,7 +14,7 @@ interface InputField<T> {
     label: string
     value: T
     onChange: (value: T) => void
-    type?: "text" | "email" | "date" | "password" | "checkbox"
+    type?: "text" | "email" | "date" | "password" | "checkbox" | "select"
     combinedWith?: string
     placeholder?: string
     requirements?: string[]
@@ -119,8 +119,6 @@ const Register = () => {
     const [age, setAge] = useState({day: "1", month: "1", year: "2000"})
     const [password, setPassword] = useState("")
     const [password2, setPassword2] = useState("")
-    const [isOrgOwner, setIsOrgOwner] = useState(false)
-    const [isWorker, setIsWorker] = useState(false)
     const [step, setStep] = useState(0)
     const [days, setDays] = useState<string[]>([])
     const [months, setMonths] = useState<string[]>([])
@@ -132,6 +130,8 @@ const Register = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const [showPassword2, setShowPassword2] = useState<boolean>(false)
     const [passwordStrength, setPasswordStrength] = useState<number>(0)
+    // First, let's add a new state for the role selection
+    const [role, setRole] = useState<string>("client") // Default to client
 
     useEffect(() => {
         if (Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
@@ -243,6 +243,10 @@ const Register = () => {
         }
 
         if (valid) {
+            // Set isOrgOwner and isWorker based on the selected role
+            const isOrgOwner = role === "owner"
+            const isWorker = role === "worker"
+
             const userData = {
                 name,
                 email,
@@ -366,16 +370,11 @@ const Register = () => {
             requirements: ["Must match the password above"],
         },
         {
-            label: "I'm an organization owner",
-            value: isOrgOwner,
-            onChange: setIsOrgOwner,
-            type: "checkbox",
-        },
-        {
-            label: "I'm a worker",
-            value: isWorker,
-            onChange: setIsWorker,
-            type: "checkbox",
+            label: "Role",
+            value: role,
+            onChange: setRole,
+            type: "select", // New type for dropdown
+            placeholder: "Select your role",
         },
     ]
 
@@ -386,7 +385,7 @@ const Register = () => {
             case 1:
                 return inputFields.slice(3, 5) // Password
             case 2:
-                return inputFields.slice(5, 7) // Role
+                return inputFields.slice(5, 6) // Role (now a single dropdown)
             default:
                 return []
         }
@@ -476,7 +475,51 @@ const Register = () => {
                     <div className="space-y-4">
                         {getCurrentFields().map((field, index) => (
                             <div key={index} className="w-full">
-                                {field.type === "checkbox" ? (
+                                {field.type === "select" ? (
+                                    <div className="space-y-1">
+                                        <label className="block text-sm font-medium text-blue-200">{field.label}</label>
+                                        <div className="relative">
+                                            <select
+                                                value={field.value}
+                                                onChange={(e) => field.onChange(e.target.value)}
+                                                className="w-full appearance-none bg-blue-900/20 border border-blue-800/50 text-white p-2 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            >
+                                                <option className="bg-blue-950" value="client">
+                                                    Client
+                                                </option>
+                                                <option className="bg-blue-950" value="worker">
+                                                    Organization Worker
+                                                </option>
+                                                <option className="bg-blue-950" value="owner">
+                                                    Organization Owner
+                                                </option>
+                                            </select>
+                                            <div
+                                                className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                                <svg
+                                                    className="h-4 w-4 text-gray-400"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                        clipRule="evenodd"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            {field.value === "owner"
+                                                ? "You'll be able to create and manage an organization"
+                                                : field.value === "worker"
+                                                    ? "You'll be able to join an organization as a worker"
+                                                    : "You'll be able to access services as a client"}
+                                        </p>
+                                    </div>
+                                ) : field.type === "checkbox" ? (
                                     <label className="flex items-center gap-2 cursor-pointer">
                                         <div className="relative">
                                             <input
@@ -511,7 +554,7 @@ const Register = () => {
                                                         className="w-full appearance-none bg-blue-900/20 border border-blue-800/50 text-white p-2 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                     >
                                                         {Array.from({length: 31}, (_, i) => i + 1).map((day) => (
-                                                            <option className={"bg-blue-950"} key={day} value={day}>
+                                                            <option key={day} value={day}>
                                                                 {day}
                                                             </option>
                                                         ))}
@@ -558,8 +601,7 @@ const Register = () => {
                                                             {value: "11", label: "November"},
                                                             {value: "12", label: "December"},
                                                         ].map((month) => (
-                                                            <option className={"bg-blue-950"} key={month.value}
-                                                                    value={month.value}>
+                                                            <option key={month.value} value={month.value}>
                                                                 {month.label}
                                                             </option>
                                                         ))}
@@ -593,7 +635,7 @@ const Register = () => {
                                                         className="w-full appearance-none bg-blue-900/20 border border-blue-800/50 text-white p-2 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                     >
                                                         {Array.from({length: 100}, (_, i) => new Date().getFullYear() - i).map((year) => (
-                                                            <option className={"bg-blue-950"} key={year} value={year}>
+                                                            <option key={year} value={year}>
                                                                 {year}
                                                             </option>
                                                         ))}
