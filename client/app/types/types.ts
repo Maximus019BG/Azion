@@ -109,19 +109,27 @@ export interface UserDataType {
     userType: string | null,
 }
 
-export interface Role{
-    id: string|null;
+export interface Role {
+    id: string | null;
     name: string;
-    roleAccess: string|null;
+    roleAccess: string | null;
     color: string;
 }
 
 export interface Organization {
     orgID: string | undefined;
-    orgName: string
-    orgDescription: string
-    orgAddress: string
-    orgEmail: string
-    orgPhone: string
-    orgType: string
+    orgName: string;
+    orgDescription: string;
+    orgAddress: string;
+    orgEmail: string;
+    orgPhone: string;
+    orgType: string;
+}
+
+export interface Message {
+    id?: string;
+    content: string;
+    from: string;
+    to: string;
+    edited?: boolean;
 }
