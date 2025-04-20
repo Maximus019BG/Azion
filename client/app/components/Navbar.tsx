@@ -328,7 +328,7 @@ export default function Navbar() {
                                     <motion.button
                                         whileHover={{scale: 1.02}}
                                         whileTap={{scale: 0.98}}
-                                        className={`w-full px-5 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg text-white font-medium shadow-lg shadow-cyan-500/10 ${spaceGrotesk.className}`}
+                                        className={`w-full px-5 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl text-white font-medium shadow-lg shadow-cyan-500/10 ${spaceGrotesk.className}`}
                                     >
                                         Get Started
                                     </motion.button>

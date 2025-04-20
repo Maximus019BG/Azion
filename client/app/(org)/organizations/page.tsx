@@ -2,7 +2,6 @@
 import React, {useEffect, useState} from "react";
 import ListAllOrgs from "../../components/listAllOrgs";
 import Cookies from "js-cookie";
-import SideMenu from "../../components/Side-menu";
 import Join_Organization from "../../components/JoinOrg";
 import {hideButton, orgSessionCheck, PartOfOrg, UserData} from "../../func/funcs";
 import Loading from "../../components/Loading";
@@ -54,9 +53,7 @@ const Organizations = () => {
                 </div>
             ) : (
                 <div className="h-dvh w-full overflow-hidden flex flex-col lg:flex-row">
-                    <div className="lg:w-1/4 bg-background">
-                        <SideMenu/>
-                    </div>
+
                     <div className="w-full flex flex-col justify-start items-center py-8 overflow-y-auto">
                         <div className="w-full flex flex-col items-center gap-6">
                             <label className="input w-3/6 h-full py-2 input-bordered flex items-center gap-2">

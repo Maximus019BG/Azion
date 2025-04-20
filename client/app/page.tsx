@@ -154,7 +154,7 @@ export default function LandingPage() {
                                     <motion.button
                                         whileHover={{scale: 1.03}}
                                         whileTap={{scale: 0.97}}
-                                        className="w-full sm:w-auto px-10 py-2 rounded-2xl text-white font-semibold text-lg transition-all bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 backdrop-blur-sm flex justify-center items-center"
+                                        className="w-full sm:w-auto px-10 py-2 rounded-xl text-white font-semibold text-lg transition-all bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 backdrop-blur-sm flex justify-center items-center"
                                     >
                                         {buttonText1}
                                         <ChevronRight size={16}/>
@@ -170,7 +170,7 @@ export default function LandingPage() {
                                             borderColor: "rgba(14, 165, 233, 0.5)",
                                         }}
                                         whileTap={{scale: 0.98}}
-                                        className="w-full sm:w-auto px-10 py-2 rounded-2xl text-white font-semibold text-lg border border-gray-700 hover:border-cyan-500/50 transition-all backdrop-blur-sm"
+                                        className="w-full sm:w-auto px-10 py-2 rounded-xl text-white font-semibold text-lg border border-gray-700 hover:border-cyan-500/50 transition-all backdrop-blur-sm"
                                     >
                                         {buttonText2}
                                     </motion.button>

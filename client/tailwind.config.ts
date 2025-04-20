@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-
 module.exports = {
     content: [
         "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -15,11 +14,11 @@ module.exports = {
                 accent: 'rgb(var(--accent))',
                 lightAccent: 'rgb(var(--lightAccent))',
                 neonAccent: 'rgb(var(--neonAccent))',
-
+                border: 'rgb(var(--border))', // ✅ This is the missing key!
             },
         },
     },
-    plugins: [require('daisyui'),],
+    plugins: [require('daisyui')],
     daisyui: {
         themes: [
             {
@@ -30,4 +29,4 @@ module.exports = {
             }
         ]
     },
-};
+}
