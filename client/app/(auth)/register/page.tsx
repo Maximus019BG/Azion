@@ -85,13 +85,13 @@ const isValidDate = (day: string, month: string, year: string): boolean => {
 }
 
 // Notification component
-const showNotification = (message: string, type: "success" | "error") => {
+const showNotification = (messageDTO: string, type: "success" | "error") => {
     const notification = document.getElementById("notification")
-    const notificationMessage = document.getElementById("notification-message")
+    const notificationMessage = document.getElementById("notification-messageDTO")
     const notificationIcon = document.getElementById("notification-icon")
 
     if (notification && notificationMessage && notificationIcon) {
-        notificationMessage.textContent = message
+        notificationMessage.textContent = messageDTO
 
         if (type === "success") {
             notification.classList.remove("bg-red-500/10", "border-red-500/30", "text-red-500")
@@ -399,7 +399,7 @@ const Register = () => {
                 className="hidden fixed top-4 right-4 z-50 items-center gap-2 p-3 rounded-md border text-sm max-w-xs"
             >
                 <span id="notification-icon"></span>
-                <span id="notification-message"></span>
+                <span id="notification-messageDTO"></span>
             </div>
 
             {/* Background gradient */}

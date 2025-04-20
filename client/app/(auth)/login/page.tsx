@@ -20,13 +20,13 @@ const spaceGrotesk = Space_Grotesk({subsets: ["latin"], weight: ["600", "700"], 
 const inter = Inter({subsets: ["latin"], display: "swap"})
 
 // Notification component
-const showNotification = (message: string, type: "success" | "error") => {
+const showNotification = (messageDTO: string, type: "success" | "error") => {
     const notification = document.getElementById("notification")
-    const notificationMessage = document.getElementById("notification-message")
+    const notificationMessage = document.getElementById("notification-messageDTO")
     const notificationIcon = document.getElementById("notification-icon")
 
     if (notification && notificationMessage && notificationIcon) {
-        notificationMessage.textContent = message
+        notificationMessage.textContent = messageDTO
 
         if (type === "success") {
             notification.classList.remove("bg-red-500/10", "border-red-500/30", "text-red-500")
@@ -66,7 +66,7 @@ const Login = () => {
                 },
             })
             .then(async (response: AxiosResponse) => {
-                if (response.data.message === "OTP required" || response.status === 204) {
+                if (response.data.messageDTO === "OTP required" || response.status === 204) {
                     await setOTPNeeded(true)
                     await showModal()
                     showNotification("Please enter your OTP code", "success")
@@ -191,7 +191,7 @@ const Login = () => {
                 className="hidden fixed top-4 right-4 z-50 items-center gap-2 p-3 rounded-md border text-sm max-w-xs"
             >
                 <span id="notification-icon"></span>
-                <span id="notification-message"></span>
+                <span id="notification-messageDTO"></span>
             </div>
 
             {/* Background gradient */}

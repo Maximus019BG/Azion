@@ -67,11 +67,11 @@ void setup() {
     Serial.print("Public IP: ");
     Serial.println(publicIP);
 
-    // WebSocket message handler
-    client.onMessage([](WebsocketsMessage message) {
-        Serial.println("Received binary message via WebSocket.");
-        if (message.isBinary()) {
-            sendImageToAPI((uint8_t *)message.data().c_str(), message.length());
+    // WebSocket messageDTO handler
+    client.onMessage([](WebsocketsMessage messageDTO) {
+        Serial.println("Received binary messageDTO via WebSocket.");
+        if (messageDTO.isBinary()) {
+            sendImageToAPI((uint8_t *)messageDTO.data().c_str(), messageDTO.length());
         }
     });
 

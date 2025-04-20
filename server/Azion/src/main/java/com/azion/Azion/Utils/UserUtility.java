@@ -17,7 +17,6 @@ import java.util.zip.GZIPOutputStream;
 public class UserUtility {
 
     private static final String rawKey = System.getProperty("secretMFA");
-    private static final String rawKey2 = System.getProperty("secretGoogle");
     private static final String ALGORITHM = "AES";
     private static final byte[] key = adjustKeyLength(rawKey);
     

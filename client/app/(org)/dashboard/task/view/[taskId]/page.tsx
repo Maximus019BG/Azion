@@ -412,7 +412,7 @@ const TaskView: FC<PageProps> = ({params}) => {
                             </div>
                         )}
 
-                        {/* Task Already Submitted Message */}
+                        {/* Task Already Submitted MessageDTO */}
                         {doneByUser && (
                             <div className="card bg-base-200 shadow-xl">
                                 <div className="card-body">
@@ -424,7 +424,7 @@ const TaskView: FC<PageProps> = ({params}) => {
                             </div>
                         )}
 
-                        {/* Task Completed Message */}
+                        {/* Task Completed MessageDTO */}
                         {task.status.toLowerCase().includes("done") && (
                             <div className="card bg-base-200 shadow-xl">
                                 <div className="card-body">

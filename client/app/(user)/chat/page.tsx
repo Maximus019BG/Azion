@@ -81,9 +81,9 @@ const ChatPage = () => {
             webSocketFactory: () => socket,
             reconnectDelay: 5000,
             onConnect: () => {
-                stompClient.subscribe(`/user/${userEmail}/private`, (message) => {
-                    if (message.body) {
-                        const newMessage = JSON.parse(message.body)
+                stompClient.subscribe(`/user/${userEmail}/private`, (messageDTO) => {
+                    if (messageDTO.body) {
+                        const newMessage = JSON.parse(messageDTO.body)
                         const decryptedContent = Decrypt(newMessage.content)
                         setMessages((prevMessages) => {
                             const updatedMessages = [
@@ -100,7 +100,7 @@ const ChatPage = () => {
                 })
             },
             onStompError: (frame) => {
-                console.error("Broker reported error: " + frame.headers["message"])
+                console.error("Broker reported error: " + frame.headers["messageDTO"])
                 console.error("Additional details: " + frame.body)
             },
         })
@@ -122,8 +122,8 @@ const ChatPage = () => {
 
     const sendPrivateMessage = () => {
         if (client && client.connected && selectedUser) {
-            const message = {content: Encrypt(input), from: userEmail, to: selectedUser.email}
-            client.publish({destination: "/app/privateMessage", body: JSON.stringify(message)})
+            const messageDTO = {content: Encrypt(input), from: userEmail, to: selectedUser.email}
+            client.publish({destination: "/app/privateMessage", body: JSON.stringify(messageDTO)})
             setMessages((prevMessages) => {
                 const updatedMessages = [...prevMessages, {content: input, from: userEmail, to: selectedUser.email}]
                 if (updatedMessages.length > 100) {
@@ -136,9 +136,31 @@ const ChatPage = () => {
         }
     }
 
+    const fetchOldMessages = async (to: string, from: string) => {
+        try {
+            const response: AxiosResponse = await axios.get(`${apiUrl}/getOldMessages/${to}/${from}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    authorization: Cookies.get("azionAccessToken"),
+                },
+            });
+
+            const oldMessages = response.data.map((msg: { content: string; from: string; to: string }) => ({
+                ...msg,
+                content: Decrypt(msg.content),
+            }));
+
+            setMessages((prevMessages) => [...oldMessages, ...prevMessages]);
+        } catch (error: any) {
+            console.error(error.response ? error.response : error);
+        }
+    };
+
     const openChatWindow = (user: User) => {
-        setSelectedUser(user)
-    }
+        setSelectedUser(user);
+        setMessages([]);
+        fetchOldMessages(user.email, userEmail);
+    };
 
     const onEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -236,7 +258,7 @@ const ChatPage = () => {
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={onEnter}
-                                placeholder="Type a message..."
+                                placeholder="Type a messageDTO..."
                             />
                             <button
                                 onClick={sendPrivateMessage}

@@ -1,31 +1,65 @@
 package com.azion.Azion.Models;
 
+import com.azion.Azion.Utils.MessageUtil;
+import jakarta.persistence.*;
+
+import java.util.UUID;
+
+@Entity
+@Table(name = "messages_azion")
 public class Message {
-    private String from;
-    private String to;
+    
+    @Id
+    private String id;
+    
+    @Column(nullable = false)
+    private String fromUser;
+    
+    @Column(nullable = false)
+    private String toUser;
+    
+    @Column(nullable = false)
     private String content;
     
-    public String getFrom() {
-        return from;
+    private void generateId() {
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        setId(uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis());
     }
     
-    public void setFrom(String from) {
-        this.from = from;
+    @PrePersist
+    private void prePersist() {
+        generateId();
     }
     
-    public String getTo() {
-        return to;
+    public String getId() {
+        return id;
     }
     
-    public void setTo(String to) {
-        this.to = to;
+    private void setId(String id) {
+        this.id = id;
     }
     
-    public String getContent() {
-        return content;
+    public String getFromUser() {
+        return fromUser;
     }
     
-    public void setContent(String content) {
-        this.content = content;
+    public void setFromUser(String from) {
+        this.fromUser = from;
+    }
+    
+    public String getToUser() {
+        return toUser;
+    }
+    
+    public void setToUser(String to) {
+        this.toUser = to;
+    }
+    
+    public String getContent() throws Exception {
+        return MessageUtil.decrypt(this.content);
+    }
+    
+    public void setContent(String content) throws Exception {
+        this.content = MessageUtil.encrypt(content);
     }
 }

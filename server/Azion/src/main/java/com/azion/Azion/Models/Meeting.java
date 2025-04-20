@@ -41,7 +41,7 @@ public class Meeting {
     
     private void generateId() {
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        this.id = uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis();
+        setId(uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis());
     }
     
     @PrePersist
@@ -53,7 +53,7 @@ public class Meeting {
         return id;
     }
     
-    public void setId(String id) {
+    private void setId(String id) {
         this.id = id;
     }
     
