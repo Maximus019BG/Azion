@@ -47,6 +47,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import LogOut from "@/app/components/LogOut";
 
 // Mock functions to simulate your actual data fetching
 const getOrgName = async () => {
@@ -288,8 +289,9 @@ export function AppSidebar() {
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                            <AlertDialogAction className="bg-blue-600 hover:bg-blue-700">Log
-                                                out</AlertDialogAction>
+                                            <AlertDialogAction className="bg-blue-600 hover:bg-blue-700">
+                                                <LogOut/>
+                                            </AlertDialogAction>
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
                                 </AlertDialog>
