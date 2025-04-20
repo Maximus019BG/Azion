@@ -6,7 +6,6 @@ import Link from "next/link"
 import {Inter, Space_Grotesk} from "next/font/google"
 import Cookies from "js-cookie"
 import {ArrowRight, BarChart3, Calendar, Check, ChevronRight, Lock, Shield, Star, Users, Zap} from "lucide-react"
-
 import Navbar from "@/app/components/Navbar"
 import Footer from "@/app/components/Footer"
 import BackgroundGrid from "@/components/background-grid"
@@ -17,16 +16,21 @@ import {TestimonialCard} from "@/components/ui/testimonial-card"
 import {AnimatedGradientBorder} from "@/components/ui/animated-gradient-border"
 import DecorativeSVG from "@/components/decorative-svg";
 import FloatingIcons from "@/components/floating-icons";
-
-// Mock functions to replace the missing imports
-const sessionCheck = () => {
-    console.log("Session check mock function called")
-    return true
-}
+import axios from "axios";
+import {apiUrl} from "@/app/api/config";
 
 const getOrgName = async () => {
-    console.log("Get org name mock function called")
-    return "Demo Organization"
+    if (Cookies.get("azionAccessToken")) {
+        const data = {accessToken: Cookies.get("azionAccessToken")};
+        const response = await axios.post(`${apiUrl}/org/partOfOrg`, data, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        return response.status === 200;
+    } else {
+        return false;
+    }
 }
 
 const inter = Inter({subsets: ["latin"], display: "swap"})
@@ -35,7 +39,7 @@ const spaceGrotesk = Space_Grotesk({subsets: ["latin"], display: "swap"})
 export default function LandingPage() {
     const [buttonText1, setButtonText1] = useState("Register")
     const [buttonText2, setButtonText2] = useState("Login")
-    const [org, setOrg] = useState<string | null>(null)
+    const [hasOrg, setHasOrg] = useState<boolean>(false)
     const {scrollYProgress} = useScroll()
     const opacity = useTransform(scrollYProgress, [0, 0.05], [1, 0])
     const scale = useTransform(scrollYProgress, [0, 0.05], [1, 0.98])
@@ -61,18 +65,16 @@ export default function LandingPage() {
         if (refreshToken && accessToken) {
             setButtonText1("Dashboard")
             setButtonText2("Organizations")
-            sessionCheck()
         }
 
         // Fetch organization name
         const fetchOrgName = async () => {
-            const result = await getOrgName()
-            if (result !== org) {
-                setOrg(result)
-            }
+            const result: boolean = await getOrgName()
+            setHasOrg(result)
         }
+
         fetchOrgName()
-    }, [org])
+    }, [])
 
     return (
         <div className={`relative min-h-screen bg-black text-white ${inter.className} overflow-hidden`}>
@@ -148,7 +150,7 @@ export default function LandingPage() {
                                 transition={{duration: 0.5, delay: 1.4}}
                                 className="flex flex-col sm:flex-row gap-6 justify-center"
                             >
-                                <Link href={org !== null ? `/dashboard` : `/register`} className="w-full sm:w-auto">
+                                <Link href={hasOrg ? `/dashboard` : `/register`} className="w-full sm:w-auto">
                                     <motion.button
                                         whileHover={{scale: 1.03}}
                                         whileTap={{scale: 0.97}}
@@ -160,7 +162,7 @@ export default function LandingPage() {
                                 </Link>
 
 
-                                <Link href={org !== null ? `/organizations` : `/login`}>
+                                <Link href={hasOrg ? `/organizations` : `/login`}>
                                     <motion.button
                                         whileHover={{
                                             scale: 1.03,

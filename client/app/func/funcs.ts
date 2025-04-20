@@ -92,6 +92,7 @@ const UserData = async (): Promise<UserDataType> => {
                 projects: response.data.projects,
                 profilePicture: response.data.profilePicture,
                 mfaEnabled: response.data.mfaEnabled,
+                userType: response.data.userType,
                 faceIdEnabled: response.data.faceIdEnabled
             };
         })
