@@ -551,7 +551,7 @@ const Register = () => {
                                                     <select
                                                         value={age.day}
                                                         onChange={(e) => setAge({...age, day: e.target.value})}
-                                                        className="w-full appearance-none bg-blue-900/20 border border-blue-800/50 text-white p-2 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        className="w-full appearance-none bg-blue-900 opacity-65 border border-blue-800/50 text-white p-2 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                     >
                                                         {Array.from({length: 31}, (_, i) => i + 1).map((day) => (
                                                             <option key={day} value={day}>
@@ -585,7 +585,7 @@ const Register = () => {
                                                     <select
                                                         value={age.month}
                                                         onChange={(e) => setAge({...age, month: e.target.value})}
-                                                        className="w-full appearance-none bg-blue-900/20 border border-blue-800/50 text-white p-2 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        className="w-full appearance-none bg-blue-900 opacity-65 border border-blue-800/50 text-white p-2 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                     >
                                                         {[
                                                             {value: "1", label: "January"},
@@ -632,7 +632,7 @@ const Register = () => {
                                                     <select
                                                         value={age.year}
                                                         onChange={(e) => setAge({...age, year: e.target.value})}
-                                                        className="w-full appearance-none bg-blue-900/20 border border-blue-800/50 text-white p-2 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        className="w-full appearance-none bg-blue-900 opacity-65 border border-blue-800/50 text-white p-2 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                     >
                                                         {Array.from({length: 100}, (_, i) => new Date().getFullYear() - i).map((year) => (
                                                             <option key={year} value={year}>
