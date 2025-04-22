@@ -18,6 +18,7 @@ import DecorativeSVG from "@/components/decorative-svg";
 import FloatingIcons from "@/components/floating-icons";
 import axios from "axios";
 import {apiUrl} from "@/app/api/config";
+import {FaqAccordion} from "@/components/ui/faq-accordion";
 
 const getOrgName = async () => {
     if (Cookies.get("azionAccessToken")) {
@@ -606,7 +607,7 @@ export default function LandingPage() {
                             className="bg-gray-900/20 border border-gray-800/50 rounded-lg overflow-hidden group hover:border-gray-700 transition-colors"
                         >
                             <div className="p-6 h-full w-full flex flex-col justify-between items-center">
-                                <div>
+                                <div className={`w-full`}>
                                     <h3 className={`text-xl font-semibold mb-2 ${spaceGrotesk.className}`}>Standart</h3>
                                     <div className="mb-4">
                                         <span className={`text-3xl font-bold ${spaceGrotesk.className}`}>$5</span>
@@ -696,15 +697,13 @@ export default function LandingPage() {
                             <div className="p-6">
                                 <h3 className={`text-xl font-semibold mb-2 ${spaceGrotesk.className}`}>Enterprise</h3>
                                 <div className="mb-4">
-                                    <span className={`text-3xl font-bold ${spaceGrotesk.className}`}>$199</span>
-                                    <span className="text-gray-400 ml-2">/month</span>
+                                    <span className={`text-3xl font-bold ${spaceGrotesk.className}`}>Custom Functionalities</span>
                                 </div>
                                 <p className="text-gray-400 text-sm mb-6">For large organizations with advanced
                                     needs</p>
                                 <ul className="space-y-3 mb-8">
                                     {[
                                         "Unlimited users",
-                                        "Enterprise-grade security",
                                         "Advanced analytics",
                                         "Custom integrations",
                                         "Dedicated account manager",
@@ -730,26 +729,37 @@ export default function LandingPage() {
                     </div>
 
                     {/* Pricing FAQ - simplified */}
-                    <div className="mt-12 max-w-3xl mx-auto bg-gray-900/20 rounded-lg p-6 border border-gray-800/50">
-                        <h3 className={`text-lg font-semibold mb-4 text-center ${spaceGrotesk.className}`}>
-                            Frequently Asked Questions
-                        </h3>
-                        <div className="space-y-4">
-                            <div>
-                                <h4 className="font-medium text-white mb-2 text-sm">Can I change my plan later?</h4>
-                                <p className="text-gray-400 text-xs leading-relaxed">
-                                    Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected
-                                    in your next
-                                    billing cycle.
-                                </p>
-                            </div>
-                            <div>
-                                <h4 className="font-medium text-white mb-2 text-sm">Is there a free trial?</h4>
-                                <p className="text-gray-400 text-xs leading-relaxed">
-                                    We offer a 14-day free trial on all plans. No credit card required to start.
-                                </p>
-                            </div>
-                        </div>
+                    <div className="mt-20 w-full">
+                        <FaqAccordion
+                            items={[
+                                {
+                                    question: "Can I change my plan later?",
+                                    answer:
+                                        "Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.",
+                                },
+                                {
+                                    question: 'What does "per user / month" mean?',
+                                    answer:
+                                        "This means that you pay a monthly fee for each user. For example, if you buy Pro plan for $10 per user/month and you have 3 users, you'll pay $30 per month.",
+                                },
+                                {
+                                    question: "What are Azion Cameras?",
+                                    answer:
+                                        "Azion Cameras are our access control cameras that allow you to monitor and control the access to a certain room.",
+                                },
+                                {
+                                    question: "How can I personalize my roles?",
+                                    answer:
+                                        "Azion provides full control over the roles and permissions of your employees. You can create as many roles as you want and to give whatever access you want. Also you can categorize the roles with colors.",
+                                },
+                                {
+                                    question: "What is the difference between basic and advanced security features?",
+                                    answer:
+                                        "Basic security features are Password and session monitoring. Advanced security features is MFA with Time-based one-time password and Face Recognition.",
+                                },
+                            ]}
+                            className="max-w-3xl mx-auto"
+                        />
                     </div>
                 </div>
             </section>
