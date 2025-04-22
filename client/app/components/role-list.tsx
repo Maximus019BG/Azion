@@ -6,6 +6,7 @@ import Cookies from "js-cookie"
 import {apiUrl} from "@/app/api/config"
 import type {Role, User} from "@/app/types/types"
 import {Edit2, Plus, Save, Trash2, X} from "lucide-react"
+import {motion} from "framer-motion"
 
 const RoleList = () => {
     const [roles, setRoles] = useState<Role[]>([])
@@ -13,6 +14,7 @@ const RoleList = () => {
     const [newRole, setNewRole] = useState<string>("")
     const [showNewRole, setShowNewRole] = useState<boolean>(false)
     const [madeChanges, setMadeChanges] = useState<boolean>(false)
+    const [saving, setSaving] = useState<boolean>(false)
     const refs = useRef<{ [key: string]: HTMLInputElement | null }>({})
 
     useEffect(() => {
@@ -51,6 +53,7 @@ const RoleList = () => {
     }, [])
 
     const handleSave = async () => {
+        setSaving(true)
         try {
             const payload = {
                 roles: roles.map((role) => ({
@@ -74,10 +77,19 @@ const RoleList = () => {
             })
 
             setMadeChanges(false)
-            alert("Roles and user roles updated successfully")
+            // Show success notification
+            const notification = document.getElementById("notification")
+            if (notification) {
+                notification.classList.remove("hidden")
+                setTimeout(() => {
+                    notification.classList.add("hidden")
+                }, 3000)
+            }
         } catch (error) {
             console.error(error)
             alert("Failed to update roles and user roles")
+        } finally {
+            setSaving(false)
         }
     }
 
@@ -98,10 +110,14 @@ const RoleList = () => {
         })
 
         setUsers((prevUsers) =>
-            prevUsers.map((user) => (user.role.name === oldRole ? {
-                ...user,
-                role: {...user.role, name: newRole}
-            } : user)),
+            prevUsers.map((user) =>
+                user.role.name === oldRole
+                    ? {
+                        ...user,
+                        role: {...user.role, name: newRole},
+                    }
+                    : user,
+            ),
         )
 
         setTimeout(() => {
@@ -137,7 +153,7 @@ const RoleList = () => {
 
     const handleAddRole = () => {
         if (newRole && !roles.some((role) => role.name === newRole)) {
-            setRoles((prevRoles) => [...prevRoles, {id: null, name: newRole, roleAccess: null, color: "#000000"}])
+            setRoles((prevRoles) => [...prevRoles, {id: null, name: newRole, roleAccess: null, color: "#3b82f6"}])
             setNewRole("")
             setShowNewRole(false)
             alert("New role added. Before editing privileges save changes")
@@ -154,31 +170,74 @@ const RoleList = () => {
         window.location.href = window.location.pathname + "/" + role
     }
 
+    const fadeInUp = {
+        hidden: {opacity: 0, y: 20},
+        visible: (i: number) => ({
+            opacity: 1,
+            y: 0,
+            transition: {
+                delay: i * 0.05,
+                duration: 0.5,
+            },
+        }),
+    }
+
     return (
-        <div className="w-full max-w-4xl p-4 sm:p-6 md:p-8 space-y-8 sm:space-y-12">
+        <div className="w-full space-y-8 sm:space-y-12">
+            {/* Success notification */}
+            <div
+                id="notification"
+                className="hidden fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-md shadow-lg z-50 flex items-center gap-2"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                >
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span>Roles updated successfully</span>
+            </div>
+
             {/* Roles Section */}
-            <section className="space-y-4 sm:space-y-6">
-                <h2 className="text-xl sm:text-2xl font-semibold text-white">Edit Roles</h2>
+            <motion.section initial="hidden" animate="visible" variants={fadeInUp} custom={0} className="space-y-6">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-white">Edit Roles</h2>
+                    <div
+                        className="h-px flex-1 bg-gradient-to-r from-transparent via-blue-800/30 to-transparent mx-4"></div>
+                </div>
+
                 <div className="space-y-4">
                     {roles.map((role, index) => (
-                        <div
+                        <motion.div
                             key={index}
-                            className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4"
+                            initial="hidden"
+                            animate="visible"
+                            variants={fadeInUp}
+                            custom={index + 1}
+                            className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 rounded-lg p-3 hover:border-blue-800/50 transition-colors"
                         >
                             <input
                                 type="text"
                                 value={role.name}
                                 onChange={(e) => handleRoleNameChange(role.name, e.target.value)}
-                                className={`w-full sm:w-auto flex-grow bg-gray-700 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 ${role.name === "owner" ? "cursor-not-allowed opacity-50" : ""}`}
+                                className={`w-full sm:w-auto flex-grow bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 ${role.name === "owner" ? "cursor-not-allowed opacity-50" : ""}`}
                                 ref={(el) => {
                                     refs.current[role.name] = el
                                 }}
                                 disabled={role.name === "owner"}
                             />
-                            <div className="flex space-x-2">
+                            <div className="flex space-x-2 w-full sm:w-auto justify-end">
                                 <button
                                     onClick={() => editAccess(role.name)}
-                                    className={`p-2 rounded-md bg-blue-600 cursor-not-allowed" transition duration-200`}
+                                    className="p-2 rounded-md bg-blue-600 hover:bg-blue-700 transition duration-200"
                                 >
                                     <Edit2 className="w-5 h-5 text-white"/>
                                 </button>
@@ -190,60 +249,81 @@ const RoleList = () => {
                                     <Trash2 className="w-5 h-5 text-white"/>
                                 </button>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
+
                 {showNewRole ? (
-                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                    <motion.div
+                        initial={{opacity: 0, y: 10}}
+                        animate={{opacity: 1, y: 0}}
+                        className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 bg-[#0c0c14] border border-[#1a1a2e] rounded-lg p-3"
+                    >
                         <input
                             type="text"
                             value={newRole}
                             onChange={(e) => setNewRole(e.target.value)}
                             placeholder="New Role"
-                            className="flex-grow bg-gray-700 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="flex-grow bg-[#1a1a2e] text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-blue-900/30"
+                            autoFocus
                         />
-                        <div className="flex space-x-2">
+                        <div className="flex space-x-2 w-full sm:w-auto justify-end">
                             <button
                                 onClick={handleAddRole}
-                                className="flex-grow sm:flex-grow-0 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition duration-200"
+                                className="flex-grow sm:flex-grow-0 bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-500 hover:to-blue-300 text-white font-medium py-2 px-4 rounded-md transition duration-200"
                             >
                                 Add Role
                             </button>
                             <button
                                 onClick={() => setShowNewRole(false)}
-                                className="bg-gray-600 hover:bg-gray-700 text-white font-medium p-2 rounded-md transition duration-200"
+                                className="bg-[#1a1a2e] hover:bg-[#252538] text-white font-medium p-2 rounded-md transition duration-200 border border-blue-900/30"
                             >
                                 <X className="w-5 h-5"/>
                             </button>
                         </div>
-                    </div>
+                    </motion.div>
                 ) : (
                     <button
                         onClick={() => setShowNewRole(true)}
-                        className="flex items-center space-x-2 text-blue-500 hover:text-blue-600 transition duration-200"
+                        className="flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition duration-200"
                     >
                         <Plus className="w-5 h-5"/>
                         <span>Add New Role</span>
                     </button>
                 )}
-            </section>
+            </motion.section>
 
             {/* User Roles Section */}
-            <section className="space-y-4 sm:space-y-6">
-                <h2 className="text-xl sm:text-2xl font-semibold text-white">Edit User Roles</h2>
+            <motion.section
+                initial="hidden"
+                animate="visible"
+                variants={fadeInUp}
+                custom={roles.length + 1}
+                className="space-y-6"
+            >
+                <div className="flex items-center justify-between">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-white">Edit User Roles</h2>
+                    <div
+                        className="h-px flex-1 bg-gradient-to-r from-transparent via-blue-800/30 to-transparent mx-4"></div>
+                </div>
+
                 <div className="space-y-4">
-                    {users.map((user) => (
-                        <div
+                    {users.map((user, index) => (
+                        <motion.div
                             key={user.id}
-                            className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4"
+                            initial="hidden"
+                            animate="visible"
+                            variants={fadeInUp}
+                            custom={roles.length + index + 2}
+                            className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 rounded-lg p-3 hover:border-blue-800/50 transition-colors"
                         >
               <span className="flex-grow text-white text-sm sm:text-base">
-                {user.name} ({user.email})
+                {user.name} <span className="text-gray-400">({user.email})</span>
               </span>
                             <select
                                 value={user.role.id ?? ""}
                                 onChange={(e) => handleUserRoleChange(user.id, e.target.value)}
-                                className="w-full sm:w-auto bg-gray-700 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full sm:w-auto bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                                 {roles.map((role) => (
                                     <option key={role.id} value={role.id ?? ""}>
@@ -251,24 +331,48 @@ const RoleList = () => {
                                     </option>
                                 ))}
                             </select>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
-            </section>
+            </motion.section>
 
             {/* Save Button */}
             {madeChanges && (
-                <button
+                <motion.button
+                    initial={{opacity: 0, scale: 0.9}}
+                    animate={{opacity: 1, scale: 1}}
                     onClick={handleSave}
-                    className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 sm:py-3 sm:px-6 rounded-full transition duration-200 shadow-lg"
+                    disabled={saving}
+                    className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-500 hover:to-blue-300 text-white font-semibold py-2 px-4 sm:py-3 sm:px-6 rounded-full transition duration-200 shadow-lg disabled:opacity-70"
                 >
-                    <Save className="w-5 h-5"/>
-                    <span className="hidden sm:inline">Save Changes</span>
-                </button>
+                    {saving ? (
+                        <>
+                            <svg
+                                className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        strokeWidth="4"></circle>
+                                <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                ></path>
+                            </svg>
+                            <span>Saving...</span>
+                        </>
+                    ) : (
+                        <>
+                            <Save className="w-5 h-5"/>
+                            <span className="hidden sm:inline">Save Changes</span>
+                        </>
+                    )}
+                </motion.button>
             )}
         </div>
     )
 }
 
 export default RoleList
-

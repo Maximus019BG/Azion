@@ -8,6 +8,7 @@ import Cookies from "js-cookie"
 import type {Role} from "@/app/types/types"
 import ColorPicker from "@/app/components/_roles/ColorPicker"
 import {AlertTriangle, Check, RefreshCw, Save} from "lucide-react"
+import {motion} from "framer-motion"
 
 interface EditRoleSectionProps {
     RoleName: string
@@ -154,16 +155,34 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
         },
     ]
 
+    const fadeInUp = {
+        hidden: {opacity: 0, y: 20},
+        visible: (i: number) => ({
+            opacity: 1,
+            y: 0,
+            transition: {
+                delay: i * 0.05,
+                duration: 0.5,
+            },
+        }),
+    }
+
     return (
-        <div className="size-full bg-base-300 flex flex-col lg:flex-row ">
+        <div className="size-full flex flex-col lg:flex-row">
             {/* Permissions Panel */}
-            <div className="w-full lg:w-3/4 px-4">
-                <div className="w-full h-full flex flex-col justify-evenly items-center">
+            <div className="w-full lg:w-3/4 p-4 overflow-y-auto">
+                <div className="w-full h-full flex flex-col gap-4">
                     {permissionFields.map((field, index) => (
-                        <div
+                        <motion.div
                             key={index}
-                            className={`w-full bg-gray-750 rounded-lg overflow-hidden transition-all duration-200 ${
-                                accessFields[index] ? "border-l-4 border-blue-500" : "border-l-4 border-transparent"
+                            initial="hidden"
+                            animate="visible"
+                            variants={fadeInUp}
+                            custom={index}
+                            className={`w-full bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 rounded-lg overflow-hidden transition-all duration-200 ${
+                                accessFields[index]
+                                    ? "border-l-4 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                                    : "border-l-4 border-transparent"
                             }`}
                         >
                             <div className="p-4 flex items-center justify-between">
@@ -172,6 +191,8 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
                                     <div>
                                         <h3 className="font-medium text-white">{field.label}</h3>
                                         <p className="text-sm text-gray-400 mt-1">{field.description}</p>
+                                        <div
+                                            className="text-xs text-blue-400/70 mt-1 font-mono">{field.permission}</div>
                                     </div>
                                 </div>
 
@@ -185,7 +206,7 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
                                     />
                                     <div
                                         className={`
-                                            w-11 h-6 bg-gray-700 rounded-full peer 
+                                            w-11 h-6 bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 rounded-full peer 
                                             peer-checked:after:translate-x-full peer-checked:after:border-white 
                                             after:content-[''] after:absolute after:top-0.5 after:left-[2px] 
                                             after:bg-gray-400 after:border-gray-300 after:border after:rounded-full 
@@ -194,17 +215,17 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
                                     ></div>
                                 </label>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             </div>
 
             {/* Color Picker & Action Buttons */}
             <div
-                className="w-full lg:w-1/4 p-4 bg-gray-750 lg:bg-transparent lg:border-l border-gray-700 overflow-y-auto">
-                <div className="sticky top-4 ">
-                    <div className="mb-6 ">
-                        <h3 className="text-lg font-medium mb-2">Role Color</h3>
+                className="w-full lg:w-1/4 p-4 bg-gradient-to-b from-blue-900/10 to-transparent border-blue-900/30 lg:bg-transparent lg:border-l  overflow-y-auto">
+                <div className="sticky top-4">
+                    <div className="mb-6">
+                        <h3 className="text-lg font-medium mb-2 text-white">Role Color</h3>
                         <p className="text-sm text-gray-400 mb-4">
                             Choose a color to visually identify this role throughout the system
                         </p>
@@ -215,19 +236,19 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
                     <div className="flex flex-col gap-3 mt-8">
                         <button
                             className={`
-                flex items-center justify-center gap-2 py-2 px-4 rounded-md
-                ${
+                                flex items-center justify-center gap-2 py-2 px-4 rounded-md
+                                ${
                                 saveStatus === "success"
                                     ? "bg-green-600 hover:bg-green-700"
                                     : saveStatus === "error"
                                         ? "bg-red-600 hover:bg-red-700"
                                         : saveStatus === "saving"
                                             ? "bg-gray-600"
-                                            : "bg-blue-600 hover:bg-blue-700"
+                                            : "bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-500 hover:to-blue-300"
                             }
-                transition-colors duration-200
-                ${!isSaveEnabled && saveStatus === "idle" ? "opacity-50 cursor-not-allowed" : ""}
-              `}
+                                transition-colors duration-200
+                                ${!isSaveEnabled && saveStatus === "idle" ? "opacity-50 cursor-not-allowed" : ""}
+                            `}
                             onClick={handleSave}
                             disabled={!isSaveEnabled || saveStatus === "saving"}
                         >
@@ -255,7 +276,7 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
                         </button>
 
                         <button
-                            className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors duration-200"
+                            className="flex items-center justify-center gap-2 py-2 px-4 bg-[#0c0c14] hover:bg-[#252538] text-white rounded-md transition-colors duration-200 border border-[#1a1a2e]"
                             onClick={handleReset}
                         >
                             <RefreshCw className="h-4 w-4"/>
@@ -281,4 +302,3 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
 }
 
 export default EditRoleSection
-
