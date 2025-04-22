@@ -99,6 +99,7 @@ public class OrgService {
         userRepository.save(user);
         users.add(user);
         org.setUsers(users);
+        org.setEmployeeCount(org.getEmployeeCount() + 1);
         orgRepository.save(org);
     }
     

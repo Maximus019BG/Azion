@@ -1,4 +1,4 @@
-export const apiUrl: string = "https://9mmqznpx-8080.euw.devtunnels.ms/api" //  https://api.azion.online/api
+export const apiUrl: string = "http://localhost:8080/api" //  https://api.azion.online/api
 export const chatUrl: string = "http://localhost:8080/chat" //!https for the handshake => upgrade to ws     https://api.azion.online/chat
 //Production
 // export const apiUrl: string = "https://api.azion.online/api"

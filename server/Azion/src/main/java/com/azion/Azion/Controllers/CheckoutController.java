@@ -1,10 +1,17 @@
 package com.azion.Azion.Controllers;
 
+import com.azion.Azion.Models.User;
+import com.azion.Azion.Services.TokenService;
+import com.azion.Azion.Services.UserService;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,48 +19,67 @@ import java.util.Map;
 @RequestMapping("/api/checkout")
 public class CheckoutController {
     
-    public CheckoutController() {
-        // Initialize Stripe with the secret key
-        Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY"); // Read the secret key from environment
+    private final UserService userService;
+    private final TokenService tokenService;
+    @Value("${stripe.secret.key}")
+    private String stripeSecretKey;
+    
+    @Value("${stripe.success.url}")
+    private String successUrl;
+    
+    @Value("${stripe.cancel.url}")
+    private String cancelUrl;
+    
+    public CheckoutController(UserService userService, TokenService tokenService) {
+        this.userService = userService;
+        this.tokenService = tokenService;
     }
     
+    @PostConstruct
+    public void init() {
+        Stripe.apiKey = stripeSecretKey;
+    }
+    
+    @Transactional
     @PostMapping
-    public Map<String, Object> createCheckoutSession(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> createCheckoutSession(@RequestBody Map<String, Object> request, @RequestHeader("authorization") String token) {
         Map<String, Object> response = new HashMap<>();
+        User user = tokenService.getUserFromToken(token);
+        if (!userService.isUserOwner(user)) {
+            return ResponseEntity.status(403).body(Map.of("error", "Forbidden"));
+        }
         try {
-            // Get priceId from the incoming request
             String priceId = (String) request.get("priceId");
+            Long quantity = Long.parseLong(request.get("quantity").toString());
+            if (quantity == null || quantity <= 0) {
+                quantity = 1L;
+            }
             
-            // Create a new Checkout session
+            if (priceId == null || priceId.isEmpty()) {
+                throw new IllegalArgumentException("Missing priceId in request");
+            }
+            
             SessionCreateParams params = SessionCreateParams.builder()
-                    .addPaymentMethodType(SessionCreateParams.PaymentMethodType.valueOf("card"))
+                    .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                     .addLineItem(
                             SessionCreateParams.LineItem.builder()
                                     .setPrice(priceId)
-                                    .setQuantity(1L)
-                                    .build())
+                                    .setQuantity(quantity)
+                                    .build()
+                    )
                     .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
-                    .setSuccessUrl(System.getenv("STRIPE_SUCCESS_URL") + "?session_id={CHECKOUT_SESSION_ID}")
-                    .setCancelUrl(System.getenv("STRIPE_CANCEL_URL"))
+                    .setSuccessUrl(successUrl + "?session_id={CHECKOUT_SESSION_ID}")
+                    .setCancelUrl(cancelUrl)
                     .build();
             
-            // Create the session
             Session session = Session.create(params);
             
-            // Return the session ID (which you use on the frontend to redirect the user)
             response.put("id", session.getId());
-            
-            // Stripe Checkout automatically handles the client_secret internally.
-            // You do not need to extract the client_secret directly for your frontend use.
-            // The session ID is the only thing needed for redirection.
-            
         } catch (Exception e) {
-            // Handle any errors
             e.printStackTrace();
             response.put("message", e.getMessage());
             response.put("status", 500);
         }
-        
-        return response;
+        return ResponseEntity.ok(response);
     }
 }

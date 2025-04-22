@@ -30,6 +30,9 @@ public class AzionApplication {
 		System.setProperty("google.client.secret", dotenv.get("GOOGLE_CLIENT_SECRET"));
 		System.setProperty("google.redirect.uri", dotenv.get("GOOGLE_REDIRECT_URI"));
 		System.setProperty("chatEncryptionKey", dotenv.get("CHAT_ENCRYPTION_KEY"));
+		System.setProperty("stripe.secret.key", dotenv.get("STRIPE_SECRET_KEY"));
+		System.setProperty("stripe.success.url", dotenv.get("STRIPE_SUCCESS_URL"));
+		System.setProperty("stripe.cancel.url", dotenv.get("STRIPE_CANCEL_URL"));
 		
 		SpringApplication.run(AzionApplication.class, args);
 	}
