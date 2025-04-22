@@ -231,11 +231,11 @@ const Register_Organisation = () => {
                 Your organization has been created. Use the connection string below to connect to your organization.
 
             </p>
-            <div className="bg-blue-950/50 p-3 rounded-md mb-4 overflow-x-auto">
+            <div className="bg-blue-950/50 flex justify-between items-center p-3 rounded-md mb-4 overflow-x-auto">
                 <code className="text-blue-300 text-sm break-all">{value}</code>
                 <button
                     onClick={handleCopy}
-                    className="absolute top-2 right-2 text-blue-300 hover:text-blue-100 transition"
+                    className="text-blue-300 hover:text-blue-100 transition"
                     title="Copy to clipboard"
                 >
                     <Copy size={18}/>

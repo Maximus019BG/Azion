@@ -1,6 +1,5 @@
 "use client";
 import React, {useEffect, useState} from "react";
-import SideMenu from "@/app/components/Side-menu";
 import {PartOfOrg, sessionCheck, UserData, UserHasRight} from "@/app/func/funcs";
 import Cookies from "js-cookie";
 import {Poppins} from "next/font/google";
@@ -45,9 +44,6 @@ const OrgSettings = () => {
                 </div>
             ) : (
                 <div className="w-full h-dvh flex flex-col lg:flex-row overflow-y-hidden">
-                    <div className="w-full lg:w-1/4 h-fit lg:h-full">
-                        <SideMenu/>
-                    </div>
                     <div className="w-full h-full flex justify-center items-center p-6 lg:p-10 overflow-auto">
                         <OrgSettingsForm/>
                     </div>
