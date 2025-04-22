@@ -792,7 +792,7 @@ export default function LandingPage() {
                                     Ready to secure your organization?
                                 </h2>
                                 <p className="text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed text-sm">
-                                    Join thousands of organizations that trust Azion to improve their workflow and
+                                    Join thousands of organizations that trust Azion to improve your workflow and
                                     security.
                                 </p>
                             </div>
@@ -806,16 +806,6 @@ export default function LandingPage() {
                                     >
                                         Get Started Now
                                         <ChevronRight size={16}/>
-                                    </motion.button>
-                                </Link>
-
-                                <Link href="/contact" className="w-full sm:w-auto">
-                                    <motion.button
-                                        whileHover={{backgroundColor: "rgba(255,255,255,0.05)"}}
-                                        whileTap={{scale: 0.98}}
-                                        className="w-full sm:w-auto px-6 py-3 rounded-lg border border-gray-700 hover:border-gray-600 text-white font-medium transition-colors"
-                                    >
-                                        Contact Sales
                                     </motion.button>
                                 </Link>
                             </div>
