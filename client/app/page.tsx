@@ -555,7 +555,8 @@ export default function LandingPage() {
 
                 <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                        {/* Starter Plan - simplified */}
+
+                        {/* Free Plan - simplified */}
                         <motion.div
                             initial={{opacity: 0, y: 20}}
                             whileInView={{opacity: 1, y: 0}}
@@ -563,24 +564,68 @@ export default function LandingPage() {
                             viewport={{once: true}}
                             className="bg-gray-900/20 border border-gray-800/50 rounded-lg overflow-hidden group hover:border-gray-700 transition-colors"
                         >
-                            <div className="p-6">
-                                <h3 className={`text-xl font-semibold mb-2 ${spaceGrotesk.className}`}>Starter</h3>
-                                <div className="mb-4">
-                                    <span className={`text-3xl font-bold ${spaceGrotesk.className}`}>$29</span>
-                                    <span className="text-gray-400 ml-2">/month</span>
+                            <div className="p-6 h-full w-full flex flex-col justify-between items-center">
+                                <div>
+                                    <h3 className={`text-xl font-semibold mb-2 ${spaceGrotesk.className}`}>Free</h3>
+                                    <div className="mb-4">
+                                        <span className={`text-3xl font-bold ${spaceGrotesk.className}`}>$0</span>
+                                        <span className="text-gray-400 ml-2">per user / month</span>
+                                    </div>
+                                    <p className="text-gray-400 text-sm mb-6">Perfect for people who want to use only
+                                        the
+                                        basic of Azion</p>
+                                    <ul className="space-y-3 mb-8">
+                                        {["Up to 5 users", "Task management", "Analytics"].map(
+                                            (feature, index) => (
+                                                <li key={index} className="flex items-start gap-2 text-sm">
+                                                    <Check size={14} className="text-cyan-500 mt-0.5 flex-shrink-0"/>
+                                                    <span className="text-gray-300">{feature}</span>
+                                                </li>
+                                            ),
+                                        )}
+                                    </ul>
                                 </div>
-                                <p className="text-gray-400 text-sm mb-6">Perfect for small teams and startups</p>
-                                <ul className="space-y-3 mb-8">
-                                    {["Up to 10 users", "Basic security features", "Task management", "Email support"].map(
-                                        (feature, index) => (
-                                            <li key={index} className="flex items-start gap-2 text-sm">
-                                                <Check size={14} className="text-cyan-500 mt-0.5 flex-shrink-0"/>
-                                                <span className="text-gray-300">{feature}</span>
-                                            </li>
-                                        ),
-                                    )}
-                                </ul>
-                                <Link href="/register">
+                                <Link href="/register" className={"w-full"}>
+                                    <motion.button
+                                        whileHover={{backgroundColor: "rgba(255,255,255,0.05)"}}
+                                        whileTap={{scale: 0.98}}
+                                        className="w-full py-2  rounded-lg border border-gray-700 hover:border-gray-600 text-white font-medium transition-colors text-sm"
+                                    >
+                                        Get Started
+                                    </motion.button>
+                                </Link>
+                            </div>
+                        </motion.div>
+
+                        {/* Standart Plan - simplified */}
+                        <motion.div
+                            initial={{opacity: 0, y: 20}}
+                            whileInView={{opacity: 1, y: 0}}
+                            transition={{duration: 0.5}}
+                            viewport={{once: true}}
+                            className="bg-gray-900/20 border border-gray-800/50 rounded-lg overflow-hidden group hover:border-gray-700 transition-colors"
+                        >
+                            <div className="p-6 h-full w-full flex flex-col justify-between items-center">
+                                <div>
+                                    <h3 className={`text-xl font-semibold mb-2 ${spaceGrotesk.className}`}>Standart</h3>
+                                    <div className="mb-4">
+                                        <span className={`text-3xl font-bold ${spaceGrotesk.className}`}>$5</span>
+                                        <span className="text-gray-400 ml-2">per user / month</span>
+                                    </div>
+                                    <p className="text-gray-400 text-sm mb-6">Perfect for small teams and startups</p>
+
+                                    <ul className="space-y-3 mb-8">
+                                        {["Advanced security features", "Task management", "Calendar Management", "Role Management", "Azion Cameras", "UniFi Integration"].map(
+                                            (feature, index) => (
+                                                <li key={index} className="flex items-start gap-2 text-sm">
+                                                    <Check size={14} className="text-cyan-500 mt-0.5 flex-shrink-0"/>
+                                                    <span className="text-gray-300">{feature}</span>
+                                                </li>
+                                            ),
+                                        )}
+                                    </ul>
+                                </div>
+                                <Link href="/register" className={"w-full"}>
                                     <motion.button
                                         whileHover={{backgroundColor: "rgba(255,255,255,0.05)"}}
                                         whileTap={{scale: 0.98}}
@@ -609,17 +654,18 @@ export default function LandingPage() {
                                 </div>
                                 <h3 className={`text-xl font-semibold mb-2 ${spaceGrotesk.className}`}>Pro</h3>
                                 <div className="mb-4">
-                                    <span className={`text-3xl font-bold ${spaceGrotesk.className}`}>$79</span>
-                                    <span className="text-gray-400 ml-2">/month</span>
+                                    <span className={`text-3xl font-bold ${spaceGrotesk.className}`}>$10</span>
+                                    <span className="text-gray-400 ml-2">per user / month</span>
                                 </div>
                                 <p className="text-gray-400 text-sm mb-6">Ideal for growing organizations</p>
                                 <ul className="space-y-3 mb-8">
                                     {[
-                                        "Up to 50 users",
                                         "Advanced security features",
-                                        "Task & organization management",
+                                        "Task, Role & Calendar management",
                                         "Analytics dashboard",
                                         "Priority support",
+                                        "UniFi Integration",
+                                        "Azion Cameras",
                                     ].map((feature, index) => (
                                         <li key={index} className="flex items-start gap-2 text-sm">
                                             <Check size={14} className="text-cyan-500 mt-0.5 flex-shrink-0"/>
