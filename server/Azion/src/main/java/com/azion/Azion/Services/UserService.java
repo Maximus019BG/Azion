@@ -164,6 +164,24 @@ public class UserService {
       
     }
     
+    public boolean isUserOwner(User user) {
+        Role role = user.getRole();
+        String[] rights = {
+                "calendar:write", "settings:write", "settings:read",
+                "employees:read", "roles:write", "roles:read",
+                "tasks:write", "tasks:read", "cameras:write", "cameras:read"
+        };
+        
+        for (String right : rights) {
+            boolean hasRight = UserHasRight(user, right);
+            if (!hasRight) {
+                return false;
+            }
+        }
+        
+        return role.getName().equals("owner");
+    }
+    
     public String getAccessByRoleName(String roleName, String orgId) {
         Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
         return role.getRoleAccess();

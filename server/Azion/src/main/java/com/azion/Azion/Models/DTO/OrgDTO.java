@@ -1,5 +1,7 @@
 package com.azion.Azion.Models.DTO;
 
+import com.azion.Azion.Enums.OrgType;
+
 public interface OrgDTO {
     String getOrgID();
     String getOrgName();
@@ -8,4 +10,12 @@ public interface OrgDTO {
     String getOrgEmail();
     String getOrgPhone();
     String getOrgDescription();
+    
+    String getSubscriptionID();
+    
+    Long getMaxEmployeeCount();
+    
+    OrgType getPlan();
+    
+    Long getEmployeeCount();
 }
