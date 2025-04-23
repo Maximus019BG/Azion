@@ -129,51 +129,6 @@ export default function Navbar() {
 
                     <NavItem href="#testimonials">Testimonials</NavItem>
                     <NavItem href="#pricing">Pricing</NavItem>
-
-                    {/* Resources Dropdown */}
-                    <div className="relative">
-                        <button
-                            onClick={() => toggleDropdown("resources")}
-                            className={cn(
-                                "text-gray-300 hover:text-white px-4 py-2 rounded-md transition-colors relative flex items-center gap-1",
-                                activeDropdown === "resources" ? "text-white bg-white/5" : "",
-                            )}
-                        >
-                            Resources
-                            <ChevronDown
-                                size={16}
-                                className={cn("transition-transform duration-200", activeDropdown === "resources" ? "rotate-180" : "")}
-                            />
-                        </button>
-
-                        <AnimatePresence>
-                            {activeDropdown === "resources" && (
-                                <motion.div
-                                    initial={{opacity: 0, y: 10}}
-                                    animate={{opacity: 1, y: 0}}
-                                    exit={{opacity: 0, y: 10}}
-                                    transition={{duration: 0.2}}
-                                    className="absolute top-full right-0 mt-1 w-64 bg-gray-900/90 backdrop-blur-md border border-gray-800 rounded-lg shadow-xl shadow-black/30 overflow-hidden z-50"
-                                >
-                                    <div className="p-2">
-                                        <DropdownItem
-                                            href="/docs"
-                                            icon={<HelpCircle size={18} className="text-cyan-400"/>}
-                                            title="Documentation"
-                                            description="Guides and references"
-                                        />
-                                        <DropdownItem
-                                            href="/blog"
-                                            icon={<Settings size={18} className="text-blue-400"/>}
-                                            title="Blog"
-                                            description="Latest news and updates"
-                                        />
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
-
                     <div className="ml-4">
                         <AnimatedGradientBorder
                             containerClassName="rounded-full"
