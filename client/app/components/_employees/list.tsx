@@ -30,22 +30,27 @@ const List = () => {
     }, []);
 
     return (
-        <div className='flex flex-col lg:flex-row w-full'>
-            <div className='w-full flex flex-col items-center gap-5 p-4 sm:p-6 md:p-8'>
-                <h1 className="text-2xl sm:text-3xl md:text-4xl my-8 text-center">Organization&apos;s Members</h1>
-                {employees.map((employee) => (
-                    <DisplayEmployee
-                        key={employee.id}
-                        id={employee.id}
-                        name={employee.name}
-                        email={employee.email}
-                        age={employee.age}
-                        role={employee.role}
-                        orgid={employee.orgid}
-                        roleLevel={employee.roleLevel}
-                        profilePicture={employee.profilePicture}
-                        projects={employee.projects}/>
-                ))}
+        <div className='h-full w-full flex flex-col justify-start items-start lg:flex-row'>
+            <div className='w-full h-full flex flex-col items-start gap-5 p-4 sm:p-6 md:p-8'>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl my-8 font-bold text-left">Organization&apos;s
+                    Members
+                </h1>
+                <div
+                    className={"w-full h-full flex flex-col gap-5 items-center justify-start"}>
+                    {employees.map((employee) => (
+                        <DisplayEmployee
+                            key={employee.id}
+                            id={employee.id}
+                            name={employee.name}
+                            email={employee.email}
+                            age={employee.age}
+                            role={employee.role}
+                            orgid={employee.orgid}
+                            roleLevel={employee.roleLevel}
+                            profilePicture={employee.profilePicture}
+                            projects={employee.projects}/>
+                    ))}
+                </div>
             </div>
         </div>
     );
