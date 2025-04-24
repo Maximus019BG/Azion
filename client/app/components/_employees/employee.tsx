@@ -75,14 +75,14 @@ const DisplayEmployee: React.FC<Employee> = ({
 
     return (
         <div className="w-11/12 mx-auto">
-            <div className="bg-slate-900 collapse">
+            <div className="bg-blue-900/10 border border-blue-900/30 collapse">
                 <input
                     type="checkbox"
                     className="peer"
                     onChange={handleCollapseChange}
                 />
                 <div
-                    className="collapse-title bg-slate-800 text-white peer-checked:text-white flex flex-row sm:items-center"
+                    className="collapse-title bg-gradient-to-b from-blue-900/10 to-transparent overflow-hidden cursor-pointer text-white peer-checked:text-white flex flex-row sm:items-center"
                     style={{backgroundColor: isCollapsed ? "" : color}}
                 >
                     <div className="avatar">
@@ -96,7 +96,7 @@ const DisplayEmployee: React.FC<Employee> = ({
                             />
                         </div>
                     </div>
-                    <h1 className="mt-2 sm:mt-0 ml-3 text-center sm:text-left">{name}</h1>
+                    <h1 className="mt-2 sm:mt-0 ml-3 text-left">{name}</h1>
                 </div>
                 <div
                     className="collapse-content bg-base-200 text-primary-content peer-checked:text-white flex flex-col sm:flex-row sm:justify-between sm:items-center"
