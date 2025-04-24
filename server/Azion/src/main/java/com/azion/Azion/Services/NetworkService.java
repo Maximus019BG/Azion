@@ -16,7 +16,7 @@ public class NetworkService {
     
     public String getDataForNetwork(Network network) {
         try {
-            LocalDateTime today = LocalDateTime.now().minusHours(3);
+            LocalDateTime today = LocalDateTime.now();
             LocalDateTime thirtyDaysAgo = today.minusDays(30);
             
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
