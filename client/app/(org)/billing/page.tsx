@@ -11,6 +11,7 @@ export default function BillingPage() {
     const [selectedPlan, setSelectedPlan] = useState<string>("pro")
     const [quantity, setQuantity] = useState<number>(10)
     const [isLoading, setIsLoading] = useState(false)
+    const [boughtPlans, setBoughtPlans] = useState<any[]>([]) // State for bought plans
 
     // Get plan from URL params
     useEffect(() => {
@@ -20,10 +21,28 @@ export default function BillingPage() {
         }
     }, [searchParams])
 
+    // Fetch bought plans
+    // useEffect(() => {
+    //     const fetchBoughtPlans = async () => {
+    //         try {
+    //             const response = await axios.get(`${apiUrl}/user/plans`, {
+    //                 headers: {
+    //                     authorization: `Bearer ${localStorage.getItem("azionAccessToken")}`,
+    //                 },
+    //             })
+    //             setBoughtPlans(response.data.plans)
+    //         } catch (error) {
+    //             console.error("Error fetching bought plans:", error)
+    //         }
+    //     }
+    //
+    //     fetchBoughtPlans()
+    // }, [])
+
     const plans = {
         standart: {
             name: "Standart",
-            price: "$5",
+            price: "€5",
             priceId: "price_1RGl1fQw1qI3j2q2nvgWPwzD",
             basePrice: 5,
             description: "Perfect for small teams and startups",
@@ -41,7 +60,7 @@ export default function BillingPage() {
         },
         pro: {
             name: "Pro",
-            price: "$10",
+            price: "€10",
             priceId: "price_1RGnggQw1qI3j2q27lmkaC2w",
             basePrice: 10,
             description: "Ideal for growing organizations",
@@ -65,33 +84,56 @@ export default function BillingPage() {
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat("en-US", {
             style: "currency",
-            currency: "USD",
+            currency: "EUR",
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
         }).format(amount)
     }
 
-    const handleCheckout = () => {
-        setIsLoading(true)
-        // In a real app, this would redirect to checkout
-        // For now, we'll simulate a success or failure
-        const success = Math.random() > 0.2 // 80% success rate for demo
-
-        setTimeout(() => {
-            if (success) {
-                router.push("/billing/success")
-            } else {
-                router.push("/billing/cancel")
-            }
-        }, 1500)
-    }
-
     return (
-        <div className="min-h-screen bg-[#050505] text-white">
+        <div className="min-h-screen bg-[#050505] w-full text-white">
             <div className="container mx-auto py-12 px-4">
                 <div className="max-w-3xl mx-auto">
                     <h1 className="text-3xl font-bold mb-2 text-white">Complete Your Subscription</h1>
                     <p className="text-gray-400 mb-8">Review your plan details and complete your subscription</p>
+
+                    {/* Bought Plans Section */}
+                    <div className="mb-12 p-6 rounded-lg bg-[#0a0a0a] border border-[#222] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                        <h2 className="text-xl font-semibold text-white mb-4">Available Plans</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {Object.keys(plans).map((planKey) => {
+                                const plan = plans[planKey as keyof typeof plans];
+                                const isSelected = selectedPlan === planKey;
+
+                                return (
+                                    <div
+                                        key={planKey}
+                                        className={`p-4 rounded-lg border ${isSelected ? "border-[#0ea5e9]" : "border-[#222]"} bg-[#111]`}
+                                    >
+                                        <h3 className="text-lg font-medium text-white">{plan.name}</h3>
+                                        <p className="text-sm text-gray-400 mb-4">{plan.description}</p>
+                                        <ul className="space-y-2 mb-4">
+                                            {plan.features.map((feature, idx) => (
+                                                <li key={idx} className="flex items-start gap-2 text-sm">
+                                                    <Check size={16} className="text-[#0ea5e9] mt-0.5 flex-shrink-0"/>
+                                                    <span className="text-gray-300">{feature}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                        <p className="text-sm text-gray-400 mb-4">Price: {plan.price} per user / month</p>
+                                        <button
+                                            onClick={() => setSelectedPlan(planKey)}
+                                            className={`w-full px-4 py-2 rounded-md text-white font-medium ${
+                                                isSelected ? "bg-[#0ea5e9]" : "bg-[#333] hover:bg-[#444]"
+                                            }`}
+                                        >
+                                            {isSelected ? "Selected" : "Choose Plan"}
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
 
                     {/* Selected Plan Details */}
                     <div

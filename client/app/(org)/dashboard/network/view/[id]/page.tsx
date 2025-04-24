@@ -8,34 +8,9 @@ import {sessionCheck, UserHasRight} from "@/app/func/funcs"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
 // @ts-ignore
-import {
-    Area,
-    AreaChart,
-    Bar,
-    BarChart,
-    CartesianGrid,
-    type Formatter,
-    Line,
-    LineChart,
-    ResponsiveContainer,
-    XAxis,
-    YAxis,
-} from "recharts"
+import {Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis,} from "recharts"
 import {ChartContainer, ChartLegend, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
-import {
-    Activity,
-    AlertCircle,
-    ArrowDown,
-    ArrowLeft,
-    ArrowUp,
-    Clock,
-    Gauge,
-    Loader2,
-    RefreshCw,
-    Server,
-    Wifi,
-    WifiOff,
-} from "lucide-react"
+import {Activity, AlertCircle, ArrowDown, ArrowLeft, ArrowUp, Clock, Gauge, Loader2, RefreshCw, Server, Wifi, WifiOff,} from "lucide-react"
 import {format} from "date-fns"
 import {apiUrl} from "@/app/api/config"
 import {Button} from "@/components/ui/button"
@@ -271,18 +246,15 @@ export default function NetworkDetailPage() {
         }
     }
 
-    // Formatter functions for chart tooltips with the correct Recharts Formatter signature
-    const formatLatency: Formatter<any, any> = (value: string) => {
-        return `${value} ms`
-    }
+    type Formatter<ValueType = number | string, NameType = string> = (
+        value: ValueType,
+        name: NameType,
+        props: any
+    ) => React.ReactNode
 
-    const formatSpeed: Formatter<any, any> = (value: string) => {
-        return `${value} Mbps`
-    }
-
-    const formatPercentage: Formatter<any, any> = (value: string) => {
-        return `${value}%`
-    }
+    const formatPercentage: Formatter = (value) => `${value}%`
+    const formatSpeed: Formatter = (value) => `${value} Mbps`
+    const formatLatency: Formatter = (value) => `${value} ms`
 
     if (loading) {
         return (

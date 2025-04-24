@@ -143,7 +143,7 @@ const TaskView: FC<PageProps> = ({params}) => {
             }
 
             UserData().then((r) => {
-                if (r.role.name === "owner") {
+                if (r.role?.name === "owner") {
                     setAdmin(true)
                 }
             })

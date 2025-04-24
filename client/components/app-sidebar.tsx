@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import {useEffect, useState} from "react"
-import {Building, ChevronDown, ClipboardList, Cog, CreditCard, Home, LogOutIcon, MessageSquare, PlusCircle, Settings, UserCircle, Users, Video,} from "lucide-react"
+import {Building, ChevronDown, ClipboardList, Cog, CreditCard, Home, LogOutIcon, MessageSquare, Network, PlusCircle, Settings, UserCircle, Users, Video,} from "lucide-react"
 import {Skeleton} from "@/components/ui/skeleton"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible"
@@ -176,7 +176,7 @@ export function AppSidebar() {
                         <SidebarMenuItem>
                             <SidebarMenuButton asChild className={"hover:bg-neutral-800"}>
                                 <Link href="/dashboard/network">
-                                    <Video className="mr-2 h-4 w-4 text-slate-200"/>
+                                    <Network className="mr-2 h-4 w-4 text-slate-200"/>
                                     <span className={"text-slate-200"}>Network</span>
                                 </Link>
                             </SidebarMenuButton>

@@ -11,7 +11,10 @@ const AccountUserCard = () => {
     const [displayImage, setDisplayImage] = useState<string | null>(null);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [role, setRole] = useState({name: "", color: ""});
+    const [role, setRole] = useState<{ name: string | undefined; color: string }>({
+        name: undefined,
+        color: "",
+    });
     const [dateOfBirth, setDateOfBirth] = useState("");
     const [isEditing, setIsEditing] = useState({name: false, email: false, dateOfBirth: false, profilePicture: false});
 
@@ -20,7 +23,7 @@ const AccountUserCard = () => {
             setDisplayImage(response.profilePicture);
             setName(response.name);
             setEmail(response.email);
-            setRole(response.role);
+            setRole(response.role ?? {name: undefined, color: ""});
             setDateOfBirth(response.age.substring(0, 10));
         });
     }, []);
