@@ -36,7 +36,7 @@ const ProfilePicture = ({displayImage, onFileChange}: {
                         alt="Profile"
                         width={150}
                         height={150}
-                        className="rounded-full object-cover border-2 border-accent"
+                        className="rounded-full object-cover border-4 border-blue-800/40"
                     />
                     <input
                         type="file"

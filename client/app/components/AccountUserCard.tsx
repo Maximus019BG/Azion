@@ -58,10 +58,10 @@ const AccountUserCard = () => {
 
     return (
         <div
-            className="w-full max-w-3xl mx-auto border-2 border-base-100 bg-base-300 rounded-lg shadow-md overflow-hidden">
+            className="w-full max-w-3xl mx-auto bg-gradient-to-b from-blue-900/10 to-transparent border-4 border-blue-900/30 rounded-lg overflow-hidden shadow-lg">
             {/* MAIN SECTION */}
             <div
-                className="px-8 py-3 border-b-2 border-base-100 flex flex-row justify-between items-center gap-6 sm:gap-0">
+                className="px-8 py-3 border-b-4 border-blue-900/30 flex flex-row justify-between items-center gap-6 sm:gap-0">
                 <div className="flex flex-col justify-evenly h-full items-start">
                     <div className="flex items-center group">
                         {isEditing.name ? (
@@ -128,7 +128,7 @@ const AccountUserCard = () => {
                 }}/>
             </div>
             {/* END MAIN SECTION */}
-            <div className="bg-base-300 p-4">
+            <div className="bg-gradient-to-b from-blue-900/10 to-transparent p-4">
                 <p className="text-gray-300 text-sm">Update your personal information here to keep your account
                     up-to-date.</p>
                 {(isEditing.name || isEditing.email || isEditing.dateOfBirth || isEditing.profilePicture) && (

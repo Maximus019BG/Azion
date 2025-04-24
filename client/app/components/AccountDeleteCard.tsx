@@ -40,7 +40,7 @@ const AccountDeleteCard = () => {
 
     return (
         <div
-            className="w-full max-w-3xl mx-auto border-2 border-red-500 border-opacity-55 bg-base-300 rounded-lg shadow-md overflow-hidden">
+            className="w-full max-w-3xl mx-auto border-4 border-red-500 border-opacity-55 bg-gradient-to-b from-blue-900/10 to-transparent  rounded-lg shadow-md overflow-hidden">
             {/* MAIN SECTION */}
             <div
                 className="p-6 border-b-2 border-red-500 border-opacity-55 flex flex-col justify-between items-start gap-3">
