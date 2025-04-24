@@ -16,10 +16,15 @@ public class NetworkService {
     
     public String getDataForNetwork(Network network) {
         try {
+            
             LocalDateTime today = LocalDateTime.now();
             LocalDateTime thirtyDaysAgo = today.minusDays(30);
-            
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                today = LocalDateTime.now().minusHours(3);
+                thirtyDaysAgo = today.minusDays(30);
+            }
+        
             String beginTimestamp = thirtyDaysAgo.format(formatter);
             String endTimestamp = today.format(formatter);
             
