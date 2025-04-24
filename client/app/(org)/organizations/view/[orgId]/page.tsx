@@ -2,7 +2,7 @@
 import {useEffect, useState} from "react"
 import axios from "axios"
 import {useParams} from "next/navigation"
-import {ArrowLeft, Building2, Calendar, Clock, Mail, MapPin, Phone, Shield, Tag, Users,} from "lucide-react"
+import {ArrowLeft, Building2, Clock, Mail, MapPin, Phone, Shield, Tag, Users,} from "lucide-react"
 import type {Organization} from "@/app/types/types"
 import {apiUrl} from "@/app/api/config"
 import Link from "next/link"
@@ -53,7 +53,7 @@ export default function OrganizationPage() {
 
     if (error || !organization) {
         return (
-            <div className="min-h-screen bg-[#030308] text-white flex justify-center items-center p-4">
+            <div className="min-h-screen w-full bg-[#030308] text-white flex justify-center items-center p-4">
                 <motion.div
                     initial={{opacity: 0, scale: 0.9}}
                     animate={{opacity: 1, scale: 1}}
@@ -130,15 +130,6 @@ export default function OrganizationPage() {
                                 <div className="h-1.5 w-1.5 rounded-full bg-blue-400/50"></div>
                                 <div className="text-blue-300/70 text-sm">ID: {orgId.substring(0, 8)}...</div>
                             </div>
-                        </div>
-                        <div className="flex gap-3">
-                            <a
-                                href={`mailto:${organization.orgEmail}`}
-                                className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-500 hover:to-blue-300 text-white font-medium py-2 px-4 rounded-md transition duration-200"
-                            >
-                                <Mail size={16}/>
-                                <span>Contact</span>
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -260,14 +251,6 @@ export default function OrganizationPage() {
                                     <div>
                                         <p className="text-sm text-gray-400">Type</p>
                                         <p className="text-white">{organization.orgType}</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start gap-3">
-                                    <Calendar className="h-5 w-5 text-blue-400 mt-0.5"/>
-                                    <div>
-                                        <p className="text-sm text-gray-400">Established</p>
-                                        <p className="text-white">January 2023</p>
                                     </div>
                                 </div>
                             </div>
