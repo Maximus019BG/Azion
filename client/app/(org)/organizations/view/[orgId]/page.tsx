@@ -258,7 +258,7 @@ export default function OrganizationPage() {
                     </div>
                 </div>
 
-                {/* Back button at the bottom  */}
+                {/* Back button at the bottom */}
                 <div className="mt-12 text-center">
                     <Link href="/organizations">
                         <button
