@@ -1,68 +1,189 @@
-import React from "react";
+"use client"
+import {motion} from "framer-motion"
+import type React from "react"
+import Link from "next/link"
+import {ArrowUp, Github, Instagram, Mail, Phone, Twitter} from "lucide-react"
+import {Space_Grotesk} from "next/font/google"
+import logo from "@/public/white-logo-small.png";
+import Image from "next/image";
 
-const Footer = () => {
+const spaceGrotesk = Space_Grotesk({subsets: ["latin"], display: "swap"})
+
+export default function Footer() {
+    const currentYear = new Date().getFullYear()
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        })
+    }
+
     return (
-        <footer className="footer footer-center bg-base-300 text-base-content rounded p-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {/* Contact Information */}
-                <div>
-                    <h3 className="font-bold text-lg">Contact Us</h3>
-                    <p className="mt-2">
-                        Phone: <a href="tel:+359 88 503 1865" className="link link-hover">+359 88 503 1865</a>
-                    </p>
-                    <p>
-                        Email: <a href="mailto:aziononlineteam@gmail.com"
-                                  className="link link-hover">aziononlineteam@gmail.com</a>
-                    </p>
+        <footer
+            className="relative bg-black/40 backdrop-blur-sm border-t border-gray-800/30 text-white pt-12 pb-6 overflow-hidden">
+            {/* Scroll to top button - simplified */}
+            <div className="absolute right-6 top-4">
+                <motion.button
+                    onClick={scrollToTop}
+                    whileHover={{y: -2}}
+                    whileTap={{scale: 0.95}}
+                    className="w-8 h-8 rounded-md bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center shadow-sm"
+                    aria-label="Scroll to top"
+                >
+                    <ArrowUp size={16} className="text-white"/>
+                </motion.button>
+            </div>
+
+            <div className="container mx-auto px-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    {/* Company Info */}
+                    <motion.div
+                        initial={{opacity: 0, y: 10}}
+                        whileInView={{opacity: 1, y: 0}}
+                        transition={{duration: 0.5}}
+                        viewport={{once: true}}
+                        className="md:col-span-2"
+                    >
+                        <Link href="/" className="inline-block mb-4 group">
+                            <div className="flex items-center">
+                                <div className="w-8 h-8 relative mr-2 overflow-hidden">
+                                    <div
+                                        className="absolute inset-0 bg-gradient-to-br -z-20 from-cyan-400 to-blue-600 rounded-md opacity-80 group-hover:opacity-100 transition-opacity"></div>
+                                    <Image src={logo.src} alt={"Azion Logo"} width={50} height={50}/>
+                                </div>
+                                <span
+                                    className={`text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent group-hover:from-cyan-300 group-hover:to-blue-400 transition-all duration-300 ${spaceGrotesk.className}`}
+                                >
+                  Azion
+                </span>
+                            </div>
+                        </Link>
+                        <p className="text-gray-400 mb-4 max-w-md text-sm">
+                            Azion provides a comprehensive suite of tools to enhance your organization&apos;s
+                            productivity
+                            and security.
+                            Our platform helps you improve workflow and secure your company with cutting-edge
+                            technology.
+                        </p>
+                        <div className="flex space-x-3">
+                            <SocialIcon href="https://twitter.com/AzionOnline" icon={<Twitter size={16}/>}/>
+                            <SocialIcon href="https://www.instagram.com/aziononlineteam" icon={<Instagram size={16}/>}/>
+                            <SocialIcon href="https://github.com/Maximus019BG/Azion/tree/master"
+                                        icon={<Github size={16}/>}/>
+                        </div>
+                    </motion.div>
+
+                    {/* Quick Links */}
+                    <motion.div
+                        initial={{opacity: 0, y: 10}}
+                        whileInView={{opacity: 1, y: 0}}
+                        transition={{duration: 0.5, delay: 0.1}}
+                        viewport={{once: true}}
+                    >
+                        <h3 className={`text-sm font-semibold mb-3 text-white ${spaceGrotesk.className}`}>Quick
+                            Links</h3>
+                        <ul className="space-y-2">
+                            <FooterLink href="#features">Features</FooterLink>
+                            <FooterLink href="#security">Security</FooterLink>
+                            <FooterLink href="#testimonials">Testimonials</FooterLink>
+                            <FooterLink href="#pricing">Pricing</FooterLink>
+                        </ul>
+                    </motion.div>
+
+                    {/* Contact */}
+                    <motion.div
+                        initial={{opacity: 0, y: 10}}
+                        whileInView={{opacity: 1, y: 0}}
+                        transition={{duration: 0.5, delay: 0.2}}
+                        viewport={{once: true}}
+                    >
+                        <h3 className={`text-sm font-semibold mb-3 text-white ${spaceGrotesk.className}`}>Contact
+                            Us</h3>
+                        <ul className="space-y-2">
+                            <li className="flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors text-xs">
+                                <Phone size={14} className="text-cyan-500"/>
+                                <a href="tel:+359 88 503 1865">+359 88 503 1865</a>
+                            </li>
+                            <li className="flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors text-xs">
+                                <Mail size={14} className="text-cyan-500"/>
+                                <a href="mailto:aziononlineteam@gmail.com">aziononlineteam@gmail.com</a>
+                            </li>
+                        </ul>
+
+                        <div className="mt-4">
+                            <h4 className={`text-xs font-medium mb-2 text-white ${spaceGrotesk.className}`}>
+                                Subscribe to our newsletter
+                            </h4>
+                            <div className="flex">
+                                <input
+                                    type="email"
+                                    placeholder="Your email"
+                                    className="bg-gray-900/30 border border-gray-700/50 rounded-l-md px-3 py-1 w-full focus:outline-none focus:ring-1 focus:ring-cyan-500 text-xs"
+                                    aria-label="Email for newsletter"
+                                />
+                                <button
+                                    className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 transition-colors px-3 py-1 rounded-r-md text-white text-xs"
+                                    aria-label="Subscribe to newsletter"
+                                >
+                                    Subscribe
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
 
-                {/* Navigation Links */}
-                <nav className="flex flex-col items-center">
-                    <h3 className="font-bold text-lg">Quick Links</h3>
-                    <a href="/download" className="link link-hover mt-2">Download our Desktop App</a>
-                </nav>
-
-                {/* Social Media Links */}
-                <div className="flex flex-col items-center">
-                    <h3 className="font-bold text-lg">Follow Us</h3>
-                    <div className="grid grid-flow-col gap-4 mt-4">
-                        <a href="https://www.instagram.com/aziononlineteam" target="_blank" rel="noopener noreferrer">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                className="fill-current"
-                            >
-                                <path
-                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.314 3.608 1.29.975.976 1.228 2.242 1.29 3.608.059 1.266.07 1.646.07 4.849s-.012 3.583-.07 4.85c-.062 1.366-.314 2.632-1.29 3.608-.975.975-2.242 1.227-3.608 1.29-1.266.059-1.646.07-4.85.07s-3.583-.012-4.849-.07c-1.366-.062-2.633-.314-3.608-1.29-.976-.975-1.228-2.242-1.29-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.583.07-4.849c.062-1.366.314-2.633 1.29-3.608C4.499 2.477 5.765 2.225 7.13 2.163 8.397 2.104 8.777 2.163 12 2.163zm0-2.163C8.74 0 8.332.014 7.052.074c-1.682.073-3.161.392-4.318 1.548C1.574 2.667 1.254 4.146 1.18 5.828.941 8.054.941 8.744.941 12c0 3.256.014 3.946.074 5.226.073 1.682.392 3.161 1.548 4.318 1.157 1.157 2.636 1.475 4.318 1.548C8.332 23.986 8.74 24 12 24c3.26 0 3.668-.014 4.948-.074 1.682-.073 3.161-.392 4.318-1.548 1.157-1.157 1.475-2.636 1.548-4.318.06-1.28.074-1.97.074-5.226 0-3.256-.014-3.946-.074-5.226-.073-1.682-.392-3.161-1.548-4.318C20.116.466 18.637.147 16.955.074 15.676.014 15.26 0 12 0z"></path>
-                                <circle cx="12" cy="12" r="3.063"></circle>
-                                <path d="M18.406 5.594a1.44 1.44 0 1 1 0 2.88 1.44 1.44 0 0 1 0-2.88z"></path>
-                            </svg>
-                        </a>
-                        <a href="https://x.com/AzionOnline" target="_blank" rel="noopener noreferrer">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                className="fill-current"
-                            >
-                                <path
-                                    d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.577 2.162-2.724-.951.565-2.005.974-3.127 1.195-.897-.957-2.176-1.555-3.593-1.555-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.125-4.09-.205-7.719-2.166-10.149-5.144-.425.724-.666 1.561-.666 2.457 0 1.69.861 3.179 2.169 4.054-.801-.026-1.556-.247-2.214-.616v.061c0 2.361 1.675 4.335 3.903 4.778-.407.111-.836.171-1.279.171-.312 0-.615-.03-.911-.086.631 1.953 2.445 3.377 4.6 3.417-1.686 1.32-3.81 2.105-6.115 2.105-.398 0-.79-.023-1.176-.068 2.179 1.397 4.768 2.211 7.548 2.211 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.548z"></path>
-                            </svg>
-                        </a>
+                {/* Copyright */}
+                <div
+                    className="mt-8 pt-4 border-t border-gray-800/30 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                    <p>© {currentYear} Azion. All rights reserved.</p>
+                    <div className="mt-3 md:mt-0 flex gap-4">
+                        <Link href="/privacy" className="hover:text-cyan-400 transition-colors">
+                            Privacy Policy
+                        </Link>
+                        <Link href="/terms" className="hover:text-cyan-400 transition-colors">
+                            Terms of Service
+                        </Link>
                     </div>
                 </div>
             </div>
-
-            <aside className="mt-10">
-                <p>
-                    Copyright © {new Date().getFullYear()} - All rights reserved by AzionOnline Team
-                </p>
-            </aside>
         </footer>
-    );
-};
+    )
+}
 
-export default Footer;
+interface FooterLinkProps {
+    href: string
+    children: React.ReactNode
+}
+
+function FooterLink({href, children}: FooterLinkProps) {
+    return (
+        <li>
+            <Link
+                href={href}
+                className={`text-gray-400 hover:text-cyan-400 transition-colors inline-block py-1 relative text-xs ${spaceGrotesk.className}`}
+            >
+                {children}
+            </Link>
+        </li>
+    )
+}
+
+interface SocialIconProps {
+    href: string
+    icon: React.ReactNode
+}
+
+function SocialIcon({href, icon}: SocialIconProps) {
+    return (
+        <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-7 h-7 rounded-md bg-gray-800/50 hover:bg-gray-700/50 flex items-center justify-center text-gray-300 hover:text-white transition-colors hover:scale-105 transform duration-200"
+            aria-label={`Visit our ${href.split("/").pop()} page`}
+        >
+            {icon}
+        </a>
+    )
+}

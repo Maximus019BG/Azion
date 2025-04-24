@@ -68,7 +68,7 @@ export default function RegisterCam() {
     }
 
     return (
-        <div className="min-h-screen bg-base-300 flex flex-col items-center justify-center p-4 relative">
+        <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 relative">
             <div className="absolute top-4 sm:top-5 left-4 sm:left-5">
                 <ReturnButton to={"/cam/list"}/>
             </div>

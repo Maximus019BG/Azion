@@ -57,9 +57,9 @@ const AccountMfaCard = () => {
     }
     return (
         <div
-            className="w-full max-w-3xl mx-auto border-2 border-base-100 bg-base-300 rounded-lg shadow-md overflow-hidden">
+            className="w-full max-w-3xl mx-auto bg-gradient-to-b from-blue-900/10 to-transparent border-4 border-blue-900/30 rounded-lg overflow-hidden shadow-lg">
             {/* MAIN SECTION */}
-            <div className="p-6 border-b-2 border-base-100 flex flex-col justify-between items-start gap-3">
+            <div className="p-6 border-b-4 border-blue-900/30 flex flex-col justify-between items-start gap-3">
                 <h1 className="text-2xl font-bold text-white">Security & Privacy</h1>
                 <p className="text-gray-300 py-3 text-sm">
                     Manage your account security by accessing your active sessions or enabling two-factor authentication
@@ -67,7 +67,7 @@ const AccountMfaCard = () => {
                 </p>
             </div>
             {/* END MAIN SECTION */}
-            <div className="bg-base-300">
+            <div className="bg-gradient-to-b from-blue-900/10 to-transparent">
                 <div className="w-full flex justify-center items-center gap-6 p-4">
                     <MfaButtons isMfaEnabled={isMfaEnabled}/>
                     {isFaceIdEnabled ? (

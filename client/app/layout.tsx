@@ -7,6 +7,7 @@ import openGraphImage from "../public/opengraphThin.png";
 import {MeetingProvider} from "./context/MeetingContext";
 import {AlertProvider} from "@/app/context/AlertContext";
 
+
 const inter = Inter({subsets: ["latin"]});
 
 export const metadata: Metadata = {
@@ -62,7 +63,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" className={"scroll-smooth"}>
+        <html lang="en" className="scroll-smooth" suppressHydrationWarning>
         <head>
             <link rel="icon" href={logo.src}/>
         </head>

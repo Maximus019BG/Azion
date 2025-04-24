@@ -202,7 +202,7 @@ const OrgSettingsForm = () => {
             <div className="w-full h-full flex flex-col justify-start gap-8">
                 <div className="flex flex-col justify-center items-center gap-10">
                     <div
-                        className="w-full h-full max-w-3xl mx-auto border-2 border-base-100 bg-base-300 rounded-lg shadow-md overflow-hidden">
+                        className="w-full h-full max-w-3xl mx-auto border-2 border-blue-900/30 bg-gradient-to-b from-blue-900/10 to-transparent rounded-lg shadow-md overflow-hidden">
                         <div
                             className="px-8 py-10 border-b-2 border-base-100 flex justify-evenly items-center gap-6 sm:gap-0">
                             <div className="w-full h-full flex flex-col justify-evenly items-start gap-10">
@@ -229,7 +229,7 @@ const OrgSettingsForm = () => {
                             </div>
                         </div>
                         <div
-                            className="px-8 py-10 border-b-2 border-base-100 flex justify-evenly items-center gap-6 sm:gap-0">
+                            className="px-8 py-10 border-b-2 border-blue-900/30 flex justify-evenly items-center gap-6 sm:gap-0">
                             <div className="w-full h-full flex flex-col justify-evenly items-start gap-10">
                                 {[
                                     {name: "orgType", icon: <IoBusiness/>},
@@ -252,8 +252,8 @@ const OrgSettingsForm = () => {
                                 ))}
                             </div>
                         </div>
-                        <div className="flex flex-col gap-4 p-4 bg-base-300">
-                            <label className="text-base text-gray-100 font-medium flex items-center gap-2">
+                        <div className="flex flex-col gap-4 p-4 ">
+                            <label className="text-base text-gray-100 font-medium flex items-center gap-2 ">
                                 <IoInformationCircle/>
                                 Description
                             </label>
@@ -261,7 +261,7 @@ const OrgSettingsForm = () => {
                                 name="orgDescription"
                                 value={orgData.orgDescription}
                                 onChange={handleInputChange}
-                                className="p-4 bg-base-200 text-sm border-2 border-accent text-gray-200 rounded-md resize-none"
+                                className="p-4 text-sm border-2 border-blue-900/30 bg-gradient-to-b from-blue-900/10 to-transparent text-gray-200 rounded-md resize-none"
                                 rows={4}
                             />
                         </div>

@@ -54,7 +54,6 @@ export default function CamTest() {
             context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height)
             const imageData = canvas.toDataURL("image/jpeg")
             const base64Image = imageData.split(",")[1]
-            const accessToken = Cookies.get("azionAccessToken")
 
             const payload = {image: base64Image}
 
@@ -88,7 +87,7 @@ export default function CamTest() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-base-300 p-4 sm:p-6 relative">
+        <div className="min-h-screen w-full flex flex-col items-center justify-center bg-base-300 p-4 sm:p-6 relative">
             <div className="absolute top-4 sm:top-5 left-4 sm:left-5">
                 <ReturnButton to={"/cam/list"}/>
             </div>

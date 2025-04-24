@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-
 module.exports = {
     content: [
         "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,17 +8,17 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                background: 'rgb(var(--background))',
                 foreground: 'rgb(var(--foreground))',
+                background: 'rgb(var(--background-start-rgb))',
                 muted: 'rgb(var(--muted))',
                 accent: 'rgb(var(--accent))',
                 lightAccent: 'rgb(var(--lightAccent))',
                 neonAccent: 'rgb(var(--neonAccent))',
-
+                border: 'rgb(var(--border))',
             },
         },
     },
-    plugins: [require('daisyui'),],
+    plugins: [require('daisyui')],
     daisyui: {
         themes: [
             {
@@ -30,4 +29,4 @@ module.exports = {
             }
         ]
     },
-};
+}

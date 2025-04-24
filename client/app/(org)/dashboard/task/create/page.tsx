@@ -6,7 +6,6 @@ import {apiUrl} from "@/app/api/config"
 import Cookies from "js-cookie"
 import {sessionCheck, UserData, UserHasRight} from "@/app/func/funcs"
 import {Poppins} from "next/font/google"
-import SideMenu from "@/app/components/Side-menu"
 import Loading from "@/app/components/Loading"
 import {Card, CardContent} from "@/components/ui/card"
 import {Input} from "@/components/ui/input"
@@ -234,9 +233,6 @@ const CreateTask: FC = () => {
                 </div>
             ) : (
                 <>
-                    <div className="w-full lg:w-1/4 lg:h-full">
-                        <SideMenu/>
-                    </div>
                     <div className="w-full h-screen flex flex-col justify-center items-center p-4 lg:p-8 overflow-auto">
                         <h1 className={`text-4xl font-bold text-center mb-8 ${HeaderText.className}`}>Create New
                             Task</h1>

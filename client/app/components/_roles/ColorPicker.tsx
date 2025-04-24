@@ -19,6 +19,19 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, setColor, setIsSaveEnab
 
     // Main color palettes with their gradients
     const colorPalettes = [
+        // Blue palette (first for emphasis)
+        [
+            {name: "Blue 50", value: "#eff6ff"},
+            {name: "Blue 100", value: "#dbeafe"},
+            {name: "Blue 200", value: "#bfdbfe"},
+            {name: "Blue 300", value: "#93c5fd"},
+            {name: "Blue 400", value: "#60a5fa"},
+            {name: "Blue 500", value: "#3b82f6"},
+            {name: "Blue 600", value: "#2563eb"},
+            {name: "Blue 700", value: "#1d4ed8"},
+            {name: "Blue 800", value: "#1e40af"},
+            {name: "Blue 900", value: "#1e3a8a"},
+        ],
         // Red palette
         [
             {name: "Red 50", value: "#fef2f2"},
@@ -31,19 +44,6 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, setColor, setIsSaveEnab
             {name: "Red 700", value: "#b91c1c"},
             {name: "Red 800", value: "#991b1b"},
             {name: "Red 900", value: "#7f1d1d"},
-        ],
-        // Blue palette
-        [
-            {name: "Blue 50", value: "#eff6ff"},
-            {name: "Blue 100", value: "#dbeafe"},
-            {name: "Blue 200", value: "#bfdbfe"},
-            {name: "Blue 300", value: "#93c5fd"},
-            {name: "Blue 400", value: "#60a5fa"},
-            {name: "Blue 500", value: "#3b82f6"},
-            {name: "Blue 600", value: "#2563eb"},
-            {name: "Blue 700", value: "#1d4ed8"},
-            {name: "Blue 800", value: "#1e40af"},
-            {name: "Blue 900", value: "#1e3a8a"},
         ],
         // Green palette
         [
@@ -58,19 +58,6 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, setColor, setIsSaveEnab
             {name: "Green 800", value: "#166534"},
             {name: "Green 900", value: "#14532d"},
         ],
-        // Yellow palette
-        [
-            {name: "Yellow 50", value: "#fefce8"},
-            {name: "Yellow 100", value: "#fef9c3"},
-            {name: "Yellow 200", value: "#fef08a"},
-            {name: "Yellow 300", value: "#fde047"},
-            {name: "Yellow 400", value: "#facc15"},
-            {name: "Yellow 500", value: "#eab308"},
-            {name: "Yellow 600", value: "#ca8a04"},
-            {name: "Yellow 700", value: "#a16207"},
-            {name: "Yellow 800", value: "#854d0e"},
-            {name: "Yellow 900", value: "#713f12"},
-        ],
         // Purple palette
         [
             {name: "Purple 50", value: "#faf5ff"},
@@ -83,6 +70,19 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, setColor, setIsSaveEnab
             {name: "Purple 700", value: "#7e22ce"},
             {name: "Purple 800", value: "#6b21a8"},
             {name: "Purple 900", value: "#581c87"},
+        ],
+        // Yellow palette
+        [
+            {name: "Yellow 50", value: "#fefce8"},
+            {name: "Yellow 100", value: "#fef9c3"},
+            {name: "Yellow 200", value: "#fef08a"},
+            {name: "Yellow 300", value: "#fde047"},
+            {name: "Yellow 400", value: "#facc15"},
+            {name: "Yellow 500", value: "#eab308"},
+            {name: "Yellow 600", value: "#ca8a04"},
+            {name: "Yellow 700", value: "#a16207"},
+            {name: "Yellow 800", value: "#854d0e"},
+            {name: "Yellow 900", value: "#713f12"},
         ],
         // Gray palette
         [
@@ -114,7 +114,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, setColor, setIsSaveEnab
                     style={{backgroundColor: selectedColor}}
                 ></div>
                 <div>
-                    <div className="text-base font-medium">{selectedColor.toUpperCase()}</div>
+                    <div className="text-base font-medium text-white">{selectedColor.toUpperCase()}</div>
                     <div className="text-sm text-gray-400">Selected color</div>
                 </div>
             </div>
@@ -123,7 +123,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, setColor, setIsSaveEnab
             <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                 {colorPalettes.map((palette, paletteIndex) => (
                     <div key={paletteIndex} className="space-y-3">
-                        <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold">
+                        <div className="text-xs text-blue-400 uppercase tracking-wider font-semibold">
                             {palette[5].name.split(" ")[0]} Palette
                         </div>
                         <div className="grid grid-cols-5 gap-3">
@@ -133,7 +133,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, setColor, setIsSaveEnab
                                     className={`
                                       w-full aspect-square rounded-lg relative
                                       hover:scale-105 transition-transform duration-150
-                                      ${selectedColor === colorObj.value ? "ring-2 ring-white ring-offset-2 ring-offset-gray-800" : ""}
+                                      ${selectedColor === colorObj.value ? "ring-2 ring-white ring-offset-2 ring-offset-[#0c0c14]" : ""}
                                       shadow-md
                                     `}
                                     style={{backgroundColor: colorObj.value}}
@@ -156,20 +156,20 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, setColor, setIsSaveEnab
             </div>
 
             {/* Custom color input */}
-            <div className="mt-4">
-                <label className="text-xs text-gray-400 block mb-1">Custom Color</label>
+            <div className="mt-6 bg-[#0c0c14] p-3 rounded-lg border border-[#1a1a2e]">
+                <label className="text-xs text-blue-400 block mb-2">Custom Color</label>
                 <div className="flex flex-col sm:flex-row items-center gap-2">
                     <input
                         type="color"
                         value={selectedColor}
                         onChange={(e) => handleColorSelect(e.target.value)}
-                        className="w-full sm:w-8 h-8 rounded cursor-pointer bg-transparent"
+                        className="w-full sm:w-10 h-10 rounded cursor-pointer bg-transparent"
                     />
                     <input
                         type="text"
                         value={selectedColor}
                         onChange={(e) => handleColorSelect(e.target.value)}
-                        className="w-full sm:flex-1 bg-base-100 border border-gray-700 rounded px-2 py-1 text-sm"
+                        className="w-full sm:flex-1 bg-[#1a1a2e] border border-blue-900/30 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="#RRGGBB"
                     />
                 </div>

@@ -1,9 +1,9 @@
 package com.azion.Azion;
 
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import io.github.cdimascio.dotenv.Dotenv;
 
 @SpringBootApplication
 public class AzionApplication {
@@ -29,6 +29,11 @@ public class AzionApplication {
 		System.setProperty("google.client.id", dotenv.get("GOOGLE_CLIENT_ID"));
 		System.setProperty("google.client.secret", dotenv.get("GOOGLE_CLIENT_SECRET"));
 		System.setProperty("google.redirect.uri", dotenv.get("GOOGLE_REDIRECT_URI"));
+		System.setProperty("chatEncryptionKey", dotenv.get("CHAT_ENCRYPTION_KEY"));
+		System.setProperty("stripe.secret.key", dotenv.get("STRIPE_SECRET_KEY"));
+		System.setProperty("stripe.success.url", dotenv.get("STRIPE_SUCCESS_URL"));
+		System.setProperty("stripe.cancel.url", dotenv.get("STRIPE_CANCEL_URL"));
+		System.setProperty("secretNetwork", dotenv.get("SECRET_NETWORK"));
 		
 		SpringApplication.run(AzionApplication.class, args);
 	}

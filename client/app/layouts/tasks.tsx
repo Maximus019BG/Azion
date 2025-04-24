@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
-import { apiUrl } from "../api/config";
+import React, {useEffect, useState} from "react";
+import axios, {AxiosResponse} from "axios";
+import {apiUrl} from "../api/config";
 import Cookies from "js-cookie";
-import { PartOfOrg, UserData } from "../func/funcs";
+import {PartOfOrg, UserData} from "../func/funcs";
 
 interface User {
   name: string;
@@ -84,7 +84,7 @@ const TasksLayout = () => {
   }, []);
 
   UserData().then((data) => {
-    if (data.role.name == "owner") {
+    if (data.role?.name == "owner") {
       setAdmin(true);
     }
   });
