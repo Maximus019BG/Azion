@@ -1,6 +1,6 @@
 "use client"
 import type React from "react"
-import {useEffect, useState} from "react"
+import {useEffect, useRef, useState} from "react"
 import {Client} from "@stomp/stompjs"
 import SockJS from "sockjs-client"
 import {byteArrayToBase64, sessionCheck, UserData} from "@/app/func/funcs"
@@ -11,12 +11,16 @@ import DefaultPic from "@/public/user.png"
 import Cookies from "js-cookie"
 import Image from "next/image"
 import {Decrypt, Encrypt} from "@/app/func/msg"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {faPaperPlane, faPen} from "@fortawesome/free-solid-svg-icons"
-import ReturnButton from "@/app/components/ReturnButton";
+import {Button} from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
+import {ScrollArea} from "@/components/ui/scroll-area"
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu"
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
+import ReturnButton from "@/app/components/ReturnButton"
+import {ArrowLeft, Edit, MoreVertical, Search, Send, Trash2} from "lucide-react"
 
 const ChatPage = () => {
-    const [messages, setMessages] = useState<Message[]>([]);
+    const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState<string>("")
     const [client, setClient] = useState<Client | null>(null)
     const [userEmail, setUserEmail] = useState("")
@@ -24,7 +28,10 @@ const ChatPage = () => {
     const [selectedUser, setSelectedUser] = useState<User | null>(null)
     const [profilePictureSrcs, setProfilePictureSrcs] = useState<{ [key: string]: string }>({})
     const [editingMessage, setEditingMessage] = useState<{ id: string; content: string } | null>(null)
-    const [contextMenu, setContextMenu] = useState<{ x: number; y: number; message: { id?: string; content: string } | null } | null>(null)
+    const [searchTerm, setSearchTerm] = useState<string>("")
+    const [isMobileView, setIsMobileView] = useState<boolean>(false)
+    const [showUserList, setShowUserList] = useState<boolean>(true)
+    const messagesEndRef = useRef<HTMLDivElement>(null)
     const defaultImageSrc = typeof DefaultPic === "string" ? DefaultPic : DefaultPic.src
 
     const getProfilePictureSrc = async (profilePicture: string | null): Promise<string | null> => {
@@ -40,6 +47,19 @@ const ChatPage = () => {
         UserData().then((data) => {
             setUserEmail(data.email)
         })
+
+        const handleResize = () => {
+            setIsMobileView(window.innerWidth < 768)
+            if (window.innerWidth < 768) {
+                setShowUserList(true)
+            } else {
+                setShowUserList(true)
+            }
+        }
+
+        handleResize()
+        window.addEventListener("resize", handleResize)
+        return () => window.removeEventListener("resize", handleResize)
     }, [])
 
     useEffect(() => {
@@ -89,7 +109,13 @@ const ChatPage = () => {
                         setMessages((prevMessages) => {
                             const updatedMessages = [
                                 ...prevMessages,
-                                {id: newMessage.id, content: decryptedContent, from: newMessage.from, to: newMessage.to, edited: newMessage.edited},
+                                {
+                                    id: newMessage.id,
+                                    content: decryptedContent,
+                                    from: newMessage.from,
+                                    to: newMessage.to,
+                                    edited: newMessage.edited,
+                                },
                             ]
                             if (updatedMessages.length > 100) {
                                 updatedMessages.shift()
@@ -121,8 +147,16 @@ const ChatPage = () => {
         }
     }, [userEmail])
 
+    useEffect(() => {
+        scrollToBottom()
+    }, [messages])
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({behavior: "smooth"})
+    }
+
     const sendPrivateMessage = () => {
-        if (client && client.connected && selectedUser) {
+        if (client && client.connected && selectedUser && input.trim()) {
             const messageDTO = {content: Encrypt(input), from: userEmail, to: selectedUser.email}
             client.publish({destination: "/app/privateMessage", body: JSON.stringify(messageDTO)})
             setMessages((prevMessages) => {
@@ -144,24 +178,29 @@ const ChatPage = () => {
                     "Content-Type": "application/json",
                     authorization: Cookies.get("azionAccessToken"),
                 },
-            });
+            })
 
-            const oldMessages = response.data.map((msg: { id: string; content: string; from: string; to: string; edited: boolean }) => ({
-                ...msg,
-                content: Decrypt(msg.content),
-            }));
+            const oldMessages = response.data.map(
+                (msg: { id: string; content: string; from: string; to: string; edited: boolean }) => ({
+                    ...msg,
+                    content: Decrypt(msg.content),
+                }),
+            )
 
-            setMessages((prevMessages) => [...oldMessages, ...prevMessages]);
+            setMessages((prevMessages) => [...oldMessages, ...prevMessages])
         } catch (error: any) {
-            console.error(error.response ? error.response : error);
+            console.error(error.response ? error.response : error)
         }
-    };
+    }
 
     const openChatWindow = (user: User) => {
-        setSelectedUser(user);
-        setMessages([]);
-        fetchOldMessages(user.email, userEmail);
-    };
+        setSelectedUser(user)
+        setMessages([])
+        fetchOldMessages(user.email, userEmail)
+        if (isMobileView) {
+            setShowUserList(false)
+        }
+    }
 
     const onEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -199,9 +238,7 @@ const ChatPage = () => {
                 },
             )
             setMessages((prevMessages) =>
-                prevMessages.map((msg) =>
-                    msg.id === id ? {...msg, content, edited: true} : msg,
-                ),
+                prevMessages.map((msg) => (msg.id === id ? {...msg, content, edited: true} : msg)),
             )
             setEditingMessage(null)
             setInput("")
@@ -210,84 +247,125 @@ const ChatPage = () => {
         }
     }
 
-    const handleRightClick = (e: React.MouseEvent, msg: { id?: string; content: string }) => {
-        e.preventDefault()
-        setContextMenu({x: e.clientX, y: e.clientY, message: msg})
-    }
+    const filteredUsers = users.filter(
+        (user) =>
+            user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
 
-    const handleHoverButtonClick = (msg: { id?: string; content: string }) => {
-        setContextMenu({x: 0, y: 0, message: msg})
-    }
-
-    const handleContextMenuAction = (action: "edit" | "delete") => {
-        if (contextMenu?.message?.id) {
-            if (action === "edit") {
-                setEditingMessage({id: contextMenu.message.id, content: contextMenu.message.content})
-                setInput(contextMenu.message.content)
-            } else if (action === "delete") {
-                deleteMessage(contextMenu.message.id)
-            }
-        }
-        setContextMenu(null)
+    const toggleUserList = () => {
+        setShowUserList(!showUserList)
     }
 
     return (
-        <div className="flex flex-col md:flex-row bg-base-300 text-white w-full min-h-screen" onClick={() => setContextMenu(null)}>
-            {/* User List */}
-            <div className="w-full md:w-1/3 lg:w-1/4 border-b md:border-r border-base-100 p-4 md:p-6 overflow-y-auto">
-                <ReturnButton to={"/dashboard"}/>
-
-                <h2 className="text-2xl md:text-4xl font-bold py-5 mb-4 md:mb-6 text-center text-lightAccent">Messages</h2>
-
-                <div className="space-y-3 p-3 h-full border-2 border-base-100">
-                    <h3 className="text-lg font-medium mb-4 text-left text-gray-300">Users to Chat</h3>
-                    {users.map((user) => (
-                        <div
-                            key={user.email}
-                            className={`flex items-center space-x-3 cursor-pointer hover:bg-base-200 rounded-lg p-2 transition-colors duration-200 ${
-                                selectedUser?.email === user.email ? "bg-base-100" : ""
-                            }`}
-                            onClick={() => openChatWindow(user)}
-                        >
-                            <Image
-                                src={profilePictureSrcs[user.email] || defaultImageSrc}
-                                alt={`${user.name}'s profile`}
-                                width={40}
-                                height={40}
-                                className="w-10 h-10 rounded-full"
-                                onError={(e) => {
-                                    e.currentTarget.src = defaultImageSrc
-                                }}
-                            />
-                            <span className="text-sm md:text-base hover:text-blue-400 transition-colors duration-200">
-                                     {user.name}
-                                </span>
-                        </div>
-                    ))}
+        <div className="flex flex-col md:flex-row bg-[#0a0a0a] text-white w-full min-h-screen">
+            {/* Mobile Header */}
+            {isMobileView && (
+                <div className="flex items-center justify-between p-4 bg-[#111] border-b border-[#222]">
+                    <ReturnButton to="/dashboard"/>
+                    <h1 className="text-xl font-bold text-[#0ea5e9]">Messages</h1>
+                    <Button variant="ghost" size="icon" onClick={toggleUserList}
+                            className="text-gray-400 hover:text-white">
+                        {showUserList ? <Send className="h-5 w-5"/> : <ArrowLeft className="h-5 w-5"/>}
+                    </Button>
                 </div>
-            </div>
+            )}
+
+            {/* User List */}
+            {(showUserList || !isMobileView) && (
+                <div className="w-full md:w-1/3 lg:w-1/4 border-r border-[#222] bg-[#111] flex flex-col h-screen">
+                    {!isMobileView && (
+                        <div className="p-4 flex items-center">
+                            <ReturnButton to="/dashboard"/>
+                            <h2 className="text-2xl font-bold ml-2 text-[#0ea5e9]">Messages</h2>
+                        </div>
+                    )}
+
+                    <div className="p-4">
+                        <div className="relative">
+                            <Search
+                                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4"/>
+                            <Input
+                                placeholder="Search users..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-10 bg-[#1a1a1a] border-[#333] focus:border-[#0ea5e9] text-white"
+                            />
+                        </div>
+                    </div>
+
+                    <ScrollArea className="flex-1 p-4">
+                        <div className="space-y-2">
+                            {filteredUsers.map((user) => (
+                                <div
+                                    key={user.email}
+                                    className={`flex items-center space-x-3 cursor-pointer rounded-lg p-3 transition-all duration-200 ${
+                                        selectedUser?.email === user.email
+                                            ? "bg-[#1a1a1a] border-l-2 border-[#0ea5e9]"
+                                            : "hover:bg-[#1a1a1a]"
+                                    }`}
+                                    onClick={() => openChatWindow(user)}
+                                >
+                                    <div className="relative">
+                                        <Image
+                                            src={profilePictureSrcs[user.email] || defaultImageSrc}
+                                            alt={`${user.name}'s profile`}
+                                            width={40}
+                                            height={40}
+                                            className="rounded-full object-cover"
+                                            onError={(e) => {
+                                                e.currentTarget.src = defaultImageSrc
+                                            }}
+                                        />
+                                        <span
+                                            className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#111]"></span>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="font-medium truncate">{user.name}</p>
+                                        <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </ScrollArea>
+                </div>
+            )}
 
             {/* Chat Area */}
-            <div className="flex-1 p-4 md:p-6 flex flex-col">
+            <div className={`flex-1 flex flex-col h-screen ${isMobileView && showUserList ? "hidden" : "block"}`}>
                 {selectedUser ? (
                     <>
-                        <div className="flex items-center mb-4 md:mb-6 p-3 rounded-lg">
+                        {/* Chat Header */}
+                        <div className="flex items-center p-4 border-b border-[#222] bg-[#111]">
+                            {isMobileView && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={toggleUserList}
+                                    className="mr-2 text-gray-400 hover:text-white"
+                                >
+                                    <ArrowLeft className="h-5 w-5"/>
+                                </Button>
+                            )}
                             <Image
                                 src={profilePictureSrcs[selectedUser.email] || defaultImageSrc}
                                 alt={`${selectedUser.name}'s profile`}
-                                width={48}
-                                height={48}
-                                className="rounded-full mr-3"
+                                width={40}
+                                height={40}
+                                className="rounded-full mr-3 object-cover"
                                 onError={(e) => {
                                     e.currentTarget.src = defaultImageSrc
                                 }}
                             />
-                            <h3 className="text-lg md:text-xl font-semibold text-slate-200">{selectedUser.name}</h3>
+                            <div className="flex-1">
+                                <h3 className="font-semibold">{selectedUser.name}</h3>
+                                <p className="text-xs text-gray-400">{selectedUser.email}</p>
+                            </div>
                         </div>
 
-                        <div
-                            className="flex-grow mb-4 border-2 border-base-100 p-4 rounded-lg bg-base-300 overflow-y-auto">
-                            <div className="flex flex-col space-y-3">
+                        {/* Messages */}
+                        <ScrollArea className="flex-1 p-4 bg-[#0a0a0a]">
+                            <div className="flex flex-col space-y-4">
                                 {messages
                                     .filter(
                                         (msg) =>
@@ -295,86 +373,142 @@ const ChatPage = () => {
                                             (msg.to === selectedUser.email || msg.to === userEmail),
                                     )
                                     .map((msg, index) => (
-                                        <div
-                                            key={index}
-                                            className={`flex ${msg.from === userEmail ? "justify-end" : "justify-start"}`}
-                                            onContextMenu={(e) => handleRightClick(e, msg)}
-                                        >
-                                            <div
-                                                className={`chat ${msg.from === userEmail ? "chat-end" : "chat-start"}`}
-                                                style={{wordBreak: "break-word", overflowWrap: "break-word", position: "relative"}}
-                                            >
+                                        <div key={index}
+                                             className={`flex ${msg.from === userEmail ? "justify-end" : "justify-start"}`}>
+                                            <div className="max-w-[80%] group">
                                                 <div
-                                                    className={`chat-bubble ${
-                                                        msg.from === userEmail ? "chat-bubble-accent" : ""
-                                                    } text-white shadow-lg max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg`}
+                                                    className={`relative rounded-2xl px-4 py-2 shadow-md ${
+                                                        msg.from === userEmail
+                                                            ? "bg-[#0ea5e9] text-white rounded-tr-none"
+                                                            : "bg-[#1a1a1a] text-white rounded-tl-none"
+                                                    }`}
                                                 >
-                                                    {msg.content}
+                                                    <p className="break-words">{msg.content}</p>
                                                     {msg.edited && (
-                                                        <FontAwesomeIcon
-                                                            icon={faPen}
-                                                            className="ml-2 text-gray-400"
-                                                        />
+                                                        <span
+                                                            className="text-xs opacity-70 ml-2 inline-flex items-center">
+                              <Edit className="h-3 w-3 mr-1"/>
+                              edited
+                            </span>
+                                                    )}
+
+                                                    {msg.from === userEmail && msg.id && (
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="absolute -right-10 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                >
+                                                                    <MoreVertical className="h-4 w-4 text-gray-400"/>
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end"
+                                                                                 className="bg-[#1a1a1a] border-[#333] text-white">
+                                                                <DropdownMenuItem
+                                                                    onClick={() => {
+                                                                        setEditingMessage({
+                                                                            id: msg.id!,
+                                                                            content: msg.content
+                                                                        })
+                                                                        setInput(msg.content)
+                                                                    }}
+                                                                    className="flex items-center cursor-pointer hover:bg-[#222]"
+                                                                >
+                                                                    <Edit className="h-4 w-4 mr-2"/>
+                                                                    Edit
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuItem
+                                                                    onClick={() => deleteMessage(msg.id!)}
+                                                                    className="flex items-center cursor-pointer text-red-500 hover:bg-[#222]"
+                                                                >
+                                                                    <Trash2 className="h-4 w-4 mr-2"/>
+                                                                    Delete
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
                                                     )}
                                                 </div>
-                                                <button
-                                                    className="absolute top-0 right-0 bg-gray-700 text-white p-1 rounded-full opacity-0 hover:opacity-100 transition-opacity"
-                                                    onClick={() => handleHoverButtonClick(msg)}
-                                                >
-                                                    ...
-                                                </button>
+                                                <div className="text-xs text-gray-500 mt-1 px-2">
+                                                    {new Date().toLocaleTimeString([], {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit"
+                                                    })}
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
+                                <div ref={messagesEndRef}/>
                             </div>
-                        </div>
+                        </ScrollArea>
 
-                        <div className="flex items-center border-t border-base-100 pt-4">
-                            <input
-                                className="flex-grow rounded-l-lg p-3 text-sm bg-base-100 border-2 border-gray-600 focus:border-none text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                                type="text"
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                onKeyDown={onEnter}
-                                placeholder="Type a message..."
-                            />
-                            <button
-                                onClick={editingMessage ? () => updateMessage(editingMessage.id, input) : sendPrivateMessage}
-                                className="bg-blue-500 text-white px-4 py-3 rounded-r-lg hover:bg-blue-600 transition-colors duration-200"
-                            >
-                                <FontAwesomeIcon icon={faPaperPlane}/>
-                            </button>
+                        {/* Message Input */}
+                        <div className="p-4 border-t border-[#222] bg-[#111]">
+                            <div className="flex items-center">
+                                <Input
+                                    className="flex-grow bg-[#1a1a1a] border-[#333] focus:border-[#0ea5e9] text-white"
+                                    type="text"
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    onKeyDown={onEnter}
+                                    placeholder={editingMessage ? "Edit message..." : "Type a message..."}
+                                />
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                onClick={editingMessage ? () => updateMessage(editingMessage.id, input) : sendPrivateMessage}
+                                                className="ml-2 bg-[#0ea5e9] hover:bg-[#0284c7]"
+                                                disabled={!input.trim()}
+                                            >
+                                                {editingMessage ? <Edit className="h-5 w-5"/> :
+                                                    <Send className="h-5 w-5"/>}
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>{editingMessage ? "Save edit" : "Send message"}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+
+                                {editingMessage && (
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    variant="ghost"
+                                                    onClick={() => {
+                                                        setEditingMessage(null)
+                                                        setInput("")
+                                                    }}
+                                                    className="ml-2 text-gray-400 hover:text-white"
+                                                >
+                                                    <ArrowLeft className="h-5 w-5"/>
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Cancel editing</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                )}
+                            </div>
                         </div>
                     </>
                 ) : (
-                    <div className="flex-grow flex items-center justify-center text-center text-gray-400 text-lg">
-                        Select a user to start chatting.
+                    <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+                        <div className="w-20 h-20 bg-[#1a1a1a] rounded-full flex items-center justify-center mb-4">
+                            <Send className="h-10 w-10 text-[#0ea5e9]"/>
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">Your Messages</h3>
+                        <p className="text-gray-400 max-w-md">
+                            Select a user from the list to start a conversation or continue where you left off.
+                        </p>
                     </div>
                 )}
             </div>
-
-            {/* Context Menu */}
-            {contextMenu && (
-                <div
-                    className="absolute bg-gray-800 text-white rounded shadow-lg p-2"
-                    style={{top: contextMenu.y, left: contextMenu.x}}
-                >
-                    <button
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-700"
-                        onClick={() => handleContextMenuAction("edit")}
-                    >
-                        Edit
-                    </button>
-                    <button
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-700"
-                        onClick={() => handleContextMenuAction("delete")}
-                    >
-                        Delete
-                    </button>
-                </div>
-            )}
         </div>
     )
 }
 
-export default ChatPage;
+export default ChatPage

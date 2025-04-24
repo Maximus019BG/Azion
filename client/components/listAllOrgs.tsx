@@ -75,7 +75,7 @@ const ListAllOrgs: React.FC<ListAllOrgsProps> = ({searchTerm}) => {
                     </div>
                     <h3 className="text-xl font-semibold text-white mb-2">No organizations found</h3>
                     <p className="text-gray-400 max-w-md">
-                        We couldn't find any organizations matching your search. Try adjusting your search terms.
+                        We couldn&lsquo;t find any organizations matching your search. Try adjusting your search terms.
                     </p>
                 </div>
             </div>
