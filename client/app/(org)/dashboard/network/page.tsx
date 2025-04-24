@@ -249,7 +249,9 @@ const PageWithCustomDialog = () => {
                                 </div>
                                 <h3 className="text-xl font-semibold mb-2">No networks found</h3>
                                 <p className="text-gray-400 max-w-md mx-auto mb-6">
-                                    You haven't added any networks yet. Click "Add New Network" to connect your UniFi
+                                    You haven&lsquo;t added any networks yet. Click &lsquo;Add New Network&lsquo; to
+                                    connect your
+                                    UniFi
                                     network.
                                 </p>
                                 <Button
