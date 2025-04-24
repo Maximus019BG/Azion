@@ -54,7 +54,6 @@ export default function CamTest() {
             context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height)
             const imageData = canvas.toDataURL("image/jpeg")
             const base64Image = imageData.split(",")[1]
-            const accessToken = Cookies.get("azionAccessToken")
 
             const payload = {image: base64Image}
 
