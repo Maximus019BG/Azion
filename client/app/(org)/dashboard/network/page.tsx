@@ -22,11 +22,11 @@ const formatApiResponse = (response: any) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
                 <div>
                     <strong className="text-gray-400">Site ID:</strong> <span
-                    className="font-mono text-sm">{site.siteId}</span>
+                    className="font-mono text-sm break-words">{site.siteId}</span>
                 </div>
                 <div>
                     <strong className="text-gray-400">Host ID:</strong> <span
-                    className="font-mono text-sm">{site.hostId}</span>
+                    className="font-mono text-sm break-words">{site.hostId}</span>
                 </div>
                 <div>
                     <strong className="text-gray-400">Name:</strong> {meta.name}
@@ -204,7 +204,7 @@ const PageWithCustomDialog = () => {
         return (
             <div
                 className="text-gray-200 bg-gradient-to-br from-[#050505] to-[#0c0c0c] h-screen flex items-center justify-center w-full">
-                <div className="flex flex-col items-center">
+                <div className="w-full flex flex-col items-center">
                     <Loader2 className="h-10 w-10 animate-spin text-[#0ea5e9] mb-4"/>
                     <span className="text-gray-400">Loading network dashboard...</span>
                 </div>

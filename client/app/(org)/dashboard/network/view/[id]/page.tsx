@@ -286,7 +286,8 @@ export default function NetworkDetailPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
+            <div
+                className="w-full flex items-center justify-center h-screen bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
                 <div className="flex flex-col items-center">
                     <Loader2 className="h-10 w-10 animate-spin text-[#0ea5e9] mb-4"/>
                     <span className="text-gray-400">Loading network data...</span>
@@ -718,7 +719,7 @@ export default function NetworkDetailPage() {
                                 </div>
                                 <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
                                     <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">Host ID</h3>
-                                    <p className="text-gray-200 font-mono text-sm">{networkData?.data?.metrics?.[0]?.hostId || "N/A"}</p>
+                                    <p className="text-gray-200 font-mono text-sm break-words">{networkData?.data?.metrics?.[0]?.hostId || "N/A"}</p>
                                 </div>
                                 <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
                                     <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">ISP</h3>
