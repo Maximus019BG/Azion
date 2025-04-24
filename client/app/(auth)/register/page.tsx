@@ -392,7 +392,7 @@ const Register = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#040410] text-white flex flex-col justify-center items-center p-4 md:p-8">
+        <div className="min-h-screen text-white flex flex-col justify-center items-center p-4 md:p-8">
             {/* Notification */}
             <div
                 id="notification"

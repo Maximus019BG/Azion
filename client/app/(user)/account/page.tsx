@@ -1,8 +1,7 @@
 "use client";
 import React, {useEffect, useState} from "react";
 import Cookies from "js-cookie";
-import {PartOfOrg, sessionCheck} from "@/app/func/funcs";
-import SideMenu from "../../components/Side-menu";
+import {sessionCheck} from "@/app/func/funcs";
 import Loading from "@/app/components/Loading";
 import AccountUserCard from "@/app/components/AccountUserCard";
 import AccountMfaCard from "@/app/components/AccountMfaCard";
@@ -40,9 +39,6 @@ const Account = () => {
                 </div>
             ) : (
                 <div className="w-full h-dvh flex flex-col lg:flex-row overflow-hidden">
-                    <div className="lg:w-1/4 h-fit">
-                        <SideMenu/>
-                    </div>
                     <div className="w-full h-full flex flex-col items-center overflow-y-auto">
                         <div className="w-full flex flex-col justify-center items-center py-12 px-3 gap-8">
                             <AccountUserCard/>
