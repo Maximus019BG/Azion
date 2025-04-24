@@ -136,6 +136,8 @@ public class UserService {
     /// Azion Cameras (Write)   cameras:write
     ///
     /// Azion Cameras (Read)    cameras:read
+    ///
+    /// Unify Networks          networks
     /// </summary>
     public boolean UserHasRight(User user, String right) {
         Role role = user.getRole();
@@ -144,7 +146,7 @@ public class UserService {
     
     //Get max access
     public String highestAccess() {
-        return "calendar:write settings:write settings:read employees:read roles:write roles:read tasks:write tasks:read cameras:write cameras:read";
+        return "calendar:write settings:write settings:read employees:read roles:write roles:read tasks:write tasks:read cameras:write cameras:read networks";
     }
     
     public String lowestAccess() {

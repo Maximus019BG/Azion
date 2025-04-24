@@ -31,9 +31,9 @@ public class Role {
     public Org getOrg() {
         return org;
     }
-
-    public void setOrg(Org orgs) {
-        this.org = orgs;
+    
+    public void setOrg(Org org) {
+        this.org = org;
     }
 
     public String getRoleAccess() {
