@@ -284,7 +284,7 @@ const Register_Organisation = () => {
 
     return (
         <div
-            className="min-h-screen bg-[#040410] text-white flex flex-col justify-center items-center p-4 md:p-8 relative">
+            className="min-h-screen  text-white flex flex-col justify-center items-center p-4 md:p-8 relative">
             {/* Background gradient */}
             <div
                 className="fixed inset-0 bg-gradient-to-b from-blue-950/20 via-[#040410] to-[#040410] pointer-events-none"/>
