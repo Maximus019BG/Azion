@@ -7,13 +7,14 @@ import Cookies from "js-cookie"
 import {sessionCheck, UserHasRight} from "@/app/func/funcs"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
+// @ts-ignore
 import {
     Area,
     AreaChart,
     Bar,
     BarChart,
     CartesianGrid,
-    Formatter,
+    type Formatter,
     Line,
     LineChart,
     ResponsiveContainer,
@@ -21,9 +22,25 @@ import {
     YAxis,
 } from "recharts"
 import {ChartContainer, ChartLegend, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
-import {Activity, ArrowDown, Clock, Gauge, Wifi} from 'lucide-react'
+import {
+    Activity,
+    AlertCircle,
+    ArrowDown,
+    ArrowLeft,
+    ArrowUp,
+    Clock,
+    Gauge,
+    Loader2,
+    RefreshCw,
+    Server,
+    Wifi,
+    WifiOff,
+} from "lucide-react"
 import {format} from "date-fns"
 import {apiUrl} from "@/app/api/config"
+import {Button} from "@/components/ui/button"
+import Link from "next/link"
+import {motion} from "framer-motion"
 
 // Define types for our data
 interface WanData {
@@ -168,6 +185,7 @@ export default function NetworkDetailPage() {
     const [averages, setAverages] = useState<any>(null)
     const [anomalies, setAnomalies] = useState<any[]>([])
     const [timeRange, setTimeRange] = useState("24h")
+    const [refreshing, setRefreshing] = useState(false)
 
     useEffect(() => {
         const checkSession = async () => {
@@ -194,6 +212,7 @@ export default function NetworkDetailPage() {
 
     const fetchNetworkData = async () => {
         try {
+            setRefreshing(true)
             const accessToken = Cookies.get("azionAccessToken")
             const response = await axios.get(`${apiUrl}/network/get/${networkId}`, {
                 headers: {
@@ -221,9 +240,11 @@ export default function NetworkDetailPage() {
             }
 
             setLoading(false)
+            setRefreshing(false)
         } catch (error) {
             console.error("Failed to fetch network data:", error)
             setLoading(false)
+            setRefreshing(false)
         }
     }
 
@@ -252,47 +273,81 @@ export default function NetworkDetailPage() {
 
     // Formatter functions for chart tooltips with the correct Recharts Formatter signature
     const formatLatency: Formatter<any, any> = (value: string) => {
-        return `${value} ms`;
+        return `${value} ms`
     }
 
     const formatSpeed: Formatter<any, any> = (value: string) => {
-        return `${value} Mbps`;
+        return `${value} Mbps`
     }
 
     const formatPercentage: Formatter<any, any> = (value: string) => {
-        return `${value}%`;
+        return `${value}%`
     }
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen bg-gray-950">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="flex items-center justify-center h-screen bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
+                <div className="flex flex-col items-center">
+                    <Loader2 className="h-10 w-10 animate-spin text-[#0ea5e9] mb-4"/>
+                    <span className="text-gray-400">Loading network data...</span>
+                </div>
             </div>
         )
     }
 
     return (
-        <div className="min-h-dvh w-full bg-gray-950 text-gray-100 p-6">
+        <div className="min-h-dvh w-full bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-gray-100 p-4 md:p-6 lg:p-8">
             <div className="max-w-7xl mx-auto">
-                <div className="mb-8">
-                    <h1 className="text-2xl font-bold mb-2">Network Monitoring</h1>
-                    <p className="text-gray-400">
-                        Detailed metrics for network {networkId}
-                        {averages && ` - ${averages.ispName}`}
-                    </p>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div>
+                        <div className="flex items-center mb-1">
+                            <Link href="/dashboard/network">
+                                <Button variant="ghost" size="sm"
+                                        className="mr-2 text-gray-400 hover:text-[#0ea5e9] -ml-2 h-8 w-8">
+                                    <ArrowLeft className="h-4 w-4"/>
+                                    <span className="sr-only">Back</span>
+                                </Button>
+                            </Link>
+                            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">
+                                Network Monitoring
+                            </h1>
+                        </div>
+                        <p className="text-gray-400">
+                            Detailed metrics for network {networkId}
+                            {averages && ` - ${averages.ispName}`}
+                        </p>
+                    </div>
+
+                    <Button
+                        onClick={fetchNetworkData}
+                        disabled={refreshing}
+                        className="bg-[#111] border border-[#333] hover:border-[#0ea5e9] text-gray-300 hover:text-[#0ea5e9]"
+                    >
+                        <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`}/>
+                        {refreshing ? "Refreshing..." : "Refresh Data"}
+                    </Button>
                 </div>
 
                 {/* Time Range Selector */}
                 <div className="mb-6">
                     <Tabs defaultValue="24h" value={timeRange} onValueChange={handleTimeRangeChange} className="w-full">
-                        <TabsList className="bg-gray-900 border border-gray-800">
-                            <TabsTrigger value="24h" className="data-[state=active]:bg-blue-900">
+                        <TabsList className="bg-[#111] border border-[#222] p-1 h-auto">
+                            <TabsTrigger
+                                value="24h"
+                                className="data-[state=active]:bg-[#0c4a6e] data-[state=active]:text-white px-4 py-2"
+                            >
                                 Last 24 Hours
                             </TabsTrigger>
-                            <TabsTrigger value="7d" className="data-[state=active]:bg-blue-900">
+                            <TabsTrigger
+                                value="7d"
+                                className="data-[state=active]:bg-[#0c4a6e] data-[state=active]:text-white px-4 py-2"
+                            >
                                 Last 7 Days
                             </TabsTrigger>
-                            <TabsTrigger value="30d" className="data-[state=active]:bg-blue-900">
+                            <TabsTrigger
+                                value="30d"
+                                className="data-[state=active]:bg-[#0c4a6e] data-[state=active]:text-white px-4 py-2"
+                            >
                                 Last 30 Days
                             </TabsTrigger>
                         </TabsList>
@@ -301,345 +356,392 @@ export default function NetworkDetailPage() {
 
                 {/* Summary Cards */}
                 {averages && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                        <Card className="bg-gray-900 border-gray-800">
-                            <CardHeader className="pb-2">
-                                <CardDescription className="text-gray-400">Average Latency</CardDescription>
-                                <CardTitle className="text-2xl flex items-center">
-                                    <Clock className="mr-2 h-5 w-5 text-blue-400"/>
-                                    {averages.avgLatency} ms
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-gray-400">Max: {averages.maxLatency} ms</p>
-                            </CardContent>
-                        </Card>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
+                                    transition={{delay: 0.1}}>
+                            <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] overflow-hidden">
+                                <CardHeader className="pb-2 bg-[#0c4a6e]/10">
+                                    <CardDescription className="text-gray-400">Average Latency</CardDescription>
+                                    <CardTitle className="text-2xl flex items-center">
+                                        <Clock className="mr-2 h-5 w-5 text-[#0ea5e9]"/>
+                                        {averages.avgLatency} ms
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="pt-4">
+                                    <p className="text-sm text-gray-400">Max: {averages.maxLatency} ms</p>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
 
-                        <Card className="bg-gray-900 border-gray-800">
-                            <CardHeader className="pb-2">
-                                <CardDescription className="text-gray-400">Download Speed</CardDescription>
-                                <CardTitle className="text-2xl flex items-center">
-                                    <ArrowDown className="mr-2 h-5 w-5 text-green-400"/>
-                                    {averages.download} Mbps
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-gray-400">Upload: {averages.upload} Mbps</p>
-                            </CardContent>
-                        </Card>
+                        <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
+                                    transition={{delay: 0.2}}>
+                            <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] overflow-hidden">
+                                <CardHeader className="pb-2 bg-[#0c4a6e]/10">
+                                    <CardDescription className="text-gray-400">Download Speed</CardDescription>
+                                    <CardTitle className="text-2xl flex items-center">
+                                        <ArrowDown className="mr-2 h-5 w-5 text-[#0ea5e9]"/>
+                                        {averages.download} Mbps
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="pt-4">
+                                    <div className="flex items-center">
+                                        <ArrowUp className="mr-1 h-4 w-4 text-gray-400"/>
+                                        <p className="text-sm text-gray-400">Upload: {averages.upload} Mbps</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
 
-                        <Card className="bg-gray-900 border-gray-800">
-                            <CardHeader className="pb-2">
-                                <CardDescription className="text-gray-400">Packet Loss</CardDescription>
-                                <CardTitle className="text-2xl flex items-center">
-                                    <Activity className="mr-2 h-5 w-5 text-yellow-400"/>
-                                    {averages.packetLoss}%
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-gray-400">
-                                    {Number(averages.packetLoss) > 0 ? "Some packet loss detected" : "No packet loss detected"}
-                                </p>
-                            </CardContent>
-                        </Card>
+                        <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
+                                    transition={{delay: 0.3}}>
+                            <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] overflow-hidden">
+                                <CardHeader className="pb-2 bg-[#0c4a6e]/10">
+                                    <CardDescription className="text-gray-400">Packet Loss</CardDescription>
+                                    <CardTitle className="text-2xl flex items-center">
+                                        <Activity className="mr-2 h-5 w-5 text-[#0ea5e9]"/>
+                                        {averages.packetLoss}%
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="pt-4">
+                                    <p className="text-sm text-gray-400">
+                                        {Number(averages.packetLoss) > 0 ? "Some packet loss detected" : "No packet loss detected"}
+                                    </p>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
 
-                        <Card className="bg-gray-900 border-gray-800">
-                            <CardHeader className="pb-2">
-                                <CardDescription className="text-gray-400">Uptime</CardDescription>
-                                <CardTitle className="text-2xl flex items-center">
-                                    <Wifi className="mr-2 h-5 w-5 text-blue-400"/>
-                                    {averages.uptime}%
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-gray-400">
-                                    {Number(averages.uptime) === 100
-                                        ? "Perfect uptime"
-                                        : `${(100 - Number(averages.uptime)).toFixed(2)}% downtime`}
-                                </p>
-                            </CardContent>
-                        </Card>
+                        <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
+                                    transition={{delay: 0.4}}>
+                            <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] overflow-hidden">
+                                <CardHeader className="pb-2 bg-[#0c4a6e]/10">
+                                    <CardDescription className="text-gray-400">Uptime</CardDescription>
+                                    <CardTitle className="text-2xl flex items-center">
+                                        <Wifi className="mr-2 h-5 w-5 text-[#0ea5e9]"/>
+                                        {averages.uptime}%
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="pt-4">
+                                    <p className="text-sm text-gray-400">
+                                        {Number(averages.uptime) === 100
+                                            ? "Perfect uptime"
+                                            : `${(100 - Number(averages.uptime)).toFixed(2)}% downtime`}
+                                    </p>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
                     </div>
                 )}
 
                 {/* Charts */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                     {/* Latency Chart */}
-                    <Card className="bg-gray-900 border-gray-800">
-                        <CardHeader>
-                            <CardTitle>Latency</CardTitle>
-                            <CardDescription>Average and maximum latency over time</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="h-80">
-                                <ChartContainer
-                                    config={{
-                                        avgLatency: {
-                                            label: "Avg Latency",
-                                            color: "hsl(217, 91%, 60%)",
-                                        },
-                                        maxLatency: {
-                                            label: "Max Latency",
-                                            color: "hsl(13, 90%, 55%)",
-                                        },
-                                    }}
-                                >
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <LineChart data={chartData} margin={{top: 10, right: 10, left: 0, bottom: 0}}>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)"/>
-                                            <XAxis
-                                                dataKey="time"
-                                                stroke="rgba(255, 255, 255, 0.5)"
-                                                tickFormatter={(value, index) => {
-                                                    // Show fewer ticks for readability
-                                                    return index % Math.ceil(chartData.length / 12) === 0 ? value : ""
-                                                }}
-                                            />
-                                            <YAxis stroke="rgba(255, 255, 255, 0.5)"/>
-                                            <ChartTooltip content={<ChartTooltipContent indicator="line"
-                                                                                        formatter={formatLatency}/>}/>
-                                            <Line
-                                                type="monotone"
-                                                dataKey="avgLatency"
-                                                stroke="hsl(217, 91%, 60%)"
-                                                strokeWidth={2}
-                                                dot={false}
-                                                activeDot={{r: 4}}
-                                            />
-                                            <Line
-                                                type="monotone"
-                                                dataKey="maxLatency"
-                                                stroke="hsl(13, 90%, 55%)"
-                                                strokeWidth={2}
-                                                dot={false}
-                                                activeDot={{r: 4}}
-                                            />
-                                            <ChartLegend/>
-                                        </LineChart>
-                                    </ResponsiveContainer>
-                                </ChartContainer>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.5}}>
+                        <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222]">
+                            <CardHeader>
+                                <CardTitle className="text-[#0ea5e9]">Latency</CardTitle>
+                                <CardDescription className="text-gray-400">Average and maximum latency over
+                                    time</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="h-80">
+                                    <ChartContainer
+                                        config={{
+                                            avgLatency: {
+                                                label: "Avg Latency",
+                                                color: "#0ea5e9",
+                                            },
+                                            maxLatency: {
+                                                label: "Max Latency",
+                                                color: "#f97316",
+                                            },
+                                        }}
+                                    >
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <LineChart data={chartData}
+                                                       margin={{top: 10, right: 10, left: 0, bottom: 0}}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)"/>
+                                                <XAxis
+                                                    dataKey="time"
+                                                    stroke="rgba(255, 255, 255, 0.5)"
+                                                    tickFormatter={(value, index) => {
+                                                        // Show fewer ticks for readability
+                                                        return index % Math.ceil(chartData.length / 12) === 0 ? value : ""
+                                                    }}
+                                                />
+                                                <YAxis stroke="rgba(255, 255, 255, 0.5)"/>
+                                                <ChartTooltip content={<ChartTooltipContent indicator="line"
+                                                                                            formatter={formatLatency}/>}/>
+                                                <Line
+                                                    type="monotone"
+                                                    dataKey="avgLatency"
+                                                    stroke="#0ea5e9"
+                                                    strokeWidth={2}
+                                                    dot={false}
+                                                    activeDot={{r: 4}}
+                                                />
+                                                <Line
+                                                    type="monotone"
+                                                    dataKey="maxLatency"
+                                                    stroke="#f97316"
+                                                    strokeWidth={2}
+                                                    dot={false}
+                                                    activeDot={{r: 4}}
+                                                />
+                                                <ChartLegend/>
+                                            </LineChart>
+                                        </ResponsiveContainer>
+                                    </ChartContainer>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
 
                     {/* Speed Chart */}
-                    <Card className="bg-gray-900 border-gray-800">
-                        <CardHeader>
-                            <CardTitle>Network Speed</CardTitle>
-                            <CardDescription>Download and upload speeds over time</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="h-80">
-                                <ChartContainer
-                                    config={{
-                                        download: {
-                                            label: "Download",
-                                            color: "hsl(142, 76%, 36%)",
-                                        },
-                                        upload: {
-                                            label: "Upload",
-                                            color: "hsl(262, 83%, 58%)",
-                                        },
-                                    }}
-                                >
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <AreaChart data={chartData} margin={{top: 10, right: 10, left: 0, bottom: 0}}>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)"/>
-                                            <XAxis
-                                                dataKey="time"
-                                                stroke="rgba(255, 255, 255, 0.5)"
-                                                tickFormatter={(value, index) => {
-                                                    return index % Math.ceil(chartData.length / 12) === 0 ? value : ""
-                                                }}
-                                            />
-                                            <YAxis stroke="rgba(255, 255, 255, 0.5)"/>
-                                            <ChartTooltip content={<ChartTooltipContent indicator="dot"
-                                                                                        formatter={formatSpeed}/>}/>
-                                            <Area
-                                                type="monotone"
-                                                dataKey="download"
-                                                stroke="hsl(142, 76%, 36%)"
-                                                fill="hsl(142, 76%, 36%, 0.2)"
-                                                strokeWidth={2}
-                                            />
-                                            <Area
-                                                type="monotone"
-                                                dataKey="upload"
-                                                stroke="hsl(262, 83%, 58%)"
-                                                fill="hsl(262, 83%, 58%, 0.2)"
-                                                strokeWidth={2}
-                                            />
-                                            <ChartLegend/>
-                                        </AreaChart>
-                                    </ResponsiveContainer>
-                                </ChartContainer>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.6}}>
+                        <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222]">
+                            <CardHeader>
+                                <CardTitle className="text-[#0ea5e9]">Network Speed</CardTitle>
+                                <CardDescription className="text-gray-400">Download and upload speeds over
+                                    time</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="h-80">
+                                    <ChartContainer
+                                        config={{
+                                            download: {
+                                                label: "Download",
+                                                color: "#0ea5e9",
+                                            },
+                                            upload: {
+                                                label: "Upload",
+                                                color: "#8b5cf6",
+                                            },
+                                        }}
+                                    >
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <AreaChart data={chartData}
+                                                       margin={{top: 10, right: 10, left: 0, bottom: 0}}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)"/>
+                                                <XAxis
+                                                    dataKey="time"
+                                                    stroke="rgba(255, 255, 255, 0.5)"
+                                                    tickFormatter={(value, index) => {
+                                                        return index % Math.ceil(chartData.length / 12) === 0 ? value : ""
+                                                    }}
+                                                />
+                                                <YAxis stroke="rgba(255, 255, 255, 0.5)"/>
+                                                <ChartTooltip content={<ChartTooltipContent indicator="dot"
+                                                                                            formatter={formatSpeed}/>}/>
+                                                <Area
+                                                    type="monotone"
+                                                    dataKey="download"
+                                                    stroke="#0ea5e9"
+                                                    fill="rgba(14, 165, 233, 0.2)"
+                                                    strokeWidth={2}
+                                                />
+                                                <Area
+                                                    type="monotone"
+                                                    dataKey="upload"
+                                                    stroke="#8b5cf6"
+                                                    fill="rgba(139, 92, 246, 0.2)"
+                                                    strokeWidth={2}
+                                                />
+                                                <ChartLegend/>
+                                            </AreaChart>
+                                        </ResponsiveContainer>
+                                    </ChartContainer>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
 
                     {/* Packet Loss Chart */}
-                    <Card className="bg-gray-900 border-gray-800">
-                        <CardHeader>
-                            <CardTitle>Packet Loss</CardTitle>
-                            <CardDescription>Packet loss percentage over time</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="h-80">
-                                <ChartContainer
-                                    config={{
-                                        packetLoss: {
-                                            label: "Packet Loss",
-                                            color: "hsl(43, 96%, 56%)",
-                                        },
-                                    }}
-                                >
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart data={chartData} margin={{top: 10, right: 10, left: 0, bottom: 0}}>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)"/>
-                                            <XAxis
-                                                dataKey="time"
-                                                stroke="rgba(255, 255, 255, 0.5)"
-                                                tickFormatter={(value, index) => {
-                                                    return index % Math.ceil(chartData.length / 12) === 0 ? value : ""
-                                                }}
-                                            />
-                                            <YAxis stroke="rgba(255, 255, 255, 0.5)"/>
-                                            <ChartTooltip content={<ChartTooltipContent indicator="dot"
-                                                                                        formatter={formatPercentage}/>}/>
-                                            <Bar dataKey="packetLoss" fill="hsl(43, 96%, 56%)" radius={[4, 4, 0, 0]}/>
-                                            <ChartLegend/>
-                                        </BarChart>
-                                    </ResponsiveContainer>
-                                </ChartContainer>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.7}}>
+                        <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222]">
+                            <CardHeader>
+                                <CardTitle className="text-[#0ea5e9]">Packet Loss</CardTitle>
+                                <CardDescription className="text-gray-400">Packet loss percentage over
+                                    time</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="h-80">
+                                    <ChartContainer
+                                        config={{
+                                            packetLoss: {
+                                                label: "Packet Loss",
+                                                color: "#eab308",
+                                            },
+                                        }}
+                                    >
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={chartData}
+                                                      margin={{top: 10, right: 10, left: 0, bottom: 0}}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)"/>
+                                                <XAxis
+                                                    dataKey="time"
+                                                    stroke="rgba(255, 255, 255, 0.5)"
+                                                    tickFormatter={(value, index) => {
+                                                        return index % Math.ceil(chartData.length / 12) === 0 ? value : ""
+                                                    }}
+                                                />
+                                                <YAxis stroke="rgba(255, 255, 255, 0.5)"/>
+                                                <ChartTooltip content={<ChartTooltipContent indicator="dot"
+                                                                                            formatter={formatPercentage}/>}/>
+                                                <Bar dataKey="packetLoss" fill="#eab308" radius={[4, 4, 0, 0]}/>
+                                                <ChartLegend/>
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </ChartContainer>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
 
                     {/* Uptime Chart */}
-                    <Card className="bg-gray-900 border-gray-800">
-                        <CardHeader>
-                            <CardTitle>Network Uptime</CardTitle>
-                            <CardDescription>Uptime percentage over time</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="h-80">
-                                <ChartContainer
-                                    config={{
-                                        uptime: {
-                                            label: "Uptime",
-                                            color: "hsl(191, 91%, 54%)",
-                                        },
-                                    }}
-                                >
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <LineChart data={chartData} margin={{top: 10, right: 10, left: 0, bottom: 0}}>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)"/>
-                                            <XAxis
-                                                dataKey="time"
-                                                stroke="rgba(255, 255, 255, 0.5)"
-                                                tickFormatter={(value, index) => {
-                                                    return index % Math.ceil(chartData.length / 12) === 0 ? value : ""
-                                                }}
-                                            />
-                                            <YAxis domain={[95, 100]} stroke="rgba(255, 255, 255, 0.5)"/>
-                                            <ChartTooltip content={<ChartTooltipContent indicator="line"
-                                                                                        formatter={formatPercentage}/>}/>
-                                            <Line
-                                                type="monotone"
-                                                dataKey="uptime"
-                                                stroke="hsl(191, 91%, 54%)"
-                                                strokeWidth={2}
-                                                dot={false}
-                                                activeDot={{r: 4}}
-                                            />
-                                            <ChartLegend/>
-                                        </LineChart>
-                                    </ResponsiveContainer>
-                                </ChartContainer>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.8}}>
+                        <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222]">
+                            <CardHeader>
+                                <CardTitle className="text-[#0ea5e9]">Network Uptime</CardTitle>
+                                <CardDescription className="text-gray-400">Uptime percentage over time</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="h-80">
+                                    <ChartContainer
+                                        config={{
+                                            uptime: {
+                                                label: "Uptime",
+                                                color: "#0ea5e9",
+                                            },
+                                        }}
+                                    >
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <LineChart data={chartData}
+                                                       margin={{top: 10, right: 10, left: 0, bottom: 0}}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)"/>
+                                                <XAxis
+                                                    dataKey="time"
+                                                    stroke="rgba(255, 255, 255, 0.5)"
+                                                    tickFormatter={(value, index) => {
+                                                        return index % Math.ceil(chartData.length / 12) === 0 ? value : ""
+                                                    }}
+                                                />
+                                                <YAxis domain={[95, 100]} stroke="rgba(255, 255, 255, 0.5)"/>
+                                                <ChartTooltip content={<ChartTooltipContent indicator="line"
+                                                                                            formatter={formatPercentage}/>}/>
+                                                <Line
+                                                    type="monotone"
+                                                    dataKey="uptime"
+                                                    stroke="#0ea5e9"
+                                                    strokeWidth={2}
+                                                    dot={false}
+                                                    activeDot={{r: 4}}
+                                                />
+                                                <ChartLegend/>
+                                            </LineChart>
+                                        </ResponsiveContainer>
+                                    </ChartContainer>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
                 </div>
 
                 {/* Anomalies Section */}
                 {anomalies.length > 0 && (
-                    <Card className="bg-gray-900 border-gray-800 mb-6">
-                        <CardHeader>
-                            <CardTitle>Network Anomalies</CardTitle>
-                            <CardDescription>Detected issues during the selected time period</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                {anomalies.map((anomaly, index) => (
-                                    <div key={index} className="border border-gray-800 rounded-lg p-4">
-                                        <h3 className="text-lg font-medium mb-2 flex items-center">
-                                            {anomaly.type === "Packet Loss" &&
-                                                <Activity className="mr-2 h-5 w-5 text-yellow-400"/>}
-                                            {anomaly.type === "Downtime" &&
-                                                <Wifi className="mr-2 h-5 w-5 text-red-400"/>}
-                                            {anomaly.type === "High Latency" &&
-                                                <Gauge className="mr-2 h-5 w-5 text-orange-400"/>}
-                                            {anomaly.type} ({anomaly.count} events)
-                                        </h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                                            {anomaly.events.slice(0, 6).map((event: any, eventIndex: number) => (
-                                                <div key={eventIndex} className="bg-gray-800 p-2 rounded text-sm">
-                                                    <span className="text-gray-400">{event.time}:</span>{" "}
-                                                    {anomaly.type === "Packet Loss" && `${event.value}% loss`}
-                                                    {anomaly.type === "Downtime" && `${event.value} seconds`}
-                                                    {anomaly.type === "High Latency" && `${event.value}ms`}
-                                                </div>
-                                            ))}
-                                            {anomaly.events.length > 6 && (
-                                                <div className="bg-gray-800 p-2 rounded text-sm text-gray-400">
-                                                    +{anomaly.events.length - 6} more events...
-                                                </div>
-                                            )}
+                    <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.9}}>
+                        <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] mb-6">
+                            <CardHeader>
+                                <CardTitle className="text-[#0ea5e9] flex items-center">
+                                    <AlertCircle className="h-5 w-5 mr-2 text-yellow-500"/>
+                                    Network Anomalies
+                                </CardTitle>
+                                <CardDescription className="text-gray-400">
+                                    Detected issues during the selected time period
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    {anomalies.map((anomaly, index) => (
+                                        <div key={index} className="border border-[#222] rounded-lg p-4 bg-[#111]">
+                                            <h3 className="text-lg font-medium mb-2 flex items-center">
+                                                {anomaly.type === "Packet Loss" &&
+                                                    <Activity className="mr-2 h-5 w-5 text-yellow-400"/>}
+                                                {anomaly.type === "Downtime" &&
+                                                    <WifiOff className="mr-2 h-5 w-5 text-red-400"/>}
+                                                {anomaly.type === "High Latency" &&
+                                                    <Gauge className="mr-2 h-5 w-5 text-orange-400"/>}
+                                                {anomaly.type} ({anomaly.count} events)
+                                            </h3>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                                                {anomaly.events.slice(0, 6).map((event: any, eventIndex: number) => (
+                                                    <div
+                                                        key={eventIndex}
+                                                        className="bg-[#0a0a0a] p-2 rounded text-sm border border-[#222] hover:border-[#333]"
+                                                    >
+                                                        <span className="text-gray-400">{event.time}:</span>{" "}
+                                                        {anomaly.type === "Packet Loss" && `${event.value}% loss`}
+                                                        {anomaly.type === "Downtime" && `${event.value} seconds`}
+                                                        {anomaly.type === "High Latency" && `${event.value}ms`}
+                                                    </div>
+                                                ))}
+                                                {anomaly.events.length > 6 && (
+                                                    <div
+                                                        className="bg-[#0a0a0a] p-2 rounded text-sm text-gray-400 border border-[#222]">
+                                                        +{anomaly.events.length - 6} more events...
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
                 )}
 
                 {/* Network Details */}
-                <Card className="bg-gray-900 border-gray-800">
-                    <CardHeader>
-                        <CardTitle>Network Details</CardTitle>
-                        <CardDescription>Technical information about this network</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-400 mb-1">Site ID</h3>
-                                <p className="text-gray-200 font-mono text-sm">{networkData?.data?.metrics?.[0]?.siteId || "N/A"}</p>
+                <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 1.0}}>
+                    <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222]">
+                        <CardHeader>
+                            <CardTitle className="text-[#0ea5e9] flex items-center">
+                                <Server className="h-5 w-5 mr-2"/>
+                                Network Details
+                            </CardTitle>
+                            <CardDescription className="text-gray-400">Technical information about this
+                                network</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
+                                    <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">Site ID</h3>
+                                    <p className="text-gray-200 font-mono text-sm">{networkData?.data?.metrics?.[0]?.siteId || "N/A"}</p>
+                                </div>
+                                <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
+                                    <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">Host ID</h3>
+                                    <p className="text-gray-200 font-mono text-sm">{networkData?.data?.metrics?.[0]?.hostId || "N/A"}</p>
+                                </div>
+                                <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
+                                    <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">ISP</h3>
+                                    <p className="text-gray-200">{chartData[0]?.ispName || "N/A"}</p>
+                                </div>
+                                <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
+                                    <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">ASN</h3>
+                                    <p className="text-gray-200">
+                                        {networkData?.data?.metrics?.[0]?.periods?.[0]?.data?.wan?.ispAsn || "N/A"}
+                                    </p>
+                                </div>
+                                <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
+                                    <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">Data Points</h3>
+                                    <p className="text-gray-200">{chartData.length} hours of data</p>
+                                </div>
+                                <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
+                                    <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">Version</h3>
+                                    <p className="text-gray-200">{networkData?.data?.metrics?.[0]?.periods?.[0]?.version || "N/A"}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-400 mb-1">Host ID</h3>
-                                <p className="text-gray-200 font-mono text-sm">{networkData?.data?.metrics?.[0]?.hostId || "N/A"}</p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-400 mb-1">ISP</h3>
-                                <p className="text-gray-200">{chartData[0]?.ispName || "N/A"}</p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-400 mb-1">ASN</h3>
-                                <p className="text-gray-200">
-                                    {networkData?.data?.metrics?.[0]?.periods?.[0]?.data?.wan?.ispAsn || "N/A"}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-400 mb-1">Data Points</h3>
-                                <p className="text-gray-200">{chartData.length} hours of data</p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-400 mb-1">Version</h3>
-                                <p className="text-gray-200">{networkData?.data?.metrics?.[0]?.periods?.[0]?.version || "N/A"}</p>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                </motion.div>
             </div>
         </div>
     )

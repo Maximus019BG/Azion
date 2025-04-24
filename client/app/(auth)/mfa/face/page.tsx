@@ -4,7 +4,6 @@ import axios, {AxiosResponse} from 'axios';
 import {apiUrl} from '@/app/api/config';
 import {Commissioner} from "next/font/google";
 import Cookies from 'js-cookie';
-import Side_menu from "@/app/components/Side-menu";
 import {UserData} from "@/app/func/funcs";
 
 interface Token {
@@ -17,7 +16,7 @@ const azionText = Commissioner({subsets: ["latin"], weight: "800"});
 export default function MfaFace() {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const [showOverlay, setShowOverlay] = useState(false);
-    const[isFaceIdEnabled, setIsFaceIdEnabled] = useState<boolean>(false)
+    const [isFaceIdEnabled, setIsFaceIdEnabled] = useState<boolean>(false)
 
 
     useEffect(() => {
@@ -33,8 +32,8 @@ export default function MfaFace() {
             setIsFaceIdEnabled(response.faceIdEnabled)
         });
 
-        if(isFaceIdEnabled){
-            window.location.href="/account"
+        if (isFaceIdEnabled) {
+            window.location.href = "/account"
         }
     });
 
@@ -99,9 +98,6 @@ export default function MfaFace() {
     return (
         <div className="w-full h-dvh flex justify-center items-center bg-background">
             {showOverlay && <div className="absolute inset-0 bg-white z-50"></div>}
-            <div className="w-fit lg:w-1/4 h-full">
-                <Side_menu/>
-            </div>
             <div className="w-full h-full flex flex-col justify-center items-center">
                 <video
                     className="rounded-full custom-oval transform scale-x-[-1]"

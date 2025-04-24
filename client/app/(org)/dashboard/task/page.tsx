@@ -130,7 +130,7 @@ const Tasks: FC = () => {
                             </div>
                             <h3 className="text-xl font-semibold mb-2">No Tasks Found</h3>
                             <p className="text-gray-400 text-center">
-                                You don't have any tasks yet. {admin && "Create a new task to get started."}
+                                You don&lsquo;t have any tasks yet. {admin && "Create a new task to get started."}
                             </p>
                             {admin && (
                                 <Link

@@ -70,7 +70,7 @@ export default function RootLayout({
         <head>
             <link rel="icon" href={logo.src}/>
         </head>
-        <body className={`${inter.className} bg-background text-white overflow-x-hidden`}>
+        <body className={`${inter.className} w-full bg-background text-white overflow-x-hidden`}>
         <SidebarProvider>
             <AlertProvider>
                 <MeetingProvider>
