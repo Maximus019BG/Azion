@@ -1,12 +1,11 @@
 "use client"
 
 import type React from "react"
-import {MdAccessTime, MdAssignment, MdDescription, MdPerson, MdTitle} from "react-icons/md"
-import {RiDeleteBin5Fill} from "react-icons/ri"
+import {Calendar, Clock, Tag, Trash2, User} from 'lucide-react'
 import axios, {type AxiosResponse} from "axios"
 import {apiUrl} from "@/app/api/config"
 import Cookies from "js-cookie"
-import { IoClipboard } from "react-icons/io5"
+import {format} from "date-fns"
 
 interface Task {
     title: string
@@ -23,30 +22,45 @@ interface Task {
 const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
         case "very_high":
-            return "bg-red-500"
+            return "from-red-600 to-red-400"
         case "high":
-            return "bg-orange-500"
+            return "from-orange-600 to-orange-400"
         case "medium":
-            return "bg-yellow-500"
+            return "from-yellow-600 to-yellow-400"
         case "low":
-            return "bg-green-500"
+            return "from-green-600 to-green-400"
         default:
-            return "bg-gray-500"
+            return "from-gray-600 to-gray-400"
     }
 }
 
-const getColor = (priority: string) => {
+const getPriorityBgColor = (priority: string) => {
     switch (priority.toLowerCase()) {
         case "very_high":
-            return "text-red-500"
+            return "bg-red-500/10 text-red-400 border-red-500/20"
         case "high":
-            return "text-orange-500"
+            return "bg-orange-500/10 text-orange-400 border-orange-500/20"
         case "medium":
-            return "text-yellow-500"
+            return "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
         case "low":
-            return "text-green-500"
+            return "bg-green-500/10 text-green-400 border-green-500/20"
         default:
-            return "text-gray-500"
+            return "bg-gray-500/10 text-gray-400 border-gray-500/20"
+    }
+}
+
+const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+        case "completed":
+            return "bg-green-500/10 text-green-400 border-green-500/20"
+        case "in progress":
+            return "bg-blue-500/10 text-blue-400 border-blue-500/20"
+        case "pending":
+            return "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+        case "cancelled":
+            return "bg-red-500/10 text-red-400 border-red-500/20"
+        default:
+            return "bg-gray-500/10 text-gray-400 border-gray-500/20"
     }
 }
 
@@ -81,43 +95,66 @@ const TasksCard: React.FC<Task> = ({
         }
     }
 
+    // Format date if it's a valid date string
+    const formattedDate = (() => {
+        try {
+            const date = new Date(data)
+            return isNaN(date.getTime()) ? data : format(date, "MMM d, yyyy")
+        } catch (e) {
+            return data
+        }
+    })()
+
     return (
         <div
-            className="bg-base-300 rounded-lg shadow-lg overflow-hidden transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl cursor-pointer"
+            className="bg-[#0a0a0a] rounded-xl border border-[#222] shadow-lg overflow-hidden transition duration-300 ease-in-out transform hover:scale-102 hover:shadow-[0_0_15px_rgba(14,165,233,0.2)] cursor-pointer"
             onClick={onClick}
         >
-            <div className={`h-2 ${getPriorityColor(priority)}`}/>
-            <div className="p-6 space-y-4">
+            <div className={`h-1.5 bg-gradient-to-r ${getPriorityColor(priority)}`}/>
+            <div className="p-5 space-y-4">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center text-lg font-semibold">
-                        <IoClipboard className={`mr-2 ${getColor(priority)}`}/>
-                        <h3 className="truncate">{title}</h3>
-                    </div>
-                    <span className={`text-xs font-medium px-2 py-1 rounded ${getPriorityColor(priority)} text-white`}>
-            {priority.toUpperCase()}
+                    <h3 className="text-lg font-semibold text-white truncate">{title}</h3>
+                    <span
+                        className={`text-xs font-medium px-2 py-1 rounded-full border ${getPriorityBgColor(priority)}`}>
+            {priority.replace("_", " ").toUpperCase()}
           </span>
                 </div>
-                <div className="flex items-center text-sm text-gray-400">
-                    {createdBy}
-                    {isCreator && <span className="ml-1 text-xs">(you)</span>}
+
+                <p className="text-gray-400 text-sm line-clamp-2">{description}</p>
+
+                <div className="grid grid-cols-1 gap-2 pt-2">
+                    <div className="flex items-center text-xs text-gray-400">
+                        <Tag className="h-3.5 w-3.5 mr-2 text-[#0ea5e9]"/>
+                        <span className={`px-2 py-0.5 rounded-full border ${getStatusColor(status)}`}>
+              {status}
+            </span>
+                    </div>
+
+                    <div className="flex items-center text-xs text-gray-400">
+                        <Calendar className="h-3.5 w-3.5 mr-2 text-[#0ea5e9]"/>
+                        {formattedDate}
+                    </div>
+
+                    <div className="flex items-center text-xs text-gray-400">
+                        <User className="h-3.5 w-3.5 mr-2 text-[#0ea5e9]"/>
+                        {createdBy}
+                        {isCreator && <span className="ml-1 text-[#0ea5e9]">(you)</span>}
+                    </div>
                 </div>
-                <div className="flex items-start text-sm text-gray-400">
-                    <p className="line-clamp-2">{description}</p>
-                </div>
-                <div className="flex items-center text-sm text-gray-400">
-                    {status}
-                </div>
-                <div className="flex items-center text-sm text-gray-400">
-                    {data}
-                </div>
-                <div className="flex items-center justify-end">
+
+                <div className="flex items-center justify-between pt-2 border-t border-[#222]">
+                    <div className="flex items-center text-xs text-gray-500">
+                        <Clock className="h-3.5 w-3.5 mr-1"/>
+                        Updated recently
+                    </div>
+
                     {isCreator && (
                         <button
                             onClick={deleteTask}
-                            className="text-red-400 hover:text-red-300 transition-colors duration-200"
+                            className="text-gray-400 hover:text-red-400 transition-colors duration-200 p-1 rounded-full hover:bg-red-500/10"
                             aria-label="Delete task"
                         >
-                            <RiDeleteBin5Fill className="text-xl"/>
+                            <Trash2 className="h-4 w-4"/>
                         </button>
                     )}
                 </div>
@@ -127,4 +164,3 @@ const TasksCard: React.FC<Task> = ({
 }
 
 export default TasksCard
-

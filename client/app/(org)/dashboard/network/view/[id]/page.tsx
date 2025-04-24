@@ -7,7 +7,19 @@ import Cookies from "js-cookie"
 import {sessionCheck, UserHasRight} from "@/app/func/funcs"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
-import {Area, AreaChart, Bar, BarChart, CartesianGrid, Formatter, Line, LineChart, ResponsiveContainer, XAxis, YAxis,} from "recharts"
+import {
+    Area,
+    AreaChart,
+    Bar,
+    BarChart,
+    CartesianGrid,
+    Formatter,
+    Line,
+    LineChart,
+    ResponsiveContainer,
+    XAxis,
+    YAxis,
+} from "recharts"
 import {ChartContainer, ChartLegend, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
 import {Activity, ArrowDown, Clock, Gauge, Wifi} from 'lucide-react'
 import {format} from "date-fns"
@@ -239,15 +251,15 @@ export default function NetworkDetailPage() {
     }
 
     // Formatter functions for chart tooltips with the correct Recharts Formatter signature
-    const formatLatency: Formatter<any, any> = (value) => {
+    const formatLatency: Formatter<any, any> = (value: string) => {
         return `${value} ms`;
     }
 
-    const formatSpeed: Formatter<any, any> = (value) => {
+    const formatSpeed: Formatter<any, any> = (value: string) => {
         return `${value} Mbps`;
     }
 
-    const formatPercentage: Formatter<any, any> = (value) => {
+    const formatPercentage: Formatter<any, any> = (value: string) => {
         return `${value}%`;
     }
 
@@ -384,7 +396,8 @@ export default function NetworkDetailPage() {
                                                 }}
                                             />
                                             <YAxis stroke="rgba(255, 255, 255, 0.5)"/>
-                                            <ChartTooltip content={<ChartTooltipContent indicator="line" formatter={formatLatency}/>}/>
+                                            <ChartTooltip content={<ChartTooltipContent indicator="line"
+                                                                                        formatter={formatLatency}/>}/>
                                             <Line
                                                 type="monotone"
                                                 dataKey="avgLatency"
@@ -440,7 +453,8 @@ export default function NetworkDetailPage() {
                                                 }}
                                             />
                                             <YAxis stroke="rgba(255, 255, 255, 0.5)"/>
-                                            <ChartTooltip content={<ChartTooltipContent indicator="dot" formatter={formatSpeed}/>}/>
+                                            <ChartTooltip content={<ChartTooltipContent indicator="dot"
+                                                                                        formatter={formatSpeed}/>}/>
                                             <Area
                                                 type="monotone"
                                                 dataKey="download"
@@ -490,7 +504,8 @@ export default function NetworkDetailPage() {
                                                 }}
                                             />
                                             <YAxis stroke="rgba(255, 255, 255, 0.5)"/>
-                                            <ChartTooltip content={<ChartTooltipContent indicator="dot" formatter={formatPercentage}/>}/>
+                                            <ChartTooltip content={<ChartTooltipContent indicator="dot"
+                                                                                        formatter={formatPercentage}/>}/>
                                             <Bar dataKey="packetLoss" fill="hsl(43, 96%, 56%)" radius={[4, 4, 0, 0]}/>
                                             <ChartLegend/>
                                         </BarChart>
@@ -527,7 +542,8 @@ export default function NetworkDetailPage() {
                                                 }}
                                             />
                                             <YAxis domain={[95, 100]} stroke="rgba(255, 255, 255, 0.5)"/>
-                                            <ChartTooltip content={<ChartTooltipContent indicator="line" formatter={formatPercentage}/>}/>
+                                            <ChartTooltip content={<ChartTooltipContent indicator="line"
+                                                                                        formatter={formatPercentage}/>}/>
                                             <Line
                                                 type="monotone"
                                                 dataKey="uptime"
@@ -557,9 +573,12 @@ export default function NetworkDetailPage() {
                                 {anomalies.map((anomaly, index) => (
                                     <div key={index} className="border border-gray-800 rounded-lg p-4">
                                         <h3 className="text-lg font-medium mb-2 flex items-center">
-                                            {anomaly.type === "Packet Loss" && <Activity className="mr-2 h-5 w-5 text-yellow-400"/>}
-                                            {anomaly.type === "Downtime" && <Wifi className="mr-2 h-5 w-5 text-red-400"/>}
-                                            {anomaly.type === "High Latency" && <Gauge className="mr-2 h-5 w-5 text-orange-400"/>}
+                                            {anomaly.type === "Packet Loss" &&
+                                                <Activity className="mr-2 h-5 w-5 text-yellow-400"/>}
+                                            {anomaly.type === "Downtime" &&
+                                                <Wifi className="mr-2 h-5 w-5 text-red-400"/>}
+                                            {anomaly.type === "High Latency" &&
+                                                <Gauge className="mr-2 h-5 w-5 text-orange-400"/>}
                                             {anomaly.type} ({anomaly.count} events)
                                         </h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">

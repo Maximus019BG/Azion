@@ -2,7 +2,6 @@
 import React, {type FC, use, useEffect, useState} from "react"
 import {getTasks} from "@/app/func/org"
 import Loading from "@/app/components/Loading"
-import SideMenu from "@/app/components/Side-menu"
 import {apiUrl} from "@/app/api/config"
 import axios from "axios"
 import Cookies from "js-cookie"
@@ -205,11 +204,6 @@ const TaskView: FC<PageProps> = ({params}) => {
 
     return (
         <div className="flex flex-col lg:flex-row w-full h-screen bg-[#090909] text-white">
-            {/* Side Menu - Hidden on mobile, visible on larger screens */}
-            <div className="w-full lg:w-1/4 h-fit lg:h-full">
-                <SideMenu/>
-            </div>
-
             {/* Main Content */}
             <div className="w-full lg:flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
                 <div className="max-w-6xl mx-auto">
