@@ -15,7 +15,7 @@ import {getOrgName} from "@/app/func/org";
 
 export function AppSidebar() {
     const [org, setOrg] = useState<string | null>("")
-    const [access, setAccess] = useState<string>("")
+    const [access, setAccess] = useState<string | undefined>("")
     const [userData, setUserData] = useState<UserDataType | null>(null);
     const [loadingOrg, setLoadingOrg] = useState(true);
     const [loadingUser, setLoadingUser] = useState(true);
@@ -29,13 +29,19 @@ export function AppSidebar() {
 
         const fetchUserData = async () => {
             const data = await UserData()
-            setAccess(data.access)
             setUserData(data)
+            setAccess(data.access)
             setLoadingUser(false)
         }
 
-        fetchOrgName()
-        fetchUserData()
+        fetchUserData().then(() => {
+            setLoadingUser(false);
+        })
+
+        setLoadingUser(false);
+        fetchOrgName().then(() => {
+            setLoadingOrg(false);
+        })
     }, [])
 
     return (
@@ -46,7 +52,7 @@ export function AppSidebar() {
                         <Building className="h-5 w-5"/>
                     </div>
                     <div className="font-semibold">
-                        {loadingOrg ? <Skeleton className="w-36 h-8"/> : org}
+                        {loadingOrg ? <Skeleton className="w-36 h-8"/> : (!org ? "Personal" : org)}
                     </div>
                 </div>
             </SidebarHeader>
@@ -78,7 +84,7 @@ export function AppSidebar() {
                                                 </Link>
                                             </SidebarMenuButton>
 
-                                            {access.includes("roles:read") && (
+                                            {access?.includes("roles:read") && (
                                                 <SidebarMenuButton className="hover:bg-neutral-900" asChild size="sm">
                                                     <Link href="/dashboard/settings/roles">
                                                         <UserCircle className="mr-2 h-4 w-4"/>
@@ -87,7 +93,7 @@ export function AppSidebar() {
                                                 </SidebarMenuButton>
                                             )}
 
-                                            {access.includes("employees:read") && (
+                                            {access?.includes("employees:read") && (
                                                 <SidebarMenuButton className="hover:bg-neutral-900" asChild size="sm">
                                                     <Link href="/dashboard/settings/employees">
                                                         <Users className="mr-2 h-4 w-4"/>
@@ -96,7 +102,7 @@ export function AppSidebar() {
                                                 </SidebarMenuButton>
                                             )}
 
-                                            {access.includes("settings:write") && (
+                                            {access?.includes("settings:write") && (
                                                 <SidebarMenuButton className="hover:bg-neutral-900" asChild size="sm">
                                                     <Link href="/dashboard/settings">
                                                         <Cog className="mr-2 h-4 w-4"/>
@@ -109,7 +115,7 @@ export function AppSidebar() {
                                 </SidebarMenuItem>
 
                                 <SidebarMenuItem>
-                                    {access.includes("tasks:write") ? (
+                                    {access?.includes("tasks:write") ? (
                                         <Collapsible className="w-full">
                                             <CollapsibleTrigger className="w-full">
                                                 <SidebarMenuButton className="w-full justify-between hover:bg-neutral-800 ">
@@ -123,7 +129,7 @@ export function AppSidebar() {
                                             </CollapsibleTrigger>
                                             <CollapsibleContent
                                                 className="animate-accordion-down space-y-1 overflow-hidden pl-6 pr-2 transition-all">
-                                                {access.includes("tasks:read") && (
+                                                {access?.includes("tasks:read") && (
                                                     <SidebarMenuButton className="hover:bg-neutral-900" asChild size="sm">
                                                         <Link href="/dashboard/task">
                                                             <Settings className="mr-2 h-4 w-4"/>
@@ -132,7 +138,7 @@ export function AppSidebar() {
                                                     </SidebarMenuButton>
                                                 )}
 
-                                                {access.includes("tasks:write") && (
+                                                {access?.includes("tasks:write") && (
                                                     <SidebarMenuButton className="hover:bg-neutral-900" asChild size="sm">
                                                         <Link href="/dashboard/task/create">
                                                             <PlusCircle className="mr-2 h-4 w-4"/>
@@ -155,7 +161,7 @@ export function AppSidebar() {
                         )
                     )}
 
-                    {(access.includes("cameras:read") || access.includes("cameras:write")) && org && (
+                    {(access?.includes("cameras:read") || access?.includes("cameras:write")) && org && (
                         <SidebarMenuItem>
                             <SidebarMenuButton asChild className={"hover:bg-neutral-800"}>
                                 <Link href="/cam/list">

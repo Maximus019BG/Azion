@@ -85,10 +85,11 @@ const UserData = async (): Promise<UserDataType> => {
         .then((response: AxiosResponse) => {
             return {
                 name: response.data.name,
+                orgid: response.data.orgid,
                 email: response.data.email,
                 age: response.data.age,
                 role: response.data.role,
-                access: response.data.role.roleAccess,
+                access: response.data.role?.roleAccess,
                 projects: response.data.projects,
                 profilePicture: response.data.profilePicture,
                 mfaEnabled: response.data.mfaEnabled,
@@ -128,7 +129,7 @@ const UserData = async (): Promise<UserDataType> => {
 const UserHasRight = async (right: string) => {
     try {
         const r = await UserData();
-        if(!r.access.includes(right)){
+        if (!r.access?.includes(right)) {
             window.location.href="/organizations";
         }
     } catch (error) {
@@ -339,7 +340,7 @@ const byteArrayToBase64 = async (byteArray: number[]): Promise<string | null> =>
 const canEditCalendar = async ():Promise<boolean|undefined>  =>{
     try {
         const r = await UserData();
-        return r.access.includes("calendar:write");
+        return r.access?.includes("calendar:write");
     } catch (error) {
         console.error("Error checking user rights:", error);
         return false;
