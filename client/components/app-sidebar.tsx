@@ -172,6 +172,17 @@ export function AppSidebar() {
                         </SidebarMenuItem>
                     )}
 
+                    {access?.includes("networks") && org && (
+                        <SidebarMenuItem>
+                            <SidebarMenuButton asChild className={"hover:bg-neutral-800"}>
+                                <Link href="/dashboard/network">
+                                    <Video className="mr-2 h-4 w-4 text-slate-200"/>
+                                    <span className={"text-slate-200"}>Network</span>
+                                </Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    )}
+
                     {org && (
                         <SidebarMenuItem>
                             <SidebarMenuButton asChild className={"hover:bg-neutral-800"}>
