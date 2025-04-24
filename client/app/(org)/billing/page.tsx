@@ -2,8 +2,8 @@
 import {useEffect, useState} from "react"
 import {useRouter, useSearchParams} from "next/navigation"
 import {Check} from "lucide-react"
-import CheckoutButton from "../components/stripe/CheckoutButton"
-import QuantitySelector from "../components/stripe/QuantitySelector"
+import CheckoutButton from "../../components/stripe/CheckoutButton"
+import QuantitySelector from "../../components/stripe/QuantitySelector"
 
 export default function BillingPage() {
     const router = useRouter()
