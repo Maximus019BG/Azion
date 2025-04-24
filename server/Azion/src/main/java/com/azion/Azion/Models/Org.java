@@ -166,6 +166,9 @@ public class Org {
     }
     
     public String getSubscriptionID() throws Exception {
+        if (subscriptionID == null || subscriptionID.isEmpty()) {
+            return null;
+        }
         return StripeUtil.decrypt(subscriptionID);
     }
     
