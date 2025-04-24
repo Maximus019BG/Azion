@@ -17,7 +17,7 @@ import {ScrollArea} from "@/components/ui/scroll-area"
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu"
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
 import ReturnButton from "@/app/components/ReturnButton"
-import {ArrowLeft, Edit, MoreVertical, Search, Send, Trash2} from "lucide-react"
+import {ArrowLeft, Edit, Info, MessageSquare, MoreVertical, Phone, Search, Send, Trash2, Video,} from "lucide-react"
 
 const ChatPage = () => {
     const [messages, setMessages] = useState<Message[]>([])
@@ -258,14 +258,17 @@ const ChatPage = () => {
     }
 
     return (
-        <div className="flex flex-col md:flex-row bg-[#0a0a0a] text-white w-full min-h-screen">
+        <div
+            className="flex flex-col md:flex-row bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-white w-full min-h-screen">
             {/* Mobile Header */}
             {isMobileView && (
-                <div className="flex items-center justify-between p-4 bg-[#111] border-b border-[#222]">
+                <div className="flex items-center justify-between p-4 bg-[#0a0a0a] border-b border-[#222] shadow-lg">
                     <ReturnButton to="/dashboard"/>
-                    <h1 className="text-xl font-bold text-[#0ea5e9]">Messages</h1>
+                    <h1 className="text-xl font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">
+                        Messages
+                    </h1>
                     <Button variant="ghost" size="icon" onClick={toggleUserList}
-                            className="text-gray-400 hover:text-white">
+                            className="text-gray-400 hover:text-[#0ea5e9]">
                         {showUserList ? <Send className="h-5 w-5"/> : <ArrowLeft className="h-5 w-5"/>}
                     </Button>
                 </div>
@@ -273,11 +276,13 @@ const ChatPage = () => {
 
             {/* User List */}
             {(showUserList || !isMobileView) && (
-                <div className="w-full md:w-1/3 lg:w-1/4 border-r border-[#222] bg-[#111] flex flex-col h-screen">
+                <div
+                    className="w-full md:w-1/3 lg:w-1/4 border-r border-[#222] bg-[#0a0a0a] flex flex-col h-screen shadow-xl">
                     {!isMobileView && (
-                        <div className="p-4 flex items-center">
-                            <ReturnButton to="/dashboard"/>
-                            <h2 className="text-2xl font-bold ml-2 text-[#0ea5e9]">Messages</h2>
+                        <div className="p-4 flex justify-center items-center border-b border-[#222]">
+                            <h2 className="text-2xl font-bold ml-2 bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">
+                                Messages
+                            </h2>
                         </div>
                     )}
 
@@ -289,36 +294,47 @@ const ChatPage = () => {
                                 placeholder="Search users..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 bg-[#1a1a1a] border-[#333] focus:border-[#0ea5e9] text-white"
+                                className="pl-10 bg-[#111] border-[#333] focus:border-[#0ea5e9] text-white rounded-full shadow-inner"
                             />
                         </div>
                     </div>
 
-                    <ScrollArea className="flex-1 p-4">
-                        <div className="space-y-2">
+                    <div className="flex px-4 py-2 border-b border-[#222]">
+                        <Button variant="ghost" className="flex-1 text-[#0ea5e9]" size="sm">
+                            <MessageSquare className="h-4 w-4 mr-2"/>
+                            Chats
+                        </Button>
+                    </div>
+
+                    <ScrollArea className="flex-1 px-2">
+                        <div className="space-y-1 py-2">
                             {filteredUsers.map((user) => (
                                 <div
                                     key={user.email}
-                                    className={`flex items-center space-x-3 cursor-pointer rounded-lg p-3 transition-all duration-200 ${
+                                    className={`flex items-center space-x-3 cursor-pointer rounded-xl p-3 transition-all duration-200 ${
                                         selectedUser?.email === user.email
-                                            ? "bg-[#1a1a1a] border-l-2 border-[#0ea5e9]"
-                                            : "hover:bg-[#1a1a1a]"
+                                            ? "bg-gradient-to-r from-[#0c4a6e] to-[#0c4a6e]/50 shadow-[0_0_10px_rgba(14,165,233,0.2)]"
+                                            : "hover:bg-[#111]"
                                     }`}
                                     onClick={() => openChatWindow(user)}
                                 >
                                     <div className="relative">
-                                        <Image
-                                            src={profilePictureSrcs[user.email] || defaultImageSrc}
-                                            alt={`${user.name}'s profile`}
-                                            width={40}
-                                            height={40}
-                                            className="rounded-full object-cover"
-                                            onError={(e) => {
-                                                e.currentTarget.src = defaultImageSrc
-                                            }}
-                                        />
+                                        <div
+                                            className={`${selectedUser?.email === user.email ? "ring-2 ring-[#0ea5e9] p-0.5 rounded-full" : ""}`}
+                                        >
+                                            <Image
+                                                src={profilePictureSrcs[user.email] || defaultImageSrc}
+                                                alt={`${user.name}'s profile`}
+                                                width={40}
+                                                height={40}
+                                                className="rounded-full object-cover"
+                                                onError={(e) => {
+                                                    e.currentTarget.src = defaultImageSrc
+                                                }}
+                                            />
+                                        </div>
                                         <span
-                                            className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#111]"></span>
+                                            className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#0a0a0a]"></span>
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="font-medium truncate">{user.name}</p>
@@ -336,35 +352,82 @@ const ChatPage = () => {
                 {selectedUser ? (
                     <>
                         {/* Chat Header */}
-                        <div className="flex items-center p-4 border-b border-[#222] bg-[#111]">
+                        <div className="flex items-center p-4 border-b border-[#222] bg-[#0a0a0a] shadow-md">
                             {isMobileView && (
                                 <Button
                                     variant="ghost"
                                     size="icon"
                                     onClick={toggleUserList}
-                                    className="mr-2 text-gray-400 hover:text-white"
+                                    className="mr-2 text-gray-400 hover:text-[#0ea5e9]"
                                 >
                                     <ArrowLeft className="h-5 w-5"/>
                                 </Button>
                             )}
-                            <Image
-                                src={profilePictureSrcs[selectedUser.email] || defaultImageSrc}
-                                alt={`${selectedUser.name}'s profile`}
-                                width={40}
-                                height={40}
-                                className="rounded-full mr-3 object-cover"
-                                onError={(e) => {
-                                    e.currentTarget.src = defaultImageSrc
-                                }}
-                            />
+                            <div className="relative">
+                                <Image
+                                    src={profilePictureSrcs[selectedUser.email] || defaultImageSrc}
+                                    alt={`${selectedUser.name}'s profile`}
+                                    width={44}
+                                    height={44}
+                                    className="rounded-full mr-3 object-cover ring-2 ring-[#0ea5e9]/30 p-0.5"
+                                    onError={(e) => {
+                                        e.currentTarget.src = defaultImageSrc
+                                    }}
+                                />
+                                <span
+                                    className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#0a0a0a]"></span>
+                            </div>
                             <div className="flex-1">
                                 <h3 className="font-semibold">{selectedUser.name}</h3>
                                 <p className="text-xs text-gray-400">{selectedUser.email}</p>
                             </div>
+                            <div className="flex space-x-1">
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button variant="ghost" size="icon"
+                                                    className="text-gray-400 hover:text-[#0ea5e9]">
+                                                <Phone className="h-5 w-5"/>
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Voice call</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button variant="ghost" size="icon"
+                                                    className="text-gray-400 hover:text-[#0ea5e9]">
+                                                <Video className="h-5 w-5"/>
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Video call</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button variant="ghost" size="icon"
+                                                    className="text-gray-400 hover:text-[#0ea5e9]">
+                                                <Info className="h-5 w-5"/>
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Info</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
                         </div>
 
                         {/* Messages */}
-                        <ScrollArea className="flex-1 p-4 bg-[#0a0a0a]">
+                        <ScrollArea className="flex-1 p-4 bg-gradient-to-b from-[#080808] to-[#0a0a0a]">
                             <div className="flex flex-col space-y-4">
                                 {messages
                                     .filter(
@@ -377,10 +440,10 @@ const ChatPage = () => {
                                              className={`flex ${msg.from === userEmail ? "justify-end" : "justify-start"}`}>
                                             <div className="max-w-[80%] group">
                                                 <div
-                                                    className={`relative rounded-2xl px-4 py-2 shadow-md ${
+                                                    className={`relative rounded-2xl px-4 py-2 shadow-lg ${
                                                         msg.from === userEmail
-                                                            ? "bg-[#0ea5e9] text-white rounded-tr-none"
-                                                            : "bg-[#1a1a1a] text-white rounded-tl-none"
+                                                            ? "bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] text-white rounded-tr-none"
+                                                            : "bg-[#1a1a1a] text-white rounded-tl-none border border-[#222]"
                                                     }`}
                                                 >
                                                     <p className="break-words">{msg.content}</p>
@@ -443,10 +506,10 @@ const ChatPage = () => {
                         </ScrollArea>
 
                         {/* Message Input */}
-                        <div className="p-4 border-t border-[#222] bg-[#111]">
+                        <div className="p-4 border-t border-[#222] bg-[#0a0a0a]">
                             <div className="flex items-center">
                                 <Input
-                                    className="flex-grow bg-[#1a1a1a] border-[#333] focus:border-[#0ea5e9] text-white"
+                                    className="flex-grow bg-[#111] border-[#333] focus:border-[#0ea5e9] text-white rounded-full shadow-inner"
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
@@ -458,7 +521,7 @@ const ChatPage = () => {
                                         <TooltipTrigger asChild>
                                             <Button
                                                 onClick={editingMessage ? () => updateMessage(editingMessage.id, input) : sendPrivateMessage}
-                                                className="ml-2 bg-[#0ea5e9] hover:bg-[#0284c7]"
+                                                className="ml-2 bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0284c7] hover:to-[#0369a1] rounded-full shadow-[0_0_10px_rgba(14,165,233,0.3)]"
                                                 disabled={!input.trim()}
                                             >
                                                 {editingMessage ? <Edit className="h-5 w-5"/> :
@@ -481,7 +544,7 @@ const ChatPage = () => {
                                                         setEditingMessage(null)
                                                         setInput("")
                                                     }}
-                                                    className="ml-2 text-gray-400 hover:text-white"
+                                                    className="ml-2 text-gray-400 hover:text-[#0ea5e9]"
                                                 >
                                                     <ArrowLeft className="h-5 w-5"/>
                                                 </Button>
@@ -496,11 +559,15 @@ const ChatPage = () => {
                         </div>
                     </>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-                        <div className="w-20 h-20 bg-[#1a1a1a] rounded-full flex items-center justify-center mb-4">
-                            <Send className="h-10 w-10 text-[#0ea5e9]"/>
+                    <div
+                        className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-[#080808] to-[#0a0a0a]">
+                        <div
+                            className="w-24 h-24 bg-gradient-to-br from-[#0c4a6e] to-[#0c4a6e]/30 rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(14,165,233,0.2)]">
+                            <Send className="h-12 w-12 text-[#0ea5e9]"/>
                         </div>
-                        <h3 className="text-xl font-semibold mb-2">Your Messages</h3>
+                        <h3 className="text-2xl font-semibold mb-3 bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">
+                            Your Messages
+                        </h3>
                         <p className="text-gray-400 max-w-md">
                             Select a user from the list to start a conversation or continue where you left off.
                         </p>
