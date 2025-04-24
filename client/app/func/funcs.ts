@@ -121,6 +121,8 @@ const UserData = async (): Promise<UserDataType> => {
     * Azion Cameras (Write)   cameras:write
     *
     * Azion Cameras (Read)    cameras:read
+    *
+    * Unify Network             network
     * </summary>
 */
 const UserHasRight = async (right: string) => {
