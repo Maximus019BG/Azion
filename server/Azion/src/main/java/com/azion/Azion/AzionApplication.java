@@ -33,6 +33,7 @@ public class AzionApplication {
 		System.setProperty("stripe.secret.key", dotenv.get("STRIPE_SECRET_KEY"));
 		System.setProperty("stripe.success.url", dotenv.get("STRIPE_SUCCESS_URL"));
 		System.setProperty("stripe.cancel.url", dotenv.get("STRIPE_CANCEL_URL"));
+		System.setProperty("secretNetwork", dotenv.get("SECRET_NETWORK"));
 		
 		SpringApplication.run(AzionApplication.class, args);
 	}
