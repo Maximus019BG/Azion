@@ -24,7 +24,7 @@ export default function BillingPage() {
         standart: {
             name: "Standart",
             price: "$5",
-            priceId: "price_standard",
+            priceId: "price_1RGl1fQw1qI3j2q2nvgWPwzD",
             basePrice: 5,
             description: "Perfect for small teams and startups",
             features: [
@@ -42,7 +42,7 @@ export default function BillingPage() {
         pro: {
             name: "Pro",
             price: "$10",
-            priceId: "price_pro",
+            priceId: "price_1RGnggQw1qI3j2q27lmkaC2w",
             basePrice: 10,
             description: "Ideal for growing organizations",
             features: [
