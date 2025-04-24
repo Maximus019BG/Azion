@@ -163,6 +163,13 @@ public class User {
             this.password = null;
             return;
         }
+        
+        if (password.length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long");
+        }
+        if (!UserUtility.isValidPassword(password)) {
+            throw new IllegalArgumentException("Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character");
+        }
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
     
