@@ -10,6 +10,7 @@ public class OrgDTOImpl implements OrgDTO {
     private String orgEmail;
     private String orgPhone;
     private String orgDescription;
+    private String customerID;
     private String subscriptionID;
     private Long maxEmployeeCount;
     private OrgType plan;
@@ -113,5 +114,13 @@ public class OrgDTOImpl implements OrgDTO {
     
     public void setEmployeeCount(Long employeeCount) {
         this.employeeCount = employeeCount;
+    }
+    
+    public String getCustomerID() {
+        return customerID;
+    }
+    
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
     }
 }
