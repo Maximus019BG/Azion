@@ -61,7 +61,7 @@ public class OrgController {
     
     @Transactional
     @PostMapping("/create")
-    public ResponseEntity<?> createOrg(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> createOrg(@RequestBody Map<String, Object> request) throws Exception {
         String orgName = (String) request.get("orgName");
         String orgType = (String) request.get("orgType");
         String orgAddress = (String) request.get("orgAddress");
@@ -86,6 +86,7 @@ public class OrgController {
         org.setEmployeeCount(1L);
         org.setMaxEmployeeCount(5L);
         org.setPlan(OrgType.FREE);
+        org.setCustomerID(null);
         org.setUsers(new HashSet<>());
         orgRepository.save(org);
         
@@ -572,5 +573,24 @@ public class OrgController {
         orgService.ensureOwnerHasLevelOne(user.getOrgid());
         
         return ResponseEntity.ok("Roles and users updated successfully.");
+    }
+    
+    @Transactional
+    @GetMapping("/get/plan")
+    public ResponseEntity<?> getOrgPlan(@RequestHeader("authorization") String accessToken) {
+        User user = tokenService.getUserFromToken(accessToken);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+        }
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("plan", org.getPlan().toString());
+        response.put("maxEmployeeCount", org.getMaxEmployeeCount());
+        
+        return ResponseEntity.ok(response);
     }
 }

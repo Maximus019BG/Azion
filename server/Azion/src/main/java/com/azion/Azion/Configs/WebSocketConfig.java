@@ -20,7 +20,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat")
-                .setAllowedOrigins(System.getProperty("requestOrigin"), System.getProperty("requestOriginMobile"))
+                .setAllowedOrigins(
+                        "https://www.azion.online",
+                        "https://azion.online",
+                        "https://azion-maximus019bgs-projects.vercel.app",
+                        "http://localhost:3000"
+                )
                 .withSockJS();
     }
 }
