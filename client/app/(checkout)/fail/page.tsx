@@ -1,12 +1,12 @@
 "use client"
-
+import {Suspense} from "react"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import {AlertTriangle, ArrowLeft} from "lucide-react"
 import Link from "next/link"
 import {useSearchParams} from "next/navigation"
 
-export default function TransactionFailed() {
+function TransactionFailedContent() {
     const searchParams = useSearchParams()
     const errorCode = searchParams.get("code") || "unknown"
     const errorMessage =
@@ -54,5 +54,13 @@ export default function TransactionFailed() {
                 </CardFooter>
             </Card>
         </div>
+    )
+}
+
+export default function TransactionFailed() {
+    return (
+        <Suspense fallback={<div className="text-white">Loading...</div>}>
+            <TransactionFailedContent/>
+        </Suspense>
     )
 }

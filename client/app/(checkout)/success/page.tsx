@@ -1,6 +1,6 @@
 "use client"
 
-import {useEffect, useState} from "react"
+import {Suspense, useEffect, useState} from "react"
 import axios from "axios"
 import Cookies from "js-cookie"
 import {useSearchParams} from "next/navigation"
@@ -10,7 +10,7 @@ import {Button} from "@/components/ui/button"
 import {ArrowLeft, CheckCircle, Loader2, XCircle} from "lucide-react"
 import Link from "next/link"
 
-export default function VerifyCheckoutCallback() {
+function VerifyCheckoutCallback() {
     const searchParams = useSearchParams()
     const sessionId = searchParams.get("session_id")
     const [response, setResponse] = useState(null)
@@ -121,5 +121,13 @@ export default function VerifyCheckoutCallback() {
                 </CardContent>
             </Card>
         </div>
+    )
+}
+
+export default function Page() {
+    return (
+        <Suspense fallback={<div className="text-white">Loading...</div>}>
+            <VerifyCheckoutCallback/>
+        </Suspense>
     )
 }
