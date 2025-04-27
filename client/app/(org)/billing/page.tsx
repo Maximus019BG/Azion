@@ -1,82 +1,106 @@
 "use client"
 import {useEffect, useState} from "react"
-import {useRouter, useSearchParams} from "next/navigation"
+import {useRouter} from "next/navigation"
 import {Check} from "lucide-react"
 import CheckoutButton from "../../components/stripe/CheckoutButton"
 import QuantitySelector from "../../components/stripe/QuantitySelector"
+import Cookies from "js-cookie"
+import {apiUrl} from "@/app/api/config"
+import axios from "axios"
+import {Skeleton} from "@/components/ui/skeleton";
+
+interface Plan {
+    name: string
+    price: string
+    priceId: string
+    basePrice: number
+    description: string
+    features: string[]
+    popular: boolean
+    minQuantity: number
+    maxQuantity: number
+}
+
+const plans = {
+    standard: {
+        name: "Standard",
+        price: "€5",
+        priceId: "price_1RGl1fQw1qI3j2q2nvgWPwzD",
+        basePrice: 5,
+        description: "Perfect for small teams and startups",
+        features: [
+            "Advanced security features",
+            "Task management",
+            "Calendar Management",
+            "Role Management",
+            "Azion Cameras",
+            "UniFi Integration",
+        ],
+        popular: false,
+        minQuantity: 1,
+        maxQuantity: 50,
+    },
+    pro: {
+        name: "Pro",
+        price: "€10",
+        priceId: "price_1RGnggQw1qI3j2q27lmkaC2w",
+        basePrice: 10,
+        description: "Ideal for growing organizations",
+        features: [
+            "Advanced security features",
+            "Task, Role & Calendar management",
+            "Analytics dashboard",
+            "Priority support",
+            "UniFi Integration",
+            "Azion Cameras",
+        ],
+        popular: true,
+        minQuantity: 1,
+        maxQuantity: 100,
+    },
+}
 
 export default function BillingPage() {
     const router = useRouter()
-    const searchParams = useSearchParams()
     const [selectedPlan, setSelectedPlan] = useState<string>("pro")
     const [quantity, setQuantity] = useState<number>(10)
-    const [isLoading, setIsLoading] = useState(false)
-    const [boughtPlans, setBoughtPlans] = useState<any[]>([]) // State for bought plans
+    const [isLoading, setIsLoading] = useState(true)
+    const [isCheckoutLoading, setIsCheckoutLoading] = useState(false)
+    const [boughtPlan, setBoughtPlan] = useState<Plan | null>(null)
 
-    // Get plan from URL params
+
+    // Fetch bought plan
     useEffect(() => {
-        const planParam = searchParams.get("plan")
-        if (planParam) {
-            setSelectedPlan(planParam)
+        const fetchBoughtPlans = async () => {
+            try {
+                const response = await axios.get(`${apiUrl}/org/get/plan`, {
+                    headers: {
+                        authorization: `${Cookies.get("azionAccessToken")}`,
+                    },
+                })
+                if (response.data.plan.toLowerCase() === "pro") {
+                    setIsLoading(false);
+                    setBoughtPlan({
+                        ...plans.pro,
+                        maxQuantity: response.data.maxEmployeeCount,
+                    });
+                }
+                if (response.data.plan.toLowerCase() === "standard") {
+                    setIsLoading(false);
+                    setBoughtPlan({
+                        ...plans.standard,
+                        maxQuantity: response.data.maxEmployeeCount,
+                    });
+                }
+            } catch
+                (error) {
+                console.error("Error fetching bought plans:", error)
+            }
         }
-    }, [searchParams])
 
-    // Fetch bought plans
-    // useEffect(() => {
-    //     const fetchBoughtPlans = async () => {
-    //         try {
-    //             const response = await axios.get(`${apiUrl}/user/plans`, {
-    //                 headers: {
-    //                     authorization: `Bearer ${localStorage.getItem("azionAccessToken")}`,
-    //                 },
-    //             })
-    //             setBoughtPlans(response.data.plans)
-    //         } catch (error) {
-    //             console.error("Error fetching bought plans:", error)
-    //         }
-    //     }
-    //
-    //     fetchBoughtPlans()
-    // }, [])
+        fetchBoughtPlans()
+    }, [])
 
-    const plans = {
-        standart: {
-            name: "Standart",
-            price: "€5",
-            priceId: "price_1RGl1fQw1qI3j2q2nvgWPwzD",
-            basePrice: 5,
-            description: "Perfect for small teams and startups",
-            features: [
-                "Advanced security features",
-                "Task management",
-                "Calendar Management",
-                "Role Management",
-                "Azion Cameras",
-                "UniFi Integration",
-            ],
-            popular: false,
-            minQuantity: 1,
-            maxQuantity: 50,
-        },
-        pro: {
-            name: "Pro",
-            price: "€10",
-            priceId: "price_1RGnggQw1qI3j2q27lmkaC2w",
-            basePrice: 10,
-            description: "Ideal for growing organizations",
-            features: [
-                "Advanced security features",
-                "Task, Role & Calendar management",
-                "Analytics dashboard",
-                "Priority support",
-                "UniFi Integration",
-                "Azion Cameras",
-            ],
-            popular: true,
-            minQuantity: 1,
-            maxQuantity: 100,
-        },
-    }
 
     const currentPlan = plans[selectedPlan as keyof typeof plans] || plans.pro
     const totalPrice = currentPlan.basePrice * quantity
@@ -98,6 +122,43 @@ export default function BillingPage() {
                     <p className="text-gray-400 mb-8">Review your plan details and complete your subscription</p>
 
                     {/* Bought Plans Section */}
+                    {boughtPlan && (
+                        <div className="mb-12 p-6 rounded-lg flex justify-between bg-[#0a0a0a] border border-[#222] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                            <div>
+                                <h2 className="text-xl font-semibold text-white mb-4">Your Current Plan</h2>
+                                <h3 className="text-lg font-medium text-white">{boughtPlan.name}</h3>
+                                <p className="text-sm text-gray-400 mb-4">{boughtPlan.description}</p>
+                                <ul className="space-y-2 mb-4">
+                                    {boughtPlan.features.map((feature, idx) => (
+                                        <li key={idx} className="flex items-start gap-2 text-sm">
+                                            <Check size={16} className="text-[#0ea5e9] mt-0.5 flex-shrink-0"/>
+                                            <span className="text-gray-300">{feature}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <p className="text-sm text-gray-400">Max Users: {boughtPlan.maxQuantity}</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-sm text-gray-400 mt-4">Price: {boughtPlan.price} per user / month</p>
+                                <p className="text-sm text-gray-400 mt-4">Total: {formatCurrency(boughtPlan.basePrice * boughtPlan.maxQuantity)} / month</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {isLoading && (
+                        <div className="mb-12 p-6 rounded-lg bg-[#0a0a0a] border border-[#222] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                            <Skeleton className="h-8 w-1/4 mb-4 rounded-lg"/>
+                            <Skeleton className="h-4 w-full mb-2 rounded-lg"/>
+                            <Skeleton className="h-4 w-1/2 rounded-lg mb-1"/>
+                            <Skeleton className="h-4 w-1/2 rounded-lg mb-1"/>
+                            <Skeleton className="h-4 w-1/2 rounded-lg mb-1"/>
+                            <Skeleton className="h-4 w-1/2 rounded-lg mb-1"/>
+                            <Skeleton className="h-4 w-1/2 rounded-lg mb-1"/>
+                            <Skeleton className="h-4 w-1/2 rounded-lg mb-1"/>
+                            <Skeleton className="h-4 w-1/6 rounded-lg mb-1 mt-1"/>
+                        </div>
+                    )}
+
                     <div className="mb-12 p-6 rounded-lg bg-[#0a0a0a] border border-[#222] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
                         <h2 className="text-xl font-semibold text-white mb-4">Available Plans</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -188,7 +249,7 @@ export default function BillingPage() {
                         </div>
 
                         <CheckoutButton priceId={currentPlan.priceId} quantity={quantity} className="w-full"
-                                        isLoading={isLoading}>
+                                        isLoading={isCheckoutLoading}>
                             Complete Subscription
                         </CheckoutButton>
 

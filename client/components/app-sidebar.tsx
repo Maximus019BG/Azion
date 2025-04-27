@@ -243,12 +243,14 @@ export function AppSidebar() {
                                         <span>Account</span>
                                     </Link>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem asChild>
-                                    <Link href="/billing" className="flex cursor-pointer items-center">
-                                        <CreditCard className="mr-2 h-4 w-4"/>
-                                        <span>Billing</span>
-                                    </Link>
-                                </DropdownMenuItem>
+                                {userData?.role?.name === "owner" && (
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/billing" className="flex cursor-pointer items-center">
+                                            <CreditCard className="mr-2 h-4 w-4"/>
+                                            <span>Billing</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                )}
                                 <DropdownMenuSeparator/>
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>

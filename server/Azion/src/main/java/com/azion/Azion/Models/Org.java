@@ -41,6 +41,9 @@ public class Org {
     @Column(nullable = true)
     private String subscriptionID;
     
+    @Column(nullable = true)
+    private String customerID;
+    
     @Column(nullable = true, columnDefinition = "INT DEFAULT 0")
     private Long employeeCount;
     
@@ -193,6 +196,21 @@ public class Org {
     
     public void setPlan(OrgType plan) {
         this.plan = plan;
+    }
+    
+    public String getCustomerID() throws Exception {
+        if (customerID == null || customerID.isEmpty()) {
+            return null;
+        }
+        return StripeUtil.decrypt(customerID);
+    }
+    
+    public void setCustomerID(String customerID) throws Exception {
+        if (customerID == null || customerID.isEmpty()) {
+            this.customerID = null;
+        } else {
+            this.customerID = StripeUtil.encrypt(customerID);
+        }
     }
     
     

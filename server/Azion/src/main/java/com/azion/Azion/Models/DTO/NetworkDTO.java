@@ -30,6 +30,7 @@ public class NetworkDTO {
             orgDTO.setSubscriptionID(network.getOrg().getSubscriptionID());
             orgDTO.setMaxEmployeeCount(network.getOrg().getMaxEmployeeCount());
             orgDTO.setPlan(network.getOrg().getPlan());
+            orgDTO.setCustomerID(network.getOrg().getCustomerID());
             orgDTO.setEmployeeCount(network.getOrg().getEmployeeCount());
             dto.setOrg(orgDTO);
         }

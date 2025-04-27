@@ -93,6 +93,7 @@ public class StripeConfirmController {
                     response.put("message", "Invalid product name.");
                     return ResponseEntity.status(400).body(response);
                 }
+                org.setCustomerID(session.getCustomer());
                 org.setSubscriptionID(session.getSubscription());
                 org.setMaxEmployeeCount(session.getAmountTotal() / 1000L);
                 orgRepository.save(org);
