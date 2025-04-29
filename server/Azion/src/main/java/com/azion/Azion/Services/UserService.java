@@ -1,23 +1,20 @@
 package com.azion.Azion.Services;
 
 
+import com.azion.Azion.Enums.OrgType;
 import com.azion.Azion.Enums.TokenType;
 import com.azion.Azion.Models.DTO.RoleDTO;
 import com.azion.Azion.Models.DTO.TasksDTO;
 import com.azion.Azion.Models.DTO.UserDTO;
-import com.azion.Azion.Models.Role;
-import com.azion.Azion.Models.Task;
-import com.azion.Azion.Models.Token;
-import com.azion.Azion.Models.User;
-import com.azion.Azion.Repositories.RoleRepository;
-import com.azion.Azion.Repositories.TasksRepository;
-import com.azion.Azion.Repositories.TokenRepo;
-import com.azion.Azion.Repositories.UserRepository;
+import com.azion.Azion.Models.*;
+import com.azion.Azion.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,16 +28,23 @@ public class UserService {
     private final TokenRepo tokenRepo;
     private final TasksRepository tasksRepository;
     private final RoleRepository roleRepository;
+    private final OrgRepository orgRepository;
     
+    private final String[] standardPlanRights = {
+            "calendar:write", "settings:write", "settings:read",
+            "employees:read", "roles:write", "roles:read",
+            "tasks:write", "tasks:read"
+    };
     
     @Autowired
-    public UserService(UserRepository userRepository, MFAService mfaService, TokenService tokenService, TokenRepo tokenRepo, TasksRepository tasksRepository, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, MFAService mfaService, TokenService tokenService, TokenRepo tokenRepo, TasksRepository tasksRepository, RoleRepository roleRepository, OrgRepository orgRepository) {
         this.userRepository = userRepository;
         this.mfaService = mfaService;
         this.tokenService = tokenService;
         this.tokenRepo = tokenRepo;
         this.tasksRepository = tasksRepository;
         this.roleRepository = roleRepository;
+        this.orgRepository = orgRepository;
     }
     
     private RoleDTO convertToRoleDTO(Role role) {
@@ -141,6 +145,25 @@ public class UserService {
     /// </summary>
     public boolean UserHasRight(User user, String right) {
         Role role = user.getRole();
+        if (role == null) {
+            return false;
+        }
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+        if (org == null) {
+            return false;
+        }
+        //if STANDARD plan check if right in standardPlanRights
+        if (org.getPlan() == OrgType.STANDARD) {
+            if (!Arrays.asList(standardPlanRights).contains(right)) {
+                return false;
+            }
+        }
+        if (org.getPlan() == OrgType.FREE) {
+            if (!Objects.equals(right, "tasks:read") && !Objects.equals(right, "tasks:write")) {
+                return false;
+            }
+        }
+        
         return role.getRoleAccess().contains(right.trim());
     }
     
@@ -155,7 +178,7 @@ public class UserService {
     
     //Give new access to a row
     public void updateRoleAccess(String color, String roleName, String roleAccess, String orgId) {
-        if(roleName.equals("owner")) {
+        if (roleName.equals("owner")) {
             Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
             role.setColor(color);
             return;
@@ -163,7 +186,7 @@ public class UserService {
         Role role = roleRepository.findByNameAndOrg(roleName, orgId).orElse(null);
         role.setColor(color);
         role.setRoleAccess(roleAccess);
-      
+        
     }
     
     public boolean isUserOwner(User user) {
