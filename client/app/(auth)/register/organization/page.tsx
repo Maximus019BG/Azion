@@ -388,7 +388,7 @@ const Register_Organisation = () => {
                                                         onChange={(e) => field.onChange(e.target.value)}
                                                         placeholder={field.placeholder}
                                                         rows={4}
-                                                        className={`w-full bg-blue-900/20 border ${
+                                                        className={`w-full bg-blue-900/20 border break-words ${
                                                             formErrors[field.id] ? "border-red-500/50" : "border-blue-800/50"
                                                         } border-l-0 text-white p-2 rounded-r-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500`}
                                                     />
@@ -404,7 +404,7 @@ const Register_Organisation = () => {
                                                         value={field.value}
                                                         onChange={(e) => field.onChange(e.target.value)}
                                                         placeholder={field.placeholder}
-                                                        className={`w-full bg-blue-900/20 border ${
+                                                        className={`w-full bg-blue-900/20 border break-words${
                                                             formErrors[field.id] ? "border-red-500/50" : "border-blue-800/50"
                                                         } border-l-0 text-white p-2 rounded-r-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500`}
                                                     />

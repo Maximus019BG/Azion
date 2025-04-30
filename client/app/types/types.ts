@@ -80,6 +80,10 @@ export interface EventData {
     allDay: boolean;
     link: string;
     roles: string[];
+    description: string;
+    backgroundColor: string;
+    borderColor: string;
+    textColor: string;
 }
 
 //Camera type
