@@ -91,7 +91,7 @@ const Tasks: FC = () => {
 
     return (
         <div
-            className="w-full flex flex-col lg:flex-row min-h-screen text-white">
+            className="w-full flex flex-col lg:flex-row min-h-screen text-white bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
             <div className="w-full flex-grow p-4 md:p-6 lg:p-10 overflow-auto">
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-8 text-center">
@@ -130,7 +130,8 @@ const Tasks: FC = () => {
                             </div>
                             <h3 className="text-xl font-semibold mb-2">No Tasks Found</h3>
                             <p className="text-gray-400 text-center">
-                                You don&lsquo;t have any tasks yet. {admin && "Create a new task to get started."}
+                                You don&lsquo;border-2 border-blue-800/50t have any tasks
+                                yet. {admin && "Create a new task to get started."}
                             </p>
                             {admin && (
                                 <Link

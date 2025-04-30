@@ -43,7 +43,8 @@ const OrgSettings = () => {
                     <Loading/>
                 </div>
             ) : (
-                <div className="w-full h-dvh flex flex-col lg:flex-row overflow-y-hidden">
+                <div
+                    className="w-full h-dvh flex flex-col lg:flex-row overflow-y-hidden bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
                     <div className="w-full h-full flex justify-center items-center p-6 lg:p-10 overflow-auto">
                         <OrgSettingsForm/>
                     </div>

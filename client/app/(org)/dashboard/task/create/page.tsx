@@ -238,7 +238,7 @@ const CreateTask: FC = () => {
                             Task</h1>
                         {error && <div
                             className="bg-red-500/80 text-white p-4 rounded-md mb-4 w-full max-w-4xl">{error}</div>}
-                        <Card className="w-full bg-base-300 max-w-4xl mx-auto border-accent">
+                        <Card className="w-full bg-[#0a0a0a] border-2 border-[#222] max-w-4xl mx-auto">
                             <CardContent className="p-6">
                                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                                     <TabsList className="w-full text-white bg-base-100 mb-6">
@@ -275,7 +275,7 @@ const CreateTask: FC = () => {
                                                         value={title}
                                                         onChange={(e) => setTitle(e.target.value)}
                                                         placeholder="Enter task title"
-                                                        className="border-2 border-base-100"
+                                                        className="border-2 border-base-100 bg-[#080808]"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
@@ -288,13 +288,14 @@ const CreateTask: FC = () => {
                                                         onChange={(e) => setDescription(e.target.value)}
                                                         placeholder="Enter task description"
                                                         rows={4}
-                                                        className="border-2 border-base-100"
+                                                        className="border-2 border-base-100 bg-[#080808]"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
                                                     <Label htmlFor="priority">Priority</Label>
                                                     <Select value={priority} onValueChange={setPriority}>
-                                                        <SelectTrigger className="border-2 border-base-100">
+                                                        <SelectTrigger
+                                                            className="border-2 border-base-100 bg-[#080808]">
                                                             <SelectValue placeholder="Select priority"/>
                                                         </SelectTrigger>
                                                         <SelectContent className="bg-base-300 border-2 border-base-100">
@@ -320,7 +321,7 @@ const CreateTask: FC = () => {
                                                         value={source}
                                                         onChange={(e) => setSource(e.target.value)}
                                                         placeholder="Enter task source"
-                                                        className="border-2 border-base-100"
+                                                        className="border-2 border-base-100 bg-[#080808]"
                                                     />
                                                 </div>
                                             </div>
@@ -331,7 +332,7 @@ const CreateTask: FC = () => {
                                                 <div className="flex items-center">
                                                     <Button
                                                         variant="outline"
-                                                        className={`w-full justify-start text-left font-normal ${!dueDate && "text-muted-foreground"} border-2 border-base-100`}
+                                                        className={`w-full justify-start text-left font-normal ${!dueDate && "text-muted-foreground"} border-2 border-base-100 bg-[#080808]`}
                                                         onClick={(e) => e.preventDefault()}
                                                     >
                                                         <CalendarIcon className="mr-2 h-4 w-4"/>

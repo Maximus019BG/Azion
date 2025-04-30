@@ -1,5 +1,6 @@
 "use client"
-import React, {type FC, use, useEffect, useState} from "react"
+import type React from "react"
+import {type FC, use, useEffect, useState} from "react"
 import {getTasks} from "@/app/func/org"
 import Loading from "@/app/components/Loading"
 import {apiUrl} from "@/app/api/config"
@@ -11,7 +12,20 @@ import {Poppins} from "next/font/google"
 import {sessionCheck, UserData, UserHasRight} from "@/app/func/funcs"
 import Link from "next/link"
 import ProgressComponent from "@/app/components/ProgressComponent"
-import {Calendar, CheckCircle2, ExternalLink, FileText, Info, LinkIcon, Maximize, Minimize, Upload,} from "lucide-react"
+import {
+    AlertCircle,
+    ArrowLeft,
+    CheckCircle2,
+    Clock,
+    ExternalLink,
+    FileText,
+    Info,
+    LinkIcon,
+    Maximize,
+    Minimize,
+    Upload,
+    Users,
+} from "lucide-react"
 
 const HeaderText = Poppins({subsets: ["latin"], weight: "600"})
 
@@ -170,7 +184,8 @@ const TaskView: FC<PageProps> = ({params}) => {
 
     if (loading) {
         return (
-            <div className="w-screen h-screen flex justify-center items-center">
+            <div
+                className="w-full h-screen flex justify-center items-center bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
                 <Loading/>
             </div>
         )
@@ -178,16 +193,21 @@ const TaskView: FC<PageProps> = ({params}) => {
 
     if (!task) {
         return (
-            <div className="w-screen h-screen flex justify-center items-center">
-                <div className="card w-full max-w-md bg-base-200">
-                    <div className="card-body">
-                        <h2 className="card-title">Task Not Found</h2>
-                        <p>The requested task could not be found.</p>
-                        <div className="card-actions justify-end mt-4">
-                            <Link href="/tasks" className="btn btn-primary">
-                                Go Back to Tasks
-                            </Link>
-                        </div>
+            <div
+                className="w-full h-screen flex justify-center items-center bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
+                <div
+                    className="bg-[#0a0a0a] border border-[#222] rounded-xl p-8  max-w-md w-full">
+                    <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4"/>
+                    <h2 className="text-xl font-semibold text-center mb-4">Task Not Found</h2>
+                    <p className="text-gray-400 text-center mb-6">The requested task could not be found.</p>
+                    <div className="flex justify-center">
+                        <Link
+                            href="/dashboard/tasks"
+                            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] text-white rounded-lg shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] transition-all duration-300"
+                        >
+                            <ArrowLeft className="h-4 w-4"/>
+                            Go Back to Tasks
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -196,97 +216,132 @@ const TaskView: FC<PageProps> = ({params}) => {
 
     const getStatusColor = (status: string) => {
         status = status.toLowerCase()
-        if (status.includes("done")) return "badge-success"
-        if (status.includes("progress")) return "badge-info"
-        if (status.includes("review")) return "badge-warning"
-        return "badge-ghost"
+        if (status.includes("done")) return "bg-green-500/20 text-green-400 border-green-500/30"
+        if (status.includes("progress")) return "bg-blue-500/20 text-blue-400 border-blue-500/30"
+        if (status.includes("review")) return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+        return "bg-gray-500/20 text-gray-400 border-gray-500/30"
+    }
+
+    const getPriorityColor = (priority: string) => {
+        switch (priority?.toLowerCase()) {
+            case "very_high":
+                return "bg-red-500/20 text-red-400 border-red-500/30"
+            case "high":
+                return "bg-orange-500/20 text-orange-400 border-orange-500/30"
+            case "medium":
+                return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+            case "low":
+                return "bg-green-500/20 text-green-400 border-green-500/30"
+            default:
+                return "bg-gray-500/20 text-gray-400 border-gray-500/30"
+        }
     }
 
     return (
-        <div className="flex flex-col lg:flex-row w-full h-screen bg-[#090909] text-white">
+        <div
+            className="flex flex-col lg:flex-row w-full min-h-screen bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-white">
             {/* Main Content */}
             <div className="w-full lg:flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
                 <div className="max-w-6xl mx-auto">
                     <div className="flex flex-col gap-6">
                         {/* Task Header */}
-                        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-                            <div>
-                                <h1 className={`text-xl sm:text-2xl md:text-3xl font-bold ${HeaderText.className} text-gray-300`}>
-                                    {task.name}
-                                </h1>
-                                <div className="flex flex-wrap items-center gap-2 mt-2">
-                                    <div className={`badge ${getStatusColor(task.status)}`}>{task.status}</div>
-                                    <span className="text-xs sm:text-sm text-gray-400">
-                                        Created by {task.createdBy?.name || "Unknown"}
-                                    </span>
+                        <div
+                            className="bg-[#0a0a0a] border border-[#222] rounded-xl p-6 ">
+                            <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                                <div>
+                                    <Link
+                                        href="/dashboard/tasks"
+                                        className="inline-flex items-center text-sm text-gray-400 hover:text-[#0ea5e9] mb-4 transition-colors"
+                                    >
+                                        <ArrowLeft className="h-4 w-4 mr-1"/>
+                                        Back to Tasks
+                                    </Link>
+                                    <h1
+                                        className={`text-2xl sm:text-3xl font-bold ${HeaderText.className} bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent`}
+                                    >
+                                        {task.name}
+                                    </h1>
+                                    <div className="flex flex-wrap items-center gap-3 mt-3">
+                                        <div
+                                            className={`px-3 py-1 rounded-full text-sm border ${getStatusColor(task.status)}`}>
+                                            {task.status}
+                                        </div>
+                                        <div
+                                            className={`px-3 py-1 rounded-full text-sm border ${getPriorityColor(task.priority)}`}>
+                                            {task.priority?.replace("_", " ")}
+                                        </div>
+                                        <div className="flex items-center text-gray-400 text-sm">
+                                            <Clock className="h-4 w-4 mr-1"/>
+                                            {task.date}
+                                        </div>
+                                    </div>
                                 </div>
+
+                                {/* Admin File View Button */}
+                                {admin && task.files && task.files.length > 0 && (
+                                    <button
+                                        className="px-4 py-2 bg-[#111] border border-[#333] hover:border-[#0ea5e9] text-gray-300 hover:text-[#0ea5e9] rounded-lg transition-colors flex items-center gap-2"
+                                        onClick={() => setShowSubmissionsModal(true)}
+                                    >
+                                        <FileText className="h-4 w-4"/>
+                                        <span className="hidden sm:inline">View Submissions</span>
+                                        <span className="inline sm:hidden">Submissions</span>
+                                        <span className="bg-[#0c4a6e] text-[#0ea5e9] text-xs px-2 py-0.5 rounded-full">
+                      {task.files.length}
+                    </span>
+                                    </button>
+                                )}
                             </div>
 
-                            {/* Admin File View Button */}
-                            {admin && task.files && task.files.length > 0 && (
-                                <button
-                                    className="btn btn-outline btn-sm mt-2 sm:mt-0 sm:absolute sm:right-4"
-                                    onClick={() => setShowSubmissionsModal(true)}>
-                                    <FileText className="mr-2 h-4 w-4"/>
-                                    <span className="hidden sm:inline">View Submissions ({task.files.length})</span>
-                                    <span className="inline sm:hidden">Submissions ({task.files.length})</span>
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Task Progress */}
-                        <div className="card bg-base-200 shadow-xl">
-                            <div className="card-body pb-3">
-                                <h2 className="card-title text-base sm:text-lg">Progress</h2>
-                                <ProgressComponent progress={task.progress}/>
+                            <div className="mt-6">
+                                <div className="flex items-center text-sm font-medium text-gray-400 mb-2">
+                                    <Users className="h-4 w-4 mr-2"/>
+                                    Created by {task.createdBy?.name || "Unknown"}
+                                </div>
+                                <div className="mt-4">
+                                    <h3 className="text-sm font-medium text-gray-400 mb-2 flex items-center">
+                                        <Info className="h-4 w-4 mr-2"/>
+                                        Progress
+                                    </h3>
+                                    <ProgressComponent progress={task.progress}/>
+                                </div>
                             </div>
                         </div>
 
                         {/* Task Details */}
-                        <div className="card bg-base-200 shadow-xl">
-                            <div className="card-body">
-                                <h2 className="card-title text-base sm:text-lg">Task Details</h2>
-                                <div className="space-y-4 sm:space-y-6 mt-4">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                                        {/* Date */}
-                                        <div className="space-y-2">
-                                            <div
-                                                className="flex items-center text-xs sm:text-sm font-medium text-gray-400">
-                                                <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-2"/>
-                                                Date
-                                            </div>
-                                            <div
-                                                className="p-2 sm:p-3 bg-base-300 rounded-md text-xs sm:text-sm">{task.date}</div>
-                                        </div>
-
-                                        {/* Source */}
-                                        <div className="space-y-2">
-                                            <div
-                                                className="flex items-center text-xs sm:text-sm font-medium text-gray-400">
-                                                <LinkIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-2"/>
-                                                Source
-                                            </div>
-                                            <Link
-                                                href={task.source}
-                                                target="_blank"
-                                                className="p-2 sm:p-3 bg-base-300 rounded-md text-xs sm:text-sm flex items-center text-accent hover:underline break-all"
-                                            >
-                                                {task.source}
-                                                <ExternalLink className="h-3 w-3 ml-1 flex-shrink-0"/>
-                                            </Link>
-                                        </div>
-                                    </div>
-
-                                    {/* Description */}
+                        <div
+                            className="bg-[#0a0a0a] border border-[#222] rounded-xl p-6 ">
+                            <h2 className="text-xl font-semibold mb-4 flex items-center">
+                                <Info className="h-5 w-5 mr-2 text-[#0ea5e9]"/>
+                                Task Details
+                            </h2>
+                            <div className="space-y-6">
+                                {/* Source */}
+                                {task.source && (
                                     <div className="space-y-2">
-                                        <div className="flex items-center text-xs sm:text-sm font-medium text-gray-400">
-                                            <Info className="h-3 w-3 sm:h-4 sm:w-4 mr-2"/>
-                                            Description
+                                        <div className="flex items-center text-sm font-medium text-gray-400">
+                                            <LinkIcon className="h-4 w-4 mr-2 text-[#0ea5e9]"/>
+                                            Source
                                         </div>
-                                        <div
-                                            className="p-3 sm:p-4 bg-base-300 rounded-md whitespace-pre-wrap text-xs sm:text-sm">
-                                            {task.description}
-                                        </div>
+                                        <Link
+                                            href={task.source}
+                                            target="_blank"
+                                            className="inline-flex items-center px-4 py-2 bg-[#111] border border-[#222] hover:border-[#0ea5e9] rounded-lg text-[#0ea5e9] hover:text-[#38bdf8] transition-colors"
+                                        >
+                                            <span className="truncate max-w-md">{task.source}</span>
+                                            <ExternalLink className="h-4 w-4 ml-2 flex-shrink-0"/>
+                                        </Link>
+                                    </div>
+                                )}
+
+                                {/* Description */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center text-sm font-medium text-gray-400">
+                                        <Info className="h-4 w-4 mr-2 text-[#0ea5e9]"/>
+                                        Description
+                                    </div>
+                                    <div className="p-4 bg-[#111] border border-[#222] rounded-lg whitespace-pre-wrap">
+                                        {task.description}
                                     </div>
                                 </div>
                             </div>
@@ -294,138 +349,194 @@ const TaskView: FC<PageProps> = ({params}) => {
 
                         {/* Task Submission Section */}
                         {!task.status.toLowerCase().includes("done") && (isUser || admin) && !doneByUser && (
-                            <div className="card bg-base-200 shadow-xl">
-                                <div className="card-body">
-                                    <h2 className="card-title text-base sm:text-lg">Submit Your Work</h2>
-                                    <p className="text-xs sm:text-sm text-gray-400">
-                                        Choose how you want to submit your work for this task
-                                    </p>
+                            <div
+                                className="bg-[#0a0a0a] border border-[#222] rounded-xl p-6 ">
+                                <h2 className="text-xl font-semibold mb-2 flex items-center">
+                                    <Upload className="h-5 w-5 mr-2 text-[#0ea5e9]"/>
+                                    Submit Your Work
+                                </h2>
+                                <p className="text-sm text-gray-400 mb-6">Choose how you want to submit your work for
+                                    this task</p>
 
-                                    <div className="tabs tabs-boxed bg-base-300 mt-4 sm:mt-6 mb-4 sm:mb-6">
-                                        <a
-                                            className={`tab tab-sm sm:tab-md ${inputMethod === "file" ? "tab-active" : ""}`}
-                                            onClick={() => setInputMethod("file")}
-                                        >
-                                            <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2"/>
-                                            File Upload
-                                        </a>
-                                        <a
-                                            className={`tab tab-sm sm:tab-md ${inputMethod === "editor" ? "tab-active" : ""}`}
-                                            onClick={() => setInputMethod("editor")}
-                                        >
-                                            <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2"/>
-                                            Editor
-                                        </a>
-                                        <a
-                                            className={`tab tab-sm sm:tab-md ${inputMethod === "link" ? "tab-active" : ""}`}
-                                            onClick={() => setInputMethod("link")}
-                                        >
-                                            <LinkIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2"/>
-                                            Link
-                                        </a>
+                                <div className="flex flex-wrap gap-2 mb-6">
+                                    <button
+                                        className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                                            inputMethod === "file"
+                                                ? "bg-[#0c4a6e] text-white"
+                                                : "bg-[#111] border border-[#222] hover:border-[#0ea5e9] text-gray-400 hover:text-[#0ea5e9]"
+                                        }`}
+                                        onClick={() => setInputMethod("file")}
+                                    >
+                                        <Upload className="h-4 w-4"/>
+                                        File Upload
+                                    </button>
+                                    <button
+                                        className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                                            inputMethod === "editor"
+                                                ? "bg-[#0c4a6e] text-white"
+                                                : "bg-[#111] border border-[#222] hover:border-[#0ea5e9] text-gray-400 hover:text-[#0ea5e9]"
+                                        }`}
+                                        onClick={() => setInputMethod("editor")}
+                                    >
+                                        <FileText className="h-4 w-4"/>
+                                        Editor
+                                    </button>
+                                    <button
+                                        className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                                            inputMethod === "link"
+                                                ? "bg-[#0c4a6e] text-white"
+                                                : "bg-[#111] border border-[#222] hover:border-[#0ea5e9] text-gray-400 hover:text-[#0ea5e9]"
+                                        }`}
+                                        onClick={() => setInputMethod("link")}
+                                    >
+                                        <LinkIcon className="h-4 w-4"/>
+                                        Link
+                                    </button>
+                                </div>
+
+                                {inputMethod === "file" && (
+                                    <div className="space-y-4">
+                                        <div
+                                            className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#333] hover:border-[#0ea5e9] rounded-lg transition-colors bg-[#111]/50 cursor-pointer">
+                                            <input type="file" onChange={handleFileChange} className="hidden"
+                                                   id="file-upload"/>
+                                            <label htmlFor="file-upload" className="cursor-pointer w-full text-center">
+                                                <Upload className="h-8 w-8 mx-auto mb-2 text-[#0ea5e9]"/>
+                                                <p className="text-sm font-medium">Click to upload or drag and drop</p>
+                                                <p className="text-xs text-gray-400 mt-1">Any file type up to 10MB</p>
+                                            </label>
+                                        </div>
+                                        {file && (
+                                            <div
+                                                className="p-3 bg-[#111] border border-[#222] rounded-lg flex items-center">
+                                                <FileText className="h-4 w-4 mr-2 text-[#0ea5e9]"/>
+                                                <span className="text-sm truncate flex-1">{file.name}</span>
+                                                <button className="text-gray-400 hover:text-red-400 ml-2"
+                                                        onClick={() => setFile(null)}>
+                                                    &times;
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
+                                )}
 
-                                    {inputMethod === "file" && (
-                                        <div className="space-y-4">
-                                            <input
-                                                type="file"
-                                                onChange={handleFileChange}
-                                                className="file-input file-input-bordered w-full text-xs sm:text-sm cursor-pointer"
-                                            />
-                                            {file && (
-                                                <div className="p-2 sm:p-3 bg-base-300 rounded-md flex items-center">
-                                                    <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-2 text-accent"/>
-                                                    <span className="text-xs sm:text-sm">{file.name}</span>
+                                {inputMethod === "editor" && (
+                                    <div className="space-y-4">
+                                        {isFullScreen ? (
+                                            <div className="fixed inset-0 z-50 bg-[#090909] p-4 flex flex-col">
+                                                <div className="flex justify-between items-center mb-4">
+                                                    <h3 className="text-lg font-medium">Code Editor</h3>
+                                                    <button
+                                                        className="px-3 py-1 bg-[#111] border border-[#222] hover:border-[#0ea5e9] text-gray-300 hover:text-[#0ea5e9] rounded-lg transition-colors flex items-center gap-2"
+                                                        onClick={() => setIsFullScreen(false)}
+                                                    >
+                                                        <Minimize className="h-4 w-4"/>
+                                                        Exit Fullscreen
+                                                    </button>
                                                 </div>
-                                            )}
-                                        </div>
-                                    )}
+                                                <div className="flex-1 border border-[#222] rounded-lg overflow-hidden">
+                                                    <AzionEditor value={editorContent} onChange={setEditorContent}/>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="relative">
+                                                <div className="absolute right-2 top-2 z-10">
+                                                    <button
+                                                        className="p-1 bg-[#111] border border-[#222] hover:border-[#0ea5e9] text-gray-300 hover:text-[#0ea5e9] rounded-lg transition-colors"
+                                                        onClick={() => setIsFullScreen(true)}
+                                                        title="Fullscreen"
+                                                    >
+                                                        <Maximize className="h-4 w-4"/>
+                                                    </button>
+                                                </div>
+                                                <div
+                                                    className="h-[300px] sm:h-[400px] border border-[#222] rounded-lg overflow-hidden">
+                                                    <AzionEditor value={editorContent} onChange={setEditorContent}/>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
 
-                                    {inputMethod === "editor" && (
-                                        <div className="space-y-4">
-                                            {isFullScreen ? (
-                                                <div className="fixed inset-0 z-50 bg-[#090909] p-4 flex flex-col">
-                                                    <div className="flex justify-between items-center mb-4">
-                                                        <button className="btn btn-outline btn-sm"
-                                                                onClick={() => setIsFullScreen(false)}>
-                                                            <Minimize className="h-3 w-3 sm:h-4 sm:w-4 mr-2"/>
-                                                            Exit Fullscreen
-                                                        </button>
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <AzionEditor value={editorContent} onChange={setEditorContent}/>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className="relative">
-                                                    <div className="absolute right-2 top-2 z-10">
-                                                        <div className="tooltip tooltip-left" data-tip="Fullscreen">
-                                                            <button className="btn btn-ghost btn-sm btn-circle"
-                                                                    onClick={() => setIsFullScreen(true)}>
-                                                                <Maximize className="h-3 w-3 sm:h-4 sm:w-4"/>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div className="h-[300px] sm:h-[400px]">
-                                                        <AzionEditor value={editorContent} onChange={setEditorContent}/>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-
-                                    {inputMethod === "link" && (
-                                        <div className="space-y-4">
+                                {inputMethod === "link" && (
+                                    <div className="space-y-4">
+                                        <div className="relative">
+                                            <LinkIcon
+                                                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4"/>
                                             <input
                                                 type="url"
                                                 placeholder="Enter URL to your work"
                                                 value={link}
                                                 onChange={(e) => setLink(e.target.value)}
-                                                className="input input-bordered w-full text-xs sm:text-sm"
+                                                className="w-full pl-10 pr-4 py-2 bg-[#111] border border-[#222] focus:border-[#0ea5e9] rounded-lg text-white outline-none transition-colors"
                                             />
                                         </div>
-                                    )}
-
-                                    <div className="card-actions justify-end mt-4 sm:mt-6">
-                                        <button
-                                            className={`btn btn-accent btn-sm sm:btn-md ${submitting ? "loading" : ""}`}
-                                            onClick={handleSubmit}
-                                            disabled={submitting}
-                                        >
-                                            {submitting ? (
-                                                "Submitting..."
-                                            ) : (
-                                                <>
-                                                    <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4 mr-2"/>
-                                                    Submit Task
-                                                </>
-                                            )}
-                                        </button>
                                     </div>
+                                )}
+
+                                <div className="mt-6 flex justify-end">
+                                    <button
+                                        className={`px-6 py-2 bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0284c7] hover:to-[#0369a1] text-white rounded-lg shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] transition-all duration-300 flex items-center gap-2 ${
+                                            submitting ? "opacity-70 cursor-not-allowed" : ""
+                                        }`}
+                                        onClick={handleSubmit}
+                                        disabled={submitting}
+                                    >
+                                        {submitting ? (
+                                            <>
+                                                <svg
+                                                    className="animate-spin h-4 w-4 text-white"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <circle
+                                                        className="opacity-25"
+                                                        cx="12"
+                                                        cy="12"
+                                                        r="10"
+                                                        stroke="currentColor"
+                                                        strokeWidth="4"
+                                                    ></circle>
+                                                    <path
+                                                        className="opacity-75"
+                                                        fill="currentColor"
+                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                    ></path>
+                                                </svg>
+                                                Submitting...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CheckCircle2 className="h-4 w-4"/>
+                                                Submit Task
+                                            </>
+                                        )}
+                                    </button>
                                 </div>
                             </div>
                         )}
 
-                        {/* Task Already Submitted MessageDTO */}
+                        {/* Task Already Submitted Message */}
                         {doneByUser && (
-                            <div className="card bg-base-200 shadow-xl">
-                                <div className="card-body">
-                                    <div className="alert alert-success text-xs sm:text-sm">
-                                        <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2"/>
-                                        <span>You have already submitted this task</span>
-                                    </div>
+                            <div
+                                className="bg-[#0a0a0a] border border-[#222] rounded-xl p-6 ">
+                                <div
+                                    className="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                                    <CheckCircle2 className="h-5 w-5 text-green-400 flex-shrink-0"/>
+                                    <span className="text-green-400">You have already submitted this task</span>
                                 </div>
                             </div>
                         )}
 
-                        {/* Task Completed MessageDTO */}
+                        {/* Task Completed Message */}
                         {task.status.toLowerCase().includes("done") && (
-                            <div className="card bg-base-200 shadow-xl">
-                                <div className="card-body">
-                                    <div className="alert alert-success text-xs sm:text-sm">
-                                        <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2"/>
-                                        <span>This task has been completed</span>
-                                    </div>
+                            <div
+                                className="bg-[#0a0a0a] border border-[#222] rounded-xl p-6 ">
+                                <div
+                                    className="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                                    <CheckCircle2 className="h-5 w-5 text-green-400 flex-shrink-0"/>
+                                    <span className="text-green-400">This task has been completed</span>
                                 </div>
                             </div>
                         )}
@@ -435,85 +546,93 @@ const TaskView: FC<PageProps> = ({params}) => {
 
             {/* Submissions Modal */}
             {showSubmissionsModal && (
-                <div className="modal modal-open">
-                    <div className="modal-box max-w-3xl">
-                        <h3 className="font-bold text-base sm:text-lg">Task Submissions</h3>
-                        <p className="py-2 text-xs sm:text-sm text-gray-400">Review submissions from team members</p>
-
-                        <div className="max-h-[60vh] overflow-y-auto mt-4">
-                            {task.files &&
-                                task.files.map((file, index) => (
-                                    <div key={index} className="mb-4 p-3 sm:p-4 border border-base-300 rounded-lg">
-                                        {file.submitType === "LINK" ? (
-                                            <>
-                                                <div
-                                                    className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
-                                                    <div>
-                                                        <div
-                                                            className="font-medium text-xs sm:text-sm flex items-center">{file.user.name}</div>
-                                                        <div className="text-xs text-gray-400">{file.user.email}</div>
-                                                        <div className="text-xs text-gray-500 mt-1">{file.date}</div>
-                                                        <div
-                                                            className="text-xs text-gray-500 mt-1">{file.submitType}</div>
-                                                    </div>
-                                                    <button className="btn btn-outline btn-xs"
-                                                            onClick={() => ReturnTask(taskId, file.user.email)}>
-                                                        Return
-                                                    </button>
-                                                </div>
-                                                <div className="divider my-2"></div>
-                                                <div className="mt-2">
-                                                    <a
-                                                        href={file.link}
-                                                        className="flex items-center text-accent hover:underline text-xs sm:text-sm"
-                                                    >
-                                                        {file.link}
-                                                        <ExternalLink className="h-2 w-2 sm:h-3 sm:w-3 ml-1"/>
-                                                    </a>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <div
-                                                    className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
-                                                    <div>
-                                                        <div
-                                                            className="font-medium text-xs sm:text-sm flex items-center">{file.user.name}</div>
-                                                        <div className="text-xs text-gray-400">{file.user.email}</div>
-                                                        <div className="text-xs text-gray-500 mt-1">{file.date}</div>
-                                                        <div
-                                                            className="text-xs text-gray-500 mt-1">{file.submitType}</div>
-                                                    </div>
-                                                    <button className="btn btn-outline btn-xs"
-                                                            onClick={() => ReturnTask(taskId, file.user.email)}>
-                                                        Return
-                                                    </button>
-                                                </div>
-                                                <div className="divider my-2"></div>
-                                                <div className="mt-2">
-                                                    <a
-                                                        href={URL.createObjectURL(new Blob([atob(file.fileData || "")], {type: file.contentType}))}
-                                                        download={file.fileName}
-                                                        className="flex items-center text-accent hover:underline text-xs sm:text-sm"
-                                                    >
-                                                        <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-2"/>
-                                                        {file.fileName}
-                                                        <ExternalLink className="h-2 w-2 sm:h-3 sm:w-3 ml-1"/>
-                                                    </a>
-                                                </div>
-                                            </>
-                                        )}
-                                    </div>
-                                ))}
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
+                    <div
+                        className="bg-[#0a0a0a] border border-[#222] rounded-xl shadow-[0_0_30px_rgba(14,165,233,0.2)] max-w-3xl w-full max-h-[90vh] flex flex-col">
+                        <div className="p-6 border-b border-[#222]">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-xl font-semibold">Task Submissions</h3>
+                                <button
+                                    className="text-gray-400 hover:text-white transition-colors"
+                                    onClick={() => setShowSubmissionsModal(false)}
+                                >
+                                    &times;
+                                </button>
+                            </div>
+                            <p className="text-sm text-gray-400 mt-1">Review submissions from team members</p>
                         </div>
 
-                        <div className="modal-action">
-                            <button className="btn btn-sm sm:btn-md" onClick={() => setShowSubmissionsModal(false)}>
+                        <div className="flex-1 overflow-y-auto p-6">
+                            {task.files && task.files.length > 0 ? (
+                                <div className="space-y-4">
+                                    {task.files.map((file, index) => (
+                                        <div key={index}
+                                             className="bg-[#111] border border-[#222] rounded-lg overflow-hidden">
+                                            <div className="p-4 border-b border-[#222] bg-[#0c0c0c]">
+                                                <div
+                                                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                                    <div>
+                                                        <div className="font-medium">{file.user.name}</div>
+                                                        <div className="text-xs text-gray-400">{file.user.email}</div>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="text-xs text-gray-400">{file.date}</div>
+                                                        <div
+                                                            className="px-2 py-1 bg-[#0c4a6e]/30 text-[#0ea5e9] text-xs rounded-full">
+                                                            {file.submitType}
+                                                        </div>
+                                                        <button
+                                                            className="px-3 py-1 bg-[#111] border border-[#222] hover:border-red-500 text-gray-300 hover:text-red-400 rounded-lg text-xs transition-colors"
+                                                            onClick={() => ReturnTask(taskId, file.user.email)}
+                                                        >
+                                                            Return
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="p-4">
+                                                {file.submitType === "LINK" ? (
+                                                    <a
+                                                        href={file.link}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center text-[#0ea5e9] hover:text-[#38bdf8] transition-colors"
+                                                    >
+                                                        <LinkIcon className="h-4 w-4 mr-2"/>
+                                                        <span className="truncate">{file.link}</span>
+                                                        <ExternalLink className="h-3 w-3 ml-2 flex-shrink-0"/>
+                                                    </a>
+                                                ) : (
+                                                    <a
+                                                        href={URL.createObjectURL(
+                                                            new Blob([atob(file.fileData || "")], {type: file.contentType}),
+                                                        )}
+                                                        download={file.fileName}
+                                                        className="flex items-center text-[#0ea5e9] hover:text-[#38bdf8] transition-colors"
+                                                    >
+                                                        <FileText className="h-4 w-4 mr-2"/>
+                                                        <span className="truncate">{file.fileName}</span>
+                                                        <ExternalLink className="h-3 w-3 ml-2 flex-shrink-0"/>
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 text-gray-400">No submissions yet</div>
+                            )}
+                        </div>
+
+                        <div className="p-4 border-t border-[#222] flex justify-end">
+                            <button
+                                className="px-6 py-2 bg-[#111] border border-[#222] hover:border-[#0ea5e9] text-gray-300 hover:text-[#0ea5e9] rounded-lg transition-colors"
+                                onClick={() => setShowSubmissionsModal(false)}
+                            >
                                 Close
                             </button>
                         </div>
                     </div>
-                    <div className="modal-backdrop" onClick={() => setShowSubmissionsModal(false)}></div>
                 </div>
             )}
         </div>

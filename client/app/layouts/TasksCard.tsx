@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import {Calendar, Clock, Tag, Trash2, User} from 'lucide-react'
+import {Calendar, Clock, Tag, Trash2, User} from "lucide-react"
 import axios, {type AxiosResponse} from "axios"
 import {apiUrl} from "@/app/api/config"
 import Cookies from "js-cookie"
@@ -107,7 +107,7 @@ const TasksCard: React.FC<Task> = ({
 
     return (
         <div
-            className="bg-[#0a0a0a] rounded-xl border border-[#222] shadow-lg overflow-hidden transition duration-300 ease-in-out transform hover:scale-102 hover:shadow-[0_0_15px_rgba(14,165,233,0.2)] cursor-pointer"
+            className="bg-[#0a0a0a] rounded-xl border border-[#222] shadow-[0_0_10px_rgba(14,165,233,0.1)] overflow-hidden transition duration-300 ease-in-out transform hover:scale-102 hover:shadow-[0_0_20px_rgba(14,165,233,0.3)] cursor-pointer"
             onClick={onClick}
         >
             <div className={`h-1.5 bg-gradient-to-r ${getPriorityColor(priority)}`}/>
@@ -125,9 +125,7 @@ const TasksCard: React.FC<Task> = ({
                 <div className="grid grid-cols-1 gap-2 pt-2">
                     <div className="flex items-center text-xs text-gray-400">
                         <Tag className="h-3.5 w-3.5 mr-2 text-[#0ea5e9]"/>
-                        <span className={`px-2 py-0.5 rounded-full border ${getStatusColor(status)}`}>
-              {status}
-            </span>
+                        <span className={`px-2 py-0.5 rounded-full border ${getStatusColor(status)}`}>{status}</span>
                     </div>
 
                     <div className="flex items-center text-xs text-gray-400">
