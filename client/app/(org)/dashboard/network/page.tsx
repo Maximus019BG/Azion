@@ -21,12 +21,12 @@ const formatApiResponse = (response: any) => {
             <h3 className="text-lg font-bold mb-2 text-[#0ea5e9]">Site Information</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
                 <div>
-                    <strong className="text-gray-400">Site ID:</strong> <span
-                    className="font-mono text-sm break-words">{site.siteId}</span>
+                    <strong className="text-gray-400">Site ID:</strong>{" "}
+                    <span className="font-mono text-sm break-words">{site.siteId}</span>
                 </div>
                 <div>
-                    <strong className="text-gray-400">Host ID:</strong> <span
-                    className="font-mono text-sm break-words">{site.hostId}</span>
+                    <strong className="text-gray-400">Host ID:</strong>{" "}
+                    <span className="font-mono text-sm break-words">{site.hostId}</span>
                 </div>
                 <div>
                     <strong className="text-gray-400">Name:</strong> {meta.name}
@@ -70,12 +70,12 @@ const NetworkCard = ({network, onClick}: { network: Network; onClick: () => void
     return (
         <motion.div whileHover={{scale: 1.02}} transition={{type: "spring", stiffness: 300}} className="h-full">
             <Card
-                className="h-full bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] hover:border-[#0ea5e9] cursor-pointer transition-colors duration-300 shadow-md hover:shadow-[0_0_15px_rgba(14,165,233,0.15)]"
+                className="h-full bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] hover:border-[#0ea5e9] cursor-pointer transition-colors duration-300 shadow-[0_0_15px_rgba(14,165,233,0.15)] hover:shadow-[0_0_25px_rgba(14,165,233,0.3)]"
                 onClick={onClick}
             >
                 <CardContent className="p-5 flex flex-col h-full">
                     <div className="flex items-center mb-3">
-                        <div className="mr-3 p-2 rounded-full bg-[#0c4a6e]/30">
+                        <div className="mr-3 p-2 rounded-full bg-[#0c4a6e]/30 shadow-[0_0_10px_rgba(14,165,233,0.2)]">
                             <Server className="h-5 w-5 text-[#0ea5e9]"/>
                         </div>
                         <h3 className="text-lg font-semibold text-white">{network.name}</h3>
@@ -241,22 +241,22 @@ const PageWithCustomDialog = () => {
                     ))}
 
                     {networks.length === 0 && (
-                        <div className="col-span-full bg-[#0a0a0a] border border-[#222] rounded-xl p-10 text-center">
+                        <div
+                            className="col-span-full bg-[#0a0a0a] border border-[#222] rounded-xl p-10 text-center shadow-[0_0_15px_rgba(14,165,233,0.1)]">
                             <div className="flex flex-col items-center justify-center">
                                 <div
-                                    className="w-16 h-16 bg-[#0c4a6e]/30 rounded-full flex items-center justify-center mb-4">
+                                    className="w-16 h-16 bg-[#0c4a6e]/30 rounded-full flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(14,165,233,0.2)]">
                                     <Wifi className="h-8 w-8 text-[#0ea5e9]"/>
                                 </div>
                                 <h3 className="text-xl font-semibold mb-2">No networks found</h3>
                                 <p className="text-gray-400 max-w-md mx-auto mb-6">
-                                    You haven&lsquo;t added any networks yet. Click &lsquo;Add New Network&lsquo; to
-                                    connect your
-                                    UniFi
+                                    You haven&apos;t added any networks yet. Click &apos;Add New Network&apos; to
+                                    connect your UniFi
                                     network.
                                 </p>
                                 <Button
                                     onClick={() => setIsApiKeyDialogOpen(true)}
-                                    className="bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0284c7] hover:to-[#0369a1] text-white"
+                                    className="bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0284c7] hover:to-[#0369a1] text-white shadow-[0_0_15px_rgba(14,165,233,0.3)]"
                                 >
                                     <Plus className="h-4 w-4 mr-2"/>
                                     Add New Network
@@ -269,7 +269,8 @@ const PageWithCustomDialog = () => {
 
             {/* API Key Input Dialog */}
             <Dialog open={isApiKeyDialogOpen} onOpenChange={setIsApiKeyDialogOpen}>
-                <DialogContent className="bg-[#0a0a0a] border-[#222] text-white sm:max-w-md">
+                <DialogContent
+                    className="bg-[#0a0a0a] border-[#222] text-white sm:max-w-md shadow-[0_0_30px_rgba(14,165,233,0.2)]">
                     <DialogHeader>
                         <DialogTitle className="text-[#0ea5e9]">Enter UniFi API Key</DialogTitle>
                         <DialogDescription className="text-gray-400">
@@ -301,7 +302,7 @@ const PageWithCustomDialog = () => {
                             <Button
                                 onClick={() => fetchApiData(apiKey)}
                                 disabled={!apiKey.trim() || apiLoading}
-                                className="bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0284c7] hover:to-[#0369a1] text-white"
+                                className="bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0284c7] hover:to-[#0369a1] text-white shadow-[0_0_10px_rgba(14,165,233,0.2)]"
                             >
                                 {apiLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2"/> : null}
                                 {apiLoading ? "Connecting..." : "Connect"}
@@ -313,7 +314,8 @@ const PageWithCustomDialog = () => {
 
             {/* API Response Dialog */}
             <Dialog open={isResponseDialogOpen} onOpenChange={setIsResponseDialogOpen}>
-                <DialogContent className="bg-[#0a0a0a] border-[#222] text-white sm:max-w-md">
+                <DialogContent
+                    className="bg-[#0a0a0a] border-[#222] text-white sm:max-w-md shadow-[0_0_30px_rgba(14,165,233,0.2)]">
                     <DialogHeader>
                         <DialogTitle className="text-[#0ea5e9]">Network Information</DialogTitle>
                         <DialogDescription className="text-gray-400">Review and confirm the network
@@ -322,7 +324,7 @@ const PageWithCustomDialog = () => {
                     {apiResponse && (
                         <div className="py-4">
                             <div
-                                className="bg-[#111] border border-[#222] hover:border-[#0ea5e9] p-4 rounded-lg mb-4 text-gray-200 cursor-pointer hover:bg-[#161616] transition-all duration-200"
+                                className="bg-[#111] border border-[#222] hover:border-[#0ea5e9] p-4 rounded-lg mb-4 text-gray-200 cursor-pointer hover:bg-[#161616] transition-all duration-200 shadow-[0_0_10px_rgba(14,165,233,0.1)] hover:shadow-[0_0_15px_rgba(14,165,233,0.2)]"
                                 onClick={addNetwork}
                             >
                                 {formatApiResponse(apiResponse)}
@@ -334,7 +336,7 @@ const PageWithCustomDialog = () => {
                             <div className="flex justify-end">
                                 <Button
                                     onClick={() => setIsResponseDialogOpen(false)}
-                                    className="bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0284c7] hover:to-[#0369a1] text-white"
+                                    className="bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0284c7] hover:to-[#0369a1] text-white shadow-[0_0_10px_rgba(14,165,233,0.2)]"
                                 >
                                     Close
                                 </Button>

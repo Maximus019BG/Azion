@@ -187,3 +187,80 @@ body {
         @apply bg-background text-foreground;
     }
 }
+
+.fc-theme-standard .fc-scrollgrid {
+    border-color: #222;
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th {
+    border-color: #222;
+}
+
+.fc-day-today {
+    background-color: rgba(14, 165, 233, 0.05) !important;
+}
+
+.fc-timegrid-now-indicator-line {
+    border-color: #0ea5e9;
+}
+
+.fc-timegrid-now-indicator-arrow {
+    border-color: #0ea5e9;
+    color: #0ea5e9;
+}
+
+.fc-list-day-cushion {
+    background-color: #111;
+}
+
+.fc-list-event:hover td {
+    background-color: rgba(14, 165, 233, 0.1);
+}
+
+.fc-list-event-dot {
+    border-color: #0ea5e9;
+}
+
+.fc-event {
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.fc-event-main {
+    padding: 2px 4px;
+}
+
+.fc-h-event .fc-event-title {
+    font-weight: 500;
+}
+
+.fc-daygrid-day-number,
+.fc-col-header-cell-cushion {
+    color: #e5e5e5;
+}
+
+.fc-daygrid-day-number:hover,
+.fc-col-header-cell-cushion:hover {
+    color: #0ea5e9;
+    text-decoration: none;
+}
+
+/* Fix for mobile calendar view */
+.fc-view-harness {
+    min-height: 400px;
+}
+
+/* Make sure dialogs are properly sized on mobile */
+@media (max-width: 640px) {
+    [data-radix-popper-content-wrapper] {
+        max-width: 95vw !important;
+    }
+}
+
+/* Add a custom class for extra small screens */
+@media (max-width: 380px) {
+    .xs\:inline {
+        display: inline;
+    }
+}

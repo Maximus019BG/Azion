@@ -50,7 +50,7 @@ const RoleEdit = () => {
             initial={{opacity: 0}}
             animate={{opacity: 1}}
             transition={{duration: 0.5}}
-            className="w-full min-h-screen  text-white flex flex-col lg:flex-row"
+            className="w-full min-h-screen bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-white flex flex-col lg:flex-row"
         >
             <div className="w-full flex justify-center items-start p-4 sm:p-6 md:p-8">
                 <div className="w-full max-w-4xl">

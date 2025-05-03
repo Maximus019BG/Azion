@@ -7,10 +7,33 @@ import Cookies from "js-cookie"
 import {sessionCheck, UserHasRight} from "@/app/func/funcs"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
-// @ts-ignore
-import {Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis,} from "recharts"
+import {
+    Area,
+    AreaChart,
+    Bar,
+    BarChart,
+    CartesianGrid,
+    Line,
+    LineChart,
+    ResponsiveContainer,
+    XAxis,
+    YAxis,
+} from "recharts"
 import {ChartContainer, ChartLegend, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
-import {Activity, AlertCircle, ArrowDown, ArrowLeft, ArrowUp, Clock, Gauge, Loader2, RefreshCw, Server, Wifi, WifiOff,} from "lucide-react"
+import {
+    Activity,
+    AlertCircle,
+    ArrowDown,
+    ArrowLeft,
+    ArrowUp,
+    Clock,
+    Gauge,
+    Loader2,
+    RefreshCw,
+    Server,
+    Wifi,
+    WifiOff,
+} from "lucide-react"
 import {format} from "date-fns"
 import {apiUrl} from "@/app/api/config"
 import {Button} from "@/components/ui/button"
@@ -52,6 +75,17 @@ interface NetworkData {
     httpStatusCode: number
     traceId: string
 }
+
+type Formatter<ValueType = number | string, NameType = string> = (
+    value: ValueType,
+    name: NameType,
+    props: any
+) => React.ReactNode
+
+const formatPercentage: Formatter = (value) => `${value}%`
+const formatSpeed: Formatter = (value) => `${value} Mbps`
+const formatLatency: Formatter = (value) => `${value} ms`
+
 
 // Format data for charts
 const formatChartData = (periods: Period[]) => {
@@ -246,20 +280,22 @@ export default function NetworkDetailPage() {
         }
     }
 
-    type Formatter<ValueType = number | string, NameType = string> = (
-        value: ValueType,
-        name: NameType,
-        props: any
-    ) => React.ReactNode
+    // Formatter functions for chart tooltips with the correct Recharts Formatter signature
+    const formatLatency: Formatter<any, any> = (value: string) => {
+        return `${value} ms`
+    }
 
-    const formatPercentage: Formatter = (value) => `${value}%`
-    const formatSpeed: Formatter = (value) => `${value} Mbps`
-    const formatLatency: Formatter = (value) => `${value} ms`
+    const formatSpeed: Formatter<any, any> = (value: string) => {
+        return `${value} Mbps`
+    }
+
+    const formatPercentage: Formatter<any, any> = (value: string) => {
+        return `${value}%`
+    }
 
     if (loading) {
         return (
-            <div
-                className="w-full flex items-center justify-center h-screen bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
+            <div className="flex items-center justify-center h-screen bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
                 <div className="flex flex-col items-center">
                     <Loader2 className="h-10 w-10 animate-spin text-[#0ea5e9] mb-4"/>
                     <span className="text-gray-400">Loading network data...</span>
@@ -332,7 +368,8 @@ export default function NetworkDetailPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                         <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
                                     transition={{delay: 0.1}}>
-                            <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] overflow-hidden">
+                            <Card
+                                className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] overflow-hidden shadow-[0_0_15px_rgba(14,165,233,0.15)]">
                                 <CardHeader className="pb-2 bg-[#0c4a6e]/10">
                                     <CardDescription className="text-gray-400">Average Latency</CardDescription>
                                     <CardTitle className="text-2xl flex items-center">
@@ -348,7 +385,8 @@ export default function NetworkDetailPage() {
 
                         <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
                                     transition={{delay: 0.2}}>
-                            <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] overflow-hidden">
+                            <Card
+                                className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] overflow-hidden shadow-[0_0_15px_rgba(14,165,233,0.15)]">
                                 <CardHeader className="pb-2 bg-[#0c4a6e]/10">
                                     <CardDescription className="text-gray-400">Download Speed</CardDescription>
                                     <CardTitle className="text-2xl flex items-center">
@@ -367,7 +405,8 @@ export default function NetworkDetailPage() {
 
                         <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
                                     transition={{delay: 0.3}}>
-                            <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] overflow-hidden">
+                            <Card
+                                className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] overflow-hidden shadow-[0_0_15px_rgba(14,165,233,0.15)]">
                                 <CardHeader className="pb-2 bg-[#0c4a6e]/10">
                                     <CardDescription className="text-gray-400">Packet Loss</CardDescription>
                                     <CardTitle className="text-2xl flex items-center">
@@ -385,7 +424,8 @@ export default function NetworkDetailPage() {
 
                         <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
                                     transition={{delay: 0.4}}>
-                            <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] overflow-hidden">
+                            <Card
+                                className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] overflow-hidden shadow-[0_0_15px_rgba(14,165,233,0.15)]">
                                 <CardHeader className="pb-2 bg-[#0c4a6e]/10">
                                     <CardDescription className="text-gray-400">Uptime</CardDescription>
                                     <CardTitle className="text-2xl flex items-center">
@@ -409,7 +449,8 @@ export default function NetworkDetailPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                     {/* Latency Chart */}
                     <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.5}}>
-                        <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222]">
+                        <Card
+                            className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] shadow-[0_0_15px_rgba(14,165,233,0.15)]">
                             <CardHeader>
                                 <CardTitle className="text-[#0ea5e9]">Latency</CardTitle>
                                 <CardDescription className="text-gray-400">Average and maximum latency over
@@ -471,7 +512,8 @@ export default function NetworkDetailPage() {
 
                     {/* Speed Chart */}
                     <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.6}}>
-                        <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222]">
+                        <Card
+                            className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] shadow-[0_0_15px_rgba(14,165,233,0.15)]">
                             <CardHeader>
                                 <CardTitle className="text-[#0ea5e9]">Network Speed</CardTitle>
                                 <CardDescription className="text-gray-400">Download and upload speeds over
@@ -530,7 +572,8 @@ export default function NetworkDetailPage() {
 
                     {/* Packet Loss Chart */}
                     <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.7}}>
-                        <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222]">
+                        <Card
+                            className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] shadow-[0_0_15px_rgba(14,165,233,0.15)]">
                             <CardHeader>
                                 <CardTitle className="text-[#0ea5e9]">Packet Loss</CardTitle>
                                 <CardDescription className="text-gray-400">Packet loss percentage over
@@ -572,7 +615,8 @@ export default function NetworkDetailPage() {
 
                     {/* Uptime Chart */}
                     <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.8}}>
-                        <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222]">
+                        <Card
+                            className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] shadow-[0_0_15px_rgba(14,165,233,0.15)]">
                             <CardHeader>
                                 <CardTitle className="text-[#0ea5e9]">Network Uptime</CardTitle>
                                 <CardDescription className="text-gray-400">Uptime percentage over time</CardDescription>
@@ -622,7 +666,8 @@ export default function NetworkDetailPage() {
                 {/* Anomalies Section */}
                 {anomalies.length > 0 && (
                     <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.9}}>
-                        <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] mb-6">
+                        <Card
+                            className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] mb-6 shadow-[0_0_15px_rgba(14,165,233,0.15)]">
                             <CardHeader>
                                 <CardTitle className="text-[#0ea5e9] flex items-center">
                                     <AlertCircle className="h-5 w-5 mr-2 text-yellow-500"/>
@@ -635,7 +680,10 @@ export default function NetworkDetailPage() {
                             <CardContent>
                                 <div className="space-y-4">
                                     {anomalies.map((anomaly, index) => (
-                                        <div key={index} className="border border-[#222] rounded-lg p-4 bg-[#111]">
+                                        <div
+                                            key={index}
+                                            className="border border-[#222] rounded-lg p-4 bg-[#111] shadow-[0_0_10px_rgba(14,165,233,0.1)]"
+                                        >
                                             <h3 className="text-lg font-medium mb-2 flex items-center">
                                                 {anomaly.type === "Packet Loss" &&
                                                     <Activity className="mr-2 h-5 w-5 text-yellow-400"/>}
@@ -674,7 +722,8 @@ export default function NetworkDetailPage() {
 
                 {/* Network Details */}
                 <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 1.0}}>
-                    <Card className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222]">
+                    <Card
+                        className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border-[#222] shadow-[0_0_15px_rgba(14,165,233,0.15)]">
                         <CardHeader>
                             <CardTitle className="text-[#0ea5e9] flex items-center">
                                 <Server className="h-5 w-5 mr-2"/>
@@ -685,29 +734,37 @@ export default function NetworkDetailPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
+                                <div
+                                    className="bg-[#111] p-3 rounded-lg border border-[#222] shadow-[0_0_10px_rgba(14,165,233,0.05)]">
                                     <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">Site ID</h3>
                                     <p className="text-gray-200 font-mono text-sm">{networkData?.data?.metrics?.[0]?.siteId || "N/A"}</p>
                                 </div>
-                                <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
+                                <div
+                                    className="bg-[#111] p-3 rounded-lg border border-[#222] shadow-[0_0_10px_rgba(14,165,233,0.05)]">
                                     <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">Host ID</h3>
-                                    <p className="text-gray-200 font-mono text-sm break-words">{networkData?.data?.metrics?.[0]?.hostId || "N/A"}</p>
+                                    <p className="text-gray-200 font-mono text-sm break-words">
+                                        {networkData?.data?.metrics?.[0]?.hostId || "N/A"}
+                                    </p>
                                 </div>
-                                <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
+                                <div
+                                    className="bg-[#111] p-3 rounded-lg border border-[#222] shadow-[0_0_10px_rgba(14,165,233,0.05)]">
                                     <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">ISP</h3>
                                     <p className="text-gray-200">{chartData[0]?.ispName || "N/A"}</p>
                                 </div>
-                                <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
+                                <div
+                                    className="bg-[#111] p-3 rounded-lg border border-[#222] shadow-[0_0_10px_rgba(14,165,233,0.05)]">
                                     <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">ASN</h3>
                                     <p className="text-gray-200">
                                         {networkData?.data?.metrics?.[0]?.periods?.[0]?.data?.wan?.ispAsn || "N/A"}
                                     </p>
                                 </div>
-                                <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
+                                <div
+                                    className="bg-[#111] p-3 rounded-lg border border-[#222] shadow-[0_0_10px_rgba(14,165,233,0.05)]">
                                     <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">Data Points</h3>
                                     <p className="text-gray-200">{chartData.length} hours of data</p>
                                 </div>
-                                <div className="bg-[#111] p-3 rounded-lg border border-[#222]">
+                                <div
+                                    className="bg-[#111] p-3 rounded-lg border border-[#222] shadow-[0_0_10px_rgba(14,165,233,0.05)]">
                                     <h3 className="text-sm font-medium text-[#0ea5e9] mb-1">Version</h3>
                                     <p className="text-gray-200">{networkData?.data?.metrics?.[0]?.periods?.[0]?.version || "N/A"}</p>
                                 </div>
