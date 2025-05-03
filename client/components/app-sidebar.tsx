@@ -12,12 +12,12 @@ import LogOut from "@/app/components/LogOut";
 import axios from "axios"
 import Cookies from "js-cookie"
 import {Organization, UserDataType} from "@/app/types/types";
-import {UserData} from "@/app/func/funcs";
+import {PartOfOrg, UserData} from "@/app/func/funcs";
 import {getOrgName} from "@/app/func/org";
 import {apiUrl} from "@/app/api/config"
 
 export function AppSidebar() {
-    const [org, setOrg] = useState<string | null>("")
+    const [org, setOrg] = useState<Organization | null>(null)
     const [access, setAccess] = useState<string | undefined>("")
     const [userData, setUserData] = useState<UserDataType | null>(null);
     const [loadingOrg, setLoadingOrg] = useState(true);
@@ -25,7 +25,7 @@ export function AppSidebar() {
 
     useEffect(() => {
         const fetchOrgName = async () => {
-            const result = await getOrgName()
+            const result = await PartOfOrg(true)
             setOrg(result)
             setLoadingOrg(false)
         }
@@ -80,7 +80,7 @@ export function AppSidebar() {
                                                 </Link>
                                             </SidebarMenuButton>
 
-                                            {access?.includes("roles:read") && (
+                                            {access?.includes("roles:read") && org.plan !== "FREE" && (
                                                 <SidebarMenuButton className="hover:bg-neutral-900" asChild size="sm">
                                                     <Link href="/dashboard/settings/roles">
                                                         <UserCircle className="mr-2 h-4 w-4"/>
@@ -157,7 +157,7 @@ export function AppSidebar() {
                         )
                     )}
 
-                    {(access?.includes("cameras:read") || access?.includes("cameras:write")) && org && (
+                    {(access?.includes("cameras:read") || access?.includes("cameras:write")) && org && org.plan !== "FREE" && (
                         <SidebarMenuItem>
                             <SidebarMenuButton asChild className={"hover:bg-neutral-800"}>
                                 <Link href="/cam/list">
@@ -168,7 +168,7 @@ export function AppSidebar() {
                         </SidebarMenuItem>
                     )}
 
-                    {access?.includes("networks") && org && (
+                    {access?.includes("networks") && org && org.plan === "PRO" && (
                         <SidebarMenuItem>
                             <SidebarMenuButton asChild className={"hover:bg-neutral-800"}>
                                 <Link href="/dashboard/network">
@@ -179,7 +179,7 @@ export function AppSidebar() {
                         </SidebarMenuItem>
                     )}
 
-                    {org && (
+                    {org && org.plan !== "FREE" && (
                         <SidebarMenuItem>
                             <SidebarMenuButton asChild className={"hover:bg-neutral-800"}>
                                 <Link href="/chat">

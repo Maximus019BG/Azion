@@ -125,6 +125,7 @@ export interface Organization {
     orgEmail: string;
     orgPhone: string;
     orgType: string;
+    plan?: "FREE" | "STANDARD" | "PRO" | "ENTERPRISE";
 }
 
 export interface Message {
