@@ -59,6 +59,9 @@ public class User {
     @Column(nullable = false)
     private UserType userType;
     
+    @ManyToMany(mappedBy = "users")
+    private Set<Org> orgs;
+    
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
     private Set<Task> tasks;

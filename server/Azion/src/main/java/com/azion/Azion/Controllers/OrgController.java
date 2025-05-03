@@ -371,7 +371,6 @@ public class OrgController {
         role.setUsers(role.getUsers().stream().filter(u -> !u.getId().equals(user.getId())).collect(Collectors.toSet()));
         roleRepository.save(role);
         
-        user.setOrgid(null);
         user.setRole(null);
         userRepository.save(user);
         
@@ -592,5 +591,37 @@ public class OrgController {
         response.put("maxEmployeeCount", org.getMaxEmployeeCount());
         
         return ResponseEntity.ok(response);
+    }
+    
+    @Transactional
+    @GetMapping("/get/all/orgs")
+    public ResponseEntity<?> getAllOrgs(@RequestHeader("authorization") String accessToken) {
+        User user = tokenService.getUserFromToken(accessToken);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        List<OrgDTO> orgs = orgRepository.findAllByUser(user);
+        return ResponseEntity.ok(orgs);
+    }
+    
+    @Transactional
+    @PostMapping("/set/org")
+    public ResponseEntity<?> setOrg(@RequestBody Map<String, Object> request, @RequestHeader("authorization") String accessToken) {
+        String orgId = (String) request.get("orgId");
+        
+        User user = tokenService.getUserFromToken(accessToken);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        
+        Org org = orgRepository.findById(orgId).orElse(null);
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+        }
+        
+        user.setOrgid(org.getOrgID());
+        userRepository.save(user);
+        
+        return ResponseEntity.ok("Organization set successfully.");
     }
 }

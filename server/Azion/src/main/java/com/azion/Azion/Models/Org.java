@@ -54,10 +54,8 @@ public class Org {
     private OrgType plan;
     
     //Employees
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "orgID")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<User> users;
-    
     
     public Set<User> getUsers() {
         return users;
@@ -66,7 +64,6 @@ public class Org {
     public void setUsers(Set<User> users) {
         this.users = users;
     }
-    
     
     public void generateId() {
         String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -232,6 +229,5 @@ public class Org {
         setOrgPhone(orgPhone);
         setOrgDescription(orgDescription);
     }
-    
     
 }

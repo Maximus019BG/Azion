@@ -10,12 +10,8 @@ public interface OrgDTO {
     String getOrgEmail();
     String getOrgPhone();
     String getOrgDescription();
-    
     String getSubscriptionID();
-    
     Long getMaxEmployeeCount();
-    
     OrgType getPlan();
-    
     Long getEmployeeCount();
 }

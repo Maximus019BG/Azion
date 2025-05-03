@@ -9,9 +9,12 @@ import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Side
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
 import {AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,} from "@/components/ui/alert-dialog"
 import LogOut from "@/app/components/LogOut";
-import {UserDataType} from "@/app/types/types";
+import axios from "axios"
+import Cookies from "js-cookie"
+import {Organization, UserDataType} from "@/app/types/types";
 import {UserData} from "@/app/func/funcs";
 import {getOrgName} from "@/app/func/org";
+import {apiUrl} from "@/app/api/config"
 
 export function AppSidebar() {
     const [org, setOrg] = useState<string | null>("")
@@ -47,14 +50,7 @@ export function AppSidebar() {
     return (
         <Sidebar className="border-r border-neutral-800">
             <SidebarHeader className="h-16 border-b border-neutral-900">
-                <div className="flex items-center gap-2 px-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-600 text-white">
-                        <Building className="h-5 w-5"/>
-                    </div>
-                    <div className="font-semibold">
-                        {loadingOrg ? <Skeleton className="w-36 h-8"/> : (!org ? "Personal" : org)}
-                    </div>
-                </div>
+                <OrgSwitch/>
             </SidebarHeader>
             <SidebarContent className="p-2">
                 <SidebarMenu>
@@ -285,4 +281,85 @@ export function AppSidebar() {
             <SidebarRail/>
         </Sidebar>
     )
+}
+
+const OrgSwitch = () => {
+    const [orgs, setOrgs] = useState<Organization[]>([])
+    const [org, setOrg] = useState<string | null>("")
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchOrgName = async () => {
+            const result = await getOrgName()
+            setOrg(result)
+            setLoading(false)
+        }
+
+        const fetchAllOrgs = async () => {
+            axios.get(`${apiUrl}/org/get/all/orgs`, {
+                headers: {
+                    authorization: Cookies.get("azionAccessToken")
+                }
+            }).then((res) => {
+                setOrgs(res.data)
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
+
+        fetchOrgName().then(() => {
+            setLoading(false);
+        })
+        fetchAllOrgs().then(() => {
+            setLoading(false);
+        })
+
+    }, [])
+
+    const handleOrgClick = (orgID: string | undefined) => {
+        axios.post(`${apiUrl}/org/set/org`, {
+            orgId: orgID
+        }, {
+            headers: {
+                authorization: Cookies.get("azionAccessToken")
+            }
+        }).then((res) => {
+            setOrg(res.data.orgName)
+            window.location.reload()
+        }).catch((err) => {
+            console.log(err)
+
+        });
+    };
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <div className="flex items-center gap-2 px-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-600 text-white">
+                        <Building className="h-5 w-5"/>
+                    </div>
+                    <div className="font-semibold">
+                        {loading ? <Skeleton className="w-36 h-8"/> : (!org ? "Personal" : org)}
+                    </div>
+                    <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180"/>
+                </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 mb-6 bg-neutral-900 border border-neutral-800">
+                {loading ? (
+                    <Skeleton className="h-8 w-full"/>
+                ) : (
+                    orgs.map((org) => (
+                        <div
+                            key={org.orgID}
+                            className="cursor-pointer px-4 py-2 hover:bg-neutral-800"
+                            onClick={() => handleOrgClick(org.orgID)}
+                        >
+                            {org.orgName}
+                        </div>
+                    ))
+                )}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
 }

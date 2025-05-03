@@ -88,11 +88,9 @@ public class OrgService {
     }
     
     public void addUserToOrg(Org org, User user) {
-        
-        if (user.getOrgid() != null) {
-            throw new RuntimeException("User is already in org");
+        if (Objects.equals(org.getMaxEmployeeCount(), org.getEmployeeCount())) {
+            throw new RuntimeException("Max employee count reached");
         }
-        
         user.setOrgid(org.getOrgID());
         Set<User> users = org.getUsers();
         user.setRole(defaultRole(org.getOrgID())); //Default role access

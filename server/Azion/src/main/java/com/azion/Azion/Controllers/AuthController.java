@@ -141,7 +141,7 @@ public class AuthController {
                         user = new User();
                         user.setEmail(email);
                         user.setName(name);
-                        user.setPassword(""); //Google users don't have a password
+                        user.setPassword(null); //Google users don't have a password
                         user.setMfaEnabled(false);
                         user.setRole(null);
                         user.setUserType(Enum.valueOf(UserType.class, "WORKER"));
