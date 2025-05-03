@@ -5,6 +5,7 @@ import com.azion.Azion.Models.Org;
 import com.azion.Azion.Models.Role;
 import com.azion.Azion.Models.User;
 import com.azion.Azion.Repositories.OrgRepository;
+import com.azion.Azion.Repositories.RoleRepository;
 import com.azion.Azion.Repositories.UserRepository;
 import com.azion.Azion.Services.TokenService;
 import com.azion.Azion.Services.UserService;
@@ -29,14 +30,16 @@ public class StripeConfirmController {
     private final TokenService tokenService;
     private final OrgRepository orgRepository;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;
     
-    public StripeConfirmController(UserService userService, TokenService tokenService, OrgRepository orgRepository, UserRepository userRepository) {
+    public StripeConfirmController(UserService userService, TokenService tokenService, OrgRepository orgRepository, UserRepository userRepository, RoleRepository roleRepository) {
         this.userService = userService;
         this.tokenService = tokenService;
         this.orgRepository = orgRepository;
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
     
     @Transactional
@@ -124,7 +127,7 @@ public class StripeConfirmController {
         if (user == null) {
             return ResponseEntity.status(401).body(Map.of("error", "Unauthorized"));
         }
-        Role role = user.getRole();
+        Role role = roleRepository.findByUserAndOrg(user, orgRepository.findById(user.getOrgid()).orElse(null)).orElse(null);
         
         if (role == null || !userService.isUserOwner(user)) {
             return ResponseEntity.status(403).body(Map.of("error", "Forbidden"));
@@ -143,10 +146,12 @@ public class StripeConfirmController {
             Set<User> users = org.getUsers();
             
             for (User u : users) {
-                if (u.getRole().getName().equals("owner")) {
+                Role r = roleRepository.findByUserAndOrg(u, orgRepository.findById(u.getOrgid()).orElse(null)).orElse(null);
+                
+                if (r.getName().equals("owner")) {
                     continue;
                 }
-                u.setRole(null);
+                u.setRoles(null);
                 u.setOrgid(null);
                 userRepository.save(u);
             }

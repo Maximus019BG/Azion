@@ -5,9 +5,7 @@ import com.azion.Azion.Models.DTO.UserDTO;
 import com.azion.Azion.Models.Role;
 import com.azion.Azion.Models.Token;
 import com.azion.Azion.Models.User;
-import com.azion.Azion.Repositories.TasksRepository;
-import com.azion.Azion.Repositories.TokenRepo;
-import com.azion.Azion.Repositories.UserRepository;
+import com.azion.Azion.Repositories.*;
 import com.azion.Azion.Services.MFAService;
 import com.azion.Azion.Services.TokenService;
 import com.azion.Azion.Services.UserService;
@@ -37,18 +35,22 @@ public class UserController {
     private final TokenRepo tokenRepo;
     private final TokenService tokenService;
     private final TasksRepository tasksRepository;
+    private final RoleRepository roleRepository;
+    private final OrgRepository orgRepository;
     
     @Autowired
-    public UserController(UserService userService, UserRepository userRepository, MFAService mfaService, TokenRepo tokenRepo, TokenService tokenService, TasksRepository tasksRepository) {
+    public UserController(UserService userService, UserRepository userRepository, MFAService mfaService, TokenRepo tokenRepo, TokenService tokenService, TasksRepository tasksRepository, RoleRepository roleRepository, OrgRepository orgRepository) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.mfaService = mfaService;
         this.tokenRepo = tokenRepo;
         this.tokenService = tokenService;
         this.tasksRepository = tasksRepository;
+        this.roleRepository = roleRepository;
+        this.orgRepository = orgRepository;
     }
     
-    private RoleDTO convertToRoleDTO(Role role){
+    private RoleDTO convertToRoleDTO(Role role) {
         RoleDTO roleDTO = new RoleDTO();
         roleDTO.setId(role.getId());
         roleDTO.setName(role.getName());
@@ -90,11 +92,16 @@ public class UserController {
             userDTO.setName(user.getName());
             userDTO.setEmail(user.getEmail());
             userDTO.setAge(user.getAge().toString());
-            if (user.getRole() != null) {
-                userDTO.setAccess(user.getRole().getRoleAccess());
-                userDTO.setRole(convertToRoleDTO(user.getRole()));
-            } else {
-                userDTO.setAccess(" ");
+            if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+                if (orgRepository.findById(user.getOrgid()).orElse(null) != null && user.getOrgid() != null) {
+                    Role role = roleRepository.findByUserAndOrg(user, orgRepository.findById(user.getOrgid()).orElse(null)).orElse(null);
+                    if (role != null) {
+                        userDTO.setAccess(role.getRoleAccess());
+                        userDTO.setRole(convertToRoleDTO(role));
+                    } else {
+                        userDTO.setAccess(" ");
+                    }
+                }
             }
             userDTO.setOrgid(user.getOrgid());
             userDTO.setId(user.getId());

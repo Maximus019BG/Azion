@@ -3,7 +3,6 @@ package com.azion.Azion.Models;
 import com.azion.Azion.Enums.UserType;
 import com.azion.Azion.Utils.UserUtility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.BCrypt;
@@ -35,10 +34,13 @@ public class User {
     @Column(nullable = true, length = 14336)
     private String faceID;
     
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "role_id", nullable = true)
-    @JsonManagedReference
-    private Role role;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> role;
     
     @Column
     private String orgid;
@@ -96,12 +98,18 @@ public class User {
         this.id = id;
     }
     
-    public Role getRole() {
-        return role;
+    public User(String name, Date age, String email, String password, double[] faceID, Set<Role> role, byte[] profilePicture) throws Exception {
+        setName(name);
+        setAge(age);
+        setEmail(email);
+        setPassword(password);
+        setFaceID(faceID);
+        setRoles(role);
+        setProfilePicture(profilePicture);
     }
     
-    public void setRole(Role role) {
-        this.role = role;
+    public Set<Role> getRoles() {
+        return role;
     }
     
     public String getName() {
@@ -160,20 +168,8 @@ public class User {
         return password;
     }
     
-    public void setPassword(String password) {
-        //Google login
-        if(password==null){
-            this.password = null;
-            return;
-        }
-        
-        if (password.length() < 8) {
-            throw new IllegalArgumentException("Password must be at least 8 characters long");
-        }
-        if (!UserUtility.isValidPassword(password)) {
-            throw new IllegalArgumentException("Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character");
-        }
-        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+    public void setRoles(Set<Role> role) {
+        this.role = role;
     }
     
     public byte[] getProfilePicture() {
@@ -240,14 +236,20 @@ public class User {
     public User() {
     }
     
-    public User(String name, Date age, String email, String password, double[] faceID, Role role, byte[] profilePicture) throws Exception {
-        setName(name);
-        setAge(age);
-        setEmail(email);
-        setPassword(password);
-        setFaceID(faceID);
-        setRole(role);
-        setProfilePicture(profilePicture);
+    public void setPassword(String password) {
+        //Google login
+        if (password == null) {
+            this.password = null;
+            return;
+        }
+        
+        if (password.length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long");
+        }
+        if (!UserUtility.isValidPassword(password)) {
+            throw new IllegalArgumentException("Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character");
+        }
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
     
 }

@@ -92,7 +92,11 @@ public class UserService {
             userDTO.setName(project.getCreatedBy().getName());
             userDTO.setEmail(project.getCreatedBy().getEmail());
             userDTO.setAge(project.getCreatedBy().getAge().toString());
-            userDTO.setRole(convertToRoleDTO(project.getCreatedBy().getRole()));
+            
+            User user = userRepository.findById(project.getCreatedBy().getId()).orElse(null);
+            Role role = roleRepository.findByUserAndOrg(user, orgRepository.findById(user.getOrgid()).orElse(null)).orElse(null);
+            
+            userDTO.setRole(convertToRoleDTO(role));
             userDTO.setOrgid(project.getCreatedBy().getOrgid());
             dto.setCreatedBy(userDTO);
         }
@@ -144,7 +148,7 @@ public class UserService {
     /// Unify Networks          networks
     /// </summary>
     public boolean UserHasRight(User user, String right) {
-        Role role = user.getRole();
+        Role role = roleRepository.findByUserAndOrg(user, orgRepository.findById(user.getOrgid()).orElse(null)).orElse(null);
         if (role == null) {
             return false;
         }
@@ -190,7 +194,10 @@ public class UserService {
     }
     
     public boolean isUserOwner(User user) {
-        Role role = user.getRole();
+        Role role = roleRepository.findByUserAndOrg(user, orgRepository.findById(user.getOrgid()).orElse(null)).orElse(null);
+        if (role == null) {
+            return false;
+        }
         String[] rights = {
                 "calendar:write", "settings:write", "settings:read",
                 "employees:read", "roles:write", "roles:read",

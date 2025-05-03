@@ -143,7 +143,7 @@ public class AuthController {
                         user.setName(name);
                         user.setPassword(null); //Google users don't have a password
                         user.setMfaEnabled(false);
-                        user.setRole(null);
+                        user.setRoles(null);
                         user.setUserType(Enum.valueOf(UserType.class, "WORKER"));
                         
                         byte[] profilePicture = null;
@@ -246,7 +246,7 @@ public class AuthController {
         user.setEmail(email);
         user.setPassword(password);
         user.setMfaEnabled(false);
-        user.setRole(null);
+        user.setRoles(null);
         user.setUserType(Enum.valueOf(UserType.class, isWorker ? "WORKER" : "CLIENT"));
         
         userRepository.save(user);

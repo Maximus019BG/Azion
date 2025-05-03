@@ -73,7 +73,7 @@ public class OrgService {
     }
     
     
-    private RoleDTO convertToRoleDTO(Role role){
+    private RoleDTO convertToRoleDTO(Role role) {
         RoleDTO roleDTO = new RoleDTO();
         roleDTO.setId(role.getId());
         roleDTO.setName(role.getName());
@@ -93,7 +93,9 @@ public class OrgService {
         }
         user.setOrgid(org.getOrgID());
         Set<User> users = org.getUsers();
-        user.setRole(defaultRole(org.getOrgID())); //Default role access
+        Set<Role> roles = user.getRoles();
+        roles.add(defaultRole(org.getOrgID()));
+        user.setRoles(roles);
         userRepository.save(user);
         users.add(user);
         org.setUsers(users);
@@ -102,7 +104,17 @@ public class OrgService {
     }
     
     public Role defaultRole(String orgId) {
-        return roleRepository.findByNameAndOrg("employee", orgId).orElse(null);
+        Role role = roleRepository.findByNameAndOrg("employee", orgId).orElse(null);
+        if (role == null) {
+            role = new Role();
+            role.setName("employee");
+            role.setColor("#000000");
+            role.setRoleAccess(userService.lowestAccess());
+            role.setOrg(orgRepository.findById(orgId).orElse(null));
+            roleRepository.save(role);
+        }
+        
+        return role;
     }
     
     public Org findOrgByConnectString(String connectString) {
@@ -127,11 +139,14 @@ public class OrgService {
             throw new RuntimeException("");
         }
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
-        Role role = user.getRole();
+        Role role = roleRepository.findByUserAndOrg(user, orgRepository.findById(user.getOrgid()).orElse(null)).orElse(null);
+        if (role == null) {
+            throw new RuntimeException("Role not found");
+        }
         List<User> employees = new ArrayList<>(org.getUsers());
         employees.remove(user);
         user.setOrgid(null);
-        user.setRole(null);
+        user.setRoles(null);
         orgRepository.save(org);
         userRepository.save(user);
         List<User> usersList = role.getUsers().stream().toList();
@@ -164,14 +179,15 @@ public class OrgService {
         Role role = ownerRole();
         role.setOrg(orgRepository.findById(orgId).get());
         
-        if(roleRepository.findByNameAndOrg("owner", orgId).isEmpty()){
+        if (roleRepository.findByNameAndOrg("owner", orgId).isEmpty()) {
             roleRepository.save(role);
             //*Final hope
             User randomUser = userRepository.findByOrgid(orgId).get(0);
-            randomUser.setRole(role);
+            Set<Role> roles = randomUser.getRoles();
+            roles.add(role);
+            randomUser.setRoles(roles);
             userRepository.save(randomUser);
-        }
-        else{
+        } else {
         }
         
     }
@@ -188,6 +204,7 @@ public class OrgService {
         role.setRoleAccess(userService.highestAccess());
         return role;
     }
+    
     public void welcomeEmail(String to, String name, String orgName) {
         String htmlContent = "<!DOCTYPE html>" +
                 "<html lang=\"en\">" +

@@ -86,8 +86,9 @@ public class CamController {
         }
         
         try {
+            Role role = roleRepository.findByUserAndOrg(user, orgRepository.findById(user.getOrgid()).orElse(null)).orElse(null);
             //Get what people can go in and what not
-            if(Objects.equals(user.getRole().getRoleAccess(), camRepository.findByCamName(auth).get().getRole()) || Objects.equals(user.getRole().getRoleAccess(), userService.highestAccess())) {
+            if (Objects.equals(role.getRoleAccess(), camRepository.findByCamName(auth).get().getRole()) || Objects.equals(role.getRoleAccess(), userService.highestAccess())) {
                 camService.addLog(auth, "User " + user.getName() + " got in");
                 emailService.sendLoginEmail(user.getEmail(), "faceID login method", user.getName());
             } else {

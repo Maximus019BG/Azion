@@ -112,10 +112,22 @@ public class OrgController {
         role.setColor("#0000ff");
         roleRepository.save(role);
         
-        
         //Update user
-        orgService.addUserToOrg(org, user);
-        user.setRole(role);
+        if (Objects.equals(org.getMaxEmployeeCount(), org.getEmployeeCount())) {
+            throw new RuntimeException("Max employee count reached");
+        }
+        
+        user.setOrgid(org.getOrgID());
+        Set<User> usersOrg = org.getUsers();
+        userRepository.save(user);
+        usersOrg.add(user);
+        org.setUsers(usersOrg);
+        org.setEmployeeCount(org.getEmployeeCount() + 1);
+        orgRepository.save(org);
+        
+        Set<Role> roles = user.getRoles();
+        roles.add(role);
+        user.setRoles(roles);
         userRepository.save(user);
         orgService.welcomeEmail(user.getEmail(), user.getName(), org.getOrgName());
         
@@ -344,7 +356,8 @@ public class OrgController {
         userDTO.setName(user.getName());
         userDTO.setEmail(user.getEmail());
         userDTO.setAge(user.getAge().toString());
-        userDTO.setRole(convertToRoleDTO(user.getRole()));
+        Role role = roleRepository.findByUserAndOrg(user, orgRepository.findById(user.getOrgid()).orElse(null)).orElse(null);
+        userDTO.setRole(convertToRoleDTO(role));
         userDTO.setOrgid(user.getOrgid());
         userDTO.setProfilePicture(Arrays.toString(user.getProfilePicture()));
         
@@ -364,14 +377,19 @@ public class OrgController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
-        if (Objects.equals(user.getRole().getName(), "owner")) {
+        Role role = roleRepository.findByUserAndOrg(user, orgRepository.findById(user.getOrgid()).orElse(null)).orElse(null);
+        if (role == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Role not found.");
+        }
+        
+        if (Objects.equals(role.getName(), "owner")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Can not remove owner");
         }
-        Role role = user.getRole();
+        
         role.setUsers(role.getUsers().stream().filter(u -> !u.getId().equals(user.getId())).collect(Collectors.toSet()));
         roleRepository.save(role);
         
-        user.setRole(null);
+        user.setRoles(null);
         userRepository.save(user);
         
         return ResponseEntity.ok("User with email " + email + " removed.");
@@ -416,8 +434,12 @@ public class OrgController {
         if (employee == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee not found.");
         }
+        Role role = roleRepository.findByUserAndOrg(employee, orgRepository.findById(employee.getOrgid()).orElse(null)).orElse(null);
+        if (role == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Role not found.");
+        }
         
-        if (employee.getRole().getName().trim().equals("owner")) {
+        if (role.getName().trim().equals("owner")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Can not remove owner");
         }
         
@@ -492,7 +514,6 @@ public class OrgController {
         }
         
         Role role = roleRepository.findByNameAndOrg(roleName, user.getOrgid()).orElse(null);
-        
         if (role == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Role not found");
         }
@@ -557,12 +578,16 @@ public class OrgController {
                 String roleId = (String) roleMap.get("id");
                 Role role = savedRoles.get(roleId);
                 if (role != null) {
-                    userToUpdate.setRole(role);
+                    Set<Role> roles = userToUpdate.getRoles();
+                    roles.add(role);
+                    userToUpdate.setRoles(roles);
                 }
             } else if (roleData instanceof String roleName) {
                 Role role = roleRepository.findByName(roleName).orElse(null);
                 if (role != null) {
-                    userToUpdate.setRole(role);
+                    Set<Role> roles = userToUpdate.getRoles();
+                    roles.add(role);
+                    userToUpdate.setRoles(roles);
                 }
             }
             

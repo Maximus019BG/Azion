@@ -8,6 +8,8 @@ import com.azion.Azion.Models.Task;
 import com.azion.Azion.Models.TaskFiles;
 import com.azion.Azion.Models.User;
 import com.azion.Azion.Repositories.FileRepo;
+import com.azion.Azion.Repositories.OrgRepository;
+import com.azion.Azion.Repositories.RoleRepository;
 import com.azion.Azion.Repositories.TasksRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,10 +36,14 @@ public class TasksService {
     
     private final TasksRepository tasksRepository;
     private final FileRepo fileRepo;
+    private final RoleRepository roleRepository;
+    private final OrgRepository orgRepository;
     
-    public TasksService(TasksRepository tasksRepository, FileRepo fileRepo) {
+    public TasksService(TasksRepository tasksRepository, FileRepo fileRepo, RoleRepository roleRepository, OrgRepository orgRepository) {
         this.tasksRepository = tasksRepository;
         this.fileRepo = fileRepo;
+        this.roleRepository = roleRepository;
+        this.orgRepository = orgRepository;
     }
     
     private RoleDTO convertToRoleDTO(Role role){
@@ -77,7 +83,9 @@ public class TasksService {
             userDTO.setName(project.getCreatedBy().getName());
             userDTO.setEmail(project.getCreatedBy().getEmail());
             userDTO.setAge(project.getCreatedBy().getAge().toString());
-            userDTO.setRole(convertToRoleDTO(project.getCreatedBy().getRole()));
+            User user = project.getCreatedBy();
+            Role role = roleRepository.findByUserAndOrg(user, orgRepository.findById(user.getOrgid()).orElse(null)).orElse(null);
+            userDTO.setRole(convertToRoleDTO(role));
             userDTO.setOrgid(project.getCreatedBy().getOrgid());
             dto.setCreatedBy(userDTO);
         }
@@ -96,7 +104,8 @@ public class TasksService {
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         dto.setAge(user.getAge().toString());
-        dto.setRole(convertToRoleDTO(user.getRole()));
+        Role role = roleRepository.findByUserAndOrg(user, orgRepository.findById(user.getOrgid()).orElse(null)).orElse(null);
+        dto.setRole(convertToRoleDTO(role));
         dto.setOrgid(user.getOrgid());
         
         return dto;

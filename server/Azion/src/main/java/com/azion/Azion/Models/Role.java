@@ -12,22 +12,22 @@ public class Role {
     @Id
     @Column(nullable = false, length = 255, unique = true)
     private String id;
-
+    
     @Column(nullable = false)
     private String name;
-
+    
     @Column(name = "roleAccess", nullable = true, columnDefinition = "VARCHAR(255)")
     private String roleAccess;
-
+    
     @Column(name = "color", nullable = true, columnDefinition = "CHAR(8) DEFAULT '#2563eb'")
     private String color;
     
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "role", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<User> users;
-
+    
     @ManyToOne
     private Org org;
-
+    
     public Org getOrg() {
         return org;
     }
@@ -35,12 +35,12 @@ public class Role {
     public void setOrg(Org org) {
         this.org = org;
     }
-
+    
     public String getRoleAccess() {
         return roleAccess;
     }
-
-    ///<summary>
+    
+    /// <summary>
     /// IN ORDER:
     ///
     /// Calendar                calendar:write
@@ -65,45 +65,45 @@ public class Role {
     public String getId() {
         return id;
     }
-
+    
     public String getColor() {
         return color;
     }
-
+    
     public void setColor(String color) {
         this.color = color;
     }
-
+    
     public Set<User> getUsers() {
         return users;
     }
-
+    
     public void setUsers(Set<User> users) {
         this.users = users;
     }
-
+    
     public String getName() {
         return name;
     }
-
+    
     public void setName(String name) {
         this.name = name;
     }
-
+    
     private void generateId() {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         this.id = uuid.substring(0, Math.min(uuid.length(), 50)) + System.currentTimeMillis();
     }
-
+    
     @PrePersist
     public void prePersist() {
         generateId();
     }
-
+    
     public Role() {
         //Empty constructor
     }
-
+    
     public Role(String name, String roleAccess, String color) {
         this.name = name;
         this.roleAccess = roleAccess;

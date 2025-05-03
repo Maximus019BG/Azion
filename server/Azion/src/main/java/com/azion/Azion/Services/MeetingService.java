@@ -2,9 +2,12 @@ package com.azion.Azion.Services;
 
 import com.azion.Azion.Models.DTO.MeetingDTO;
 import com.azion.Azion.Models.Meeting;
+import com.azion.Azion.Models.Org;
+import com.azion.Azion.Models.Role;
 import com.azion.Azion.Models.User;
 import com.azion.Azion.Repositories.MeetingRepo;
 import com.azion.Azion.Repositories.OrgRepository;
+import com.azion.Azion.Repositories.RoleRepository;
 import com.azion.Azion.Repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +23,13 @@ public class MeetingService {
     private final UserRepository userRepository;
     private final MeetingRepo meetingRepo;
     private final OrgRepository orgRepository;
+    private final RoleRepository roleRepository;
     
-    public MeetingService(UserRepository userRepository, MeetingRepo meetingRepo, OrgRepository orgRepository) {
+    public MeetingService(UserRepository userRepository, MeetingRepo meetingRepo, OrgRepository orgRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.meetingRepo = meetingRepo;
         this.orgRepository = orgRepository;
+        this.roleRepository = roleRepository;
     }
     
     //!Meeting Creation
@@ -51,9 +56,19 @@ public class MeetingService {
     
     @Transactional(readOnly = true)
     public List<MeetingDTO> getMeetings(User user) {
-        List<Meeting> meetings = meetingRepo.findByOrg(orgRepository.findById(user.getOrgid()).get());
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+        if (org == null) {
+            throw new RuntimeException("Organization not found for user.");
+        }
+        Role role = roleRepository.findByUserAndOrg(user, org).orElse(null);
+        if (role == null) {
+            throw new RuntimeException("Role not found for user in the organization.");
+        }
+        
+        List<Meeting> meetings = meetingRepo.findByOrg(org);
+        
         return meetings.stream()
-                .filter(meeting -> meeting.getRoles().contains(user.getRole().getName()))
+                .filter(meeting -> meeting.getRoles().contains(role.getName()))
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
