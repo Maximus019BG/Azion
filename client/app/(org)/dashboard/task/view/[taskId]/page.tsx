@@ -185,7 +185,7 @@ const TaskView: FC<PageProps> = ({params}) => {
     if (loading) {
         return (
             <div
-                className="w-full h-screen flex justify-center items-center bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
+                className="w-full h-screen flex justify-center items-center">
                 <Loading/>
             </div>
         )
@@ -194,7 +194,7 @@ const TaskView: FC<PageProps> = ({params}) => {
     if (!task) {
         return (
             <div
-                className="w-full h-screen flex justify-center items-center bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
+                className="w-full h-screen flex justify-center items-center ">
                 <div
                     className="bg-[#0a0a0a] border border-[#222] rounded-xl p-8  max-w-md w-full">
                     <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4"/>
@@ -239,7 +239,7 @@ const TaskView: FC<PageProps> = ({params}) => {
 
     return (
         <div
-            className="flex flex-col lg:flex-row w-full min-h-screen bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-white">
+            className="flex flex-col lg:flex-row w-full min-h-screen text-white">
             {/* Main Content */}
             <div className="w-full lg:flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
                 <div className="max-w-6xl mx-auto">

@@ -203,7 +203,7 @@ const PageWithCustomDialog = () => {
     if (loading) {
         return (
             <div
-                className="text-gray-200 bg-gradient-to-br from-[#050505] to-[#0c0c0c] h-screen flex items-center justify-center w-full">
+                className="text-gray-200 h-screen flex items-center justify-center w-full">
                 <div className="w-full flex flex-col items-center">
                     <Loader2 className="h-10 w-10 animate-spin text-[#0ea5e9] mb-4"/>
                     <span className="text-gray-400">Loading network dashboard...</span>
@@ -217,7 +217,7 @@ const PageWithCustomDialog = () => {
     }
 
     return (
-        <div className="p-4 md:p-6 lg:p-8 bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-gray-200 min-h-dvh w-full">
+        <div className="p-4 md:p-6 lg:p-8  text-gray-200 min-h-dvh w-full">
             <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                     <div>

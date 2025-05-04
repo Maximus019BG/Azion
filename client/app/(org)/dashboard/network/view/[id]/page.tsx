@@ -295,7 +295,7 @@ export default function NetworkDetailPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
+            <div className="flex items-center justify-center h-screen">
                 <div className="flex flex-col items-center">
                     <Loader2 className="h-10 w-10 animate-spin text-[#0ea5e9] mb-4"/>
                     <span className="text-gray-400">Loading network data...</span>
@@ -305,7 +305,7 @@ export default function NetworkDetailPage() {
     }
 
     return (
-        <div className="min-h-dvh w-full bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-gray-100 p-4 md:p-6 lg:p-8">
+        <div className="min-h-dvh w-full text-gray-100 p-4 md:p-6 lg:p-8">
             <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                     <div>

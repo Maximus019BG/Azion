@@ -83,7 +83,7 @@ const Tasks: FC = () => {
     if (loading) {
         return (
             <div
-                className="w-screen h-screen flex justify-center items-center bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
+                className="w-screen h-screen flex justify-center items-center">
                 <Loading/>
             </div>
         )
@@ -91,7 +91,7 @@ const Tasks: FC = () => {
 
     return (
         <div
-            className="w-full flex flex-col lg:flex-row min-h-screen text-white bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
+            className="w-full flex flex-col lg:flex-row min-h-screen text-white">
             <div className="w-full flex-grow p-4 md:p-6 lg:p-10 overflow-auto">
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-8 text-center">
