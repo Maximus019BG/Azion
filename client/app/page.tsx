@@ -547,7 +547,8 @@ export default function LandingPage() {
             </section>
 
             {/* Pricing Section */}
-            <section id="pricing" className="py-20 md:py-32 relative bg-gradient-to-b from-transparent to-gray-900/10">
+            <section id="pricing"
+                     className="py-20 md:py-32 relative flex flex-col justify-center items-center bg-gradient-to-b from-transparent to-gray-900/10">
                 <SectionHeading
                     title="Simple, Transparent Pricing"
                     subtitle="Choose the plan that fits your organization's needs"

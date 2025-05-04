@@ -17,7 +17,20 @@ import {ScrollArea} from "@/components/ui/scroll-area"
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu"
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
 import ReturnButton from "@/app/components/ReturnButton"
-import {ArrowLeft, Edit, Info, MessageSquare, MoreVertical, Phone, Search, Send, Trash2, Video,} from "lucide-react"
+import {
+    ArrowLeft,
+    Edit,
+    Info,
+    MessageSquare,
+    MoreVertical,
+    Phone,
+    Search,
+    Send,
+    Trash2,
+    Users,
+    Video,
+} from "lucide-react"
+import VideoCall from "@/app/components/chat/VideoCall"
 
 const ChatPage = () => {
     const [messages, setMessages] = useState<Message[]>([])
@@ -31,6 +44,8 @@ const ChatPage = () => {
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [isMobileView, setIsMobileView] = useState<boolean>(false)
     const [showUserList, setShowUserList] = useState<boolean>(true)
+    const [showVoiceCall, setShowVoiceCall] = useState<boolean>(false)
+    const [showVideoCall, setShowVideoCall] = useState<boolean>(false)
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const defaultImageSrc = typeof DefaultPic === "string" ? DefaultPic : DefaultPic.src
 
@@ -257,6 +272,18 @@ const ChatPage = () => {
         setShowUserList(!showUserList)
     }
 
+    const handleVoiceCall = () => {
+        if (selectedUser) {
+            setShowVoiceCall(true)
+        }
+    }
+
+    const handleVideoCall = () => {
+        if (selectedUser) {
+            setShowVideoCall(true)
+        }
+    }
+
     return (
         <div
             className="flex flex-col md:flex-row bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-white w-full min-h-screen">
@@ -279,7 +306,8 @@ const ChatPage = () => {
                 <div
                     className="w-full md:w-1/3 lg:w-1/4 border-r border-[#222] bg-[#0a0a0a] flex flex-col h-screen shadow-xl">
                     {!isMobileView && (
-                        <div className="p-4 flex justify-center items-center border-b border-[#222]">
+                        <div className="p-4 flex items-center border-b border-[#222]">
+                            <ReturnButton to="/dashboard"/>
                             <h2 className="text-2xl font-bold ml-2 bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">
                                 Messages
                             </h2>
@@ -303,6 +331,10 @@ const ChatPage = () => {
                         <Button variant="ghost" className="flex-1 text-[#0ea5e9]" size="sm">
                             <MessageSquare className="h-4 w-4 mr-2"/>
                             Chats
+                        </Button>
+                        <Button variant="ghost" className="flex-1 text-gray-400 hover:text-[#0ea5e9]" size="sm">
+                            <Users className="h-4 w-4 mr-2"/>
+                            Groups
                         </Button>
                     </div>
 
@@ -385,9 +417,15 @@ const ChatPage = () => {
                                 <TooltipProvider>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <Button variant="ghost" size="icon"
-                                                    className="text-gray-400 hover:text-[#0ea5e9]">
-                                                <Phone className="h-5 w-5"/>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={handleVoiceCall}
+                                                className="text-gray-400 hover:text-[#0ea5e9] relative overflow-hidden group"
+                                            >
+                                                <span
+                                                    className="absolute inset-0 bg-blue-500/10 scale-0 group-hover:scale-100 rounded-full transition-transform duration-300"></span>
+                                                <Phone className="h-5 w-5 relative z-10"/>
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>
@@ -399,9 +437,15 @@ const ChatPage = () => {
                                 <TooltipProvider>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <Button variant="ghost" size="icon"
-                                                    className="text-gray-400 hover:text-[#0ea5e9]">
-                                                <Video className="h-5 w-5"/>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={handleVideoCall}
+                                                className="text-gray-400 hover:text-[#0ea5e9] relative overflow-hidden group"
+                                            >
+                                                <span
+                                                    className="absolute inset-0 bg-blue-500/10 scale-0 group-hover:scale-100 rounded-full transition-transform duration-300"></span>
+                                                <Video className="h-5 w-5 relative z-10"/>
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>
@@ -571,9 +615,31 @@ const ChatPage = () => {
                         <p className="text-gray-400 max-w-md">
                             Select a user from the list to start a conversation or continue where you left off.
                         </p>
+                        <Button
+                            variant="outline"
+                            className="mt-6 border-[#333] hover:border-[#0ea5e9] text-gray-300 hover:text-[#0ea5e9]"
+                            onClick={toggleUserList}
+                        >
+                            <Users className="h-4 w-4 mr-2"/>
+                            Browse Users
+                        </Button>
                     </div>
                 )}
             </div>
+
+            {/* Voice Call Component */}
+            {showVoiceCall && selectedUser && (
+                <div className="fixed inset-0 z-50">
+                    <VideoCall remoteUserId={selectedUser.email} onClose={() => setShowVoiceCall(false)}/>
+                </div>
+            )}
+
+            {/* Video Call Component */}
+            {showVideoCall && selectedUser && (
+                <div className="fixed inset-0 z-50">
+                    <VideoCall remoteUserId={selectedUser.email} onClose={() => setShowVideoCall(false)}/>
+                </div>
+            )}
         </div>
     )
 }

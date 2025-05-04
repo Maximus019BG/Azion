@@ -54,7 +54,8 @@ const OrganizationPage = ({params}: OrganizationPageProps) => {
     }, [conString])
 
     return (
-        <div className="min-h-screen w-full bg-[#040410] text-white flex justify-center items-center p-4">
+        <div
+            className="min-h-screen w-full text-white flex justify-center items-center p-4">
             <div className=" w-full">
                 {loading ? (
                     <motion.div

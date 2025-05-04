@@ -31,7 +31,7 @@ const EditRole = ({params}: PageProps) => {
             initial={{opacity: 0}}
             animate={{opacity: 1}}
             transition={{duration: 0.5}}
-            className="w-full min-h-screen bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-white flex flex-col lg:flex-row lg:justify-end overflow-y-hidden"
+            className="w-full min-h-screen text-white flex flex-col lg:flex-row lg:justify-end overflow-y-hidden"
         >
             <div className="w-full h-full flex flex-col p-4 lg:p-8 overflow-y-auto">
                 <div className="mb-6">

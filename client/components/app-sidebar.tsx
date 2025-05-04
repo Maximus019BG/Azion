@@ -1,13 +1,55 @@
 "use client"
 import Link from "next/link"
 import {useEffect, useState} from "react"
-import {Building, ChevronDown, ClipboardList, Cog, CreditCard, Home, LogOutIcon, MessageSquare, Network, PlusCircle, Settings, UserCircle, Users, Video,} from "lucide-react"
+import {
+    Building,
+    Check,
+    ChevronDown,
+    ClipboardList,
+    Cog,
+    CreditCard,
+    Home,
+    LinkIcon,
+    LogOutIcon,
+    MessageSquare,
+    Network,
+    PlusCircle,
+    Settings,
+    UserCircle,
+    Users,
+    Video,
+} from "lucide-react"
 import {Skeleton} from "@/components/ui/skeleton"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible"
-import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail,} from "@/components/ui/sidebar"
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
-import {AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,} from "@/components/ui/alert-dialog"
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarRail,
+} from "@/components/ui/sidebar"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import LogOut from "@/app/components/LogOut";
 import axios from "axios"
 import Cookies from "js-cookie"
@@ -15,6 +57,8 @@ import {Organization, UserDataType} from "@/app/types/types";
 import {PartOfOrg, UserData} from "@/app/func/funcs";
 import {getOrgName} from "@/app/func/org";
 import {apiUrl} from "@/app/api/config"
+import {cn} from "@/lib/utils/cn"
+import JoinOrganization from "@/components/JoinOrg";
 
 export function AppSidebar() {
     const [org, setOrg] = useState<Organization | null>(null)
@@ -114,7 +158,8 @@ export function AppSidebar() {
                                     {access?.includes("tasks:write") ? (
                                         <Collapsible className="w-full">
                                             <CollapsibleTrigger className="w-full">
-                                                <SidebarMenuButton className="w-full justify-between hover:bg-neutral-800 ">
+                                                <SidebarMenuButton
+                                                    className="w-full justify-between hover:bg-neutral-800 ">
                                                     <div className="flex items-center">
                                                         <Settings className="mr-2 h-4 w-4 text-slate-200"/>
                                                         <span className={"text-slate-200"}>Tasks</span>
@@ -126,7 +171,8 @@ export function AppSidebar() {
                                             <CollapsibleContent
                                                 className="animate-accordion-down space-y-1 overflow-hidden pl-6 pr-2 transition-all">
                                                 {access?.includes("tasks:read") && (
-                                                    <SidebarMenuButton className="hover:bg-neutral-900" asChild size="sm">
+                                                    <SidebarMenuButton className="hover:bg-neutral-900" asChild
+                                                                       size="sm">
                                                         <Link href="/dashboard/task">
                                                             <Settings className="mr-2 h-4 w-4"/>
                                                             <span>Your Tasks</span>
@@ -135,7 +181,8 @@ export function AppSidebar() {
                                                 )}
 
                                                 {access?.includes("tasks:write") && (
-                                                    <SidebarMenuButton className="hover:bg-neutral-900" asChild size="sm">
+                                                    <SidebarMenuButton className="hover:bg-neutral-900" asChild
+                                                                       size="sm">
                                                         <Link href="/dashboard/task/create">
                                                             <PlusCircle className="mr-2 h-4 w-4"/>
                                                             <span>Create Task</span>
@@ -211,7 +258,8 @@ export function AppSidebar() {
                                             <Skeleton className="h-8 w-8 rounded-full"/>
                                         ) : (
                                             <>
-                                                <AvatarImage src={"data:image/png;base64," + userData?.profilePicture || "/placeholder.svg?height=32&width=32"}/>
+                                                <AvatarImage
+                                                    src={"data:image/png;base64," + userData?.profilePicture || "/placeholder.svg?height=32&width=32"}/>
                                                 <AvatarFallback className="bg-blue-600 text-white">
                                                     {userData && userData.name
                                                         .split(" ")
@@ -223,10 +271,12 @@ export function AppSidebar() {
                                     </Avatar>
                                     <div className="flex flex-col items-start text-sm">
                                                     <span className="font-medium">
-                                                        {loadingUser ? <Skeleton className="w-24 h-4"/> : (userData ? userData.name : "Guest")}
+                                                        {loadingUser ? <Skeleton
+                                                            className="w-24 h-4"/> : (userData ? userData.name : "Guest")}
                                                     </span>
                                         <span className="text-xs text-muted-foreground">
-                                                        {loadingUser ? <Skeleton className="w-32 h-3"/> : (userData ? userData.email : "No email available")}
+                                                        {loadingUser ? <Skeleton
+                                                            className="w-32 h-3"/> : (userData ? userData.email : "No email available")}
                                                     </span>
                                     </div>
                                     <ChevronDown className="ml-auto h-4 w-4 opacity-50"/>
@@ -283,10 +333,19 @@ export function AppSidebar() {
     )
 }
 
-const OrgSwitch = () => {
+function OrgSwitch() {
     const [orgs, setOrgs] = useState<Organization[]>([])
     const [org, setOrg] = useState<string | null>("")
     const [loading, setLoading] = useState(true);
+    const [open, setOpen] = useState(false)
+    const [showJoinModal, setShowJoinModal] = useState(false)
+    const [joinModalTab, setJoinModalTab] = useState<"join" | "create">("join")
+
+    const handleOpenJoinModal = (tab: "join" | "create") => {
+        setJoinModalTab(tab)
+        setShowJoinModal(true)
+        setOpen(false)
+    }
 
     useEffect(() => {
         const fetchOrgName = async () => {
@@ -333,33 +392,103 @@ const OrgSwitch = () => {
     };
 
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <div className="flex items-center gap-2 px-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-600 text-white">
-                        <Building className="h-5 w-5"/>
-                    </div>
-                    <div className="font-semibold">
-                        {loading ? <Skeleton className="w-36 h-8"/> : (!org ? "Personal" : org)}
-                    </div>
-                    <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180"/>
-                </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 mb-6 bg-neutral-900 border border-neutral-800">
-                {loading ? (
-                    <Skeleton className="h-8 w-full"/>
-                ) : (
-                    orgs.map((org) => (
+        <>
+            <DropdownMenu open={open} onOpenChange={setOpen}>
+                <DropdownMenuTrigger asChild>
+                    <button
+                        className="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-blue-600/10 border border-transparent hover:border-blue-600/20 group">
                         <div
-                            key={org.orgID}
-                            className="cursor-pointer px-4 py-2 hover:bg-neutral-800"
-                            onClick={() => handleOrgClick(org.orgID)}
-                        >
-                            {org.orgName}
+                            className="flex h-9 w-9 items-center justify-center rounded-md bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-[0_0_10px_rgba(37,99,235,0.3)]">
+                            <Building className="h-5 w-5"/>
                         </div>
-                    ))
-                )}
-            </DropdownMenuContent>
-        </DropdownMenu>
+                        <div className="flex flex-col items-start">
+                            <div className="font-semibold text-sm">
+                                {loading ? <Skeleton className="w-24 h-5"/> : !org ? "Personal" : org}
+                            </div>
+                            <div className="text-xs text-gray-400">
+                                {loading ? <Skeleton className="w-16 h-3 mt-1"/> : "Switch organization"}
+                            </div>
+                        </div>
+                        <ChevronDown
+                            className={cn(
+                                "h-4 w-4 text-gray-400 transition-transform duration-200 ml-1",
+                                open && "rotate-180 text-blue-500",
+                            )}
+                        />
+                    </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                    align="end"
+                    className="w-64 py-2 bg-neutral-900 border border-neutral-800 rounded-lg shadow-[0_0_25px_rgba(0,0,0,0.3)] backdrop-blur-sm"
+                >
+                    <div className="px-3 py-2 text-xs font-medium text-gray-400 border-b border-neutral-800">
+                        Your Organizations
+                    </div>
+                    {loading ? (
+                        <div className="p-3 space-y-2">
+                            <Skeleton className="h-8 w-full"/>
+                            <Skeleton className="h-8 w-full"/>
+                            <Skeleton className="h-8 w-full"/>
+                        </div>
+                    ) : (
+                        <div className="max-h-[320px] overflow-y-auto py-1">
+                            {orgs.map((organization) => (
+                                <div
+                                    key={organization.orgID}
+                                    className={cn(
+                                        "flex items-center justify-between cursor-pointer px-3 py-2 hover:bg-blue-600/10 transition-colors duration-150",
+                                        organization.orgName === org && "bg-blue-600/5",
+                                    )}
+                                    onClick={() => {
+                                        handleOrgClick(organization.orgID)
+                                        setOpen(false)
+                                    }}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <div
+                                            className={cn(
+                                                "flex h-7 w-7 items-center justify-center rounded-md",
+                                                organization.orgName === org ? "bg-blue-600 text-white" : "bg-neutral-800 text-gray-400",
+                                            )}
+                                        >
+                                            <Building className="h-4 w-4"/>
+                                        </div>
+                                        <span
+                                            className={cn(
+                                                "text-sm",
+                                                organization.orgName === org ? "font-medium text-white" : "text-gray-300",
+                                            )}
+                                        >
+                      {organization.orgName}
+                    </span>
+                                    </div>
+                                    {organization.orgName === org && <Check className="h-4 w-4 text-blue-500"/>}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    <div className="mt-1 pt-1 px-3 border-t border-neutral-800">
+                        <div className="grid grid-cols-2 gap-2 mt-2">
+                            <button
+                                onClick={() => handleOpenJoinModal("join")}
+                                className="flex items-center justify-center gap-1.5 text-sm text-blue-500 hover:text-blue-400 py-2 px-3 rounded hover:bg-blue-600/10 transition-colors duration-150"
+                            >
+                                <LinkIcon className="h-3.5 w-3.5"/>
+                                Join Existing
+                            </button>
+                            <button
+                                onClick={() => handleOpenJoinModal("create")}
+                                className="flex items-center justify-center gap-1.5 text-sm text-blue-500 hover:text-blue-400 py-2 px-3 rounded hover:bg-blue-600/10 transition-colors duration-150"
+                            >
+                                <PlusCircle className="h-3.5 w-3.5"/>
+                                Create New
+                            </button>
+                        </div>
+                    </div>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            {showJoinModal && <JoinOrganization onClose={() => setShowJoinModal(false)} initialTab={joinModalTab}/>}
+        </>
     );
 }

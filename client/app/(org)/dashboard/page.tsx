@@ -43,7 +43,7 @@ const Dashboard = () => {
     if (loading) {
         return (
             <div
-                className="w-full h-screen flex justify-center items-center bg-gradient-to-br from-[#050505] to-[#0c0c0c]">
+                className="w-full h-screen flex justify-center items-center">
                 <div className="flex flex-col items-center">
                     <Loader2 className="h-10 w-10 animate-spin text-[#0ea5e9] mb-4"/>
                     <span className="text-gray-400">Loading dashboard...</span>
@@ -53,7 +53,7 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="w-full min-h-screen bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-white">
+        <div className="w-full min-h-screen text-white">
             <div className="container mx-auto px-4 py-6 md:py-8">
                 {/* Dashboard Header */}
                 <motion.div
