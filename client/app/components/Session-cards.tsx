@@ -284,7 +284,7 @@ const SessionCards = () => {
                             </svg>
                         </div>
                         <h3 className="text-xl font-semibold text-white mb-2">No Active Sessions</h3>
-                        <p className="text-gray-400">You don't have any active sessions at the moment.</p>
+                        <p className="text-gray-400">You don&apos;t have any active sessions at the moment.</p>
                     </div>
                 )}
             </div>
