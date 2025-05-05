@@ -16,19 +16,7 @@ import {Input} from "@/components/ui/input"
 import {ScrollArea} from "@/components/ui/scroll-area"
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu"
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
-import {
-    ArrowLeft,
-    Edit,
-    Info,
-    MessageSquare,
-    MoreVertical,
-    Phone,
-    Search,
-    Send,
-    Trash2,
-    Users,
-    Video,
-} from "lucide-react"
+import {ArrowLeft, Edit, Info, MessageSquare, MoreVertical, Phone, Search, Send, Trash2, Video,} from "lucide-react"
 import VideoCall from "@/app/components/chat/VideoCall"
 
 const ChatPage = () => {
@@ -610,14 +598,6 @@ const ChatPage = () => {
                         <p className="text-gray-400 max-w-md">
                             Select a user from the list to start a conversation or continue where you left off.
                         </p>
-                        <Button
-                            variant="outline"
-                            className="mt-6 border-[#333] hover:border-[#0ea5e9] text-gray-300 hover:text-[#0ea5e9]"
-                            onClick={toggleUserList}
-                        >
-                            <Users className="h-4 w-4 mr-2"/>
-                            Browse Users
-                        </Button>
                     </div>
                 )}
             </div>
