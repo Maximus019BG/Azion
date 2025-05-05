@@ -66,12 +66,14 @@ const ChatPage = () => {
     const [showVoiceCall, setShowVoiceCall] = useState<boolean>(false)
     const [showVideoCall, setShowVideoCall] = useState<boolean>(false)
     const [isTyping, setIsTyping] = useState<boolean>(false)
+    const [remoteTyping, setRemoteTyping] = useState<{ [key: string]: boolean }>({})
     const [isUploading, setIsUploading] = useState<boolean>(false)
     const [showAttachmentMenu, setShowAttachmentMenu] = useState<boolean>(false)
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const attachmentMenuRef = useRef<HTMLDivElement>(null)
+    const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
     const defaultImageSrc = typeof DefaultPic === "string" ? DefaultPic : DefaultPic.src
 
     const getProfilePictureSrc = async (profilePicture: string | null): Promise<string | null> => {
@@ -161,6 +163,7 @@ const ChatPage = () => {
             webSocketFactory: () => socket,
             reconnectDelay: 5000,
             onConnect: () => {
+                // Subscribe to private messages
                 stompClient.subscribe(`/user/${userEmail}/private`, (messageDTO) => {
                     if (messageDTO.body) {
                         const newMessage = JSON.parse(messageDTO.body)
@@ -184,6 +187,17 @@ const ChatPage = () => {
                             localStorage.setItem("chatMessages", JSON.stringify(updatedMessages))
                             return updatedMessages
                         })
+                    }
+                })
+
+                // Subscribe to typing status updates
+                stompClient.subscribe(`/user/${userEmail}/typing`, (typingDTO) => {
+                    if (typingDTO.body) {
+                        const typingData = JSON.parse(typingDTO.body)
+                        setRemoteTyping((prev) => ({
+                            ...prev,
+                            [typingData.from]: typingData.isTyping,
+                        }))
                     }
                 })
             },
@@ -250,6 +264,24 @@ const ChatPage = () => {
 
             setInput("")
             setIsTyping(false)
+
+            // Send typing stopped notification
+            sendTypingStatus(false)
+        }
+    }
+
+    const sendTypingStatus = (isTyping: boolean) => {
+        if (client && client.connected && selectedUser) {
+            const typingDTO = {
+                from: userEmail,
+                to: selectedUser.email,
+                isTyping: isTyping,
+            }
+
+            client.publish({
+                destination: "/app/typing",
+                body: JSON.stringify(typingDTO),
+            })
         }
     }
 
@@ -291,6 +323,8 @@ const ChatPage = () => {
         if (isMobileView) {
             setShowUserList(false)
         }
+        // Reset remote typing status when changing chat
+        setRemoteTyping({})
         // Focus the input field when opening a chat
         setTimeout(() => {
             inputRef.current?.focus()
@@ -373,11 +407,28 @@ const ChatPage = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value)
+
+        // Handle typing status
         if (e.target.value.length > 0 && !isTyping) {
             setIsTyping(true)
+            sendTypingStatus(true)
         } else if (e.target.value.length === 0 && isTyping) {
             setIsTyping(false)
+            sendTypingStatus(false)
         }
+
+        // Reset typing timeout
+        if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current)
+        }
+
+        // Set a timeout to stop typing indicator after 3 seconds of inactivity
+        typingTimeoutRef.current = setTimeout(() => {
+            if (isTyping) {
+                setIsTyping(false)
+                sendTypingStatus(false)
+            }
+        }, 3000)
     }
 
     const formatMessageTime = (timestamp: string | undefined) => {
@@ -459,6 +510,9 @@ const ChatPage = () => {
         else return (bytes / 1048576).toFixed(1) + " MB"
     }
 
+    // Check if the selected user is typing
+    const isRemoteUserTyping = selectedUser ? remoteTyping[selectedUser.email] : false
+
     return (
         <div
             className="flex flex-col sm:flex-row bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-white w-full min-h-screen h-screen overflow-hidden">
@@ -476,7 +530,7 @@ const ChatPage = () => {
                 <div
                     className="flex items-center justify-between p-3 bg-[#0a0a0a] border-b border-[#222] shadow-lg z-10">
                     <div className="w-full flex justify-center items-center">
-                        <h1 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">Messages</h1>
+                        <h1 className="text-lg font-bold text-white">Messages</h1>
                     </div>
                     {selectedUser && !showUserList && (
                         <Button variant="ghost" size="icon" onClick={toggleUserList}
@@ -506,11 +560,11 @@ const ChatPage = () => {
                 {/* Desktop Header */}
                 {!isMobileView ? (
                     <div className="p-4 flex items-center justify-center border-b border-[#222]">
-                        <h2 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">Messages</h2>
+                        <h2 className="text-lg font-bold text-white">Messages</h2>
                     </div>
                 ) : (
                     <div className="p-4 flex items-center justify-between border-b border-[#222]">
-                        <h2 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">Messages</h2>
+                        <h2 className="text-lg font-bold text-white">Messages</h2>
                         <Button variant="ghost" size="icon" onClick={toggleUserList}
                                 className="text-gray-400 hover:text-[#0ea5e9]">
                             <X className="h-5 w-5"/>
@@ -589,6 +643,14 @@ const ChatPage = () => {
                                         <p className="font-medium truncate text-sm">{user.name}</p>
                                         <p className="text-xs text-gray-400 truncate">{user.email}</p>
                                     </div>
+                                    {remoteTyping[user.email] && (
+                                        <div className="flex-shrink-0">
+                      <span className="inline-flex items-center text-xs text-[#0ea5e9] animate-pulse">
+                        <span className="mr-1">●</span>
+                        <span>Typing</span>
+                      </span>
+                                        </div>
+                                    )}
                                 </div>
                             ))
                         )}
@@ -634,7 +696,15 @@ const ChatPage = () => {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <h3 className="font-semibold truncate text-sm sm:text-base">{selectedUser.name}</h3>
-                                <p className="text-xs text-gray-400 truncate">{selectedUser.email}</p>
+                                <div className="flex items-center">
+                                    <p className="text-xs text-gray-400 truncate">{selectedUser.email}</p>
+                                    {isRemoteUserTyping && (
+                                        <span className="ml-2 text-xs text-[#0ea5e9] animate-pulse flex items-center">
+                      <span className="mr-1">●</span>
+                      <span>Typing...</span>
+                    </span>
+                                    )}
+                                </div>
                             </div>
                             <div className="flex space-x-1">
                                 <TooltipProvider>
@@ -810,7 +880,7 @@ const ChatPage = () => {
                                                                             onClick={() => {
                                                                                 setEditingMessage({
                                                                                     id: msg.id!,
-                                                                                    content: msg.content
+                                                                                    content: msg.content,
                                                                                 })
                                                                                 setInput(msg.content)
                                                                                 inputRef.current?.focus()
@@ -844,11 +914,36 @@ const ChatPage = () => {
                                 )}
                                 <div ref={messagesEndRef}/>
 
-                                {/* Typing indicator */}
-                                {isTyping && (
-                                    <div className="flex items-center text-xs text-gray-400 animate-pulse">
-                                        <span className="mr-2">●</span>
-                                        <span>Typing...</span>
+                                {/* Typing indicator - only show when the remote user is typing */}
+                                {isRemoteUserTyping && (
+                                    <div
+                                        className="flex items-center space-x-2 text-xs text-gray-400 animate-pulse ml-2">
+                                        <div className="flex-shrink-0">
+                                            <Image
+                                                src={profilePictureSrcs[selectedUser.email] || defaultImageSrc}
+                                                alt="User avatar"
+                                                width={24}
+                                                height={24}
+                                                className="rounded-full w-6 h-6"
+                                                onError={(e) => {
+                                                    e.currentTarget.src = defaultImageSrc
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="flex space-x-1">
+                                            <div
+                                                className="h-2 w-2 bg-[#0ea5e9] rounded-full animate-bounce"
+                                                style={{animationDelay: "0ms"}}
+                                            ></div>
+                                            <div
+                                                className="h-2 w-2 bg-[#0ea5e9] rounded-full animate-bounce"
+                                                style={{animationDelay: "300ms"}}
+                                            ></div>
+                                            <div
+                                                className="h-2 w-2 bg-[#0ea5e9] rounded-full animate-bounce"
+                                                style={{animationDelay: "600ms"}}
+                                            ></div>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -991,9 +1086,7 @@ const ChatPage = () => {
                             className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-[#0c4a6e] to-[#0c4a6e]/30 rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(14,165,233,0.2)]">
                             <MessageSquare className="h-10 w-10 sm:h-12 sm:w-12 text-[#0ea5e9]"/>
                         </div>
-                        <h3 className="text-xl sm:text-2xl font-semibold mb-3 bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">
-                            Your Messages
-                        </h3>
+                        <h3 className="text-xl sm:text-2xl font-semibold mb-3 text-white">Your Messages</h3>
                         <p className="text-gray-400 max-w-md text-sm sm:text-base">
                             Select a user from the list to start a conversation or continue where you left off.
                         </p>
