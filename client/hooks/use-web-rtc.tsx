@@ -37,29 +37,31 @@ export function useWebRTC(userId: string, remoteUserId: string) {
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
             onConnect: () => {
-                console.log("Connected to signaling server")
+                console.log(`[WebRTC] Connected to signaling server as ${userId}`)
 
                 // Subscribe to signaling messages
                 stompClient.subscribe(`/user/${userId}/signal`, async (msg: IMessage) => {
                     try {
                         const data = JSON.parse(msg.body)
-                        console.log("Received signal:", data.type, "from:", data.from)
+                        console.log(`[WebRTC] Received signal: ${data.type} from: ${data.from}`)
 
                         switch (data.type) {
                             case "call-request":
                                 // Notify about incoming call
+                                console.log(`[WebRTC] Incoming call request from: ${data.from}`)
                                 if (incomingCallHandlerRef.current) {
                                     incomingCallHandlerRef.current(data.from)
                                 }
                                 break
 
                             case "call-accepted":
-                                console.log("Call accepted by remote user")
+                                console.log(`[WebRTC] Call accepted by: ${data.from}`)
                                 if (callAcceptedHandlerRef.current) {
                                     callAcceptedHandlerRef.current()
                                 }
                                 // Create and send offer since we're the initiator
                                 if (isCallInitiatorRef.current) {
+                                    console.log(`[WebRTC] We are the initiator, creating and sending offer`)
                                     createAndSendOffer()
                                 }
                                 break
@@ -94,7 +96,7 @@ export function useWebRTC(userId: string, remoteUserId: string) {
                                 break
                         }
                     } catch (error) {
-                        console.error("Error handling signal:", error)
+                        console.error("[WebRTC] Error handling signal:", error)
                     }
                 })
 
@@ -390,17 +392,18 @@ export function useWebRTC(userId: string, remoteUserId: string) {
 
             // Mark as call initiator
             isCallInitiatorRef.current = true
+            console.log(`[WebRTC] Initiating call as ${userId} to ${remoteUserId}`)
 
             // Send call request
             stompClientRef.current.publish({
                 destination: `/app/signal/${remoteUserId}`,
                 body: JSON.stringify({
                     type: "call-request",
-                    from: userId
+                    from: userId,
                 }),
             })
 
-            console.log("Sent call request to:", remoteUserId)
+            console.log(`[WebRTC] Sent call request to: ${remoteUserId}`)
             setConnectionState("ringing")
 
             // Create peer connection (but don't send offer yet - wait for acceptance)
@@ -423,17 +426,18 @@ export function useWebRTC(userId: string, remoteUserId: string) {
 
             // Create peer connection
             createPeerConnection()
+            console.log(`[WebRTC] Accepting call as ${userId} from ${remoteUserId}`)
 
             // Send call accepted message
             stompClientRef.current.publish({
                 destination: `/app/signal/${remoteUserId}`,
                 body: JSON.stringify({
                     type: "call-accepted",
-                    from: userId
+                    from: userId,
                 }),
             })
 
-            console.log("Sent call acceptance to:", remoteUserId)
+            console.log(`[WebRTC] Sent call acceptance to: ${remoteUserId}`)
             setConnectionState("connecting")
         } catch (err) {
             console.error("Error accepting call:", err)
@@ -452,7 +456,7 @@ export function useWebRTC(userId: string, remoteUserId: string) {
             destination: `/app/signal/${remoteUserId}`,
             body: JSON.stringify({
                 type: "call-rejected",
-                from: userId
+                from: userId,
             }),
         })
 
@@ -468,7 +472,7 @@ export function useWebRTC(userId: string, remoteUserId: string) {
                 destination: `/app/signal/${remoteUserId}`,
                 body: JSON.stringify({
                     type: "call-ended",
-                    from: userId
+                    from: userId,
                 }),
             })
 
@@ -540,7 +544,7 @@ export function useWebRTC(userId: string, remoteUserId: string) {
         try {
             // Stop all tracks in the screen stream
             if (screenStreamRef.current) {
-                screenStreamRef.current.getTracks().forEach(track => track.stop())
+                screenStreamRef.current.getTracks().forEach((track) => track.stop())
                 screenStreamRef.current = null
             }
 

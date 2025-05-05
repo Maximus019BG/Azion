@@ -1,6 +1,7 @@
 "use client"
 import type React from "react"
 import {useEffect, useRef, useState} from "react"
+
 import {Client} from "@stomp/stompjs"
 import SockJS from "sockjs-client"
 import {byteArrayToBase64, sessionCheck, UserData} from "@/app/func/funcs"
@@ -16,28 +17,9 @@ import {Input} from "@/components/ui/input"
 import {ScrollArea} from "@/components/ui/scroll-area"
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu"
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
-import {
-    ChevronLeft,
-    Download,
-    Edit,
-    File,
-    ImageIcon,
-    Info,
-    Menu,
-    MessageSquare,
-    Mic,
-    MoreVertical,
-    Paperclip,
-    Phone,
-    Search,
-    Send,
-    Smile,
-    Trash2,
-    Users,
-    Video,
-    X,
-} from "lucide-react"
-import VideoCall from "@/app/components/chat/VideoCall"
+import {ChevronLeft, Download, Edit, File, ImageIcon, Info, Menu, MessageSquare, Mic, MoreVertical, Paperclip, Phone, Search, Send, Smile, Trash2, Users, Video, X,} from "lucide-react"
+import VideoChatComponent from "@/app/components/chat/VideoCall"
+import {Toaster} from "@/components/ui/toaster2"
 
 // Extend the Message type to include timestamp and file properties
 interface ExtendedMessage extends Message {
@@ -69,6 +51,9 @@ const ChatPage = () => {
     const [remoteTyping, setRemoteTyping] = useState<{ [key: string]: boolean }>({})
     const [isUploading, setIsUploading] = useState<boolean>(false)
     const [showAttachmentMenu, setShowAttachmentMenu] = useState<boolean>(false)
+    const [incomingVideoCall, setIncomingVideoCall] = useState<string | null>(null)
+    const [callType, setCallType] = useState<"video" | "audio">("video")
+
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
@@ -168,6 +153,13 @@ const ChatPage = () => {
                     if (messageDTO.body) {
                         const newMessage = JSON.parse(messageDTO.body)
                         const decryptedContent = Decrypt(newMessage.content)
+
+                        // Check if this is a video call request
+                        if (decryptedContent.startsWith("VIDEO_CALL_REQUEST")) {
+                            handleIncomingVideoCall(newMessage.from, decryptedContent)
+                            return
+                        }
+
                         setMessages((prevMessages) => {
                             const updatedMessages = [
                                 ...prevMessages,
@@ -267,6 +259,38 @@ const ChatPage = () => {
 
             // Send typing stopped notification
             sendTypingStatus(false)
+        }
+    }
+
+    // Inside ChatPage component
+
+    // 1. Modify the video call request function to ensure proper signaling
+    const sendVideoCallRequest = (to: string, type: "video" | "audio" = "video") => {
+        if (client && client.connected) {
+            const messageDTO = {
+                content: Encrypt(`VIDEO_CALL_REQUEST:${type}`),
+                from: userEmail,
+                to: to,
+            }
+
+            client.publish({destination: "/app/privateMessage", body: JSON.stringify(messageDTO)})
+        }
+    }
+
+    // 2. Update the handleIncomingVideoCall function to extract caller ID
+    const handleIncomingVideoCall = (from: string, messageContent: string) => {
+        // Extract call type from message
+        const callType = messageContent.includes(":audio") ? "audio" : "video"
+        setCallType(callType)
+        setIncomingVideoCall(from)
+
+        // Find the user who is calling
+        const callingUser = users.find((user) => user.email === from)
+        if (callingUser) {
+            setSelectedUser(callingUser)
+            if (isMobileView) {
+                setShowUserList(false)
+            }
         }
     }
 
@@ -393,16 +417,29 @@ const ChatPage = () => {
         }
     }
 
-    const handleVoiceCall = () => {
+    const handleVideoCall = (callType: "video" | "audio" = "video") => {
         if (selectedUser) {
-            setShowVoiceCall(true)
+            // Send a video call request message to the selected user
+            sendVideoCallRequest(selectedUser.email, callType)
+            setShowVideoCall(true)
+            // Set call type for the video component
+            setCallType(callType)
         }
     }
 
-    const handleVideoCall = () => {
+    const handleVoiceCall = () => {
         if (selectedUser) {
-            setShowVideoCall(true)
+            handleVideoCall("audio")
         }
+    }
+
+    const handleAcceptVideoCall = () => {
+        setIncomingVideoCall(null)
+        setShowVideoCall(true)
+    }
+
+    const handleRejectVideoCall = () => {
+        setIncomingVideoCall(null)
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -514,8 +551,7 @@ const ChatPage = () => {
     const isRemoteUserTyping = selectedUser ? remoteTyping[selectedUser.email] : false
 
     return (
-        <div
-            className="flex flex-col sm:flex-row bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-white w-full min-h-screen h-screen overflow-hidden">
+        <div className="flex flex-col sm:flex-row bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-white w-full min-h-screen h-screen overflow-hidden">
             {/* Hidden file input */}
             <input
                 type="file"
@@ -524,29 +560,26 @@ const ChatPage = () => {
                 className="hidden"
                 accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
             />
-
             {/* Mobile Header - Only visible on small screens */}
             {isMobileView && (
-                <div
-                    className="flex items-center justify-between p-3 bg-[#0a0a0a] border-b border-[#222] shadow-lg z-10">
+                <div className="flex items-center justify-between p-3 bg-[#0a0a0a] border-b border-[#222] shadow-lg z-10">
                     <div className="w-full flex justify-center items-center">
-                        <h1 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">Messages</h1>
+                        <h1 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">
+                            Messages
+                        </h1>
                     </div>
                     {selectedUser && !showUserList && (
-                        <Button variant="ghost" size="icon" onClick={toggleUserList}
-                                className="text-gray-400 hover:text-[#0ea5e9]">
+                        <Button variant="ghost" size="icon" onClick={toggleUserList} className="text-gray-400 hover:text-[#0ea5e9]">
                             <ChevronLeft className="h-5 w-5"/>
                         </Button>
                     )}
                     {!selectedUser && (
-                        <Button variant="ghost" size="icon" onClick={toggleUserList}
-                                className="text-gray-400 hover:text-[#0ea5e9]">
+                        <Button variant="ghost" size="icon" onClick={toggleUserList} className="text-gray-400 hover:text-[#0ea5e9]">
                             <Menu className="h-5 w-5"/>
                         </Button>
                     )}
                 </div>
             )}
-
             {/* User List Panel */}
             <div
                 className={`
@@ -560,13 +593,16 @@ const ChatPage = () => {
                 {/* Desktop Header */}
                 {!isMobileView ? (
                     <div className="p-4 flex items-center justify-center border-b border-[#222]">
-                        <h2 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">Messages</h2>
+                        <h2 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">
+                            Messages
+                        </h2>
                     </div>
                 ) : (
                     <div className="p-4 flex items-center justify-between border-b border-[#222]">
-                        <h2 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">Messages</h2>
-                        <Button variant="ghost" size="icon" onClick={toggleUserList}
-                                className="text-gray-400 hover:text-[#0ea5e9]">
+                        <h2 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">
+                            Messages
+                        </h2>
+                        <Button variant="ghost" size="icon" onClick={toggleUserList} className="text-gray-400 hover:text-[#0ea5e9]">
                             <X className="h-5 w-5"/>
                         </Button>
                     </div>
@@ -601,8 +637,7 @@ const ChatPage = () => {
                                 <Users className="h-12 w-12 mx-auto mb-3 opacity-30"/>
                                 <p className="text-sm">No users found</p>
                                 {searchTerm && (
-                                    <Button variant="ghost" size="sm" onClick={() => setSearchTerm("")}
-                                            className="mt-2 text-[#0ea5e9]">
+                                    <Button variant="ghost" size="sm" onClick={() => setSearchTerm("")} className="mt-2 text-[#0ea5e9]">
                                         Clear search
                                     </Button>
                                 )}
@@ -623,7 +658,9 @@ const ChatPage = () => {
                                 >
                                     <div className="relative">
                                         <div
-                                            className={`${selectedUser?.email === user.email ? "ring-2 ring-[#0ea5e9] p-0.5 rounded-full" : ""}`}
+                                            className={`${
+                                                selectedUser?.email === user.email ? "ring-2 ring-[#0ea5e9] p-0.5 rounded-full" : ""
+                                            }`}
                                         >
                                             <Image
                                                 src={profilePictureSrcs[user.email] || defaultImageSrc}
@@ -636,8 +673,7 @@ const ChatPage = () => {
                                                 }}
                                             />
                                         </div>
-                                        <span
-                                            className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#0a0a0a]"></span>
+                                        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#0a0a0a]"></span>
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="font-medium truncate text-sm">{user.name}</p>
@@ -651,13 +687,20 @@ const ChatPage = () => {
                       </span>
                                         </div>
                                     )}
+                                    {incomingVideoCall === user.email && (
+                                        <div className="flex-shrink-0">
+                      <span className="inline-flex items-center text-xs text-red-400 animate-pulse">
+                        <span className="mr-1">●</span>
+                        <span>Calling</span>
+                      </span>
+                                        </div>
+                                    )}
                                 </div>
                             ))
                         )}
                     </div>
                 </ScrollArea>
             </div>
-
             {/* Chat Area */}
             <div
                 className={`
@@ -691,8 +734,7 @@ const ChatPage = () => {
                                         e.currentTarget.src = defaultImageSrc
                                     }}
                                 />
-                                <span
-                                    className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#0a0a0a]"></span>
+                                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#0a0a0a]"></span>
                             </div>
                             <div className="flex-1 min-w-0">
                                 <h3 className="font-semibold truncate text-sm sm:text-base">{selectedUser.name}</h3>
@@ -716,8 +758,7 @@ const ChatPage = () => {
                                                 onClick={handleVoiceCall}
                                                 className="text-gray-400 hover:text-[#0ea5e9] relative overflow-hidden group hidden sm:flex"
                                             >
-                                                <span
-                                                    className="absolute inset-0 bg-blue-500/10 scale-0 group-hover:scale-100 rounded-full transition-transform duration-300"></span>
+                                                <span className="absolute inset-0 bg-blue-500/10 scale-0 group-hover:scale-100 rounded-full transition-transform duration-300"></span>
                                                 <Phone className="h-5 w-5 relative z-10"/>
                                             </Button>
                                         </TooltipTrigger>
@@ -733,11 +774,10 @@ const ChatPage = () => {
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                onClick={handleVideoCall}
+                                                onClick={() => handleVideoCall("video")}
                                                 className="text-gray-400 hover:text-[#0ea5e9] relative overflow-hidden group"
                                             >
-                                                <span
-                                                    className="absolute inset-0 bg-blue-500/10 scale-0 group-hover:scale-100 rounded-full transition-transform duration-300"></span>
+                                                <span className="absolute inset-0 bg-blue-500/10 scale-0 group-hover:scale-100 rounded-full transition-transform duration-300"></span>
                                                 <Video className="h-5 w-5 relative z-10"/>
                                             </Button>
                                         </TooltipTrigger>
@@ -750,8 +790,7 @@ const ChatPage = () => {
                                 <TooltipProvider>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <Button variant="ghost" size="icon"
-                                                    className="text-gray-400 hover:text-[#0ea5e9] hidden sm:flex">
+                                            <Button variant="ghost" size="icon" className="text-gray-400 hover:text-[#0ea5e9] hidden sm:flex">
                                                 <Info className="h-5 w-5"/>
                                             </Button>
                                         </TooltipTrigger>
@@ -768,8 +807,7 @@ const ChatPage = () => {
                             <div className="flex flex-col space-y-3">
                                 {messages.length === 0 ? (
                                     <div className="flex flex-col items-center justify-center h-full py-10">
-                                        <div
-                                            className="w-16 h-16 bg-gradient-to-br from-[#0c4a6e] to-[#0c4a6e]/30 rounded-full flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(14,165,233,0.2)]">
+                                        <div className="w-16 h-16 bg-gradient-to-br from-[#0c4a6e] to-[#0c4a6e]/30 rounded-full flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(14,165,233,0.2)]">
                                             <MessageSquare className="h-8 w-8 text-[#0ea5e9]"/>
                                         </div>
                                         <p className="text-gray-400 text-sm text-center max-w-xs">
@@ -787,6 +825,11 @@ const ChatPage = () => {
                                             const isFirstInGroup = index === 0 || filteredMessages[index - 1].from !== msg.from
                                             const isLastInGroup =
                                                 index === filteredMessages.length - 1 || filteredMessages[index + 1].from !== msg.from
+
+                                            // Skip video call request messages in the chat display
+                                            if (msg.content.startsWith("VIDEO_CALL_REQUEST")) {
+                                                return null
+                                            }
 
                                             return (
                                                 <div
@@ -815,7 +858,9 @@ const ChatPage = () => {
 
                                                     {/* Message content */}
                                                     <div
-                                                        className={`max-w-[75%] sm:max-w-[70%] group ${msg.from !== userEmail && isFirstInGroup ? "" : msg.from !== userEmail ? "ml-9" : ""}`}
+                                                        className={`max-w-[75%] sm:max-w-[70%] group ${
+                                                            msg.from !== userEmail && isFirstInGroup ? "" : msg.from !== userEmail ? "ml-9" : ""
+                                                        }`}
                                                     >
                                                         <div
                                                             className={`
@@ -829,10 +874,8 @@ const ChatPage = () => {
                                                         >
                                                             {/* File attachment */}
                                                             {msg.file && (
-                                                                <div
-                                                                    className="mb-2 bg-black/20 rounded-lg p-2 flex items-center">
-                                                                    <div
-                                                                        className="mr-2 bg-black/30 rounded-lg p-2">{getFileIcon(msg.file.type)}</div>
+                                                                <div className="mb-2 bg-black/20 rounded-lg p-2 flex items-center">
+                                                                    <div className="mr-2 bg-black/30 rounded-lg p-2">{getFileIcon(msg.file.type)}</div>
                                                                     <div className="flex-1 min-w-0">
                                                                         <p className="text-xs font-medium truncate">{msg.file.name}</p>
                                                                         <p className="text-xs opacity-70">{formatFileSize(msg.file.size)}</p>
@@ -855,8 +898,7 @@ const ChatPage = () => {
                                                             </p>
 
                                                             {msg.edited && (
-                                                                <span
-                                                                    className="text-xs opacity-70 ml-1 inline-flex items-center">
+                                                                <span className="text-xs opacity-70 ml-1 inline-flex items-center">
                                   <Edit className="h-2.5 w-2.5 mr-0.5"/>
                                   edited
                                 </span>
@@ -870,12 +912,10 @@ const ChatPage = () => {
                                                                             size="icon"
                                                                             className="absolute -right-8 top-0 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6"
                                                                         >
-                                                                            <MoreVertical
-                                                                                className="h-3.5 w-3.5 text-gray-400"/>
+                                                                            <MoreVertical className="h-3.5 w-3.5 text-gray-400"/>
                                                                         </Button>
                                                                     </DropdownMenuTrigger>
-                                                                    <DropdownMenuContent align="end"
-                                                                                         className="bg-[#1a1a1a] border-[#333] text-white">
+                                                                    <DropdownMenuContent align="end" className="bg-[#1a1a1a] border-[#333] text-white">
                                                                         <DropdownMenuItem
                                                                             onClick={() => {
                                                                                 setEditingMessage({
@@ -904,8 +944,7 @@ const ChatPage = () => {
 
                                                         {/* Only show timestamp for last message in group */}
                                                         {isLastInGroup && (
-                                                            <div
-                                                                className="text-xs text-gray-500 mt-1 px-1">{formatMessageTime(msg.timestamp)}</div>
+                                                            <div className="text-xs text-gray-500 mt-1 px-1">{formatMessageTime(msg.timestamp)}</div>
                                                         )}
                                                     </div>
                                                 </div>
@@ -916,8 +955,7 @@ const ChatPage = () => {
 
                                 {/* Typing indicator - only show when the remote user is typing */}
                                 {isRemoteUserTyping && (
-                                    <div
-                                        className="flex items-center space-x-2 text-xs text-gray-400 animate-pulse ml-2">
+                                    <div className="flex items-center space-x-2 text-xs text-gray-400 animate-pulse ml-2">
                                         <div className="flex-shrink-0">
                                             <Image
                                                 src={profilePictureSrcs[selectedUser.email] || defaultImageSrc}
@@ -962,8 +1000,7 @@ const ChatPage = () => {
                                         disabled={isUploading}
                                     >
                                         {isUploading ? (
-                                            <div
-                                                className="h-4 w-4 border-2 border-t-transparent border-[#0ea5e9] rounded-full animate-spin"/>
+                                            <div className="h-4 w-4 border-2 border-t-transparent border-[#0ea5e9] rounded-full animate-spin"/>
                                         ) : (
                                             <Paperclip className="h-4 w-4"/>
                                         )}
@@ -1017,8 +1054,7 @@ const ChatPage = () => {
                                     />
 
                                     <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
-                                        <Button variant="ghost" size="icon"
-                                                className="text-gray-400 hover:text-[#0ea5e9] h-6 w-6">
+                                        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-[#0ea5e9] h-6 w-6">
                                             <Smile className="h-4 w-4"/>
                                         </Button>
                                         <Button
@@ -1045,8 +1081,7 @@ const ChatPage = () => {
                                                 className="ml-2 bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0284c7] hover:to-[#0369a1] rounded-full shadow-[0_0_10px_rgba(14,165,233,0.3)] h-9 w-9 flex-shrink-0"
                                                 disabled={(!input.trim() && !editingMessage) || isUploading}
                                             >
-                                                {editingMessage ? <Edit className="h-4 w-4"/> :
-                                                    <Send className="h-4 w-4"/>}
+                                                {editingMessage ? <Edit className="h-4 w-4"/> : <Send className="h-4 w-4"/>}
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>
@@ -1080,10 +1115,8 @@ const ChatPage = () => {
                         </div>
                     </>
                 ) : (
-                    <div
-                        className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-[#080808] to-[#0a0a0a]">
-                        <div
-                            className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-[#0c4a6e] to-[#0c4a6e]/30 rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(14,165,233,0.2)]">
+                    <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-[#080808] to-[#0a0a0a]">
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-[#0c4a6e] to-[#0c4a6e]/30 rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(14,165,233,0.2)]">
                             <MessageSquare className="h-10 w-10 sm:h-12 sm:w-12 text-[#0ea5e9]"/>
                         </div>
                         <h3 className="text-xl sm:text-2xl font-semibold mb-3 text-white">Your Messages</h3>
@@ -1103,7 +1136,6 @@ const ChatPage = () => {
                     </div>
                 )}
             </div>
-
             {/* Voice Call Component */}
             {showVoiceCall && selectedUser && (
                 <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
@@ -1120,8 +1152,7 @@ const ChatPage = () => {
                             </Button>
                         </div>
                         <div className="text-center py-6">
-                            <div
-                                className="w-20 h-20 mx-auto bg-[#0c4a6e] rounded-full flex items-center justify-center mb-4">
+                            <div className="w-20 h-20 mx-auto bg-[#0c4a6e] rounded-full flex items-center justify-center mb-4">
                                 <Image
                                     src={profilePictureSrcs[selectedUser.email] || defaultImageSrc}
                                     alt={selectedUser.name}
@@ -1147,13 +1178,60 @@ const ChatPage = () => {
                     </div>
                 </div>
             )}
+            {/* Incoming Video Call Alert */}
+            {incomingVideoCall && selectedUser && (
+                <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+                    <div className="bg-[#0a0a0a] rounded-lg shadow-2xl max-w-md w-full p-4 border border-[#222]">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold">Incoming {callType === "video" ? "Video" : "Voice"} Call</h3>
+                        </div>
+                        <div className="text-center py-6">
+                            <div className="w-20 h-20 mx-auto bg-[#0c4a6e] rounded-full flex items-center justify-center mb-4">
+                                <Image
+                                    src={profilePictureSrcs[selectedUser.email] || defaultImageSrc}
+                                    alt={selectedUser.name}
+                                    width={70}
+                                    height={70}
+                                    className="rounded-full"
+                                />
+                            </div>
+                            <h4 className="text-lg font-medium">{selectedUser.name}</h4>
+                            <p className="text-gray-400 text-sm">is calling you...</p>
 
-            {/* Video Call Component */}
-            {showVideoCall && selectedUser && (
-                <div className="fixed inset-0 z-50">
-                    <VideoCall remoteUserId={selectedUser.email} onClose={() => setShowVideoCall(false)}/>
+                            <div className="flex justify-center space-x-4 mt-8">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="bg-green-500/10 hover:bg-green-500/20 text-green-500 h-12 w-12 rounded-full"
+                                    onClick={handleAcceptVideoCall}
+                                >
+                                    <Video className="h-6 w-6"/>
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="bg-red-500/10 hover:bg-red-500/20 text-red-500 h-12 w-12 rounded-full"
+                                    onClick={handleRejectVideoCall}
+                                >
+                                    <X className="h-6 w-6"/>
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
+
+            {showVideoCall && selectedUser && (
+                <div className="fixed inset-0 z-50">
+                    <VideoChatComponent
+                        remoteUserId={selectedUser.email}
+                        onClose={() => setShowVideoCall(false)}
+                        initialCallType={callType}
+                        isIncomingCall={incomingVideoCall === selectedUser.email}
+                    />
+                </div>
+            )}
+            <Toaster/>
         </div>
     )
 }
