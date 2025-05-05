@@ -556,7 +556,7 @@ export default function LandingPage() {
                     badge="Pricing"
                 />
 
-                <div className="container mx-auto px-4">
+                <div className="flex flex-col justify-center items-center container mx-auto px-4">
 
                     <Pricing/>
 
