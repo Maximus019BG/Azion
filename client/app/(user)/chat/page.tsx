@@ -530,7 +530,7 @@ const ChatPage = () => {
                 <div
                     className="flex items-center justify-between p-3 bg-[#0a0a0a] border-b border-[#222] shadow-lg z-10">
                     <div className="w-full flex justify-center items-center">
-                        <h1 className="text-lg font-bold text-white">Messages</h1>
+                        <h1 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">Messages</h1>
                     </div>
                     {selectedUser && !showUserList && (
                         <Button variant="ghost" size="icon" onClick={toggleUserList}
@@ -560,11 +560,11 @@ const ChatPage = () => {
                 {/* Desktop Header */}
                 {!isMobileView ? (
                     <div className="p-4 flex items-center justify-center border-b border-[#222]">
-                        <h2 className="text-lg font-bold text-white">Messages</h2>
+                        <h2 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">Messages</h2>
                     </div>
                 ) : (
                     <div className="p-4 flex items-center justify-between border-b border-[#222]">
-                        <h2 className="text-lg font-bold text-white">Messages</h2>
+                        <h2 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">Messages</h2>
                         <Button variant="ghost" size="icon" onClick={toggleUserList}
                                 className="text-gray-400 hover:text-[#0ea5e9]">
                             <X className="h-5 w-5"/>

@@ -234,7 +234,8 @@ const CreateTask: FC = () => {
             ) : (
                 <>
                     <div className="w-full h-screen flex flex-col justify-center items-center p-4 lg:p-8 overflow-auto">
-                        <h1 className={`text-4xl font-bold text-center mb-8 ${HeaderText.className}`}>Create New
+                        <h1 className={`text-4xl font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text p-10 text-transparent ${HeaderText.className}`}>Create
+                            New
                             Task</h1>
                         {error && <div
                             className="bg-red-500/80 text-white p-4 rounded-md mb-4 w-full max-w-4xl">{error}</div>}

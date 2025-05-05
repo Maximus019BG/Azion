@@ -94,7 +94,7 @@ const DashboardTasks = () => {
                     <p className="mb-2">No tasks available</p>
                     <p className="text-sm">Create new tasks to see them here</p>
                     <Link
-                        href="/dashboard/tasks"
+                        href="/dashboard/task"
                         className="inline-block mt-4 px-4 py-2 bg-[#111] border border-[#333] hover:border-[#0ea5e9] rounded-md text-gray-300 hover:text-[#0ea5e9] transition-colors"
                     >
                         Go to Tasks
