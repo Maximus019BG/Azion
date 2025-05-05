@@ -67,9 +67,11 @@ const ChatPage = () => {
     const [showVideoCall, setShowVideoCall] = useState<boolean>(false)
     const [isTyping, setIsTyping] = useState<boolean>(false)
     const [isUploading, setIsUploading] = useState<boolean>(false)
+    const [showAttachmentMenu, setShowAttachmentMenu] = useState<boolean>(false)
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const attachmentMenuRef = useRef<HTMLDivElement>(null)
     const defaultImageSrc = typeof DefaultPic === "string" ? DefaultPic : DefaultPic.src
 
     const getProfilePictureSrc = async (profilePicture: string | null): Promise<string | null> => {
@@ -91,9 +93,9 @@ const ChatPage = () => {
             setIsMobileView(width < 640)
             setIsTabletView(width >= 640 && width < 1024)
 
-            // On mobile, start with user list visible
+            // On mobile, start with user list visible if no user is selected
             if (width < 640) {
-                setShowUserList(true)
+                setShowUserList(!selectedUser)
             } else {
                 // On larger screens, always show both panels
                 setShowUserList(true)
@@ -103,6 +105,20 @@ const ChatPage = () => {
         handleResize()
         window.addEventListener("resize", handleResize)
         return () => window.removeEventListener("resize", handleResize)
+    }, [selectedUser])
+
+    // Close attachment menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (attachmentMenuRef.current && !attachmentMenuRef.current.contains(event.target as Node)) {
+                setShowAttachmentMenu(false)
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside)
+        }
     }, [])
 
     useEffect(() => {
@@ -334,6 +350,13 @@ const ChatPage = () => {
 
     const toggleUserList = () => {
         setShowUserList(!showUserList)
+        // If on mobile and a user is selected, this helps with navigation
+        if (isMobileView && selectedUser && showUserList) {
+            // We're closing the user list to show the chat
+            document.body.style.overflow = "hidden"
+        } else {
+            document.body.style.overflow = ""
+        }
     }
 
     const handleVoiceCall = () => {
@@ -367,8 +390,16 @@ const ChatPage = () => {
         }
     }
 
-    const handleFileClick = () => {
-        fileInputRef.current?.click()
+    const toggleAttachmentMenu = () => {
+        setShowAttachmentMenu(!showAttachmentMenu)
+    }
+
+    const handleFileUpload = (acceptType = "*/*") => {
+        if (fileInputRef.current) {
+            fileInputRef.current.accept = acceptType
+            fileInputRef.current.click()
+        }
+        setShowAttachmentMenu(false)
     }
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -444,10 +475,8 @@ const ChatPage = () => {
             {isMobileView && (
                 <div
                     className="flex items-center justify-between p-3 bg-[#0a0a0a] border-b border-[#222] shadow-lg z-10">
-                    <div className="flex items-center">
-                        <h1 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent ml-2">
-                            Messages
-                        </h1>
+                    <div className="w-full flex justify-center items-center">
+                        <h1 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">Messages</h1>
                     </div>
                     {selectedUser && !showUserList && (
                         <Button variant="ghost" size="icon" onClick={toggleUserList}
@@ -456,7 +485,8 @@ const ChatPage = () => {
                         </Button>
                     )}
                     {!selectedUser && (
-                        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-[#0ea5e9]">
+                        <Button variant="ghost" size="icon" onClick={toggleUserList}
+                                className="text-gray-400 hover:text-[#0ea5e9]">
                             <Menu className="h-5 w-5"/>
                         </Button>
                     )}
@@ -470,17 +500,21 @@ const ChatPage = () => {
           ${isTabletView ? "w-1/3" : "sm:w-1/4 lg:w-1/5"}
           flex-col h-full border-r border-[#222] bg-[#0a0a0a] shadow-xl
           transition-all duration-300 ease-in-out
-          ${isMobileView ? "absolute inset-0 z-20" : "relative"}
+          ${isMobileView ? "fixed inset-0 z-30" : "relative"}
         `}
             >
                 {/* Desktop Header */}
-                {!isMobileView && (
+                {!isMobileView ? (
+                    <div className="p-4 flex items-center justify-center border-b border-[#222]">
+                        <h2 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">Messages</h2>
+                    </div>
+                ) : (
                     <div className="p-4 flex items-center justify-between border-b border-[#222]">
-                        <div className="flex items-center">
-                            <h2 className="text-xl font-bold ml-2 bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">
-                                Messages
-                            </h2>
-                        </div>
+                        <h2 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">Messages</h2>
+                        <Button variant="ghost" size="icon" onClick={toggleUserList}
+                                className="text-gray-400 hover:text-[#0ea5e9]">
+                            <X className="h-5 w-5"/>
+                        </Button>
                     </div>
                 )}
 
@@ -823,30 +857,54 @@ const ChatPage = () => {
                         {/* Message Input */}
                         <div className="p-3 border-t border-[#222] bg-[#0a0a0a]">
                             <div className="flex items-center">
-                                <div className="flex-shrink-0 flex space-x-1 mr-2">
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="text-gray-400 hover:text-[#0ea5e9] h-8 w-8"
-                                                    onClick={handleFileClick}
-                                                    disabled={isUploading}
+                                {/* Attachment button with dropdown menu */}
+                                <div className="relative flex-shrink-0 mr-2">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-gray-400 hover:text-[#0ea5e9] h-8 w-8"
+                                        onClick={toggleAttachmentMenu}
+                                        disabled={isUploading}
+                                    >
+                                        {isUploading ? (
+                                            <div
+                                                className="h-4 w-4 border-2 border-t-transparent border-[#0ea5e9] rounded-full animate-spin"/>
+                                        ) : (
+                                            <Paperclip className="h-4 w-4"/>
+                                        )}
+                                    </Button>
+
+                                    {/* Attachment menu */}
+                                    {showAttachmentMenu && (
+                                        <div
+                                            ref={attachmentMenuRef}
+                                            className="absolute bottom-full left-0 mb-2 bg-[#1a1a1a] border border-[#333] rounded-lg shadow-lg z-50 w-48 overflow-hidden"
+                                        >
+                                            <div className="p-1">
+                                                <button
+                                                    onClick={() => handleFileUpload("image/*")}
+                                                    className="flex items-center w-full px-3 py-2 text-sm text-white hover:bg-[#222] rounded-md"
                                                 >
-                                                    {isUploading ? (
-                                                        <div
-                                                            className="h-4 w-4 border-2 border-t-transparent border-[#0ea5e9] rounded-full animate-spin"/>
-                                                    ) : (
-                                                        <Paperclip className="h-4 w-4"/>
-                                                    )}
-                                                </Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>Attach file</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
+                                                    <ImageIcon className="h-4 w-4 mr-2 text-[#0ea5e9]"/>
+                                                    <span>Image</span>
+                                                </button>
+                                                <button
+                                                    onClick={() => handleFileUpload("application/pdf")}
+                                                    className="flex items-center w-full px-3 py-2 text-sm text-white hover:bg-[#222] rounded-md"
+                                                >
+                                                    <File className="h-4 w-4 mr-2 text-[#0ea5e9]"/>
+                                                    <span>Document</span>
+                                                </button>
+                                                <button
+                                                    onClick={() => handleFileUpload()}
+                                                    className="flex items-center w-full px-3 py-2 text-sm text-white hover:bg-[#222] rounded-md"
+                                                >
+                                                    <Paperclip className="h-4 w-4 mr-2 text-[#0ea5e9]"/>
+                                                    <span>Other files</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="relative flex-grow">
@@ -884,9 +942,9 @@ const ChatPage = () => {
                                             <Button
                                                 onClick={() => {
                                                     if (editingMessage) {
-                                                        updateMessage(editingMessage.id, input);
+                                                        updateMessage(editingMessage.id, input)
                                                     } else {
-                                                        sendPrivateMessage();
+                                                        sendPrivateMessage()
                                                     }
                                                 }}
                                                 className="ml-2 bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0284c7] hover:to-[#0369a1] rounded-full shadow-[0_0_10px_rgba(14,165,233,0.3)] h-9 w-9 flex-shrink-0"
