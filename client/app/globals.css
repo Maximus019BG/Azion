@@ -296,3 +296,8 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(59, 130, 246, 0.7);
 }
+
+
+.animate-fade-out {
+    animation: 1s;
+}
