@@ -94,11 +94,12 @@ export default function PricingPage() {
     }
 
     return (
-        <div className="flex justify-start items-stretch gap-6 mx-auto flex-wrap">
+        <div
+            className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {plans.map((plan, index) => (
                 <div
                     key={index}
-                    className={`bg-[#0a0a0a] min-h-[520px] w-[300px] border border-[#222] rounded-lg overflow-hidden flex flex-col justify-between ${
+                    className={`bg-[#0a0a0a] w-full border border-[#222] rounded-lg overflow-hidden flex flex-col justify-between transition-shadow duration-300 hover:shadow-lg ${
                         plan.highlight ? "relative" : ""
                     }`}
                 >
@@ -111,12 +112,12 @@ export default function PricingPage() {
                     <div className="p-6 flex-1 flex flex-col">
                         <h3 className="text-xl font-semibold mb-1">{plan.name}</h3>
                         <div className="mb-4">
-                            <div className="flex items-baseline">
+                            <div className="flex items-baseline flex-wrap">
                                 <span className="text-3xl font-bold">{plan.price}</span>
                                 {plan.subtitle && (
-                                    <span className="text-3xl font-bold block mt-1">
-                {plan.subtitle}
-              </span>
+                                    <span className="text-3xl font-bold block mt-1 sm:mt-0 sm:ml-2">
+                                {plan.subtitle}
+                            </span>
                                 )}
                                 {plan.interval && (
                                     <span className="text-gray-400 ml-2">{plan.interval}</span>
@@ -149,6 +150,5 @@ export default function PricingPage() {
                 </div>
             ))}
         </div>
-
     )
 }

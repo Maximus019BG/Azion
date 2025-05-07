@@ -124,13 +124,15 @@ const Tasks: FC = () => {
                     {sortedTasks.length === 0 ? (
                         <div
                             className="flex flex-col items-center justify-center p-10 bg-[#0a0a0a] rounded-xl border border-[#222] shadow-lg">
-                            <div
-                                className="w-20 h-20 bg-[#111] rounded-full flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(14,165,233,0.2)]">
-                                <PlusCircle className="h-10 w-10 text-[#0ea5e9]"/>
-                            </div>
+                            <Link href={"/dashboard/task/create"}>
+                                <div
+                                    className="w-20 h-20 hover:scale-110 transition ease-out duration-300 bg-[#111] rounded-full flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(14,165,233,0.2)]">
+                                    <PlusCircle className="h-10 w-10 text-[#0ea5e9]"/>
+                                </div>
+                            </Link>
                             <h3 className="text-xl font-semibold mb-2">No Tasks Found</h3>
                             <p className="text-gray-400 text-center">
-                                You don&lsquo;border-2 border-blue-800/50t have any tasks
+                                You don&lsquo;t have any tasks
                                 yet. {admin && "Create a new task to get started."}
                             </p>
                             {admin && (

@@ -29,6 +29,7 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
         "tasks:read",
         "cameras:write",
         "cameras:read",
+        "network",
     ]
 
     useEffect(() => {
@@ -153,6 +154,14 @@ const EditRoleSection: React.FC<EditRoleSectionProps> = ({RoleName}) => {
             permission: "cameras:read",
             icon: "📊",
         },
+        //!!! TODO: BACKEND
+        {
+            label: "Network Analytics",
+            description: "Enables access to view the UniFi network analytics in your organization.",
+            permission: "network",
+            icon: "🖧",
+        },
+
     ]
 
     const fadeInUp = {

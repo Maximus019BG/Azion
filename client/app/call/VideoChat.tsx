@@ -2,7 +2,7 @@
 
 import {useEffect, useRef, useState} from "react"
 import {useWebRTC} from "@/hooks/use-web-rtc"
-import {BluetoothOffIcon as HeadphonesOff, CheckCircle, Clock, Headphones, Mic, MicOff, MonitorSmartphone, MonitorUp, Phone, PhoneOff, User, Video, VideoOff, X, XCircle,} from "lucide-react"
+import {BluetoothOffIcon as HeadphonesOff, CheckCircle, Clock, Headphones, Mic, MicOff, MonitorSmartphone, MonitorUp, Phone, PhoneOff, User, Video, VideoOff, XCircle,} from "lucide-react"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Badge} from "@/components/ui/badge"
@@ -12,10 +12,9 @@ import {AnimatePresence, motion} from "framer-motion"
 
 interface VideoChatProps {
     remoteUserId: string
-    onClose?: () => void
 }
 
-const VideoChatComponent = ({remoteUserId, onClose}: VideoChatProps) => {
+const VideoChatComponent = ({remoteUserId}: VideoChatProps) => {
     const [isCalling, setIsCalling] = useState(false)
     const [isReceivingCall, setIsReceivingCall] = useState(false)
     const [isCameraOn, setIsCameraOn] = useState(true)
@@ -386,22 +385,6 @@ const VideoChatComponent = ({remoteUserId, onClose}: VideoChatProps) => {
                   </span>
                                 )}
                             </Badge>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 rounded-full text-gray-400 hover:text-white hover:bg-gray-700/50"
-                                onClick={() => {
-                                    // End call if active
-                                    if (isCalling) {
-                                        handleEndCall()
-                                    }
-                                    // Close the component
-                                    onClose && onClose()
-                                }}
-                            >
-                                <X className="h-4 w-4"/>
-                                <span className="sr-only">Close</span>
-                            </Button>
                         </div>
                     </div>
                 </CardHeader>

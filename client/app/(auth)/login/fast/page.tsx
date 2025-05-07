@@ -63,7 +63,6 @@ export default function FastLogIn() {
                 const base64Image = imageData.split(",")[1];
                 const payload = {image: base64Image};
 
-                // Send to API
                 const response: AxiosResponse<{
                     accessToken: string;
                     refreshToken: string;
@@ -77,7 +76,6 @@ export default function FastLogIn() {
                     }
                 );
 
-                // Set cookies
                 Cookies.set("azionAccessToken", response.data.accessToken, {
                     secure: true,
                     sameSite: "Strict",
@@ -87,7 +85,6 @@ export default function FastLogIn() {
                     sameSite: "Strict",
                 });
 
-                // Redirect on success
                 if (Cookies.get("azionAccessToken") && Cookies.get("azionRefreshToken")) {
                     setTimeout(() => {
                         window.location.href = "/organizations";
@@ -98,7 +95,6 @@ export default function FastLogIn() {
             console.error("Error sending image to API: ", error);
             setError(error.response?.data || "Face recognition failed. Please try again.");
         } finally {
-            // Wait before removing overlay
             await new Promise((resolve) => setTimeout(resolve, 100));
             setShowOverlay(false); // Hide white screen
             setIsLoading(false);
@@ -106,12 +102,15 @@ export default function FastLogIn() {
     };
 
     return (
-        <div className="min-h-screen bg-[#040410] text-white flex flex-col justify-center items-center p-4 md:p-8 relative">
+        <div
+            className="min-h-dvh text-white flex flex-col justify-center items-center p-4 md:p-8 relative">
             {/* Background gradient */}
-            <div className="fixed inset-0 bg-gradient-to-b from-blue-950/20 via-[#040410] to-[#040410] pointer-events-none"/>
+            <div
+                className="fixed inset-0 bg-gradient-to-b from-blue-950/20 via-[#040410] to-[#040410] pointer-events-none"/>
 
             {/* Blue gradient orb */}
-            <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] opacity-30 pointer-events-none"/>
+            <div
+                className="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] opacity-30 pointer-events-none"/>
 
             {/* Back Button */}
             <Link
@@ -140,7 +139,6 @@ export default function FastLogIn() {
                     transition={{duration: 0.5, delay: 0.1}}
                     className="relative mb-8 w-full max-w-sm aspect-[4/3]"
                 >
-                    {/* Video Element */}
                     <div className="w-full h-full rounded-lg overflow-hidden bg-blue-900/20 backdrop-blur-sm">
                         <video
                             ref={videoRef}
@@ -151,8 +149,10 @@ export default function FastLogIn() {
                         />
                     </div>
 
-                    {/* Flash Overlay */}
-                    {showOverlay && <div className="absolute inset-0 w-screen h-screen top-0 bg-white z-50 animate-fade-out"></div>}
+                    {/* Full-Screen Flash Overlay */}
+                    {showOverlay && (
+                        <div className="fixed inset-0 bg-white z-[1000] animate-fade-out pointer-events-none"></div>
+                    )}
 
                     {/* Loading Overlay */}
                     {isLoading && (

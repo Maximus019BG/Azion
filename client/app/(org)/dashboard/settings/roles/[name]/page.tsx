@@ -35,7 +35,7 @@ const EditRole = ({params}: PageProps) => {
         >
             <div className="w-full h-full flex flex-col p-4 lg:p-8 overflow-y-auto">
                 <div className="mb-6">
-                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-300">
+                    <h1 className="text-3xl font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">
                         <span className="uppercase">{name}</span> Role
                     </h1>
                     {name === "owner" ? (

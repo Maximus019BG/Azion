@@ -12,6 +12,7 @@ type CallStatus = "disconnected" | "connecting" | "connected" | "ringing" | "fai
 export function useWebRTC(userId: string, remoteUserId: string) {
     const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null)
     const [connectionState, setConnectionState] = useState<CallStatus>("disconnected")
+    const [mediaAccessDenied, setMediaAccessDenied] = useState<boolean>(false)
     const localStreamRef = useRef<MediaStream | null>(null)
     const screenStreamRef = useRef<MediaStream | null>(null)
     const peerRef = useRef<RTCPeerConnection | null>(null)
@@ -219,15 +220,43 @@ export function useWebRTC(userId: string, remoteUserId: string) {
             }
 
             console.log("Initializing local media stream")
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: true,
-            })
+            try {
+                // Try to get both video and audio
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true,
+                })
 
-            localStreamRef.current = stream
-            return stream
+                localStreamRef.current = stream
+                setMediaAccessDenied(false)
+                return stream
+            } catch (err) {
+                console.warn("Could not access both video and audio:", err)
+
+                // Try to get only audio if video fails
+                try {
+                    console.log("Attempting to get audio-only stream")
+                    const audioOnlyStream = await navigator.mediaDevices.getUserMedia({
+                        video: false,
+                        audio: true,
+                    })
+                    localStreamRef.current = audioOnlyStream
+                    setMediaAccessDenied(false)
+                    return audioOnlyStream
+                } catch (audioErr) {
+                    console.warn("Could not access audio devices either:", audioErr)
+
+                    // Create an empty stream as a last resort
+                    console.log("Creating empty stream as fallback")
+                    const emptyStream = new MediaStream()
+                    localStreamRef.current = emptyStream
+                    setMediaAccessDenied(true)
+                    return emptyStream
+                }
+            }
         } catch (err) {
-            console.error("Error accessing media devices:", err)
+            console.error("Error in initializeLocalStream:", err)
+            setMediaAccessDenied(true)
             return null
         }
     }
@@ -396,7 +425,7 @@ export function useWebRTC(userId: string, remoteUserId: string) {
                 destination: `/app/signal/${remoteUserId}`,
                 body: JSON.stringify({
                     type: "call-request",
-                    from: userId
+                    from: userId,
                 }),
             })
 
@@ -407,6 +436,8 @@ export function useWebRTC(userId: string, remoteUserId: string) {
             createPeerConnection()
         } catch (err) {
             console.error("Error initiating call:", err)
+            // Continue with the call even if media access fails
+            // The call will proceed with limited functionality
         }
     }
 
@@ -429,7 +460,7 @@ export function useWebRTC(userId: string, remoteUserId: string) {
                 destination: `/app/signal/${remoteUserId}`,
                 body: JSON.stringify({
                     type: "call-accepted",
-                    from: userId
+                    from: userId,
                 }),
             })
 
@@ -437,6 +468,22 @@ export function useWebRTC(userId: string, remoteUserId: string) {
             setConnectionState("connecting")
         } catch (err) {
             console.error("Error accepting call:", err)
+            // Continue with the call even if media access fails
+            // The call will proceed with limited functionality
+
+            // Create peer connection anyway
+            createPeerConnection()
+
+            // Send call accepted message
+            stompClientRef.current.publish({
+                destination: `/app/signal/${remoteUserId}`,
+                body: JSON.stringify({
+                    type: "call-accepted",
+                    from: userId,
+                }),
+            })
+
+            setConnectionState("connecting")
         }
     }
 
@@ -452,7 +499,7 @@ export function useWebRTC(userId: string, remoteUserId: string) {
             destination: `/app/signal/${remoteUserId}`,
             body: JSON.stringify({
                 type: "call-rejected",
-                from: userId
+                from: userId,
             }),
         })
 
@@ -468,7 +515,7 @@ export function useWebRTC(userId: string, remoteUserId: string) {
                 destination: `/app/signal/${remoteUserId}`,
                 body: JSON.stringify({
                     type: "call-ended",
-                    from: userId
+                    from: userId,
                 }),
             })
 
@@ -482,27 +529,42 @@ export function useWebRTC(userId: string, remoteUserId: string) {
     // Toggle camera on/off
     const toggleCamera = (enabled: boolean) => {
         if (localStreamRef.current) {
-            localStreamRef.current.getVideoTracks().forEach((track) => {
-                track.enabled = enabled
-            })
+            const videoTracks = localStreamRef.current.getVideoTracks()
+            if (videoTracks && videoTracks.length > 0) {
+                videoTracks.forEach((track) => {
+                    track.enabled = enabled
+                })
+            } else {
+                console.warn("No video tracks available to toggle")
+            }
         }
     }
 
     // Toggle microphone on/off
     const toggleMic = (enabled: boolean) => {
         if (localStreamRef.current) {
-            localStreamRef.current.getAudioTracks().forEach((track) => {
-                track.enabled = enabled
-            })
+            const audioTracks = localStreamRef.current.getAudioTracks()
+            if (audioTracks && audioTracks.length > 0) {
+                audioTracks.forEach((track) => {
+                    track.enabled = enabled
+                })
+            } else {
+                console.warn("No audio tracks available to toggle")
+            }
         }
     }
 
     // Toggle deafen (mute incoming audio)
     const toggleDeafen = (deafened: boolean) => {
         if (remoteStream) {
-            remoteStream.getAudioTracks().forEach((track) => {
-                track.enabled = !deafened
-            })
+            const audioTracks = remoteStream.getAudioTracks()
+            if (audioTracks && audioTracks.length > 0) {
+                audioTracks.forEach((track) => {
+                    track.enabled = !deafened
+                })
+            } else {
+                console.warn("No remote audio tracks available to toggle")
+            }
         }
     }
 
@@ -540,7 +602,7 @@ export function useWebRTC(userId: string, remoteUserId: string) {
         try {
             // Stop all tracks in the screen stream
             if (screenStreamRef.current) {
-                screenStreamRef.current.getTracks().forEach(track => track.stop())
+                screenStreamRef.current.getTracks().forEach((track) => track.stop())
                 screenStreamRef.current = null
             }
 
@@ -579,6 +641,7 @@ export function useWebRTC(userId: string, remoteUserId: string) {
         remoteStream,
         screenStream: screenStreamRef.current,
         connectionState,
+        mediaAccessDenied,
         initiateCall,
         acceptCall,
         rejectCall,
