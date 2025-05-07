@@ -515,7 +515,7 @@ const ChatPage = () => {
 
     return (
         <div
-            className="flex flex-col sm:flex-row bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-white w-full min-h-screen h-screen overflow-hidden">
+            className="flex flex-col sm:flex-row text-white w-full min-h-screen h-screen overflow-hidden">
             {/* Hidden file input */}
             <input
                 type="file"
@@ -528,7 +528,7 @@ const ChatPage = () => {
             {/* Mobile Header - Only visible on small screens */}
             {isMobileView && (
                 <div
-                    className="flex items-center justify-between p-3 bg-[#0a0a0a] border-b border-[#222] shadow-lg z-10">
+                    className="flex items-center justify-between p-3  border-b border-[#222] shadow-lg z-10">
                     <div className="w-full flex justify-center items-center">
                         <h1 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">Messages</h1>
                     </div>
@@ -552,7 +552,7 @@ const ChatPage = () => {
                 className={`
           ${isMobileView ? (showUserList ? "flex" : "hidden") : "flex"}
           ${isTabletView ? "w-1/3" : "sm:w-1/4 lg:w-1/5"}
-          flex-col h-full border-r border-[#222] bg-[#0a0a0a] shadow-xl
+          flex-col h-full border-r border-[#222]  shadow-xl
           transition-all duration-300 ease-in-out
           ${isMobileView ? "fixed inset-0 z-30" : "relative"}
         `}
@@ -580,7 +580,7 @@ const ChatPage = () => {
                             placeholder="Search users..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10 bg-[#111] border-[#333] focus:border-[#0ea5e9] text-white rounded-full shadow-inner text-sm"
+                            className="pl-10 border-[#333] focus:border-[#0ea5e9] text-white rounded-full shadow-inner text-sm"
                         />
                     </div>
                 </div>
@@ -669,7 +669,7 @@ const ChatPage = () => {
                 {selectedUser ? (
                     <>
                         {/* Chat Header */}
-                        <div className="flex items-center p-3 border-b border-[#222] bg-[#0a0a0a] shadow-md">
+                        <div className="flex items-center p-3 border-b border-[#222]  shadow-md">
                             {isMobileView && (
                                 <Button
                                     variant="ghost"
@@ -764,7 +764,7 @@ const ChatPage = () => {
                         </div>
 
                         {/* Messages */}
-                        <ScrollArea className="flex-1 p-3 sm:p-4 bg-gradient-to-b from-[#080808] to-[#0a0a0a]">
+                        <ScrollArea className="flex-1 p-3 sm:p-4">
                             <div className="flex flex-col space-y-3">
                                 {messages.length === 0 ? (
                                     <div className="flex flex-col items-center justify-center h-full py-10">
@@ -950,7 +950,7 @@ const ChatPage = () => {
                         </ScrollArea>
 
                         {/* Message Input */}
-                        <div className="p-3 border-t border-[#222] bg-[#0a0a0a]">
+                        <div className="p-3 border-t border-[#222] ">
                             <div className="flex items-center">
                                 {/* Attachment button with dropdown menu */}
                                 <div className="relative flex-shrink-0 mr-2">
@@ -1005,7 +1005,7 @@ const ChatPage = () => {
                                 <div className="relative flex-grow">
                                     <Input
                                         ref={inputRef}
-                                        className="flex-grow bg-[#111] border-[#333] focus:border-[#0ea5e9] text-white rounded-full shadow-inner pr-10 text-sm"
+                                        className="flex-grow border-[#333] focus:border-[#0ea5e9] text-white rounded-full shadow-inner pr-10 text-sm"
                                         type="text"
                                         value={input}
                                         onChange={handleInputChange}
@@ -1081,7 +1081,7 @@ const ChatPage = () => {
                     </>
                 ) : (
                     <div
-                        className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-[#080808] to-[#0a0a0a]">
+                        className="flex-1 flex flex-col items-center justify-center p-6 text-center">
                         <div
                             className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-[#0c4a6e] to-[#0c4a6e]/30 rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(14,165,233,0.2)]">
                             <MessageSquare className="h-10 w-10 sm:h-12 sm:w-12 text-[#0ea5e9]"/>
