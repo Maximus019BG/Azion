@@ -551,7 +551,8 @@ const ChatPage = () => {
     const isRemoteUserTyping = selectedUser ? remoteTyping[selectedUser.email] : false
 
     return (
-        <div className="flex flex-col sm:flex-row bg-gradient-to-br from-[#050505] to-[#0c0c0c] text-white w-full min-h-screen h-screen overflow-hidden">
+        <div
+            className="flex flex-col sm:flex-row text-white w-full min-h-screen h-screen overflow-hidden">
             {/* Hidden file input */}
             <input
                 type="file"
@@ -562,7 +563,8 @@ const ChatPage = () => {
             />
             {/* Mobile Header - Only visible on small screens */}
             {isMobileView && (
-                <div className="flex items-center justify-between p-3 bg-[#0a0a0a] border-b border-[#222] shadow-lg z-10">
+                <div
+                    className="flex items-center justify-between p-3  border-b border-[#222] shadow-lg z-10">
                     <div className="w-full flex justify-center items-center">
                         <h1 className="text-lg font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text text-transparent">
                             Messages
@@ -1115,8 +1117,10 @@ const ChatPage = () => {
                         </div>
                     </>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-[#080808] to-[#0a0a0a]">
-                        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-[#0c4a6e] to-[#0c4a6e]/30 rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(14,165,233,0.2)]">
+                    <div
+                        className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-[#080808] to-[#0a0a0a]">
+                        <div
+                            className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-[#0c4a6e] to-[#0c4a6e]/30 rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(14,165,233,0.2)]">
                             <MessageSquare className="h-10 w-10 sm:h-12 sm:w-12 text-[#0ea5e9]"/>
                         </div>
                         <h3 className="text-xl sm:text-2xl font-semibold mb-3 text-white">Your Messages</h3>
