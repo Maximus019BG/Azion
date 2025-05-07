@@ -12,6 +12,7 @@ type CallStatus = "disconnected" | "connecting" | "connected" | "ringing" | "fai
 export function useWebRTC(userId: string, remoteUserId: string) {
     const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null)
     const [connectionState, setConnectionState] = useState<CallStatus>("disconnected")
+    const [mediaAccessDenied, setMediaAccessDenied] = useState<boolean>(false)
     const localStreamRef = useRef<MediaStream | null>(null)
     const screenStreamRef = useRef<MediaStream | null>(null)
     const peerRef = useRef<RTCPeerConnection | null>(null)
@@ -37,31 +38,29 @@ export function useWebRTC(userId: string, remoteUserId: string) {
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
             onConnect: () => {
-                console.log(`[WebRTC] Connected to signaling server as ${userId}`)
+                console.log("Connected to signaling server")
 
                 // Subscribe to signaling messages
                 stompClient.subscribe(`/user/${userId}/signal`, async (msg: IMessage) => {
                     try {
                         const data = JSON.parse(msg.body)
-                        console.log(`[WebRTC] Received signal: ${data.type} from: ${data.from}`)
+                        console.log("Received signal:", data.type, "from:", data.from)
 
                         switch (data.type) {
                             case "call-request":
                                 // Notify about incoming call
-                                console.log(`[WebRTC] Incoming call request from: ${data.from}`)
                                 if (incomingCallHandlerRef.current) {
                                     incomingCallHandlerRef.current(data.from)
                                 }
                                 break
 
                             case "call-accepted":
-                                console.log(`[WebRTC] Call accepted by: ${data.from}`)
+                                console.log("Call accepted by remote user")
                                 if (callAcceptedHandlerRef.current) {
                                     callAcceptedHandlerRef.current()
                                 }
                                 // Create and send offer since we're the initiator
                                 if (isCallInitiatorRef.current) {
-                                    console.log(`[WebRTC] We are the initiator, creating and sending offer`)
                                     createAndSendOffer()
                                 }
                                 break
@@ -96,7 +95,7 @@ export function useWebRTC(userId: string, remoteUserId: string) {
                                 break
                         }
                     } catch (error) {
-                        console.error("[WebRTC] Error handling signal:", error)
+                        console.error("Error handling signal:", error)
                     }
                 })
 
@@ -221,15 +220,43 @@ export function useWebRTC(userId: string, remoteUserId: string) {
             }
 
             console.log("Initializing local media stream")
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: true,
-            })
+            try {
+                // Try to get both video and audio
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true,
+                })
 
-            localStreamRef.current = stream
-            return stream
+                localStreamRef.current = stream
+                setMediaAccessDenied(false)
+                return stream
+            } catch (err) {
+                console.warn("Could not access both video and audio:", err)
+
+                // Try to get only audio if video fails
+                try {
+                    console.log("Attempting to get audio-only stream")
+                    const audioOnlyStream = await navigator.mediaDevices.getUserMedia({
+                        video: false,
+                        audio: true,
+                    })
+                    localStreamRef.current = audioOnlyStream
+                    setMediaAccessDenied(false)
+                    return audioOnlyStream
+                } catch (audioErr) {
+                    console.warn("Could not access audio devices either:", audioErr)
+
+                    // Create an empty stream as a last resort
+                    console.log("Creating empty stream as fallback")
+                    const emptyStream = new MediaStream()
+                    localStreamRef.current = emptyStream
+                    setMediaAccessDenied(true)
+                    return emptyStream
+                }
+            }
         } catch (err) {
-            console.error("Error accessing media devices:", err)
+            console.error("Error in initializeLocalStream:", err)
+            setMediaAccessDenied(true)
             return null
         }
     }
@@ -392,7 +419,6 @@ export function useWebRTC(userId: string, remoteUserId: string) {
 
             // Mark as call initiator
             isCallInitiatorRef.current = true
-            console.log(`[WebRTC] Initiating call as ${userId} to ${remoteUserId}`)
 
             // Send call request
             stompClientRef.current.publish({
@@ -403,13 +429,15 @@ export function useWebRTC(userId: string, remoteUserId: string) {
                 }),
             })
 
-            console.log(`[WebRTC] Sent call request to: ${remoteUserId}`)
+            console.log("Sent call request to:", remoteUserId)
             setConnectionState("ringing")
 
             // Create peer connection (but don't send offer yet - wait for acceptance)
             createPeerConnection()
         } catch (err) {
             console.error("Error initiating call:", err)
+            // Continue with the call even if media access fails
+            // The call will proceed with limited functionality
         }
     }
 
@@ -426,7 +454,6 @@ export function useWebRTC(userId: string, remoteUserId: string) {
 
             // Create peer connection
             createPeerConnection()
-            console.log(`[WebRTC] Accepting call as ${userId} from ${remoteUserId}`)
 
             // Send call accepted message
             stompClientRef.current.publish({
@@ -437,10 +464,26 @@ export function useWebRTC(userId: string, remoteUserId: string) {
                 }),
             })
 
-            console.log(`[WebRTC] Sent call acceptance to: ${remoteUserId}`)
+            console.log("Sent call acceptance to:", remoteUserId)
             setConnectionState("connecting")
         } catch (err) {
             console.error("Error accepting call:", err)
+            // Continue with the call even if media access fails
+            // The call will proceed with limited functionality
+
+            // Create peer connection anyway
+            createPeerConnection()
+
+            // Send call accepted message
+            stompClientRef.current.publish({
+                destination: `/app/signal/${remoteUserId}`,
+                body: JSON.stringify({
+                    type: "call-accepted",
+                    from: userId,
+                }),
+            })
+
+            setConnectionState("connecting")
         }
     }
 
@@ -486,27 +529,42 @@ export function useWebRTC(userId: string, remoteUserId: string) {
     // Toggle camera on/off
     const toggleCamera = (enabled: boolean) => {
         if (localStreamRef.current) {
-            localStreamRef.current.getVideoTracks().forEach((track) => {
-                track.enabled = enabled
-            })
+            const videoTracks = localStreamRef.current.getVideoTracks()
+            if (videoTracks && videoTracks.length > 0) {
+                videoTracks.forEach((track) => {
+                    track.enabled = enabled
+                })
+            } else {
+                console.warn("No video tracks available to toggle")
+            }
         }
     }
 
     // Toggle microphone on/off
     const toggleMic = (enabled: boolean) => {
         if (localStreamRef.current) {
-            localStreamRef.current.getAudioTracks().forEach((track) => {
-                track.enabled = enabled
-            })
+            const audioTracks = localStreamRef.current.getAudioTracks()
+            if (audioTracks && audioTracks.length > 0) {
+                audioTracks.forEach((track) => {
+                    track.enabled = enabled
+                })
+            } else {
+                console.warn("No audio tracks available to toggle")
+            }
         }
     }
 
     // Toggle deafen (mute incoming audio)
     const toggleDeafen = (deafened: boolean) => {
         if (remoteStream) {
-            remoteStream.getAudioTracks().forEach((track) => {
-                track.enabled = !deafened
-            })
+            const audioTracks = remoteStream.getAudioTracks()
+            if (audioTracks && audioTracks.length > 0) {
+                audioTracks.forEach((track) => {
+                    track.enabled = !deafened
+                })
+            } else {
+                console.warn("No remote audio tracks available to toggle")
+            }
         }
     }
 
@@ -583,6 +641,7 @@ export function useWebRTC(userId: string, remoteUserId: string) {
         remoteStream,
         screenStream: screenStreamRef.current,
         connectionState,
+        mediaAccessDenied,
         initiateCall,
         acceptCall,
         rejectCall,

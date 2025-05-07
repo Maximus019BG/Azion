@@ -1,16 +1,27 @@
-import VideoChat from "./VideoChat";
+"use client";
+import {useState} from "react";
+import VideoChatComponent from "./VideoChat";
 
-export default function Home() {
+export default function VideoChatPage() {
+    const [remoteUserId, setRemoteUserId] = useState("");
+
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-gray-50">
-            <div className="w-full max-w-6xl space-y-8">
-                <h1 className="text-3xl font-bold text-center">WebRTC Video Chat Demo</h1>
-                <p className="text-center text-gray-600 mb-8">
-                    Enter your email and the recipient&apos;s email to start a video call
-                </p>
-
-                <VideoChat/>
+        <div className="min-h-screen bg-zinc-950 p-4 text-white">
+            <div className="mb-6">
+                <label htmlFor="remote-id" className="block mb-2 font-medium">
+                    Enter Remote User ID:
+                </label>
+                <input
+                    id="remote-id"
+                    type="text"
+                    value={remoteUserId}
+                    onChange={(e) => setRemoteUserId(e.target.value)}
+                    className="p-2 w-full rounded bg-zinc-800 border border-zinc-700 text-white"
+                    placeholder="remote@example.com"
+                />
             </div>
-        </main>
+
+            {remoteUserId && <VideoChatComponent remoteUserId={remoteUserId}/>}
+        </div>
     );
 }

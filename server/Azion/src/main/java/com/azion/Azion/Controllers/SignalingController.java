@@ -23,8 +23,7 @@ public class SignalingController {
             @Payload String message,
             Principal principal
     ) {
-        String senderEmail = principal.getName(); // email from auth context
-        // Add sender info to message if needed
+        
         messagingTemplate.convertAndSend("/user/" + receiverEmail + "/signal", message);
     }
     

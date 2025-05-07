@@ -205,8 +205,7 @@ public class UserService {
         };
         
         for (String right : rights) {
-            boolean hasRight = UserHasRight(user, right);
-            if (!hasRight) {
+            if (!Arrays.asList(rights).contains(right)) {
                 return false;
             }
         }
