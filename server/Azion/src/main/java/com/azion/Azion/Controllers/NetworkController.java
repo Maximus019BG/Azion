@@ -57,6 +57,10 @@ public class NetworkController {
             return ResponseEntity.status(401).body("Unauthorized");
         }
         
+        if (!userService.UserHasRight(user, "networks")) {
+            return ResponseEntity.status(403).body("Forbidden");
+        }
+        
         Org org = orgRepository.findById(user.getOrgid()).orElse(null);
         if (org == null) {
             return ResponseEntity.status(404).body("Organization not found");
