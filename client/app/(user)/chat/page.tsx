@@ -1230,8 +1230,6 @@ const ChatPage = () => {
                     <VideoChatComponent
                         remoteUserId={selectedUser.email}
                         onClose={() => setShowVideoCall(false)}
-                        initialCallType={callType}
-                        isIncomingCall={incomingVideoCall === selectedUser.email}
                     />
                 </div>
             )}
