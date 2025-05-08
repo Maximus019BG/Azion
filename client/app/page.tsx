@@ -5,7 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import {Inter, Space_Grotesk} from "next/font/google"
 import Cookies from "js-cookie"
-import {ArrowRight, BarChart3, Calendar, Check, ChevronRight, Lock, Shield, Star, Users, Zap} from "lucide-react"
+import {BarChart3, Calendar, Check, ChevronRight, Lock, Shield, Star, Users, Zap} from "lucide-react"
 import Navbar from "@/app/components/Navbar"
 import Footer from "@/app/components/Footer"
 import BackgroundGrid from "@/components/background-grid"
@@ -14,24 +14,24 @@ import {SectionHeading} from "@/components/ui/section-heading"
 import {FeatureCard} from "@/components/ui/feature-card"
 import {TestimonialCard} from "@/components/ui/testimonial-card"
 import {AnimatedGradientBorder} from "@/components/ui/animated-gradient-border"
-import DecorativeSVG from "@/components/decorative-svg";
-import FloatingIcons from "@/components/floating-icons";
-import axios from "axios";
-import {apiUrl} from "@/app/api/config";
-import {FaqAccordion} from "@/components/ui/faq-accordion";
-import Pricing from "@/app/components/stripe/Pricing-landing";
+import DecorativeSVG from "@/components/decorative-svg"
+import FloatingIcons from "@/components/floating-icons"
+import axios from "axios"
+import {apiUrl} from "@/app/api/config"
+import {FaqAccordion} from "@/components/ui/faq-accordion"
+import Pricing from "@/app/components/stripe/Pricing-landing"
 
 const getOrgName = async () => {
     if (Cookies.get("azionAccessToken")) {
-        const data = {accessToken: Cookies.get("azionAccessToken")};
+        const data = {accessToken: Cookies.get("azionAccessToken")}
         const response = await axios.post(`${apiUrl}/org/partOfOrg`, data, {
             headers: {
                 "Content-Type": "application/json",
             },
-        });
-        return response.status === 200;
+        })
+        return response.status === 200
     } else {
-        return false;
+        return false
     }
 }
 
@@ -163,7 +163,6 @@ export default function LandingPage() {
                                     </motion.button>
                                 </Link>
 
-
                                 <Link href={hasOrg ? `/organizations` : `/login`}>
                                     <motion.button
                                         whileHover={{
@@ -269,7 +268,7 @@ export default function LandingPage() {
 
                 {/* Scroll Indicator */}
                 <motion.div
-                    className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+                    className="absolute bottom-5 left-1/2 transform -translate-x-1/2"
                     animate={{y: [0, 10, 0]}}
                     transition={{duration: 1.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut"}}
                 >
@@ -314,57 +313,37 @@ export default function LandingPage() {
                             title="Advanced Dashboard"
                             description="Get a comprehensive view of your organization's data with our intuitive dashboard. Monitor performance and make informed decisions."
                             index={0}
-                            link="/features/dashboard"
                         />
                         <FeatureCard
                             icon={<Users size={24}/>}
                             title="Organization Management"
                             description="Seamlessly collaborate with other organizations. Find and connect with any organization registered in Azion."
                             index={1}
-                            link="/features/organizations"
                         />
                         <FeatureCard
                             icon={<Calendar size={24}/>}
                             title="Task Management"
                             description="Create, control, and delete tasks with ease. Our task management system helps you stay organized and productive."
                             index={2}
-                            link="/features/tasks"
                         />
                         <FeatureCard
                             icon={<Shield size={24}/>}
                             title="Cyber Security"
                             description="Protect your data with our advanced security features including MFA, OTP, and more to keep your account safe."
                             index={3}
-                            link="/features/security"
                         />
                         <FeatureCard
                             icon={<Zap size={24}/>}
                             title="Performance Analytics"
                             description="Track and analyze your organization's performance with detailed analytics and customizable reports."
                             index={4}
-                            link="/features/analytics"
                         />
                         <FeatureCard
                             icon={<Lock size={24}/>}
                             title="Secure Access Control"
                             description="Manage user permissions and access controls with granular settings to ensure data security."
                             index={5}
-                            link="/features/access-control"
                         />
-                    </div>
-
-                    {/* Feature comparison link - simplified */}
-                    <div className="mt-16 text-center">
-                        <Link href="/features">
-                            <motion.button
-                                whileHover={{y: -2}}
-                                whileTap={{scale: 0.98}}
-                                className="inline-flex items-center gap-2 px-6 py-2 bg-gray-900/40 hover:bg-gray-900/60 rounded-lg border border-gray-800 text-gray-300 hover:text-white transition-all"
-                            >
-                                Compare all features
-                                <ChevronRight size={16}/>
-                            </motion.button>
-                        </Link>
                     </div>
                 </div>
             </section>
@@ -429,14 +408,6 @@ export default function LandingPage() {
                                 viewport={{once: true}}
                                 className="mt-8"
                             >
-                                <Link href="/security">
-                                    <motion.button
-                                        whileHover={{x: 3}}
-                                        className="text-cyan-400 flex items-center gap-2 font-medium text-sm"
-                                    >
-                                        Learn more about our security features <ArrowRight size={14}/>
-                                    </motion.button>
-                                </Link>
                             </motion.div>
                         </motion.div>
 
@@ -498,21 +469,21 @@ export default function LandingPage() {
                             author="Sarah Johnson"
                             role="CTO, TechVision Inc."
                             index={0}
-                            companyLogo="/placeholder.svg?height=32&width=120"
+                            userImage="/woman1.png"
                         />
                         <TestimonialCard
                             quote="The dashboard analytics provide invaluable insights into our organization's performance. We've been able to optimize our workflow and increase productivity by 30%."
                             author="Michael Chen"
                             role="Operations Director, Nexus Group"
                             index={1}
-                            companyLogo="/placeholder.svg?height=32&width=120"
+                            userImage="/woman2.png"
                         />
                         <TestimonialCard
                             quote="Implementing Azion was the best decision we made for our company's security infrastructure. The seamless integration and user-friendly interface made adoption across our team effortless."
                             author="Elena Rodriguez"
                             role="Security Manager, GlobalSecure"
                             index={2}
-                            companyLogo="/placeholder.svg?height=32&width=120"
+                            userImage="/woman3.png"
                         />
                     </div>
                 </div>
@@ -547,8 +518,10 @@ export default function LandingPage() {
             </section>
 
             {/* Pricing Section */}
-            <section id="pricing"
-                     className="py-20 md:py-32 relative flex flex-col justify-center items-center bg-gradient-to-b from-transparent to-gray-900/10">
+            <section
+                id="pricing"
+                className="py-20 md:py-32 relative flex flex-col justify-center items-center bg-gradient-to-b from-transparent to-gray-900/10"
+            >
                 <SectionHeading
                     title="Simple, Transparent Pricing"
                     subtitle="Choose the plan that fits your organization's needs"
@@ -557,7 +530,6 @@ export default function LandingPage() {
                 />
 
                 <div className="flex flex-col justify-center items-center container mx-auto px-4">
-
                     <Pricing/>
 
                     {/* Pricing FAQ - simplified */}

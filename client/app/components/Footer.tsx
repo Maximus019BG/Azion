@@ -110,41 +110,21 @@ export default function Footer() {
                                 <a href="mailto:aziononlineteam@gmail.com">aziononlineteam@gmail.com</a>
                             </li>
                         </ul>
-
-                        <div className="mt-4">
-                            <h4 className={`text-xs font-medium mb-2 text-white ${spaceGrotesk.className}`}>
-                                Subscribe to our newsletter
-                            </h4>
-                            <div className="flex">
-                                <input
-                                    type="email"
-                                    placeholder="Your email"
-                                    className="bg-gray-900/30 border border-gray-700/50 rounded-l-md px-3 py-1 w-full focus:outline-none focus:ring-1 focus:ring-cyan-500 text-xs"
-                                    aria-label="Email for newsletter"
-                                />
-                                <button
-                                    className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 transition-colors px-3 py-1 rounded-r-md text-white text-xs"
-                                    aria-label="Subscribe to newsletter"
-                                >
-                                    Subscribe
-                                </button>
-                            </div>
-                        </div>
                     </motion.div>
                 </div>
 
                 {/* Copyright */}
                 <div
-                    className="mt-8 pt-4 border-t border-gray-800/30 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                    className="mt-8 pt-4 border-t border-gray-800/30 flex flex-col md:flex-row justify-center items-center text-xs text-gray-500">
                     <p>© {currentYear} Azion. All rights reserved.</p>
-                    <div className="mt-3 md:mt-0 flex gap-4">
-                        <Link href="/privacy" className="hover:text-cyan-400 transition-colors">
-                            Privacy Policy
-                        </Link>
-                        <Link href="/terms" className="hover:text-cyan-400 transition-colors">
-                            Terms of Service
-                        </Link>
-                    </div>
+                    {/*<div className="mt-3 md:mt-0 flex gap-4">*/}
+                    {/*    <Link href="/privacy" className="hover:text-cyan-400 transition-colors">*/}
+                    {/*        Privacy Policy*/}
+                    {/*    </Link>*/}
+                    {/*    <Link href="/terms" className="hover:text-cyan-400 transition-colors">*/}
+                    {/*        Terms of Service*/}
+                    {/*    </Link>*/}
+                    {/*</div>*/}
                 </div>
             </div>
         </footer>

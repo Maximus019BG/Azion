@@ -129,6 +129,8 @@ export interface Organization {
     orgEmail: string;
     orgPhone: string;
     orgType: string;
+    employeeCount?: number;
+    maxEmployeeCount?: number;
     plan?: "FREE" | "STANDARD" | "PRO" | "ENTERPRISE";
 }
 

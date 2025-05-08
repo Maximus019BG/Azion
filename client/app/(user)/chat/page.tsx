@@ -23,16 +23,13 @@ import {
     Edit,
     File,
     ImageIcon,
-    Info,
     Menu,
     MessageSquare,
     Mic,
     MoreVertical,
-    Paperclip,
     Phone,
     Search,
     Send,
-    Smile,
     Trash2,
     Users,
     Video,
@@ -875,20 +872,6 @@ const ChatPage = () => {
                                         </TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
-
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Button variant="ghost" size="icon"
-                                                    className="text-gray-400 hover:text-[#0ea5e9] hidden sm:flex">
-                                                <Info className="h-5 w-5"/>
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Info</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
                             </div>
                         </div>
 
@@ -1100,54 +1083,54 @@ const ChatPage = () => {
                         <div className="p-3 border-t border-[#222]  ">
                             <div className="flex items-center">
                                 {/* Attachment button with dropdown menu */}
-                                <div className="relative flex-shrink-0 mr-2">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="text-gray-400 hover:text-[#0ea5e9] h-8 w-8"
-                                        onClick={toggleAttachmentMenu}
-                                        disabled={isUploading}
-                                    >
-                                        {isUploading ? (
-                                            <div
-                                                className="h-4 w-4 border-2 border-t-transparent border-[#0ea5e9] rounded-full animate-spin"/>
-                                        ) : (
-                                            <Paperclip className="h-4 w-4"/>
-                                        )}
-                                    </Button>
+                                {/*<div className="relative flex-shrink-0 mr-2">*/}
+                                {/*    <Button*/}
+                                {/*        variant="ghost"*/}
+                                {/*        size="icon"*/}
+                                {/*        className="text-gray-400 hover:text-[#0ea5e9] h-8 w-8"*/}
+                                {/*        onClick={toggleAttachmentMenu}*/}
+                                {/*        disabled={isUploading}*/}
+                                {/*    >*/}
+                                {/*        {isUploading ? (*/}
+                                {/*            <div*/}
+                                {/*                className="h-4 w-4 border-2 border-t-transparent border-[#0ea5e9] rounded-full animate-spin"/>*/}
+                                {/*        ) : (*/}
+                                {/*            <Paperclip className="h-4 w-4"/>*/}
+                                {/*        )}*/}
+                                {/*    </Button>*/}
 
-                                    {/* Attachment menu */}
-                                    {showAttachmentMenu && (
-                                        <div
-                                            ref={attachmentMenuRef}
-                                            className="absolute bottom-full left-0 mb-2 bg-[#1a1a1a] border border-[#333] rounded-lg shadow-lg z-50 w-48 overflow-hidden"
-                                        >
-                                            <div className="p-1">
-                                                <button
-                                                    onClick={() => handleFileUpload("image/*")}
-                                                    className="flex items-center w-full px-3 py-2 text-sm text-white hover:bg-[#222] rounded-md"
-                                                >
-                                                    <ImageIcon className="h-4 w-4 mr-2 text-[#0ea5e9]"/>
-                                                    <span>Image</span>
-                                                </button>
-                                                <button
-                                                    onClick={() => handleFileUpload("application/pdf")}
-                                                    className="flex items-center w-full px-3 py-2 text-sm text-white hover:bg-[#222] rounded-md"
-                                                >
-                                                    <File className="h-4 w-4 mr-2 text-[#0ea5e9]"/>
-                                                    <span>Document</span>
-                                                </button>
-                                                <button
-                                                    onClick={() => handleFileUpload()}
-                                                    className="flex items-center w-full px-3 py-2 text-sm text-white hover:bg-[#222] rounded-md"
-                                                >
-                                                    <Paperclip className="h-4 w-4 mr-2 text-[#0ea5e9]"/>
-                                                    <span>Other files</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                {/*    /!* Attachment menu *!/*/}
+                                {/*    {showAttachmentMenu && (*/}
+                                {/*        <div*/}
+                                {/*            ref={attachmentMenuRef}*/}
+                                {/*            className="absolute bottom-full left-0 mb-2 bg-[#1a1a1a] border border-[#333] rounded-lg shadow-lg z-50 w-48 overflow-hidden"*/}
+                                {/*        >*/}
+                                {/*            <div className="p-1">*/}
+                                {/*                <button*/}
+                                {/*                    onClick={() => handleFileUpload("image/*")}*/}
+                                {/*                    className="flex items-center w-full px-3 py-2 text-sm text-white hover:bg-[#222] rounded-md"*/}
+                                {/*                >*/}
+                                {/*                    <ImageIcon className="h-4 w-4 mr-2 text-[#0ea5e9]"/>*/}
+                                {/*                    <span>Image</span>*/}
+                                {/*                </button>*/}
+                                {/*                <button*/}
+                                {/*                    onClick={() => handleFileUpload("application/pdf")}*/}
+                                {/*                    className="flex items-center w-full px-3 py-2 text-sm text-white hover:bg-[#222] rounded-md"*/}
+                                {/*                >*/}
+                                {/*                    <File className="h-4 w-4 mr-2 text-[#0ea5e9]"/>*/}
+                                {/*                    <span>Document</span>*/}
+                                {/*                </button>*/}
+                                {/*                <button*/}
+                                {/*                    onClick={() => handleFileUpload()}*/}
+                                {/*                    className="flex items-center w-full px-3 py-2 text-sm text-white hover:bg-[#222] rounded-md"*/}
+                                {/*                >*/}
+                                {/*                    <Paperclip className="h-4 w-4 mr-2 text-[#0ea5e9]"/>*/}
+                                {/*                    <span>Other files</span>*/}
+                                {/*                </button>*/}
+                                {/*            </div>*/}
+                                {/*        </div>*/}
+                                {/*    )}*/}
+                                {/*</div>*/}
 
                                 <div className="relative flex-grow">
                                     <Input
@@ -1164,10 +1147,6 @@ const ChatPage = () => {
                                     />
 
                                     <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
-                                        <Button variant="ghost" size="icon"
-                                                className="text-gray-400 hover:text-[#0ea5e9] h-6 w-6">
-                                            <Smile className="h-4 w-4"/>
-                                        </Button>
                                         <Button
                                             variant="ghost"
                                             size="icon"

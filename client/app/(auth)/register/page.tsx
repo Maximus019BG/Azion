@@ -9,6 +9,7 @@ import {AlertCircle, ArrowLeft, CheckCircle2, ChevronRight, Eye, EyeOff} from "l
 import {authSessionCheck} from "@/app/func/funcs"
 import GoogleLoginButton from "@/app/components/_auth/googleSSO"
 import {motion} from "framer-motion"
+import PasswordRequirementItem from "@/components/PasswordRequirementItem"
 
 interface InputField<T> {
     label: string
@@ -130,6 +131,13 @@ const Register = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const [showPassword2, setShowPassword2] = useState<boolean>(false)
     const [passwordStrength, setPasswordStrength] = useState<number>(0)
+    // Password requirement states
+    const [hasMinLength, setHasMinLength] = useState<boolean>(false)
+    const [hasUppercase, setHasUppercase] = useState<boolean>(false)
+    const [hasLowercase, setHasLowercase] = useState<boolean>(false)
+    const [hasNumber, setHasNumber] = useState<boolean>(false)
+    const [hasSpecial, setHasSpecial] = useState<boolean>(false)
+    const [passwordsMatch, setPasswordsMatch] = useState<boolean>(false)
     // First, let's add a new state for the role selection
     const [role, setRole] = useState<string>("client") // Default to client
 
@@ -171,27 +179,30 @@ const Register = () => {
         setDays(newDays)
     }, [age.year, age.month])
 
-    // Password strength checker
+    // Password validation
     useEffect(() => {
-        if (!password) {
-            setPasswordStrength(0)
-            return
-        }
+        // Check individual requirements
+        setHasMinLength(password.length >= 8)
+        setHasUppercase(/[A-Z]/.test(password))
+        setHasLowercase(/[a-z]/.test(password))
+        setHasNumber(/[0-9]/.test(password))
+        setHasSpecial(/[^A-Za-z0-9]/.test(password))
 
+        // Calculate overall strength
         let strength = 0
-        // Length check
-        if (password.length >= 8) strength += 1
-        // Contains uppercase
-        if (/[A-Z]/.test(password)) strength += 1
-        // Contains lowercase
-        if (/[a-z]/.test(password)) strength += 1
-        // Contains number
-        if (/[0-9]/.test(password)) strength += 1
-        // Contains special character
-        if (/[^A-Za-z0-9]/.test(password)) strength += 1
+        if (hasMinLength) strength += 1
+        if (hasUppercase) strength += 1
+        if (hasLowercase) strength += 1
+        if (hasNumber) strength += 1
+        if (hasSpecial) strength += 1
 
         setPasswordStrength(strength)
-    }, [password])
+    }, [password, hasMinLength, hasUppercase, hasLowercase, hasNumber, hasSpecial])
+
+    // Check if passwords match
+    useEffect(() => {
+        setPasswordsMatch(password === password2 && password2 !== "")
+    }, [password, password2])
 
     // Email validation
     const validateEmail = (email: string) => {
@@ -225,7 +236,7 @@ const Register = () => {
         if (!password) {
             setPasswordError("Password is required")
             valid = false
-        } else if (password.length < 8) {
+        } else if (!hasMinLength) {
             setPasswordError("Password must be at least 8 characters")
             valid = false
         } else if (passwordStrength < 3) {
@@ -235,7 +246,7 @@ const Register = () => {
             setPasswordError("")
         }
 
-        if (password !== password2) {
+        if (!passwordsMatch) {
             setPassword2Error("Passwords do not match")
             valid = false
         } else {
@@ -287,7 +298,7 @@ const Register = () => {
             if (!password) {
                 setPasswordError("Password is required")
                 valid = false
-            } else if (password.length < 8) {
+            } else if (!hasMinLength) {
                 setPasswordError("Password must be at least 8 characters")
                 valid = false
             } else if (passwordStrength < 3) {
@@ -297,7 +308,7 @@ const Register = () => {
                 setPasswordError("")
             }
 
-            if (password !== password2) {
+            if (!passwordsMatch) {
                 setPassword2Error("Passwords do not match")
                 valid = false
             } else {
@@ -546,7 +557,7 @@ const Register = () => {
                                         <div className="flex flex-wrap gap-2">
                                             {/* Day */}
                                             <div className="flex-1 min-w-[80px]">
-                                                <label className="block text-xs text-gray-500 mb-1">Day</label>
+                                                <label className="block text-xs text-white mb-1">Day</label>
                                                 <div className="relative">
                                                     <select
                                                         value={age.day}
@@ -580,7 +591,7 @@ const Register = () => {
 
                                             {/* Month */}
                                             <div className="flex-1 min-w-[80px]">
-                                                <label className="block text-xs text-gray-500 mb-1">Month</label>
+                                                <label className="block text-xs text-white mb-1">Month</label>
                                                 <div className="relative">
                                                     <select
                                                         value={age.month}
@@ -627,7 +638,7 @@ const Register = () => {
 
                                             {/* Year */}
                                             <div className="flex-1 min-w-[80px]">
-                                                <label className="block text-xs text-gray-500 mb-1">Year</label>
+                                                <label className="block text-xs text-white mb-1">Year</label>
                                                 <div className="relative">
                                                     <select
                                                         value={age.year}
@@ -770,17 +781,31 @@ const Register = () => {
                                             </p>
                                         )}
 
-                                        {/* Field requirements */}
-                                        {field.requirements && (
+                                        {/* Enhanced Password Requirements */}
+                                        {field.label === "Password" && (
                                             <div className="mt-2">
                                                 <p className="text-xs text-gray-500 mb-1">Requirements:</p>
                                                 <ul className="space-y-1">
-                                                    {field.requirements.map((req, idx) => (
-                                                        <li key={idx}
-                                                            className="text-xs text-gray-500 flex items-start gap-1">
-                                                            <span className="mt-0.5">•</span> {req}
-                                                        </li>
-                                                    ))}
+                                                    <PasswordRequirementItem text="At least 8 characters"
+                                                                             isMet={hasMinLength}/>
+                                                    <PasswordRequirementItem text="Include uppercase letters"
+                                                                             isMet={hasUppercase}/>
+                                                    <PasswordRequirementItem text="Include lowercase letters"
+                                                                             isMet={hasLowercase}/>
+                                                    <PasswordRequirementItem text="Include numbers" isMet={hasNumber}/>
+                                                    <PasswordRequirementItem text="Include special characters"
+                                                                             isMet={hasSpecial}/>
+                                                </ul>
+                                            </div>
+                                        )}
+
+                                        {/* Enhanced Confirm Password Requirement */}
+                                        {field.label === "Confirm Password" && (
+                                            <div className="mt-2">
+                                                <p className="text-xs text-gray-500 mb-1">Requirements:</p>
+                                                <ul className="space-y-1">
+                                                    <PasswordRequirementItem text="Must match the password above"
+                                                                             isMet={passwordsMatch}/>
                                                 </ul>
                                             </div>
                                         )}

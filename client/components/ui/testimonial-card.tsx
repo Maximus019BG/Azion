@@ -1,75 +1,53 @@
 "use client"
+
 import {motion} from "framer-motion"
 import Image from "next/image"
-import {Quote} from "lucide-react"
+import {Star} from "lucide-react"
 
 interface TestimonialCardProps {
     quote: string
     author: string
     role: string
-    avatarSrc?: string
-    index?: number
-    companyLogo?: string
+    index: number
+    companyLogo?: string // Keep for backward compatibility
+    userImage?: string // New prop for user profile image
 }
 
-export function TestimonialCard({quote, author, role, avatarSrc, companyLogo, index = 0}: TestimonialCardProps) {
+export function TestimonialCard({quote, author, role, index, companyLogo, userImage}: TestimonialCardProps) {
+    // Use userImage if provided, otherwise fall back to companyLogo
+    const imageUrl = userImage || companyLogo || "/placeholder.svg"
+
     return (
         <motion.div
-            initial={{opacity: 0, y: 10}}
+            initial={{opacity: 0, y: 20}}
             whileInView={{opacity: 1, y: 0}}
             transition={{duration: 0.5, delay: index * 0.1}}
             viewport={{once: true}}
-            className="bg-gray-900/20 border border-gray-800/50 rounded-lg p-5 relative group hover:border-gray-700/50 transition-colors"
+            className="bg-gray-900/20 border border-gray-800/50 rounded-lg p-6 flex flex-col h-full"
         >
-            <Quote className="absolute top-4 right-4 text-cyan-500/10 w-8 h-8"/>
-
-            {/* Rating stars - simplified */}
-            <div className="flex mb-3">
-                {[1, 2, 3, 4, 5].map((star) => (
-                    <svg key={star} className="w-3 h-3 text-yellow-400 fill-current" viewBox="0 0 24 24">
-                        <path
-                            d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                    </svg>
+            <div className="flex items-center gap-1 mb-4">
+                {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={16} className="text-yellow-400 fill-yellow-400"/>
                 ))}
             </div>
 
-            <p className="text-gray-300 mb-5 text-sm">{quote}</p>
+            <p className="text-gray-300 mb-6 flex-grow">{quote}</p>
 
-            <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                    <div className="mr-3">
-                        {avatarSrc ? (
-                            <Image
-                                src={avatarSrc || "/placeholder.svg"}
-                                alt={author}
-                                width={36}
-                                height={36}
-                                className="rounded-full object-cover border border-gray-800/50"
-                            />
-                        ) : (
-                            <div
-                                className="w-9 h-9 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xs font-semibold">
-                                {author.charAt(0)}
-                            </div>
-                        )}
-                    </div>
-                    <div>
-                        <h4 className="font-medium text-white text-sm">{author}</h4>
-                        <p className="text-gray-400 text-xs">{role}</p>
-                    </div>
+            <div className="flex items-center gap-4">
+                {/* User profile image */}
+                <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-cyan-500/30">
+                    <Image
+                        src={imageUrl || "/woman1.png"}
+                        alt={author}
+                        width={48}
+                        height={48}
+                        className="object-cover w-full h-full"
+                    />
                 </div>
-
-                {companyLogo && (
-                    <div className="h-6 w-auto opacity-60 group-hover:opacity-80 transition-opacity">
-                        <Image
-                            src={companyLogo || "/placeholder.svg"}
-                            alt={`${author}'s company`}
-                            width={60}
-                            height={24}
-                            className="h-full w-auto object-contain"
-                        />
-                    </div>
-                )}
+                <div>
+                    <h4 className="font-semibold text-white">{author}</h4>
+                    <p className="text-gray-400 text-sm">{role}</p>
+                </div>
             </div>
         </motion.div>
     )

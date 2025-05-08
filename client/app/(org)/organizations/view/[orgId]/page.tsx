@@ -2,7 +2,7 @@
 import {useEffect, useState} from "react"
 import axios from "axios"
 import {useParams} from "next/navigation"
-import {ArrowLeft, Building2, Clock, Mail, MapPin, Phone, Shield, Tag, Users,} from "lucide-react"
+import {ArrowLeft, Building2, Mail, MapPin, Phone, Shield, Tag, Users,} from "lucide-react"
 import type {Organization} from "@/app/types/types"
 import {apiUrl} from "@/app/api/config"
 import Link from "next/link"
@@ -127,8 +127,6 @@ export default function OrganizationPage() {
                                     className="inline-block bg-[#1a1a2e] border border-blue-800/50 rounded-full px-3 py-1 text-xs font-medium text-blue-300">
                                     {organization.orgType}
                                 </div>
-                                <div className="h-1.5 w-1.5 rounded-full bg-blue-400/50"></div>
-                                <div className="text-blue-300/70 text-sm">ID: {orgId.substring(0, 8)}...</div>
                             </div>
                         </div>
                     </div>
@@ -167,33 +165,24 @@ export default function OrganizationPage() {
                                 Organization Stats
                             </h2>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                 <div
                                     className="bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 rounded-lg p-4 flex flex-col items-center justify-center">
                                     <Users className="h-6 w-6 text-blue-400 mb-2"/>
-                                    <p className="text-2xl font-bold text-white">24</p>
+                                    <p className="text-2xl font-bold text-white">{organization.employeeCount}</p>
                                     <p className="text-xs text-gray-400">Members</p>
                                 </div>
-
-                                <div
-                                    className="bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 rounded-lg p-4 flex flex-col items-center justify-center">
-                                    <Clock className="h-6 w-6 text-blue-400 mb-2"/>
-                                    <p className="text-2xl font-bold text-white">3y</p>
-                                    <p className="text-xs text-gray-400">Active</p>
-                                </div>
-
                                 <div
                                     className="bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 rounded-lg p-4 flex flex-col items-center justify-center">
                                     <Shield className="h-6 w-6 text-blue-400 mb-2"/>
-                                    <p className="text-2xl font-bold text-white">A+</p>
+                                    <p className="text-2xl font-bold text-white">{organization.plan?.toLowerCase() === "pro" ? "A+" : organization.plan?.toLowerCase() === "standard" ? "A-" : "B"}</p>
                                     <p className="text-xs text-gray-400">Security</p>
                                 </div>
-
                                 <div
                                     className="bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 rounded-lg p-4 flex flex-col items-center justify-center">
                                     <Building2 className="h-6 w-6 text-blue-400 mb-2"/>
-                                    <p className="text-2xl font-bold text-white">12</p>
-                                    <p className="text-xs text-gray-400">Projects</p>
+                                    <p className="text-2xl font-bold text-white">{organization.plan}</p>
+                                    <p className="text-xs text-gray-400">Plan</p>
                                 </div>
                             </div>
                         </motion.div>
