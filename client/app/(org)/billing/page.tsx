@@ -115,7 +115,7 @@ export default function BillingPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#050505] w-full text-white">
+        <div className="min-h-screen w-full text-white">
             <div className="container mx-auto py-12 px-4">
                 <div className="max-w-3xl mx-auto">
                     <h1 className="text-3xl font-bold mb-2 text-white">Complete Your Subscription</h1>
@@ -123,7 +123,8 @@ export default function BillingPage() {
 
                     {/* Bought Plans Section */}
                     {boughtPlan && (
-                        <div className="mb-12 p-6 rounded-lg flex justify-between bg-[#0a0a0a] border border-[#222] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                        <div
+                            className="mb-12 p-6 rounded-lg flex justify-between  border border-[#222] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
                             <div>
                                 <h2 className="text-xl font-semibold text-white mb-4">Your Current Plan</h2>
                                 <h3 className="text-lg font-medium text-white">{boughtPlan.name}</h3>
@@ -140,13 +141,15 @@ export default function BillingPage() {
                             </div>
                             <div className="text-right">
                                 <p className="text-sm text-gray-400 mt-4">Price: {boughtPlan.price} per user / month</p>
-                                <p className="text-sm text-gray-400 mt-4">Total: {formatCurrency(boughtPlan.basePrice * boughtPlan.maxQuantity)} / month</p>
+                                <p className="text-sm text-gray-400 mt-4">Total: {formatCurrency(boughtPlan.basePrice * boughtPlan.maxQuantity)} /
+                                    month</p>
                             </div>
                         </div>
                     )}
 
                     {isLoading && (
-                        <div className="mb-12 p-6 rounded-lg bg-[#0a0a0a] border border-[#222] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                        <div
+                            className="mb-12 p-6 rounded-lg  border border-[#222] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
                             <Skeleton className="h-8 w-1/4 mb-4 rounded-lg"/>
                             <Skeleton className="h-4 w-full mb-2 rounded-lg"/>
                             <Skeleton className="h-4 w-1/2 rounded-lg mb-1"/>
@@ -159,7 +162,8 @@ export default function BillingPage() {
                         </div>
                     )}
 
-                    <div className="mb-12 p-6 rounded-lg bg-[#0a0a0a] border border-[#222] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                    <div
+                        className="mb-12 p-6 rounded-lg  border border-[#222] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
                         <h2 className="text-xl font-semibold text-white mb-4">Available Plans</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {Object.keys(plans).map((planKey) => {
@@ -181,7 +185,8 @@ export default function BillingPage() {
                                                 </li>
                                             ))}
                                         </ul>
-                                        <p className="text-sm text-gray-400 mb-4">Price: {plan.price} per user / month</p>
+                                        <p className="text-sm text-gray-400 mb-4">Price: {plan.price} per user /
+                                            month</p>
                                         <button
                                             onClick={() => setSelectedPlan(planKey)}
                                             className={`w-full px-4 py-2 rounded-md text-white font-medium ${
@@ -198,7 +203,7 @@ export default function BillingPage() {
 
                     {/* Selected Plan Details */}
                     <div
-                        className="mb-12 p-6 rounded-lg bg-[#0a0a0a] border border-[#222] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                        className="mb-12 p-6 rounded-lg  border border-[#222] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-semibold text-white">Selected Plan: {currentPlan.name}</h2>
                             {currentPlan.popular && (
@@ -208,7 +213,7 @@ export default function BillingPage() {
 
                         <p className="text-gray-400 mb-6">{currentPlan.description}</p>
 
-                        <div className="bg-[#111] rounded-lg p-4 mb-6">
+                        <div className=" rounded-lg p-4 mb-6">
                             <h3 className="text-sm font-medium text-gray-300 mb-3">Features included:</h3>
                             <ul className="space-y-2">
                                 {currentPlan.features.map((feature: string, idx: number) => (
@@ -258,7 +263,7 @@ export default function BillingPage() {
                         </p>
                     </div>
 
-                    <div className="text-sm text-gray-400 bg-[#0a0a0a] p-6 rounded-lg border border-[#222]">
+                    <div className="text-sm text-gray-400  p-6 rounded-lg border border-[#222]">
                         <p className="font-medium text-white mb-2">Need help?</p>
                         <p className="mb-4">
                             If you have any questions about our plans or the subscription process, our team is here to
