@@ -138,8 +138,6 @@ const Register = () => {
     const [hasNumber, setHasNumber] = useState<boolean>(false)
     const [hasSpecial, setHasSpecial] = useState<boolean>(false)
     const [passwordsMatch, setPasswordsMatch] = useState<boolean>(false)
-    // Email validation state
-    const [isValidEmailFormat, setIsValidEmailFormat] = useState<boolean>(false)
     // First, let's add a new state for the role selection
     const [role, setRole] = useState<string>("client") // Default to client
 
@@ -200,11 +198,6 @@ const Register = () => {
 
         setPasswordStrength(strength)
     }, [password, hasMinLength, hasUppercase, hasLowercase, hasNumber, hasSpecial])
-
-    // Email validation
-    useEffect(() => {
-        setIsValidEmailFormat(validateEmail(email))
-    }, [email])
 
     // Check if passwords match
     useEffect(() => {
@@ -769,24 +762,11 @@ const Register = () => {
                                                 {nameError}
                                             </p>
                                         )}
-                                        {field.label === "Email" && (
-                                            <>
-                                                {emailError && (
-                                                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                                                        <AlertCircle size={12}/>
-                                                        {emailError}
-                                                    </p>
-                                                )}
-                                                <div className="mt-2">
-                                                    <p className="text-xs text-gray-500 mb-1">Requirements:</p>
-                                                    <ul className="space-y-1">
-                                                        <PasswordRequirementItem
-                                                            text="Valid email format (e.g., user@example.com)"
-                                                            isMet={isValidEmailFormat}
-                                                        />
-                                                    </ul>
-                                                </div>
-                                            </>
+                                        {field.label === "Email" && emailError && (
+                                            <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                                                <AlertCircle size={12}/>
+                                                {emailError}
+                                            </p>
                                         )}
                                         {field.label === "Password" && passwordError && (
                                             <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
