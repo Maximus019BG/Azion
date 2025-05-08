@@ -2,7 +2,7 @@
 import {useEffect, useState} from "react"
 import axios from "axios"
 import {useParams} from "next/navigation"
-import {ArrowLeft, Building2, Clock, Mail, MapPin, Phone, Shield, Tag, Users,} from "lucide-react"
+import {ArrowLeft, Building2, Mail, MapPin, Phone, Shield, Tag, Users,} from "lucide-react"
 import type {Organization} from "@/app/types/types"
 import {apiUrl} from "@/app/api/config"
 import Link from "next/link"
@@ -169,29 +169,20 @@ export default function OrganizationPage() {
                                 <div
                                     className="bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 rounded-lg p-4 flex flex-col items-center justify-center">
                                     <Users className="h-6 w-6 text-blue-400 mb-2"/>
-                                    <p className="text-2xl font-bold text-white">24</p>
+                                    <p className="text-2xl font-bold text-white">{organization.employeeCount}</p>
                                     <p className="text-xs text-gray-400">Members</p>
                                 </div>
-
-                                <div
-                                    className="bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 rounded-lg p-4 flex flex-col items-center justify-center">
-                                    <Clock className="h-6 w-6 text-blue-400 mb-2"/>
-                                    <p className="text-2xl font-bold text-white">3y</p>
-                                    <p className="text-xs text-gray-400">Active</p>
-                                </div>
-
                                 <div
                                     className="bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 rounded-lg p-4 flex flex-col items-center justify-center">
                                     <Shield className="h-6 w-6 text-blue-400 mb-2"/>
-                                    <p className="text-2xl font-bold text-white">A+</p>
+                                    <p className="text-2xl font-bold text-white">{organization.plan?.toLowerCase() === "pro" ? "A+" : organization.plan?.toLowerCase() === "standard" ? "A-" : "B"}</p>
                                     <p className="text-xs text-gray-400">Security</p>
                                 </div>
-
                                 <div
                                     className="bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 rounded-lg p-4 flex flex-col items-center justify-center">
                                     <Building2 className="h-6 w-6 text-blue-400 mb-2"/>
-                                    <p className="text-2xl font-bold text-white">12</p>
-                                    <p className="text-xs text-gray-400">Projects</p>
+                                    <p className="text-2xl font-bold text-white">{organization.plan}</p>
+                                    <p className="text-xs text-gray-400">Plan</p>
                                 </div>
                             </div>
                         </motion.div>
