@@ -14,24 +14,24 @@ import {SectionHeading} from "@/components/ui/section-heading"
 import {FeatureCard} from "@/components/ui/feature-card"
 import {TestimonialCard} from "@/components/ui/testimonial-card"
 import {AnimatedGradientBorder} from "@/components/ui/animated-gradient-border"
-import DecorativeSVG from "@/components/decorative-svg";
-import FloatingIcons from "@/components/floating-icons";
-import axios from "axios";
-import {apiUrl} from "@/app/api/config";
-import {FaqAccordion} from "@/components/ui/faq-accordion";
-import Pricing from "@/app/components/stripe/Pricing-landing";
+import DecorativeSVG from "@/components/decorative-svg"
+import FloatingIcons from "@/components/floating-icons"
+import axios from "axios"
+import {apiUrl} from "@/app/api/config"
+import {FaqAccordion} from "@/components/ui/faq-accordion"
+import Pricing from "@/app/components/stripe/Pricing-landing"
 
 const getOrgName = async () => {
     if (Cookies.get("azionAccessToken")) {
-        const data = {accessToken: Cookies.get("azionAccessToken")};
+        const data = {accessToken: Cookies.get("azionAccessToken")}
         const response = await axios.post(`${apiUrl}/org/partOfOrg`, data, {
             headers: {
                 "Content-Type": "application/json",
             },
-        });
-        return response.status === 200;
+        })
+        return response.status === 200
     } else {
-        return false;
+        return false
     }
 }
 
@@ -162,7 +162,6 @@ export default function LandingPage() {
                                         <ChevronRight size={16}/>
                                     </motion.button>
                                 </Link>
-
 
                                 <Link href={hasOrg ? `/organizations` : `/login`}>
                                     <motion.button
@@ -498,21 +497,21 @@ export default function LandingPage() {
                             author="Sarah Johnson"
                             role="CTO, TechVision Inc."
                             index={0}
-                            companyLogo="/placeholder.svg?height=32&width=120"
+                            userImage="/woman1.png"
                         />
                         <TestimonialCard
                             quote="The dashboard analytics provide invaluable insights into our organization's performance. We've been able to optimize our workflow and increase productivity by 30%."
                             author="Michael Chen"
                             role="Operations Director, Nexus Group"
                             index={1}
-                            companyLogo="/placeholder.svg?height=32&width=120"
+                            userImage="/woman2.png"
                         />
                         <TestimonialCard
                             quote="Implementing Azion was the best decision we made for our company's security infrastructure. The seamless integration and user-friendly interface made adoption across our team effortless."
                             author="Elena Rodriguez"
                             role="Security Manager, GlobalSecure"
                             index={2}
-                            companyLogo="/placeholder.svg?height=32&width=120"
+                            userImage="/woman3.png"
                         />
                     </div>
                 </div>
@@ -547,8 +546,10 @@ export default function LandingPage() {
             </section>
 
             {/* Pricing Section */}
-            <section id="pricing"
-                     className="py-20 md:py-32 relative flex flex-col justify-center items-center bg-gradient-to-b from-transparent to-gray-900/10">
+            <section
+                id="pricing"
+                className="py-20 md:py-32 relative flex flex-col justify-center items-center bg-gradient-to-b from-transparent to-gray-900/10"
+            >
                 <SectionHeading
                     title="Simple, Transparent Pricing"
                     subtitle="Choose the plan that fits your organization's needs"
@@ -557,7 +558,6 @@ export default function LandingPage() {
                 />
 
                 <div className="flex flex-col justify-center items-center container mx-auto px-4">
-
                     <Pricing/>
 
                     {/* Pricing FAQ - simplified */}
