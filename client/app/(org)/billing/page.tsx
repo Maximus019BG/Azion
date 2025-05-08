@@ -21,6 +21,22 @@ interface Plan {
     maxQuantity: number
 }
 
+const freePlan = {
+    name: "Free",
+    priceId: "",
+    price: "Free",
+    basePrice: 0,
+    description: "No credit card required",
+    features: [
+        "Up to 5 users",
+        "Task management",
+        "Analytics",
+        "Advanced security",
+    ],
+    popular: false,
+    minQuantity: 1,
+    maxQuantity: 5,
+}
 const plans = {
     standard: {
         name: "Standard",
@@ -92,8 +108,19 @@ export default function BillingPage() {
                         maxQuantity: response.data.maxEmployeeCount,
                     });
                 }
-            } catch
-                (error) {
+                if (response.data.plan.toLowerCase() === "free") {
+                    setIsLoading(false);
+                    setBoughtPlan({
+                        ...freePlan,
+                        maxQuantity: 5,
+                    });
+                }
+            } catch (error) {
+                setIsLoading(false);
+                setBoughtPlan({
+                    ...freePlan,
+                    maxQuantity: 5,
+                });
                 console.error("Error fetching bought plans:", error)
             }
         }
