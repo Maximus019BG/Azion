@@ -202,7 +202,7 @@ const TaskView: FC<PageProps> = ({params}) => {
                     <p className="text-gray-400 text-center mb-6">The requested task could not be found.</p>
                     <div className="flex justify-center">
                         <Link
-                            href="/dashboard/tasks"
+                            href="/dashboard/task"
                             className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] text-white rounded-lg shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] transition-all duration-300"
                         >
                             <ArrowLeft className="h-4 w-4"/>
@@ -250,7 +250,7 @@ const TaskView: FC<PageProps> = ({params}) => {
                             <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                                 <div>
                                     <Link
-                                        href="/dashboard/tasks"
+                                        href="/dashboard/task"
                                         className="inline-flex items-center text-sm text-gray-400 hover:text-[#0ea5e9] mb-4 transition-colors"
                                     >
                                         <ArrowLeft className="h-4 w-4 mr-1"/>

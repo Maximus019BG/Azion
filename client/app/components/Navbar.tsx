@@ -104,9 +104,9 @@ export default function Navbar() {
                                 >
                                     <div className="p-2">
                                         <DropdownItem
-                                            href="#dashboard"
+                                            href="#features"
                                             icon={<BarChart3 size={18} className="text-cyan-400"/>}
-                                            title="Dashboard"
+                                            title="Features"
                                             description="Analytics and monitoring"
                                         />
                                         <DropdownItem
@@ -116,9 +116,9 @@ export default function Navbar() {
                                             description="Enterprise-grade protection"
                                         />
                                         <DropdownItem
-                                            href="#organizations"
+                                            href="#testimonials"
                                             icon={<Users size={18} className="text-purple-400"/>}
-                                            title="Organizations"
+                                            title="Testimonials"
                                             description="Team collaboration tools"
                                         />
                                     </div>

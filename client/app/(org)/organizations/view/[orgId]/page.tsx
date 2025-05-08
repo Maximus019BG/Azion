@@ -127,8 +127,6 @@ export default function OrganizationPage() {
                                     className="inline-block bg-[#1a1a2e] border border-blue-800/50 rounded-full px-3 py-1 text-xs font-medium text-blue-300">
                                     {organization.orgType}
                                 </div>
-                                <div className="h-1.5 w-1.5 rounded-full bg-blue-400/50"></div>
-                                <div className="text-blue-300/70 text-sm">ID: {orgId.substring(0, 8)}...</div>
                             </div>
                         </div>
                     </div>
