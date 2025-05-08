@@ -1,10 +1,9 @@
 "use client";
-import { useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import {useSearchParams} from "next/navigation";
+import React, {Suspense, useState} from "react";
 import axios from "axios";
-import { apiUrl } from "@/app/api/config";
-import { Poppins } from "next/font/google";
-import { Suspense } from 'react';
+import {apiUrl} from "@/app/api/config";
+import {Poppins} from "next/font/google";
 
 const HeaderText = Poppins({ subsets: ["latin"], weight: "600" });
 
