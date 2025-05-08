@@ -833,25 +833,25 @@ const ChatPage = () => {
                                 </div>
                             </div>
                             <div className="flex space-x-1">
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={handleVoiceCall}
-                                                className="text-gray-400 hover:text-[#0ea5e9] relative overflow-hidden group hidden sm:flex"
-                                            >
-                                                <span
-                                                    className="absolute inset-0 bg-blue-500/10 scale-0 group-hover:scale-100 rounded-full transition-transform duration-300"></span>
-                                                <Phone className="h-5 w-5 relative z-10"/>
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Voice call</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
+                                {/*<TooltipProvider>*/}
+                                {/*    <Tooltip>*/}
+                                {/*        <TooltipTrigger asChild>*/}
+                                {/*            <Button*/}
+                                {/*                variant="ghost"*/}
+                                {/*                size="icon"*/}
+                                {/*                onClick={handleVoiceCall}*/}
+                                {/*                className="text-gray-400 hover:text-[#0ea5e9] relative overflow-hidden group hidden sm:flex"*/}
+                                {/*            >*/}
+                                {/*                <span*/}
+                                {/*                    className="absolute inset-0 bg-blue-500/10 scale-0 group-hover:scale-100 rounded-full transition-transform duration-300"></span>*/}
+                                {/*                <Phone className="h-5 w-5 relative z-10"/>*/}
+                                {/*            </Button>*/}
+                                {/*        </TooltipTrigger>*/}
+                                {/*        <TooltipContent>*/}
+                                {/*            <p>Voice call</p>*/}
+                                {/*        </TooltipContent>*/}
+                                {/*    </Tooltip>*/}
+                                {/*</TooltipProvider>*/}
 
                                 <TooltipProvider>
                                     <Tooltip>

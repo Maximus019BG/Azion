@@ -3,7 +3,7 @@ import {Inter} from "next/font/google";
 import "./globals.css";
 import logo from "../public/white-logo.png";
 import logoSEO from "../public/logo.png";
-import openGraphImage from "../public/opengraphThin.png";
+import openGraphImage from "../public/landing.png";
 import {MeetingProvider} from "./context/MeetingContext";
 import {AlertProvider} from "@/app/context/AlertContext";
 
