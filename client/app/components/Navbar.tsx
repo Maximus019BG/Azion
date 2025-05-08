@@ -5,18 +5,7 @@ import {AnimatePresence, motion} from "framer-motion"
 import Link from "next/link"
 import Image from "next/image"
 import logo from "@/public/white-logo-small.png"
-import {
-    BarChart3,
-    Briefcase,
-    ChevronDown,
-    ChevronRight,
-    HelpCircle,
-    Menu,
-    Settings,
-    Shield,
-    Users,
-    X
-} from "lucide-react"
+import {BarChart3, ChevronDown, ChevronRight, HelpCircle, Menu, Settings, Shield, Users, X} from "lucide-react"
 import {cn} from "@/lib/utils/cn"
 import {AnimatedGradientBorder} from "@/components/ui/animated-gradient-border"
 import {Space_Grotesk} from "next/font/google"
@@ -87,50 +76,10 @@ export default function Navbar() {
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center space-x-1" ref={dropdownRef}>
                     <NavItem href="#features">Features</NavItem>
+                    <NavItem href="#security">Security</NavItem>
 
                     {/* Products Dropdown */}
-                    <div className="relative">
-                        <button
-                            onClick={() => toggleDropdown("products")}
-                            className={cn(
-                                "text-gray-300 hover:text-white px-4 py-2 rounded-md transition-colors relative flex items-center gap-1",
-                                activeDropdown === "products" ? "text-white bg-white/5" : "",
-                            )}
-                        >
-                            Products
-                            <ChevronDown
-                                size={16}
-                                className={cn("transition-transform duration-200", activeDropdown === "products" ? "rotate-180" : "")}
-                            />
-                        </button>
 
-                        <AnimatePresence>
-                            {activeDropdown === "products" && (
-                                <motion.div
-                                    initial={{opacity: 0, y: 10}}
-                                    animate={{opacity: 1, y: 0}}
-                                    exit={{opacity: 0, y: 10}}
-                                    transition={{duration: 0.2}}
-                                    className="absolute top-full left-0 mt-1 w-64 bg-gray-900/90 backdrop-blur-md border border-gray-800 rounded-lg shadow-xl shadow-black/30 overflow-hidden z-50"
-                                >
-                                    <div className="p-2">
-                                        <DropdownItem
-                                            href="#features"
-                                            icon={<Briefcase size={18} className="text-cyan-400"/>}
-                                            title="Features"
-                                            description="The services Azion provides"
-                                        />
-                                        <DropdownItem
-                                            href="#security"
-                                            icon={<Shield size={18} className="text-blue-400"/>}
-                                            title="Security"
-                                            description="Advanced Azion Security"
-                                        />
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
 
                     <NavItem href="#testimonials">Testimonials</NavItem>
                     <NavItem href="#pricing">Pricing</NavItem>
