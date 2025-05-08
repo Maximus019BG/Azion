@@ -144,7 +144,7 @@ const ForgotPassword = () => {
                     className="bg-blue-900/10 border border-blue-900/20 rounded-md p-6 mb-6"
                 >
                     <p className="text-gray-300 mb-6 text-sm">
-                        Enter your email address below and we'll send you a link to reset your password.
+                        Enter your email address below and we will send you a link to reset your password.
                     </p>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
