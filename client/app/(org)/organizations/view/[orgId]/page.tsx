@@ -165,7 +165,7 @@ export default function OrganizationPage() {
                                 Organization Stats
                             </h2>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                 <div
                                     className="bg-gradient-to-b from-blue-900/10 to-transparent border border-blue-900/30 rounded-lg p-4 flex flex-col items-center justify-center">
                                     <Users className="h-6 w-6 text-blue-400 mb-2"/>
