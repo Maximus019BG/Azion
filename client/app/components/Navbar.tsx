@@ -5,7 +5,18 @@ import {AnimatePresence, motion} from "framer-motion"
 import Link from "next/link"
 import Image from "next/image"
 import logo from "@/public/white-logo-small.png"
-import {BarChart3, ChevronDown, ChevronRight, HelpCircle, Menu, Settings, Shield, Users, X} from "lucide-react"
+import {
+    BarChart3,
+    Briefcase,
+    ChevronDown,
+    ChevronRight,
+    HelpCircle,
+    Menu,
+    Settings,
+    Shield,
+    Users,
+    X
+} from "lucide-react"
 import {cn} from "@/lib/utils/cn"
 import {AnimatedGradientBorder} from "@/components/ui/animated-gradient-border"
 import {Space_Grotesk} from "next/font/google"
@@ -105,21 +116,15 @@ export default function Navbar() {
                                     <div className="p-2">
                                         <DropdownItem
                                             href="#features"
-                                            icon={<BarChart3 size={18} className="text-cyan-400"/>}
+                                            icon={<Briefcase size={18} className="text-cyan-400"/>}
                                             title="Features"
-                                            description="Analytics and monitoring"
+                                            description="The services Azion provides"
                                         />
                                         <DropdownItem
                                             href="#security"
                                             icon={<Shield size={18} className="text-blue-400"/>}
                                             title="Security"
-                                            description="Enterprise-grade protection"
-                                        />
-                                        <DropdownItem
-                                            href="#testimonials"
-                                            icon={<Users size={18} className="text-purple-400"/>}
-                                            title="Testimonials"
-                                            description="Team collaboration tools"
+                                            description="Advanced Azion Security"
                                         />
                                     </div>
                                 </motion.div>
