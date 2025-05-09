@@ -295,7 +295,7 @@ export default function NetworkDetailPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen">
+            <div className="w-full flex items-center justify-center h-screen">
                 <div className="flex flex-col items-center">
                     <Loader2 className="h-10 w-10 animate-spin text-[#0ea5e9] mb-4"/>
                     <span className="text-gray-400">Loading network data...</span>
