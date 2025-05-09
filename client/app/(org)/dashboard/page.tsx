@@ -197,7 +197,7 @@ const Dashboard = () => {
                     transition={{duration: 0.5, delay: 0.1}}
                     className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6"
                 >
-                    <Link href="/dashboard/tasks" className="block">
+                    <Link href="/dashboard/task" className="block">
                         <div
                             className="bg-[#0a0a0a] border-2 border-blue-800/50 rounded-xl p-4 hover:border-[#0ea5e9] transition-colors duration-200 h-full shadow-[0_0_15px_rgba(14,165,233,0.15)]">
                             <div className="flex flex-col h-full">
@@ -225,7 +225,7 @@ const Dashboard = () => {
                         </div>
                     </Link>
 
-                    <Link href="/chat-page" className="block">
+                    <Link href="/chat" className="block">
                         <div
                             className="bg-[#0a0a0a] border-2 border-blue-800/50 rounded-xl p-4 hover:border-[#0ea5e9] transition-colors duration-200 h-full shadow-[0_0_15px_rgba(14,165,233,0.15)]">
                             <div className="flex flex-col h-full">
