@@ -144,7 +144,7 @@ public class TasksController extends FileSize {
         if (org == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
         }
-        List<TasksDTO> tasks = tasksService.getProjectByUser(user);
+        List<TasksDTO> tasks = tasksService.getProjectByUser(user, org);
         if (tasks.isEmpty()) {
             return ResponseEntity.ok("no tasks");
         }
