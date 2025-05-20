@@ -111,6 +111,11 @@ const CreateTask: FC = () => {
         if (!dueDate) missingFields.push("Due Date")
         if (selectedUsers.size === 0) missingFields.push("Assigned Users")
 
+        if (description.length > 255) {
+            setError("Description must be 255 characters or less")
+            return
+        }
+
         if (missingFields.length > 0) {
             setError(`Please fill in the following fields: ${missingFields.join(", ")}`)
             return false
@@ -184,6 +189,11 @@ const CreateTask: FC = () => {
             if (!description.trim()) detailsFields.push("Description")
             if (!dueDate) detailsFields.push("Due Date")
 
+            if (description.length > 255) {
+                setError("Description must be 255 characters or less")
+                return
+            }
+
             if (detailsFields.length > 0) {
                 setError(`Please fill in the following fields: ${detailsFields.join(", ")}`)
                 return
@@ -234,9 +244,11 @@ const CreateTask: FC = () => {
             ) : (
                 <>
                     <div className="w-full h-screen flex flex-col justify-center items-center p-4 lg:p-8 overflow-auto">
-                        <h1 className={`text-4xl font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text p-10 text-transparent ${HeaderText.className}`}>Create
-                            New
-                            Task</h1>
+                        <h1
+                            className={`text-4xl font-bold bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] bg-clip-text p-10 text-transparent ${HeaderText.className}`}
+                        >
+                            Create New Task
+                        </h1>
                         {error && <div
                             className="bg-red-500/80 text-white p-4 rounded-md mb-4 w-full max-w-4xl">{error}</div>}
                         <Card className="w-full bg-[#0a0a0a] border-2 border-[#222] max-w-4xl mx-auto">
@@ -276,7 +288,7 @@ const CreateTask: FC = () => {
                                                         value={title}
                                                         onChange={(e) => setTitle(e.target.value)}
                                                         placeholder="Enter task title"
-                                                        className="border-2 border-base-100 bg-[#080808]"
+                                                        className="border-2 break-words border-base-100 bg-[#080808]"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
@@ -289,8 +301,14 @@ const CreateTask: FC = () => {
                                                         onChange={(e) => setDescription(e.target.value)}
                                                         placeholder="Enter task description"
                                                         rows={4}
+                                                        maxLength={255}
                                                         className="border-2 border-base-100 bg-[#080808]"
                                                     />
+                                                    <div
+                                                        className={`text-xs ${description.length > 255 ? "text-red-500 font-medium" : "text-muted-foreground"} text-right`}
+                                                    >
+                                                        {description.length}/255 characters
+                                                    </div>
                                                 </div>
                                                 <div className="space-y-2">
                                                     <Label htmlFor="priority">Priority</Label>
@@ -314,9 +332,7 @@ const CreateTask: FC = () => {
                                                     </Select>
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label htmlFor="source">
-                                                        Source
-                                                    </Label>
+                                                    <Label htmlFor="source">Source</Label>
                                                     <Input
                                                         id="source"
                                                         value={source}
@@ -468,7 +484,9 @@ const CreateTask: FC = () => {
                                             </div>
                                             <div className="space-y-2 bg-base-100/20 p-4 rounded-md">
                                                 <h4 className="text-sm font-semibold">Description</h4>
-                                                <p className="text-sm whitespace-pre-wrap">{description || "No description provided"}</p>
+                                                <p className="text-sm whitespace-pre-wrap break-words">
+                                                    {description || "No description provided"}
+                                                </p>
                                             </div>
                                             <div className="space-y-2 bg-base-100/20 p-4 rounded-md">
                                                 <h4 className="text-sm font-semibold">Assigned Users
@@ -479,10 +497,11 @@ const CreateTask: FC = () => {
                                                         return (
                                                             <span
                                                                 key={email}
-                                                                className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-accent">
-                                                                {user ? user.name : email}
+                                                                className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-accent"
+                                                            >
+                                {user ? user.name : email}
                                                                 {email === uEmail && " (You)"}
-                                                           </span>
+                              </span>
                                                         )
                                                     })}
                                                 </div>
@@ -540,4 +559,3 @@ const CreateTask: FC = () => {
 }
 
 export default CreateTask
-

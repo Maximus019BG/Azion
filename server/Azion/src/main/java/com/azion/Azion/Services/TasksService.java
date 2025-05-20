@@ -3,10 +3,7 @@ package com.azion.Azion.Services;
 import com.azion.Azion.Models.DTO.RoleDTO;
 import com.azion.Azion.Models.DTO.TasksDTO;
 import com.azion.Azion.Models.DTO.UserDTO;
-import com.azion.Azion.Models.Role;
-import com.azion.Azion.Models.Task;
-import com.azion.Azion.Models.TaskFiles;
-import com.azion.Azion.Models.User;
+import com.azion.Azion.Models.*;
 import com.azion.Azion.Repositories.FileRepo;
 import com.azion.Azion.Repositories.OrgRepository;
 import com.azion.Azion.Repositories.RoleRepository;
@@ -33,6 +30,7 @@ public class TasksService {
     //VirusTotal config
     private static final String API_KEY = System.getProperty("virusTotalApiKey");
     private static final String VIRUSTOTAL_URL = "https://www.virustotal.com/api/v3/files";
+    private static final int TASK_SIZE = 7;
     
     private final TasksRepository tasksRepository;
     private final FileRepo fileRepo;
@@ -173,12 +171,14 @@ public class TasksService {
                 .comparing(Task::getDate) //!Compare by date
                 .thenComparing(Comparator.comparing(Task::getPriority).reversed()) //!Compare by priority
         );
+        
         List<TasksDTO> topProjects = new ArrayList<>();
         
-        if (projects.size() >= 3) {
-            topProjects.add(convertToDTO(projects.get(0)));
-            topProjects.add(convertToDTO(projects.get(1)));
-            topProjects.add(convertToDTO(projects.get(2)));
+        if (projects.size() >= TASK_SIZE) {
+            for (int index = 0; index < TASK_SIZE; index++) {
+                topProjects.add(convertToDTO(projects.get(index)));
+            }
+            
         } else {
             for (Task task : projects) {
                 topProjects.add(convertToDTO(task));
@@ -194,9 +194,9 @@ public class TasksService {
     }
     
     @Transactional
-    public List<TasksDTO> getProjectByUser(User user) {
-        List<Task> projectsAssigned = tasksRepository.findByUsers(user); //!Projects the user is assigned to do
-        List<Task> projectsCreatedBy = tasksRepository.findProjectByCreatedBy(user); //!Task the user has created
+    public List<TasksDTO> getProjectByUser(User user, Org org) {
+        List<Task> projectsAssigned = tasksRepository.findByUserAndOrg(user, org); //!Projects the user is assigned to do
+        List<Task> projectsCreatedBy = tasksRepository.findProjectByCreatedByAndOrg(user, org); //!Task the user has created
         
         //Remove duplicates
         for(Task task : projectsAssigned) {

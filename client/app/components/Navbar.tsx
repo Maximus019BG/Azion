@@ -68,7 +68,7 @@ export default function Navbar() {
                         <span
                             className={`text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent group-hover:from-cyan-300 group-hover:to-blue-400 transition-all duration-300 ${spaceGrotesk.className}`}
                         >
-              Azion
+              AzionOnline
             </span>
                     </motion.div>
                 </Link>

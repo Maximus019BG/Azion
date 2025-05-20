@@ -238,8 +238,11 @@ const SessionCards = () => {
                                                 <p className="text-sm text-gray-400 mt-1 line-clamp-1">{session.tokenDTO.userAgent}</p>
 
                                                 <div className="mt-4 flex items-center gap-2">
-                                                    <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                                                    <span className="text-xs text-gray-400">Active now</span>
+                                                    <div
+                                                        className={`h-2 w-2 rounded-full ${isCurrentSession ? "bg-green-500" : "bg-red-500"}`}
+                                                    ></div>
+                                                    <span
+                                                        className="text-xs text-gray-400">{isCurrentSession ? "Active" : "Not active"}</span>
                                                 </div>
                                             </div>
                                         </div>

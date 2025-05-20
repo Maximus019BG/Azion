@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import {Calendar, Clock, Tag, Trash2, User} from "lucide-react"
+import {Calendar, Tag, Trash2, User} from "lucide-react"
 import axios, {type AxiosResponse} from "axios"
 import {apiUrl} from "@/app/api/config"
 import Cookies from "js-cookie"
@@ -140,11 +140,7 @@ const TasksCard: React.FC<Task> = ({
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-[#222]">
-                    <div className="flex items-center text-xs text-gray-500">
-                        <Clock className="h-3.5 w-3.5 mr-1"/>
-                        Updated recently
-                    </div>
+                <div className="flex items-center justify-end pt-2 border-t border-[#222]">
 
                     {isCreator && (
                         <button

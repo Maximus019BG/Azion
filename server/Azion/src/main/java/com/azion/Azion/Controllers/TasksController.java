@@ -32,6 +32,9 @@ import java.util.*;
 @RequestMapping("/api/tasks")
 public class TasksController extends FileSize {
     
+    private static final int TASK_SIZE = 7;
+    
+    
     private final TasksRepository tasksRepository;
     private final TasksService tasksService;
     private final UserRepository userRepository;
@@ -144,7 +147,7 @@ public class TasksController extends FileSize {
         if (org == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
         }
-        List<TasksDTO> tasks = tasksService.getProjectByUser(user);
+        List<TasksDTO> tasks = tasksService.getProjectByUser(user, org);
         if (tasks.isEmpty()) {
             return ResponseEntity.ok("no tasks");
         }
@@ -316,7 +319,7 @@ public class TasksController extends FileSize {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");
     }
     
-    //*List top tasks
+    //List top tasks
     @Transactional
     @GetMapping("/top/{accessToken}")
     public ResponseEntity<?> topTasks(@PathVariable String accessToken) {
@@ -327,17 +330,24 @@ public class TasksController extends FileSize {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
-        List<Task> tasks = tasksRepository.findByUsers(user);
+        
+        Org org = orgRepository.findById(user.getOrgid()).orElse(null);
+        if (org == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
+        }
+        
+        List<Task> tasks = tasksRepository.findByUserAndOrg(user, org);
+        
         if (tasks.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("tasks not found");
         }
         
-        int numberOfTasks = Math.min(tasks.size(), 3); //The number of task to be shown on the user
+        int numberOfTasks = Math.min(tasks.size(), TASK_SIZE); //The number of task to be shown on the user
         
         return ResponseEntity.ok(tasksService.sortProjectsByDate(tasks).subList(0,numberOfTasks));
     }
     
-    //!Task return
+    //Task return
     @Transactional
     @PutMapping("/return/task/{id}")
     public ResponseEntity<?> returnTask(@PathVariable String id, @RequestBody Map<Object, String> request, @RequestHeader("authorization") String token) {
