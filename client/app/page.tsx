@@ -116,7 +116,7 @@ export default function LandingPage() {
                 <span
                     className="inline-block px-5 py-2 rounded-full bg-gradient-to-r from-gray-900 to-gray-800 text-gray-300 text-sm mb-8 border border-gray-800/80 shadow-lg shadow-black/20 backdrop-blur-sm">
                   <span className="inline-block w-2 h-2 rounded-full bg-cyan-500 mr-2 animate-pulse"></span>
-                  Secure your organization with Azion
+                  Secure your organization with AzionOnline
                 </span>
                             </motion.div>
 
@@ -129,7 +129,7 @@ export default function LandingPage() {
                                 />
                                 <span
                                     className="block mt-2 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                  Azion
+                  AzionOnline
                 </span>
                             </h1>
 
@@ -190,7 +190,7 @@ export default function LandingPage() {
                                 <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg">
                                     <Image
                                         src="/Dashboard.png"
-                                        alt="Azion Dashboard"
+                                        alt="AzionOnline Dashboard"
                                         width={1200}
                                         height={675}
                                         className="w-full h-full object-cover rounded-lg"
@@ -301,7 +301,7 @@ export default function LandingPage() {
 
                 <SectionHeading
                     title="Powerful Features"
-                    subtitle="Azion provides a comprehensive suite of tools to enhance your organization's productivity and security"
+                    subtitle="AzionOnline provides a comprehensive suite of tools to enhance your organization's productivity and security"
                     titleClassName={`bg-gradient-to-r from-gray-100 to-gray-300 bg-clip-text text-transparent ${spaceGrotesk.className}`}
                     badge="What We Offer"
                 />
@@ -317,7 +317,7 @@ export default function LandingPage() {
                         <FeatureCard
                             icon={<Users size={24}/>}
                             title="Organization Management"
-                            description="Seamlessly collaborate with other organizations. Find and connect with any organization registered in Azion."
+                            description="Seamlessly collaborate with other organizations. Find and connect with any organization registered in AzionOnline."
                             index={1}
                         />
                         <FeatureCard
@@ -353,7 +353,7 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4">
                     <SectionHeading
                         title="Enterprise-Grade Security"
-                        subtitle="Azion secures every part of your account and organization with comprehensive security features"
+                        subtitle="AzionOnline secures every part of your account and organization with comprehensive security features"
                         titleClassName={`bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent ${spaceGrotesk.className}`}
                         badge="Security First"
                     />
@@ -465,7 +465,7 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                         <TestimonialCard
-                            quote="Azion has transformed how we manage our organization's security. The multi-factor authentication and task management features are game-changers for our team."
+                            quote="AzionOnline has transformed how we manage our organization's security. The multi-factor authentication and task management features are game-changers for our team."
                             author="Sarah Johnson"
                             role="CTO, TechVision Inc."
                             index={0}
@@ -479,7 +479,7 @@ export default function LandingPage() {
                             userImage="/woman2.png"
                         />
                         <TestimonialCard
-                            quote="Implementing Azion was the best decision we made for our company's security infrastructure. The seamless integration and user-friendly interface made adoption across our team effortless."
+                            quote="Implementing AzionOnline was the best decision we made for our company's security infrastructure. The seamless integration and user-friendly interface made adoption across our team effortless."
                             author="Elena Rodriguez"
                             role="Security Manager, GlobalSecure"
                             index={2}
@@ -547,14 +547,14 @@ export default function LandingPage() {
                                         "This means that you pay a monthly fee for each user. For example, if you buy Pro plan for $10 per user/month and you have 3 users, you'll pay $30 per month.",
                                 },
                                 {
-                                    question: "What are Azion Cameras?",
+                                    question: "What are AzionCams?",
                                     answer:
-                                        "Azion Cameras are our access control cameras that allow you to monitor and control the access to a certain room.",
+                                        "AzionOnline Cameras are our access control cameras that allow you to monitor and control the access to a certain room.",
                                 },
                                 {
                                     question: "How can I personalize my roles?",
                                     answer:
-                                        "Azion provides full control over the roles and permissions of your employees. You can create as many roles as you want and to give whatever access you want. Also you can categorize the roles with colors.",
+                                        "AzionOnline provides full control over the roles and permissions of your employees. You can create as many roles as you want and to give whatever access you want. Also you can categorize the roles with colors.",
                                 },
                                 {
                                     question: "What is the difference between basic and advanced security features?",
@@ -596,7 +596,7 @@ export default function LandingPage() {
                                     Ready to secure your organization?
                                 </h2>
                                 <p className="text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed text-sm">
-                                    Join thousands of organizations that trust Azion to improve your workflow and
+                                    Join thousands of organizations that trust AzionOnline to improve your workflow and
                                     security.
                                 </p>
                             </div>
