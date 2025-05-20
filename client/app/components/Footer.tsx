@@ -60,7 +60,7 @@ export default function Footer() {
                             </div>
                         </Link>
                         <p className="text-gray-400 mb-4 max-w-md text-sm">
-                            Azion provides a comprehensive suite of tools to enhance your organization&apos;s
+                            AzionOnline provides a comprehensive suite of tools to enhance your organization&apos;s
                             productivity
                             and security.
                             Our platform helps you improve workflow and secure your company with cutting-edge
@@ -116,7 +116,7 @@ export default function Footer() {
                 {/* Copyright */}
                 <div
                     className="mt-8 pt-4 border-t border-gray-800/30 flex flex-col md:flex-row justify-center items-center text-xs text-gray-500">
-                    <p>© {currentYear} Azion. All rights reserved.</p>
+                    <p>© {currentYear} AzionOnline. All rights reserved.</p>
                     {/*<div className="mt-3 md:mt-0 flex gap-4">*/}
                     {/*    <Link href="/privacy" className="hover:text-cyan-400 transition-colors">*/}
                     {/*        Privacy Policy*/}
