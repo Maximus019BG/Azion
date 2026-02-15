@@ -128,57 +128,9 @@ export default function Navbar() {
                                 Features
                             </MobileNavItem>
 
-                            {/* Mobile Products Dropdown */}
-                            <div className="border-b border-gray-800/30 py-3">
-                                <button
-                                    onClick={() => toggleDropdown("mobile-products")}
-                                    className="flex items-center justify-between w-full text-gray-300 py-2 px-4 hover:bg-gray-800/20 rounded-md"
-                                    aria-expanded={activeDropdown === "mobile-products"}
-                                >
-                                    <span className={spaceGrotesk.className}>Products</span>
-                                    <ChevronDown
-                                        size={16}
-                                        className={cn(
-                                            "transition-transform duration-200",
-                                            activeDropdown === "mobile-products" ? "rotate-180" : "",
-                                        )}
-                                    />
-                                </button>
-
-                                <AnimatePresence>
-                                    {activeDropdown === "mobile-products" && (
-                                        <motion.div
-                                            initial={{opacity: 0, height: 0}}
-                                            animate={{opacity: 1, height: "auto"}}
-                                            exit={{opacity: 0, height: 0}}
-                                            transition={{duration: 0.2}}
-                                            className="mt-1 pl-4"
-                                        >
-                                            <MobileDropdownItem
-                                                href="#dashboard"
-                                                icon={<BarChart3 size={16} className="text-cyan-400"/>}
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                Dashboard
-                                            </MobileDropdownItem>
-                                            <MobileDropdownItem
-                                                href="#security"
-                                                icon={<Shield size={16} className="text-blue-400"/>}
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                Security
-                                            </MobileDropdownItem>
-                                            <MobileDropdownItem
-                                                href="#organizations"
-                                                icon={<Users size={16} className="text-purple-400"/>}
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                Organizations
-                                            </MobileDropdownItem>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
+                            <MobileNavItem href="#security" onClick={() => setIsOpen(false)}>
+                                Security
+                            </MobileNavItem>
 
                             <MobileNavItem href="#testimonials" onClick={() => setIsOpen(false)}>
                                 Testimonials
@@ -186,52 +138,7 @@ export default function Navbar() {
                             <MobileNavItem href="#pricing" onClick={() => setIsOpen(false)}>
                                 Pricing
                             </MobileNavItem>
-
-                            {/* Mobile Resources Dropdown */}
-                            <div className="border-b border-gray-800/30 py-3">
-                                <button
-                                    onClick={() => toggleDropdown("mobile-resources")}
-                                    className="flex items-center justify-between w-full text-gray-300 py-2 px-4 hover:bg-gray-800/20 rounded-md"
-                                    aria-expanded={activeDropdown === "mobile-resources"}
-                                >
-                                    <span className={spaceGrotesk.className}>Resources</span>
-                                    <ChevronDown
-                                        size={16}
-                                        className={cn(
-                                            "transition-transform duration-200",
-                                            activeDropdown === "mobile-resources" ? "rotate-180" : "",
-                                        )}
-                                    />
-                                </button>
-
-                                <AnimatePresence>
-                                    {activeDropdown === "mobile-resources" && (
-                                        <motion.div
-                                            initial={{opacity: 0, height: 0}}
-                                            animate={{opacity: 1, height: "auto"}}
-                                            exit={{opacity: 0, height: 0}}
-                                            transition={{duration: 0.2}}
-                                            className="mt-1 pl-4"
-                                        >
-                                            <MobileDropdownItem
-                                                href="/docs"
-                                                icon={<HelpCircle size={16} className="text-cyan-400"/>}
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                Documentation
-                                            </MobileDropdownItem>
-                                            <MobileDropdownItem
-                                                href="/blog"
-                                                icon={<Settings size={16} className="text-blue-400"/>}
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                Blog
-                                            </MobileDropdownItem>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-
+                            
                             <div className="pt-4">
                                 <Link href="/login" onClick={() => setIsOpen(false)}>
                                     <motion.button
